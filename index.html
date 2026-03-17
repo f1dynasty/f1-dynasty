@@ -867,6 +867,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </div>
 
       <div id="dash-preseason-panel" class="hidden" style="margin-bottom:12px"></div>
+      <div id="dash-upgrade-alert" style="display:none;margin-bottom:12px"></div>
 
       <div class="dash-layout">
         <div class="panel dash-next-event">
@@ -874,6 +875,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
           <div id="next-event-info"></div>
           <div class="action-btns">
             <button id="btn-sim-quali" class="btn btn-red" onclick="GameActions.doNextQuali()">Simulate Qualifying</button>
+            <button id="btn-strategy" class="btn btn-outline" onclick="UI.openStrategyPicker()" style="display:none">🧠 Race Strategy</button>
             <button id="btn-watch-race" class="btn btn-red" onclick="GameActions.watchRaceFromDash()" style="display:none">🎬 Watch Race</button>
             <button id="btn-watch-sprint" class="btn btn-outline" onclick="GameActions.watchSprintFromDash()" style="display:none">🎬 Watch Sprint</button>
             <button id="btn-sim-sprint" class="btn btn-outline" onclick="GameActions.simSprint()" style="display:none">🏃 Simulate Sprint</button>
@@ -1008,6 +1010,13 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
     <div class="modal-box">
       <button class="modal-close" onclick="UI.closeModal()">✕</button>
       <div id="modal-body"></div>
+    </div>
+  </div>
+
+  <div id="strategy-modal" class="modal-overlay hidden">
+    <div class="modal-box" style="max-width:560px">
+      <button class="modal-close" onclick="UI.closeModal()">✕</button>
+      <div id="strategy-modal-body"></div>
     </div>
   </div>
 
@@ -1222,55 +1231,55 @@ const DATA = {
   // Circuit types: power=low downforce, technical=high downforce, street=high downforce, balanced
   // idealDownforce: 0=min drag (power tracks), 100=max downforce (street/technical)
   calendar: [
-    {name:"Australian Grand Prix",location:"Melbourne",country:"Australia",laps:58,circuitType:"balanced",idealDownforce:55},
-    {name:"Chinese Grand Prix",location:"Shanghai",country:"China",laps:56,sprint:true,circuitType:"balanced",idealDownforce:50},
-    {name:"Japanese Grand Prix",location:"Suzuka",country:"Japan",laps:53,circuitType:"technical",idealDownforce:70},
-    {name:"Miami Grand Prix",location:"Miami",country:"USA",laps:57,sprint:true,circuitType:"balanced",idealDownforce:55},
-    {name:"Canadian Grand Prix",location:"Montreal",country:"Canada",laps:70,sprint:true,circuitType:"power",idealDownforce:35},
-    {name:"Monaco Grand Prix",location:"Monte Carlo",country:"Monaco",laps:78,circuitType:"street",idealDownforce:90},
-    {name:"Barcelona-Catalunya Grand Prix",location:"Barcelona",country:"Spain",laps:66,circuitType:"technical",idealDownforce:65},
-    {name:"Austrian Grand Prix",location:"Spielberg",country:"Austria",laps:71,circuitType:"power",idealDownforce:40},
-    {name:"British Grand Prix",location:"Silverstone",country:"UK",laps:52,sprint:true,circuitType:"technical",idealDownforce:60},
-    {name:"Belgian Grand Prix",location:"Spa",country:"Belgium",laps:44,circuitType:"power",idealDownforce:30},
-    {name:"Hungarian Grand Prix",location:"Budapest",country:"Hungary",laps:70,circuitType:"technical",idealDownforce:80},
-    {name:"Dutch Grand Prix",location:"Zandvoort",country:"Netherlands",laps:72,sprint:true,circuitType:"technical",idealDownforce:72},
-    {name:"Italian Grand Prix",location:"Monza",country:"Italy",laps:53,circuitType:"power",idealDownforce:20},
-    {name:"Madrid Grand Prix",location:"Madrid",country:"Spain",laps:55,circuitType:"balanced",idealDownforce:50},
-    {name:"Azerbaijan Grand Prix",location:"Baku",country:"Azerbaijan",laps:51,circuitType:"street",idealDownforce:45},
-    {name:"Singapore Grand Prix",location:"Singapore",country:"Singapore",laps:62,sprint:true,circuitType:"street",idealDownforce:88},
-    {name:"United States Grand Prix",location:"Austin",country:"USA",laps:56,circuitType:"technical",idealDownforce:62},
-    {name:"Mexico City Grand Prix",location:"Mexico City",country:"Mexico",laps:71,circuitType:"power",idealDownforce:35},
-    {name:"São Paulo Grand Prix",location:"Interlagos",country:"Brazil",laps:71,circuitType:"balanced",idealDownforce:55},
-    {name:"Las Vegas Grand Prix",location:"Las Vegas",country:"USA",laps:50,circuitType:"power",idealDownforce:28},
-    {name:"Qatar Grand Prix",location:"Lusail",country:"Qatar",laps:57,circuitType:"technical",idealDownforce:68},
-    {name:"Abu Dhabi Grand Prix",location:"Yas Marina",country:"UAE",laps:58,circuitType:"balanced",idealDownforce:52}
+    {name:"Australian Grand Prix",   location:"Melbourne",  country:"Australia", laps:58,circuitType:"balanced", idealDownforce:55, tireDeg:0.6, overtakingDiff:0.5},
+    {name:"Chinese Grand Prix",      location:"Shanghai",   country:"China",     laps:56,sprint:true,circuitType:"balanced", idealDownforce:50, tireDeg:0.6, overtakingDiff:0.5},
+    {name:"Japanese Grand Prix",     location:"Suzuka",     country:"Japan",     laps:53,circuitType:"technical",idealDownforce:70, tireDeg:0.55,overtakingDiff:0.6},
+    {name:"Miami Grand Prix",        location:"Miami",      country:"USA",       laps:57,sprint:true,circuitType:"balanced", idealDownforce:55, tireDeg:0.65,overtakingDiff:0.5},
+    {name:"Canadian Grand Prix",     location:"Montreal",   country:"Canada",    laps:70,sprint:true,circuitType:"power",    idealDownforce:35, tireDeg:0.7, overtakingDiff:0.4},
+    {name:"Monaco Grand Prix",       location:"Monte Carlo",country:"Monaco",    laps:78,circuitType:"street",  idealDownforce:90, tireDeg:0.25,overtakingDiff:0.95},
+    {name:"Barcelona-Catalunya Grand Prix",location:"Barcelona",country:"Spain", laps:66,circuitType:"technical",idealDownforce:65, tireDeg:0.75,overtakingDiff:0.6},
+    {name:"Austrian Grand Prix",     location:"Spielberg",  country:"Austria",   laps:71,circuitType:"power",   idealDownforce:40, tireDeg:0.6, overtakingDiff:0.4},
+    {name:"British Grand Prix",      location:"Silverstone",country:"UK",        laps:52,sprint:true,circuitType:"technical",idealDownforce:60, tireDeg:0.8, overtakingDiff:0.45},
+    {name:"Belgian Grand Prix",      location:"Spa",        country:"Belgium",   laps:44,circuitType:"power",   idealDownforce:30, tireDeg:0.5, overtakingDiff:0.35},
+    {name:"Hungarian Grand Prix",    location:"Budapest",   country:"Hungary",   laps:70,circuitType:"technical",idealDownforce:80, tireDeg:0.7, overtakingDiff:0.75},
+    {name:"Dutch Grand Prix",        location:"Zandvoort",  country:"Netherlands",laps:72,sprint:true,circuitType:"technical",idealDownforce:72, tireDeg:0.7, overtakingDiff:0.7},
+    {name:"Italian Grand Prix",      location:"Monza",      country:"Italy",     laps:53,circuitType:"power",   idealDownforce:20, tireDeg:0.45,overtakingDiff:0.3},
+    {name:"Madrid Grand Prix",       location:"Madrid",     country:"Spain",     laps:55,circuitType:"balanced",idealDownforce:50, tireDeg:0.65,overtakingDiff:0.5},
+    {name:"Azerbaijan Grand Prix",   location:"Baku",       country:"Azerbaijan",laps:51,circuitType:"street",  idealDownforce:45, tireDeg:0.4, overtakingDiff:0.4},
+    {name:"Singapore Grand Prix",    location:"Singapore",  country:"Singapore", laps:62,sprint:true,circuitType:"street",  idealDownforce:88, tireDeg:0.35,overtakingDiff:0.85},
+    {name:"United States Grand Prix",location:"Austin",     country:"USA",       laps:56,circuitType:"technical",idealDownforce:62, tireDeg:0.7, overtakingDiff:0.45},
+    {name:"Mexico City Grand Prix",  location:"Mexico City",country:"Mexico",    laps:71,circuitType:"power",   idealDownforce:35, tireDeg:0.5, overtakingDiff:0.5},
+    {name:"São Paulo Grand Prix",    location:"Interlagos", country:"Brazil",    laps:71,circuitType:"balanced",idealDownforce:55, tireDeg:0.65,overtakingDiff:0.4},
+    {name:"Las Vegas Grand Prix",    location:"Las Vegas",  country:"USA",       laps:50,circuitType:"power",   idealDownforce:28, tireDeg:0.35,overtakingDiff:0.35},
+    {name:"Qatar Grand Prix",        location:"Lusail",     country:"Qatar",     laps:57,circuitType:"technical",idealDownforce:68, tireDeg:0.85,overtakingDiff:0.55},
+    {name:"Abu Dhabi Grand Prix",    location:"Yas Marina", country:"UAE",       laps:58,circuitType:"balanced",idealDownforce:52, tireDeg:0.55,overtakingDiff:0.55}
   ],
   // 2027+: full 24 rounds — Bahrain & Saudi restored
   calendarFull: [
-    {name:"Australian Grand Prix",location:"Melbourne",country:"Australia",laps:58,circuitType:"balanced",idealDownforce:55},
-    {name:"Chinese Grand Prix",location:"Shanghai",country:"China",laps:56,sprint:true,circuitType:"balanced",idealDownforce:50},
-    {name:"Japanese Grand Prix",location:"Suzuka",country:"Japan",laps:53,circuitType:"technical",idealDownforce:70},
-    {name:"Bahrain Grand Prix",location:"Sakhir",country:"Bahrain",laps:57,circuitType:"balanced",idealDownforce:55},
-    {name:"Saudi Arabian Grand Prix",location:"Jeddah",country:"Saudi Arabia",laps:50,circuitType:"street",idealDownforce:60},
-    {name:"Miami Grand Prix",location:"Miami",country:"USA",laps:57,sprint:true,circuitType:"balanced",idealDownforce:55},
-    {name:"Canadian Grand Prix",location:"Montreal",country:"Canada",laps:70,sprint:true,circuitType:"power",idealDownforce:35},
-    {name:"Monaco Grand Prix",location:"Monte Carlo",country:"Monaco",laps:78,circuitType:"street",idealDownforce:90},
-    {name:"Barcelona-Catalunya Grand Prix",location:"Barcelona",country:"Spain",laps:66,circuitType:"technical",idealDownforce:65},
-    {name:"Austrian Grand Prix",location:"Spielberg",country:"Austria",laps:71,circuitType:"power",idealDownforce:40},
-    {name:"British Grand Prix",location:"Silverstone",country:"UK",laps:52,sprint:true,circuitType:"technical",idealDownforce:60},
-    {name:"Belgian Grand Prix",location:"Spa",country:"Belgium",laps:44,circuitType:"power",idealDownforce:30},
-    {name:"Hungarian Grand Prix",location:"Budapest",country:"Hungary",laps:70,circuitType:"technical",idealDownforce:80},
-    {name:"Dutch Grand Prix",location:"Zandvoort",country:"Netherlands",laps:72,sprint:true,circuitType:"technical",idealDownforce:72},
-    {name:"Italian Grand Prix",location:"Monza",country:"Italy",laps:53,circuitType:"power",idealDownforce:20},
-    {name:"Madrid Grand Prix",location:"Madrid",country:"Spain",laps:55,circuitType:"balanced",idealDownforce:50},
-    {name:"Azerbaijan Grand Prix",location:"Baku",country:"Azerbaijan",laps:51,circuitType:"street",idealDownforce:45},
-    {name:"Singapore Grand Prix",location:"Singapore",country:"Singapore",laps:62,sprint:true,circuitType:"street",idealDownforce:88},
-    {name:"United States Grand Prix",location:"Austin",country:"USA",laps:56,circuitType:"technical",idealDownforce:62},
-    {name:"Mexico City Grand Prix",location:"Mexico City",country:"Mexico",laps:71,circuitType:"power",idealDownforce:35},
-    {name:"São Paulo Grand Prix",location:"Interlagos",country:"Brazil",laps:71,circuitType:"balanced",idealDownforce:55},
-    {name:"Las Vegas Grand Prix",location:"Las Vegas",country:"USA",laps:50,circuitType:"power",idealDownforce:28},
-    {name:"Qatar Grand Prix",location:"Lusail",country:"Qatar",laps:57,circuitType:"technical",idealDownforce:68},
-    {name:"Abu Dhabi Grand Prix",location:"Yas Marina",country:"UAE",laps:58,circuitType:"balanced",idealDownforce:52}
+    {name:"Australian Grand Prix",   location:"Melbourne",  country:"Australia",  laps:58,circuitType:"balanced", idealDownforce:55, tireDeg:0.6, overtakingDiff:0.5},
+    {name:"Chinese Grand Prix",      location:"Shanghai",   country:"China",      laps:56,sprint:true,circuitType:"balanced", idealDownforce:50, tireDeg:0.6, overtakingDiff:0.5},
+    {name:"Japanese Grand Prix",     location:"Suzuka",     country:"Japan",      laps:53,circuitType:"technical",idealDownforce:70, tireDeg:0.55,overtakingDiff:0.6},
+    {name:"Bahrain Grand Prix",      location:"Sakhir",     country:"Bahrain",    laps:57,circuitType:"balanced", idealDownforce:55, tireDeg:0.75,overtakingDiff:0.4},
+    {name:"Saudi Arabian Grand Prix",location:"Jeddah",     country:"Saudi Arabia",laps:50,circuitType:"street", idealDownforce:60, tireDeg:0.45,overtakingDiff:0.5},
+    {name:"Miami Grand Prix",        location:"Miami",      country:"USA",        laps:57,sprint:true,circuitType:"balanced", idealDownforce:55, tireDeg:0.65,overtakingDiff:0.5},
+    {name:"Canadian Grand Prix",     location:"Montreal",   country:"Canada",     laps:70,sprint:true,circuitType:"power",   idealDownforce:35, tireDeg:0.7, overtakingDiff:0.4},
+    {name:"Monaco Grand Prix",       location:"Monte Carlo",country:"Monaco",     laps:78,circuitType:"street",  idealDownforce:90, tireDeg:0.25,overtakingDiff:0.95},
+    {name:"Barcelona-Catalunya Grand Prix",location:"Barcelona",country:"Spain",  laps:66,circuitType:"technical",idealDownforce:65, tireDeg:0.75,overtakingDiff:0.6},
+    {name:"Austrian Grand Prix",     location:"Spielberg",  country:"Austria",    laps:71,circuitType:"power",   idealDownforce:40, tireDeg:0.6, overtakingDiff:0.4},
+    {name:"British Grand Prix",      location:"Silverstone",country:"UK",         laps:52,sprint:true,circuitType:"technical",idealDownforce:60, tireDeg:0.8, overtakingDiff:0.45},
+    {name:"Belgian Grand Prix",      location:"Spa",        country:"Belgium",    laps:44,circuitType:"power",   idealDownforce:30, tireDeg:0.5, overtakingDiff:0.35},
+    {name:"Hungarian Grand Prix",    location:"Budapest",   country:"Hungary",    laps:70,circuitType:"technical",idealDownforce:80, tireDeg:0.7, overtakingDiff:0.75},
+    {name:"Dutch Grand Prix",        location:"Zandvoort",  country:"Netherlands",laps:72,sprint:true,circuitType:"technical",idealDownforce:72, tireDeg:0.7, overtakingDiff:0.7},
+    {name:"Italian Grand Prix",      location:"Monza",      country:"Italy",      laps:53,circuitType:"power",   idealDownforce:20, tireDeg:0.45,overtakingDiff:0.3},
+    {name:"Madrid Grand Prix",       location:"Madrid",     country:"Spain",      laps:55,circuitType:"balanced",idealDownforce:50, tireDeg:0.65,overtakingDiff:0.5},
+    {name:"Azerbaijan Grand Prix",   location:"Baku",       country:"Azerbaijan", laps:51,circuitType:"street",  idealDownforce:45, tireDeg:0.4, overtakingDiff:0.4},
+    {name:"Singapore Grand Prix",    location:"Singapore",  country:"Singapore",  laps:62,sprint:true,circuitType:"street",  idealDownforce:88, tireDeg:0.35,overtakingDiff:0.85},
+    {name:"United States Grand Prix",location:"Austin",     country:"USA",        laps:56,circuitType:"technical",idealDownforce:62, tireDeg:0.7, overtakingDiff:0.45},
+    {name:"Mexico City Grand Prix",  location:"Mexico City",country:"Mexico",     laps:71,circuitType:"power",   idealDownforce:35, tireDeg:0.5, overtakingDiff:0.5},
+    {name:"São Paulo Grand Prix",    location:"Interlagos", country:"Brazil",     laps:71,circuitType:"balanced",idealDownforce:55, tireDeg:0.65,overtakingDiff:0.4},
+    {name:"Las Vegas Grand Prix",    location:"Las Vegas",  country:"USA",        laps:50,circuitType:"power",   idealDownforce:28, tireDeg:0.35,overtakingDiff:0.35},
+    {name:"Qatar Grand Prix",        location:"Lusail",     country:"Qatar",      laps:57,circuitType:"technical",idealDownforce:68, tireDeg:0.85,overtakingDiff:0.55},
+    {name:"Abu Dhabi Grand Prix",    location:"Yas Marina", country:"UAE",        laps:58,circuitType:"balanced",idealDownforce:52, tireDeg:0.55,overtakingDiff:0.55}
   ],
   prospectSeries: ['F2','F2','F2','F3','F3','FE','IndyCar'],
   prospectNationalities: ['British','Dutch','French','Italian','Australian','Canadian','Japanese','Brazilian','German','Spanish','American','Belgian','Finnish','Thai','Chinese'],
@@ -1306,6 +1315,121 @@ const DATA = {
   },
   points: [25,18,15,12,10,8,6,4,2,1,0,0,0,0,0,0,0,0,0,0],
   pointsFastestLap: 1,
+
+  // Tire compounds: pace bonus at start, degradation per lap (0-1 scale), cliff lap (% of race)
+  tires: {
+    soft:   { name:'Soft',   color:'#e53e3e', short:'S', pacebonus:3.0,  degradeRate:0.10, cliffPct:0.45, warmupLaps:1 },
+    medium: { name:'Medium', color:'#d97706', short:'M', pacebonus:1.0,  degradeRate:0.055,cliffPct:0.65, warmupLaps:2 },
+    hard:   { name:'Hard',   color:'#6b7280', short:'H', pacebonus:-0.5, degradeRate:0.025,cliffPct:0.85, warmupLaps:3 },
+    inter:  { name:'Inter',  color:'#16a34a', short:'I', pacebonus:0,    degradeRate:0.02, cliffPct:0.9,  warmupLaps:2 },
+    wet:    { name:'Wet',    color:'#2563eb', short:'W', pacebonus:-1.0, degradeRate:0.015,cliffPct:0.95, warmupLaps:2 }
+  },
+
+  // Returns recommended strategy options for a race given circuit data + weather
+  getStrategyOptions(race, weatherRisk=0) {
+    const td = race.tireDeg || 0.6;
+    const od = race.overtakingDiff || 0.5;
+    const laps = race.laps || 58;
+
+    // Pit stop time loss in score points (~25s real = ~1.5 score pts)
+    const pitCost = 1.5;
+
+    // Calculate effective stint lengths
+    // High tireDeg = tires last fewer laps before cliff
+    const softLife  = Math.round(laps * (1 - td) * 0.42);  // soft dies first
+    const medLife   = Math.round(laps * (1 - td) * 0.72);
+    const hardLife  = Math.round(laps * (1 - td) * 0.95);
+
+    // 1-stop score: avg pace minus 1 pit cost
+    // 2-stop score: higher avg pace (fresher tires) minus 2 pit costs
+    const oneStopPace  = td < 0.5 ? 1.2 : td < 0.7 ? 0.6 : -0.3;
+    const twoStopPace  = td > 0.65 ? 1.8 : td > 0.5 ? 0.8 : -0.2;
+    const trackPosPrem = od * 2.5; // high od = massive track position premium
+
+    const oneStopNet = oneStopPace - pitCost + trackPosPrem * 0.3;
+    const twoStopNet = twoStopPace - pitCost * 2;
+
+    const oneStopBetter = oneStopNet >= twoStopNet;
+    const dominant      = Math.abs(oneStopNet - twoStopNet) > 1.2;
+
+    // Strategy options to present
+    const options = [];
+
+    if(oneStopBetter) {
+      options.push({
+        id:'1stop_MH', label:'1-Stop: Medium → Hard',
+        stints:[{compound:'medium',laps:Math.round(laps*0.42)},{compound:'hard',laps:Math.round(laps*0.58)}],
+        recommended: dominant,
+        desc: od>0.75
+          ? 'Track position is everything here — stay out as long as possible.'
+          : td<0.4
+          ? 'Low degradation circuit — tires will last. One stop is clean and efficient.'
+          : 'Balanced strategy. One stop minimises time lost in the pits.',
+        scoreBonus: 0.8,
+        pitWindows:[Math.round(laps*0.38), Math.round(laps*0.48)]
+      });
+      options.push({
+        id:'1stop_SH', label:'1-Stop: Soft → Hard',
+        stints:[{compound:'soft',laps:softLife},{compound:'hard',laps:laps-softLife}],
+        recommended:false,
+        desc:'Aggressive qualifying-style start on softs. Watch the tire cliff — softs will struggle late.',
+        scoreBonus: td>0.65 ? -0.5 : 0.4,
+        pitWindows:[Math.round(laps*0.28), Math.round(laps*0.38)]
+      });
+      if(td > 0.55) options.push({
+        id:'2stop_MSH', label:'2-Stop: Medium → Soft → Hard',
+        stints:[{compound:'medium',laps:Math.round(laps*0.32)},{compound:'soft',laps:Math.round(laps*0.28)},{compound:'hard',laps:Math.round(laps*0.40)}],
+        recommended:false,
+        desc:'Higher pace through the race but two pit stops costs time and track position.',
+        scoreBonus: -0.3,
+        pitWindows:[Math.round(laps*0.28), Math.round(laps*0.32), Math.round(laps*0.60), Math.round(laps*0.65)]
+      });
+    } else {
+      options.push({
+        id:'2stop_SMH', label:'2-Stop: Soft → Medium → Hard',
+        stints:[{compound:'soft',laps:softLife},{compound:'medium',laps:medLife-softLife},{compound:'hard',laps:laps-medLife}],
+        recommended: dominant,
+        desc: td>0.75
+          ? 'Brutal tire wear demands two stops. Trying to stretch to one stop will cost you 3+ positions.'
+          : 'High degradation track. Two stops keeps your pace up throughout.',
+        scoreBonus: 1.0,
+        pitWindows:[Math.round(laps*0.26), Math.round(laps*0.32), Math.round(laps*0.56), Math.round(laps*0.62)]
+      });
+      options.push({
+        id:'2stop_MMH', label:'2-Stop: Medium → Medium → Hard',
+        stints:[{compound:'medium',laps:Math.round(laps*0.33)},{compound:'medium',laps:Math.round(laps*0.33)},{compound:'hard',laps:Math.round(laps*0.34)}],
+        recommended:false,
+        desc:'Conservative two-stop. Consistent pace, lower risk of tire cliff.',
+        scoreBonus: 0.4,
+        pitWindows:[Math.round(laps*0.30), Math.round(laps*0.36), Math.round(laps*0.62), Math.round(laps*0.68)]
+      });
+      options.push({
+        id:'1stop_MH', label:'1-Stop: Medium → Hard',
+        stints:[{compound:'medium',laps:Math.round(laps*0.42)},{compound:'hard',laps:Math.round(laps*0.58)}],
+        recommended:false,
+        desc: od>0.7
+          ? 'Risky on a high-deg track, but track position makes this worth considering if you qualify well.'
+          : 'Risky undercut bait. Your tires will drop off badly in the final stint.',
+        scoreBonus: -0.8,
+        pitWindows:[Math.round(laps*0.38), Math.round(laps*0.48)]
+      });
+    }
+
+    // Weather wildcard option
+    if(weatherRisk > 0.15) {
+      options.push({
+        id:'reactive', label:'Reactive — respond to conditions',
+        stints:[{compound:'medium',laps:laps}],
+        recommended:false,
+        desc:`Rain forecast (${Math.round(weatherRisk*100)}% chance). A reactive strategy lets you respond when weather hits. Risky but can win races.`,
+        scoreBonus: weatherRisk > 0.4 ? 1.2 : 0.0,
+        pitWindows:[]
+      });
+    }
+
+    return { options, oneStopBetter, tireDeg: td, overtakingDiff: od, softLife, medLife, hardLife };
+  },
+
   devOptions: [
     {id:"engine",name:"Engine Upgrade",cost:25,effect:"carPerformance",value:2,desc:"+2 Car Performance"},
     {id:"aero",name:"Aero Package",cost:20,effect:"carPerformance",value:1.5,desc:"+1.5 Car Performance"},
@@ -1509,16 +1633,49 @@ const Sim = {
     const laps=17, ptid=g.playerTeamId;
     const tag=r=>r&&r.teamId===ptid?' ⭐':'';
     const finishers=results.filter(r=>!r.dnf).sort((a,b)=>a.position-b.position);
-    const events=[{lap:1,type:'start',text:`🚦 Sprint start — ${laps} laps!`}];
-    results.filter(r=>r.dnf).forEach(r=>events.push({lap:r.dnfLap||randInt(3,14),type:'dnf',text:`🚩 ${r.driverName}${tag(r)} retires from the sprint.`}));
-    finishers.filter(r=>r.position<r.startPos).slice(0,3).forEach(r=>{
+
+    // Live position tracker for sprint — starts at grid, updates as events fire
+    const livePos={};
+    results.forEach(r=>{ livePos[r.driverId] = r.startPos || r.position; });
+    const snapPos=()=>Object.assign({},livePos);
+
+    const events=[{lap:1,type:'start',text:`🚦 Sprint start — ${laps} laps!`, driverPositions:snapPos()}];
+
+    results.filter(r=>r.dnf).forEach(r=>{
+      const dnfPos=livePos[r.driverId];
+      if(dnfPos!=null){ Object.keys(livePos).forEach(id=>{if(livePos[id]>dnfPos)livePos[id]--;}); livePos[r.driverId]=null; }
+      events.push({lap:r.dnfLap||randInt(3,14),type:'dnf',text:`🚩 ${r.driverName}${tag(r)} retires from the sprint.`, driverPositions:snapPos()});
+    });
+
+    // Player driver position changes — step by step
+    results.filter(r=>r.teamId===ptid&&!r.dnf).forEach(r=>{
+      if(!r.startPos||r.startPos===r.position) return;
+      const gained=r.startPos-r.position;
+      const steps=Math.abs(gained), direction=gained>0?-1:1;
+      let cur=r.startPos;
+      for(let i=0;i<steps;i++){
+        const stepLap=Math.floor(2+(laps-3)*((i+0.5)/steps));
+        cur+=direction; livePos[r.driverId]=cur;
+        const snap=snapPos();
+        const txt=gained>0?`⭐ ${r.driverName}${tag(r)} moves up to P${cur}!`:`⭐ ${r.driverName}${tag(r)} drops to P${cur}.`;
+        events.push({lap:Math.max(2,Math.min(laps-1,stepLap)),type:'overtake',text:txt,driverPositions:snap});
+      }
+    });
+
+    // Non-player bulk moves
+    finishers.filter(r=>r.teamId!==ptid&&r.position<r.startPos&&r.startPos-r.position>=2).slice(0,2).forEach(r=>{
       events.push({lap:randInt(4,12),type:'overtake',text:`⚡ ${r.driverName}${tag(r)} gains ${r.startPos-r.position} place${r.startPos-r.position>1?'s':''}!`});
     });
+
     events.sort((a,b)=>a.lap-b.lap);
-    events.push({lap:laps,type:'finish',text:`🏁 Sprint winner: ${finishers[0]?.driverName||'?'}${tag(finishers[0])}!`});
-    if(finishers[1]) events.push({lap:laps,type:'finish',text:`P2: ${finishers[1].driverName}${tag(finishers[1])}`});
-    if(finishers[2]) events.push({lap:laps,type:'finish',text:`P3: ${finishers[2].driverName}${tag(finishers[2])}`});
-    finishers.forEach(r=>{if(r.teamId===ptid&&r.position>3) events.push({lap:laps,type:'finish',text:`⭐ ${r.driverName} finishes P${r.position} — ${r.points}pts`});});
+
+    // Final — lock to real positions
+    results.forEach(r=>{ livePos[r.driverId]=r.position||null; });
+    const finalSnap=snapPos();
+    events.push({lap:laps,type:'finish',text:`🏁 Sprint winner: ${finishers[0]?.driverName||'?'}${tag(finishers[0])}!`, driverPositions:finalSnap});
+    if(finishers[1]) events.push({lap:laps,type:'finish',text:`P2: ${finishers[1].driverName}${tag(finishers[1])}`, driverPositions:finalSnap});
+    if(finishers[2]) events.push({lap:laps,type:'finish',text:`P3: ${finishers[2].driverName}${tag(finishers[2])}`, driverPositions:finalSnap});
+    finishers.forEach(r=>{if(r.teamId===ptid&&r.position>3) events.push({lap:laps,type:'finish',text:`⭐ ${r.driverName} finishes P${r.position} — ${r.points}pts`, driverPositions:finalSnap});});
     race.sprintDone=true; race.sprintResult=results; race.sprintLapEvents=events;
     return results;
   },
@@ -1539,28 +1696,41 @@ const Sim = {
     return entries;
   },
   simQualifying(race) {
+    const g = State.game;
+    // Auto aero — set player team downforce to circuit ideal before simulating
+    if(g.autoAero && race) {
+      const playerTeam = State.getPlayerTeam();
+      if(playerTeam && race.idealDownforce !== undefined) {
+        playerTeam.downforce = race.idealDownforce;
+      }
+    }
     const drivers = State.game.drivers.filter(d=>d.teamId&&!d.retired&&!d.isReserve&&!d.isProspect);
     const entries = [];
     drivers.forEach(d => {
       const team = State.getTeam(d.teamId);
       if (!team) return;
+      const isPlayerTeam = team.id === g.playerTeamId;
+      const autoAeroPenalty = (g.autoAero && isPlayerTeam) ? -2 : 0;
       const circuitMod = race ? (()=>{
         const ideal = race.idealDownforce||50;
         const df = team.downforce||50;
         const diff = Math.abs(df - ideal);
         return diff<10 ? 1.5 : diff<20 ? 0.5 : diff<35 ? -0.5 : -2.0;
       })() : 0;
-      const score = (team.carPerformance/100*55 + d.qualifying/100*45) + circuitMod + randNorm(0,2.5);
+      const score = ((team.carPerformance + autoAeroPenalty)/100*55 + d.qualifying/100*45) + circuitMod + randNorm(0,2.5);
       entries.push({driverId:d.id,driverName:d.name,teamId:team.id,teamName:team.name,score,dnf:Math.random()<0.02});
     });
     entries.sort((a,b)=>{if(a.dnf&&!b.dnf)return 1;if(!a.dnf&&b.dnf)return -1;return b.score-a.score;});
     entries.forEach((e,i)=>{ e.position=i+1; });
     race.qualiDone=true; race.qualiResult=entries;
+    // If player has persistent auto strategy enabled, pre-apply it
+    if(State.game.autoStrategy && !race._chosenStrategy) race._chosenStrategy = 'auto';
     const pole=entries[0];
     if(pole){const d=State.getDriver(pole.driverId);if(d){d.poles++;const team=State.getTeam(d.teamId);if(team)team.poles++;}}
     return entries;
   },
   simRace(race) {
+    const g = State.game;
     if(!race.qualiDone) this.simQualifying(race);
     if(!race.qualiResult||race.qualiResult.length===0){
       return {race,results:[],weather:'dry',hadSafetyCar:false};
@@ -1591,13 +1761,13 @@ const Sim = {
       const scFactor=hadSafetyCar?(driver.consistency/200+0.5):1;
       // Trait effects
       const trait = driver.trait || 'consistent';
-      let traitBonus = 0, traitDnfMod = 0, noiseScale = 1.8;
-      if(trait==='aggressive'){ traitBonus = 0.8; traitDnfMod = 0.03; }
-      if(trait==='consistent'){ noiseScale = 0.9; traitBonus = 0.3; }
-      if(trait==='rainy'     && weather==='wet'){ traitBonus = 3.5; }
-      if(trait==='qualifier' ){ traitBonus = gridBonus * 0.4; } // already has gridBonus, amplify
-      if(trait==='overtaker' ){ traitBonus = 0.6; }
-      if(trait==='technical' ){ traitBonus = 0.5 + (team.developmentRate-70)/100*2; } // bonus in well-developed cars
+      let traitBonus = 0, traitDnfMod = 0, noiseScale = 2.8; // higher base noise = more upsets
+      if(trait==='aggressive'){ traitBonus = 0.8; traitDnfMod = 0.03; noiseScale = 3.2; }
+      if(trait==='consistent'){ noiseScale = 1.6; traitBonus = 0.3; }
+      if(trait==='rainy'     && weather==='wet'){ traitBonus = 3.5; noiseScale = 2.0; }
+      if(trait==='qualifier' ){ traitBonus = gridBonus * 0.4; }
+      if(trait==='overtaker' ){ traitBonus = 0.6; noiseScale = 3.0; }
+      if(trait==='technical' ){ traitBonus = 0.5 + (team.developmentRate-70)/100*2; }
       // Chemistry: consistent drivers penalty in unreliable cars
       const chemBonus = (trait==='consistent' && team.reliability<72) ? -0.5 :
                         (trait==='technical' && team.facilities>85) ? 0.8 :
@@ -1609,7 +1779,21 @@ const Sim = {
         const diff = Math.abs(df - ideal);
         return diff<10 ? 1.5 : diff<20 ? 0.5 : diff<35 ? -0.5 : -2.0;
       })() : 0;
-      const score=(team.carPerformance/100*52+driver.racePace/100*32+driver.consistency/100*10+(wetFactor-1)*6)+gridBonus*aggrFactor*scFactor+traitBonus+chemBonus+circuitMod2+randNorm(0,noiseScale);
+      // Strategy bonus/penalty for player team
+      const isPlayerTeamRace = team.id === g.playerTeamId;
+      let stratBonus = 0;
+      if(isPlayerTeamRace && race) {
+        const chosenId = race._chosenStrategy;
+        if(!chosenId || chosenId === 'auto') {
+          // Auto or no strategy chosen — slight penalty
+          stratBonus = -1.5;
+        } else {
+          const stratData = DATA.getStrategyOptions(race, race._weatherRisk||0);
+          const opt = stratData.options.find(o=>o.id===chosenId);
+          stratBonus = opt ? opt.scoreBonus : 0;
+        }
+      }
+      const score=(team.carPerformance/100*52+driver.racePace/100*32+driver.consistency/100*10+(wetFactor-1)*6)+gridBonus*aggrFactor*scFactor+traitBonus+chemBonus+circuitMod2+stratBonus+randNorm(0,noiseScale);
       results.push({driverId:driver.id,driverName:driver.name,teamId:team.id,teamName:team.name,startPos:startPos+1,score:dnf?-999+dnfLap:score,dnf,dnfLap});
     });
     results.sort((a,b)=>b.score-a.score);
@@ -1639,6 +1823,11 @@ const Sim = {
     });
     const lapEvents=Sim._generateLapEvents(race,results,weather,hadSafetyCar);
     race.raceDone=true; race.raceResult=results; race.weather=weather; race.hadSafetyCar=hadSafetyCar; race.lapEvents=lapEvents;
+    // Save strategy context for post-race display before clearing ephemeral fields
+    race._strategyUsed = race._chosenStrategy || null;
+    race._weatherRiskUsed = race._weatherRisk || 0;
+    // Clear ephemeral pre-race fields
+    delete race._chosenStrategy; delete race._pendingStrategy; delete race._weatherRisk;
     State.game.lastRaceResult={race:{...race},results}; State.game.totalRaces++;
     Sim._processInjuries(results, race);
     return {race,results,weather,hadSafetyCar,lapEvents};
@@ -1680,8 +1869,9 @@ const Sim = {
     results.forEach(r=>{ livePos[r.driverId] = r.startPos || r.position; });
     const snapPos = () => Object.assign({}, livePos); // shallow copy
 
-    // Start
-    events.push({lap:1, type:'start', text:`🚦 Lights out! ${leader?.driverName||'?'} leads off the line from pole.`, driverPositions: snapPos()});
+    // Start — use actual pole sitter from qualifying result
+    const poleSitter = (race.qualiResult || [])[0];
+    events.push({lap:1, type:'start', text:`🚦 Lights out! ${poleSitter?.driverName||leader?.driverName||'?'} leads off the line from pole.`, driverPositions: snapPos()});
     if(weather==='wet'){
       events.push({lap:1, type:'weather', text:'🌧 Heavy rain at the start — wet conditions throughout.'});
       // Shout out rain masters
@@ -1697,14 +1887,8 @@ const Sim = {
       const lap = r.dnfLap || randInt(5, laps-2);
       const reasons = ['mechanical failure','brake failure','hydraulics issue','collision','gearbox failure','power unit failure','puncture'];
       const reason = reasons[randInt(0,reasons.length-1)];
-      // Remove DNF driver from live positions, shift others up
-      const dnfPos = livePos[r.driverId];
-      if(dnfPos !== undefined){
-        Object.keys(livePos).forEach(id=>{
-          if(livePos[id] > dnfPos) livePos[id]--;
-        });
-        livePos[r.driverId] = null; // retired
-      }
+      // Mark as retired — snapshot system excludes them (driverFinal has no entry)
+      livePos[r.driverId] = null;
       events.push({lap, type:'dnf', text:`🚩 ${r.driverName} (${r.teamName}) retired — ${reason}.`, driverPositions: snapPos()});
     });
 
@@ -1712,73 +1896,223 @@ const Sim = {
     const playerTeamId = State.game.playerTeamId;
     const isPlayer = r => r && r.teamId === playerTeamId;
 
-    finishers.forEach(r=>{
-      if(!r.startPos || !r.position || r.startPos === r.position) return;
-      const gained = r.startPos - r.position; // positive = gained places
-      const driver_obj = State.getDriver(r.driverId);
-      const trait_txt = driver_obj?.trait==='overtaker' ? ' Classic overtaking masterclass.' :
-                        driver_obj?.trait==='aggressive' ? ' Brave move pays off!' : '';
-
-      if(isPlayer(r)){
-        // Player driver — generate one event per place change spread across the race
-        const steps = Math.abs(gained);
-        const direction = gained > 0 ? -1 : 1; // -1 = gaining, +1 = losing
-        const raceStart = Math.floor(laps * 0.1);
-        const raceEnd = Math.floor(laps * 0.88);
-        let currentPos = r.startPos;
-        for(let i = 0; i < steps; i++){
-          const stepLap = Math.floor(raceStart + (raceEnd - raceStart) * ((i + 0.5 + randFloat(-0.3,0.3)) / steps));
-          const prevPos = currentPos;
-          currentPos += direction;
-          livePos[r.driverId] = currentPos;
-          const snap = snapPos();
-          let txt;
-          if(gained > 0){
-            // Gaining a place
-            const exclaim = currentPos <= 3 ? ' 🔥' : currentPos <= 6 ? ' 💪' : '';
-            txt = `⭐ ${r.driverName} overtakes for P${currentPos}!${exclaim}`;
-          } else {
-            // Losing a place
-            txt = `⭐ ${r.driverName} drops to P${currentPos} — under pressure.`;
-          }
-          events.push({lap: Math.max(2, Math.min(laps-1, stepLap)), type:'overtake', text: txt, driverPositions: snap});
-        }
-        // Trait flavour text as a separate event near the end if they gained 3+
-        if(gained >= 3 && trait_txt){
-          events.push({lap: Math.floor(laps*0.85), type:'overtake', text:`⭐ ${r.driverName}${trait_txt}`, driverPositions: snapPos()});
-        }
+    // Build a single timeline of position snapshots across the race.
+    // Start: grid order. End: final result. Interpolate — ensuring no shared positions.
+    const driverStart = {}; // driverId -> startPos
+    const driverFinal = {}; // driverId -> finalPos (null if DNF)
+    const driverDnfLap = {}; // driverId -> lap they retired
+    results.forEach(r => {
+      driverStart[r.driverId] = r.startPos;
+      if(r.dnf) {
+        driverDnfLap[r.driverId] = r.dnfLap || Math.floor(laps * 0.5);
       } else {
-        // Non-player driver — single bulk event if 3+ places
-        if(Math.abs(gained) >= 3){
-          const battLap = randInt(Math.floor(laps*0.2), Math.floor(laps*0.8));
-          livePos[r.driverId] = r.position;
-          events.push({lap:battLap, type:'overtake', text:`⚡ ${r.driverName} gains ${gained} places — up from P${r.startPos} to P${r.position}.`, driverPositions: snapPos()});
-        }
+        driverFinal[r.driverId] = r.position;
       }
     });
+    // allDriverIds = all non-DNF finishers (for final order)
+    const allDriverIds = Object.keys(driverFinal);
+    // allRacingIds = everyone who started (for interpolation — DNFs are present early)
+    const allRacingIds = results.map(r => r.driverId);
 
-    // Lap time snapshots at key intervals
+    // Get a clean sorted position array at fraction t (0=start, 1=finish)
+    // Active drivers only (not yet DNF'd at this lap fraction)
+    const getOrderAtFrac = (t) => {
+      const currentLap = Math.round(t * laps);
+      const active = allRacingIds.filter(id => !driverDnfLap[id] || driverDnfLap[id] > currentLap);
+      return active
+        .map(id => ({
+          id,
+          score: driverStart[id] * (1-t) + (driverFinal[id] || driverStart[id]) * t
+        }))
+        .sort((a,b) => a.score - b.score)
+        .map((x,i) => ({ id: x.id, pos: i+1 }));
+    };
+
+    // ── PLAYER DRIVER POSITION CHANGES ──────────────────────────
+    // Step lap-by-lap through interpolated order for player drivers.
+    // Every time a player driver crosses a position boundary, emit commentary.
+    // Non-player drivers: one bulk note if they move 3+ places total.
+
+    const playerIds = allRacingIds.filter(id => {
+      const r = results.find(x => x.driverId === id);
+      return r && isPlayer(r) && !r.dnf;
+    });
+
+    // Track last emitted position per player driver
+    const lastEmittedPos = {};
+    playerIds.forEach(id => { lastEmittedPos[id] = driverStart[id] || 99; });
+
+    // Check every 3 laps — always include the final lap
+    const stepSize = 3;
+    const stepLaps = [];
+    for(let lap = stepSize; lap < laps; lap += stepSize) stepLaps.push(lap);
+    stepLaps.push(laps); // always include final lap
+
+    stepLaps.forEach(lap => {
+      const frac = lap / laps;
+      const curOrder = lap >= laps
+        ? allDriverIds.map(id => ({ id, pos: driverFinal[id] }))
+        : getOrderAtFrac(frac);
+
+      // Update livePos — clear DNF'd drivers at this lap
+      curOrder.forEach(x => { livePos[x.id] = x.pos; });
+      // Remove drivers who have DNF'd by this lap
+      Object.keys(driverDnfLap).forEach(id => {
+        if(driverDnfLap[id] <= lap) livePos[id] = null;
+      });
+      const snap = snapPos();
+
+      playerIds.forEach(id => {
+        const curPos = curOrder.find(x => x.id === id)?.pos;
+        const prevPos = lastEmittedPos[id];
+        if(curPos === undefined || curPos === prevPos) return;
+
+        const r = results.find(x => x.driverId === id);
+        if(!r || r.dnf) return;
+
+        const moved = prevPos - curPos; // positive = gained places
+        const evLap = Math.max(2, Math.min(laps - 1, lap - randInt(0, stepSize - 1)));
+        const exclaim = curPos <= 1 ? ' 🔥 P1!' : curPos <= 3 ? ' 🔥' : curPos <= 6 ? ' 💪' : '';
+
+        let txt;
+        if(moved > 0) {
+          // Gaining — one event per place gained
+          for(let p = prevPos - 1; p >= curPos; p--) {
+            const fraction = (prevPos - p) / (prevPos - curPos);
+            const placeLap = Math.max(2, Math.min(laps-1,
+              Math.round(evLap - stepSize + stepSize * fraction)));
+            const placeExclaim = p <= 1 ? ' 🔥 P1!' : p <= 3 ? ' 🔥' : p <= 6 ? ' 💪' : '';
+            // Use the checkpoint snap (consistent, no collisions) for all per-place events
+            events.push({
+              lap: placeLap,
+              type: 'overtake',
+              text: `⭐ ${r.driverName} moves up to P${p}!${placeExclaim}`,
+              driverPositions: snap
+            });
+          }
+        } else {
+          // Losing — one event per place dropped
+          for(let p = prevPos + 1; p <= curPos; p++) {
+            const fraction = (p - prevPos) / (curPos - prevPos);
+            const placeLap = Math.max(2, Math.min(laps-1,
+              Math.round(evLap - stepSize + stepSize * fraction)));
+            events.push({
+              lap: placeLap,
+              type: 'overtake',
+              text: `⭐ ${r.driverName} drops to P${p} — under pressure.`,
+              driverPositions: snap
+            });
+          }
+        }
+
+        // Restore livePos to curPos after per-place loop
+        livePos[id] = curPos;
+        lastEmittedPos[id] = curPos;
+      });
+    }); // end stepLaps.forEach
+
+    // Final position lock for livePos
+    allDriverIds.forEach(id => { livePos[id] = driverFinal[id]; });
+
+    // Non-player notable moves (3+ places total) — one event each
+    allDriverIds.forEach(id => {
+      if(playerIds.includes(id)) return;
+      const r = results.find(x => x.driverId === id);
+      if(!r || r.dnf) return;
+      const totalMoved = (driverStart[id] || 10) - (driverFinal[id] || 10);
+      if(Math.abs(totalMoved) < 3) return;
+      const driver_obj = State.getDriver(id);
+      const trait_txt = driver_obj?.trait === 'overtaker' ? ' Superb racecraft.' : '';
+      const evLap = randInt(Math.floor(laps*0.25), Math.floor(laps*0.75));
+      livePos[id] = driverFinal[id];
+      const snap = snapPos();
+      const txt = totalMoved > 0
+        ? `⚡ ${r.driverName} on the move — up to P${driverFinal[id]}.${trait_txt}`
+        : `⚡ ${r.driverName} struggling — down to P${driverFinal[id]}.`;
+      events.push({ lap: evLap, type:'overtake', text: txt, driverPositions: snap });
+    });
+
+    // Lap time snapshots — use interpolated live order, not final result
     const snapLaps = [5, Math.floor(laps*0.25), Math.floor(laps*0.5), Math.floor(laps*0.75)].filter(l=>l>1&&l<laps);
     snapLaps.forEach(snapLap=>{
-      if(finishers.length>0){
-        const top3 = finishers.slice(0,Math.min(3,finishers.length));
-        const timeLines = top3.map((r,i)=>{
-          const t = driverLaps[r.driverId]||baseLap;
-          const wobble = randFloat(-0.3,0.3);
-          return `P${i+1} ${r.driverName.split(' ').pop()} ${Sim._fmtLapTime(t+wobble)}`;
-        }).join(' · ');
-        events.push({lap:snapLap, type:'timing', text:`⏱ Lap ${snapLap} times — ${timeLines}`});
-      }
+      if(finishers.length === 0) return;
+      const frac = snapLap / laps;
+      const liveOrder = getOrderAtFrac(frac).slice(0, 3);
+      const timeLines = liveOrder.map((x, i) => {
+        const r = results.find(r => r.driverId === x.id);
+        const name = r ? r.driverName.split(' ').pop() : '?';
+        const t = driverLaps[x.id] || baseLap;
+        const wobble = randFloat(-0.3, 0.3);
+        return `P${i+1} ${name} ${Sim._fmtLapTime(t+wobble)}`;
+      }).join(' · ');
+      events.push({lap:snapLap, type:'timing', text:`⏱ Lap ${snapLap} — ${timeLines}`});
     });
 
-    // Pit stop window (approx lap 20-35% and 55-75%)
-    if(laps >= 30){
-      const pit1 = randInt(Math.floor(laps*0.2), Math.floor(laps*0.35));
-      events.push({lap:pit1, type:'pit', text:`🔧 Pit stop window opens. Teams starting to make their moves.`});
-      if(laps >= 50){
-        const pit2 = randInt(Math.floor(laps*0.55), Math.floor(laps*0.72));
-        events.push({lap:pit2, type:'pit', text:`🔧 Second round of stops underway. Strategy battles heating up.`});
+    // Pit stop events — use chosen strategy pit windows if available, else generic
+    const chosenStratId = race._chosenStrategy || race._strategyUsed;
+    const stratData = DATA.getStrategyOptions(race, race._weatherRisk || race._weatherRiskUsed || 0);
+    const chosenOpt = chosenStratId && chosenStratId !== 'auto' ? stratData.options.find(o=>o.id===chosenStratId) : null;
+    const tc = DATA.tires;
+
+    if(chosenOpt && chosenOpt.stints.length > 1) {
+      // Player has a real strategy — generate pit DECISION moments
+      const playerDrivers = finishers.filter(r => isPlayer(r) && !r.dnf);
+      for(let si = 0; si < chosenOpt.stints.length - 1; si++) {
+        const windowOpen  = chosenOpt.pitWindows[si*2]   || Math.round(laps * (0.28 + si*0.3));
+        const windowClose = chosenOpt.pitWindows[si*2+1] || windowOpen + 6;
+        const idealLap    = Math.round((windowOpen + windowClose) / 2); // centre of window
+        const nextCompound = chosenOpt.stints[si+1]?.compound || 'hard';
+        const nextTire = tc[nextCompound] || tc.medium;
+        const stopNum = si + 1;
+        const totalStops = chosenOpt.stints.length - 1;
+        playerDrivers.forEach((r, driverIdx) => {
+          // Spread drivers across the window: driver 0 at 40%, driver 1 at 65%
+          const fractions = [0.4, 0.65, 0.8];
+          const frac = fractions[driverIdx] || (0.4 + driverIdx * 0.2);
+          const driverLap = Math.round(windowOpen + (windowClose - windowOpen) * frac);
+          events.push({
+            lap: clamp(driverLap, windowOpen, windowClose),
+            type: 'pit_decision',
+            driverName: r.driverName,
+            driverId: r.driverId,
+            stopNum, totalStops,
+            nextCompound, nextTireName: nextTire.name,
+            windowOpen, windowClose,
+            text: `🔧 ⭐ ${r.driverName} — pit window open! Stop ${stopNum} of ${totalStops}.`
+          });
+        });
       }
+      // AI pit stops — generic
+      const aiPit1 = randInt(Math.floor(laps*0.25), Math.floor(laps*0.38));
+      events.push({lap:aiPit1, type:'pit', text:`🔧 Pit stop window active. Rival teams making their moves.`});
+      if(laps >= 50) {
+        const aiPit2 = randInt(Math.floor(laps*0.55), Math.floor(laps*0.70));
+        events.push({lap:aiPit2, type:'pit', text:`🔧 Second round of stops underway. Strategy battle heating up.`});
+      }
+    } else {
+      // Auto or no strategy — generic pit events with a note
+      if(laps >= 30) {
+        const pit1 = randInt(Math.floor(laps*0.22), Math.floor(laps*0.36));
+        const autoNote = (!chosenStratId || chosenStratId==='auto') ? ' Your engineers handle the timing.' : '';
+        events.push({lap:pit1, type:'pit', text:`🔧 Pit stop window opens.${autoNote}`});
+        if(laps >= 50) {
+          const pit2 = randInt(Math.floor(laps*0.55), Math.floor(laps*0.72));
+          events.push({lap:pit2, type:'pit', text:`🔧 Second round of stops underway. Strategy battles heating up.`});
+        }
+      }
+    }
+
+    // Strategy outcome note near end of race
+    if(chosenOpt) {
+      const outcomeLap = Math.floor(laps * 0.88);
+      const good = chosenOpt.scoreBonus > 0.3;
+      const bad  = chosenOpt.scoreBonus < -0.3;
+      const stratNote = good ? `📋 ${chosenOpt.label} — strategy working well. Good call before the race.`
+                      : bad  ? `📋 ${chosenOpt.label} — strategy not ideal for these conditions.`
+                      :        `📋 ${chosenOpt.label} — solid execution from the pit wall.`;
+      events.push({lap: outcomeLap, type:'pit', text: stratNote});
+    } else if(!chosenStratId || chosenStratId === 'auto') {
+      events.push({lap: Math.floor(laps*0.85), type:'pit', text:`📋 Auto strategy in play — engineers managing the race from the pit wall.`});
     }
 
     // Fastest lap moment
@@ -2443,6 +2777,23 @@ const UI = {
     document.getElementById('nav-season').textContent = g.season;
     const shortName = team.name.replace('Scuderia ','').replace(' F1 Team','').replace(' Racing','').replace('-AMG','').replace(' F1',''); document.getElementById('nav-team').textContent = shortName;
 
+    // Upgrade available banner
+    const _racesDoneNow = g.calendar.filter(r=>r.raceDone).length;
+    const _qT2=[7,14];
+    const _upgradeAlertEl = document.getElementById('dash-upgrade-alert');
+    if(_upgradeAlertEl){
+      const _openWindow = _qT2.findIndex((t,i)=>_racesDoneNow>=t && g.quarterDev && g.quarterDev[i] && !g.quarterDev[i].applied);
+      if(_openWindow>=0 && !g.offseasonPending){
+        _upgradeAlertEl.innerHTML=`<div style="background:#fef3c7;border:1px solid #f59e0b;border-radius:8px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center">
+          <div><span style="font-size:13px;font-weight:800">🔧 Upgrade Window Open</span><span style="font-size:11px;color:#92400e;margin-left:8px">${_openWindow===0?'Mid-Season':'Summer'} upgrades available now</span></div>
+          <button class="btn btn-sm" style="background:#f59e0b;color:#fff;border:none;white-space:nowrap" onclick="UI.showView('car')">Go to Car →</button>
+        </div>`;
+        _upgradeAlertEl.style.display='block';
+      } else {
+        _upgradeAlertEl.style.display='none';
+      }
+    }
+
     // Season progress card
     const racesDone = g.calendar.filter(r=>r.raceDone).length;
     const totalRaces = g.calendar.length;
@@ -2567,6 +2918,15 @@ const UI = {
         </div>
         <div style="font-size:10px;color:var(--tx3);margin-top:5px;font-style:italic">${circuitType.tip}</div>
         ${race.qualiDone ? '<div style="margin-top:6px"><span class="quali-tag">✓ Qualifying done</span></div>' : ''}
+        ${race.qualiDone && !race.raceDone ? (()=>{
+          const cs = race._chosenStrategy;
+          const autoOn = g.autoStrategy;
+          if(!cs && !autoOn) return `<div style="margin-top:8px;background:#fef9c3;border:1px solid #fde68a;border-radius:7px;padding:7px 10px;font-size:11px;color:#92400e;display:flex;align-items:center;justify-content:space-between;gap:8px"><span>⚠️ <strong>No strategy set</strong> — choose one or use auto (−1.5 pace).</span><div style="display:flex;gap:6px;flex-shrink:0"><button onclick="GameActions.setAutoStrategyDash()" style="background:#92400e;color:#fff;border:none;border-radius:5px;padding:4px 8px;font-size:11px;font-weight:700;cursor:pointer">🤖 Auto</button><button onclick="UI.openStrategyPicker()" style="background:none;border:1px solid #92400e;border-radius:5px;padding:4px 8px;font-size:11px;font-weight:700;cursor:pointer;color:#92400e">Pick</button></div></div>`;
+          if(cs==='auto' || autoOn) return `<div style="margin-top:8px;background:var(--bg3);border-radius:7px;padding:7px 10px;font-size:11px;color:var(--tx3);display:flex;align-items:center;justify-content:space-between">🤖 <strong>Auto strategy</strong> — engineers manage the race. <a href="javascript:void(0)" onclick="UI.openStrategyPicker()" style="color:var(--red)">Change</a></div>`;
+          const sd = DATA.getStrategyOptions(race, race._weatherRisk || 0);
+          const opt = sd.options.find(o=>o.id===cs);
+          return opt ? `<div style="margin-top:8px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:7px;padding:7px 10px;font-size:11px;color:#166534">🧠 <strong>${opt.label}</strong> locked in. <a href="javascript:void(0)" onclick="UI.openStrategyPicker()" style="color:var(--red);font-weight:700">Change</a></div>` : '';
+        })() : ''}
       `;
       document.getElementById('dash-next-race').textContent = `Race ${n} of ${g.calendar.length}`;
       const qb=document.getElementById('btn-sim-quali'), rb=document.getElementById('btn-sim-race'), wb=document.getElementById('btn-watch-race');
@@ -2602,6 +2962,7 @@ const UI = {
             rb.disabled=false; rb.textContent='Simulate Race';
             if(wb) wb.style.display='';
             if(wsb) wsb.style.display='none';
+            const stb=document.getElementById('btn-strategy'); if(stb) stb.style.display='';
           } else {
             qb.disabled=true; qb.textContent='✓ Sprint Weekend Complete'; qb.className='btn btn-ghost';
             rb.disabled=true; rb.textContent='✓ Race Complete';
@@ -2617,7 +2978,9 @@ const UI = {
           }
           rb.disabled=race.raceDone;
           rb.textContent=race.raceDone?'✓ Race Complete':'Simulate Race';
+          const stb2=document.getElementById('btn-strategy');
           if(wb){ wb.style.display=(race.qualiDone&&!race.raceDone)?'':'none'; }
+          if(stb2){ stb2.style.display=(race.qualiDone&&!race.raceDone)?'':'none'; }
           if(wsb) wsb.style.display='none';
         }
       }
@@ -2931,25 +3294,25 @@ const UI = {
         <div class="dev-slider-desc">${desc} <span style="color:var(--blue);font-weight:600">${impact}</span></div>
       </div>`;
 
-    // Quarter system — 4 development windows per season
-    // Q1 = pre-season (offseasonPending), Q2/Q3/Q4 = in-season quarters
+    // Two in-season upgrade windows: after race 7 (European swing) and race 14 (post-summer break)
     if(!g.pendingUpgrades) g.pendingUpgrades=[];
     if(!g.retirements) g.retirements=[];
     if(!g.newsFeed) g.newsFeed=[];
     if(!g.offseasonBudget) g.offseasonBudget={aero:0,engine:0,reliability:0,facilities:0};
-    if(!g.quarterDev) g.quarterDev=[{aero:0,reliability:0,engine:0,applied:false},{aero:0,reliability:0,engine:0,applied:false},{aero:0,reliability:0,engine:0,applied:false}];
-    // Upgrade windows unlock after a meaningful number of races
-    // Q0 unlocks after race 6, Q1 after race 13, Q2 after race 19
-    const qThresholds = [6, 13, 19];
+    if(!g.quarterDev) g.quarterDev=[{aero:0,reliability:0,engine:0,applied:false},{aero:0,reliability:0,engine:0,applied:false}];
+    // Ensure exactly 2 windows (save compat)
+    while(g.quarterDev.length < 2) g.quarterDev.push({aero:0,reliability:0,engine:0,applied:false});
+    g.quarterDev = g.quarterDev.slice(0,2);
+    // Window 1 unlocks after race 7 (mid-European swing), Window 2 after race 14 (post-summer)
+    const qThresholds = [7, 14];
     const currentQ = qThresholds.reduce((q,t,i)=>racesDone>=t?i:q, -1);
-    const qBudget = Math.round(team.revenue * 0.12); // 12% per window
+    const qBudget = Math.round(team.revenue * 0.15); // 15% per window
 
     const qLabels = [
-      'Upgrade Window 1 — unlocks after Race 6',
-      'Upgrade Window 2 — unlocks after Race 13',
-      'Upgrade Window 3 — unlocks after Race 19'
+      'Mid-Season Upgrade — unlocks after Race 7',
+      'Summer Upgrade — unlocks after Race 14',
     ];
-    const qIcons = ['🔧','🔩','⚡'];
+    const qIcons = ['🔧','🔩'];
 
     const quarterHTML = g.quarterDev.map((qd,qi)=>{
       const isActive = qi===currentQ && !g.offseasonPending && !qd.applied;
@@ -2965,20 +3328,21 @@ const UI = {
         </div>`;
       }
       if(isFuture){
+        const racesUntil = qThresholds[qi] - racesDone;
         return `<div class="dev-section" style="opacity:0.4">
           <div class="dev-section-title">${qIcons[qi]} ${qLabels[qi]} <span style="font-size:10px;background:var(--bg3);padding:2px 7px;border-radius:10px;margin-left:6px;font-weight:600">UPCOMING</span></div>
-          <div style="font-size:12px;color:var(--tx3)">Available when you reach this quarter of the season.</div>
+          <div style="font-size:12px;color:var(--tx3)">Unlocks in ${racesUntil} race${racesUntil!==1?'s':''}.</div>
         </div>`;
       }
       return `<div class="dev-section" style="border:1px solid var(--red)">
-        <div class="dev-section-title">${qIcons[qi]} ${qLabels[qi]} <span style="font-size:10px;background:#fee2e2;color:var(--red);padding:2px 7px;border-radius:10px;margin-left:6px;font-weight:700">ACTIVE</span></div>
-        <div class="dev-section-sub">Quarterly budget: <strong>${formatMoney(qBudget)}</strong>. Upgrades applied immediately to this season's car.</div>
+        <div class="dev-section-title">${qIcons[qi]} ${qLabels[qi]} <span style="font-size:10px;background:#fee2e2;color:var(--red);padding:2px 7px;border-radius:10px;margin-left:6px;font-weight:700">AVAILABLE NOW</span></div>
+        <div class="dev-section-sub">Budget: <strong>${formatMoney(qBudget)}</strong>. Upgrades apply immediately to your car for the rest of the season.</div>
         ${slider('aero','Aerodynamic Package',qd.aero,6,'q'+qi,6,'Aero updates — front/rear wing, diffuser.','→ +0.9 Car Perf')}
         ${slider('reliability','Reliability Work',qd.reliability,5,'q'+qi,4,'Fix failure points before they cost you points.','→ +0.6 Reliability')}
         ${slider('engine','Engine Mode',qd.engine,3,'q'+qi,10,'Power unit mapping push — expensive but fast.','→ +1.4 Car Perf')}
         <div style="margin-top:12px">
           <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px">
-            <span style="font-size:11px;font-weight:700;color:var(--tx2)">Q${qi+1} Budget</span>
+            <span style="font-size:11px;font-weight:700;color:var(--tx2)">Budget</span>
             <span id="q${qi}-cost-display" style="font-size:12px;font-weight:800;font-family:var(--fm);color:${qCost>qBudget?'var(--red)':'var(--tx)'}">${formatMoney(qCost)} <span style="font-weight:400;color:var(--tx3)">of ${formatMoney(qBudget)}</span></span>
           </div>
           <div style="height:6px;background:var(--bd);border-radius:3px;overflow:hidden">
@@ -2986,11 +3350,18 @@ const UI = {
           </div>
         </div>
         ${applied
-          ? `<button class="btn btn-ghost dev-confirm-btn" disabled style="margin-top:10px">✅ Q${qi+1} Upgrades Applied</button>`
-          : `<button class="btn btn-red dev-confirm-btn" onclick="GameActions.applyQuarterDev(${qi})" style="margin-top:10px">Apply Q${qi+1} Upgrades</button>`
+          ? `<button class="btn btn-ghost dev-confirm-btn" disabled style="margin-top:10px">✅ Upgrades Applied</button>`
+          : `<button class="btn btn-red dev-confirm-btn" onclick="GameActions.applyQuarterDev(${qi})" style="margin-top:10px">Apply Upgrades to Car</button>`
         }
       </div>`;
     }).join('');
+
+    const nextUnlock = qThresholds.find(t=>racesDone<t);
+    const upgradeStatus = currentQ>=0 && !g.quarterDev[currentQ]?.applied
+      ? `🔧 <strong>Upgrade window open!</strong> Head to the Car page to apply your upgrades.`
+      : nextUnlock
+        ? `Next upgrade window unlocks after Race ${nextUnlock} (${nextUnlock-racesDone} race${nextUnlock-racesDone!==1?'s':''} away).`
+        : `All in-season upgrades used. Winter development available in the offseason.`;
 
     document.getElementById('car-content').innerHTML = `
       <div class="car-stats-grid">
@@ -3000,8 +3371,8 @@ const UI = {
         ${abar('Facilities',team.facilities,'#d97706')}
       </div>
       <div style="font-size:11px;color:var(--tx3);background:var(--bg3);border-radius:7px;padding:8px 12px;margin-bottom:10px">
-        📅 Season split into 4 development windows. One upgrade round per quarter — plan wisely.
-        Race ${racesDone} of ${totalRaces} complete · ${currentQ<0?'Next upgrade window unlocks after Race '+qThresholds[0]:currentQ<2&&g.quarterDev[currentQ].applied?'Next upgrade window unlocks after Race '+qThresholds[currentQ+1]:'Upgrade window '+( currentQ+1)+' available now'}.
+        📅 Two in-season upgrade windows per season — mid-season and post-summer break.
+        Race ${racesDone} of ${totalRaces} complete · ${upgradeStatus}
       </div>
       ${g.offseasonPending ? `<div class="dev-section" style="border:1px solid #3b82f6;margin-bottom:8px">
         <div class="dev-section-title" style="color:#2563eb">❄️ Winter Development Budget</div>
@@ -3010,25 +3381,33 @@ const UI = {
       </div>` : ''}
       <div class="dev-section" style="margin-bottom:10px">
         <div class="dev-section-title">⚖️ Aero Balance — Downforce vs Drag</div>
-        <div class="dev-section-sub" style="margin-bottom:10px">Adjust your car's aerodynamic philosophy. High downforce = fast in corners. Low drag = fast on straights. Match the next circuit for a setup advantage.</div>
-        <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:700;color:var(--tx3);margin-bottom:4px">
-          <span>◀ Low Drag (Power)</span><span>High Downforce ▶</span>
+        <div class="dev-section-sub" style="margin-bottom:10px">Match your setup to each circuit for a performance advantage. Auto mode sets the optimal balance automatically, at a small cost to peak performance.</div>
+        <div style="display:flex;gap:8px;margin-bottom:12px">
+          <button onclick="GameActions.setAutoAero(false)" class="btn btn-sm ${g.autoAero?'btn-outline':'btn-red'}" style="flex:1">✋ Manual</button>
+          <button onclick="GameActions.setAutoAero(true)"  class="btn btn-sm ${g.autoAero?'btn-red':'btn-outline'}" style="flex:1">🤖 Auto <span style="font-size:10px;opacity:.7">(−2 perf)</span></button>
         </div>
-        <input type="range" min="0" max="100" value="${team.downforce||50}"
-          oninput="GameActions.setDownforce(this.value);document.getElementById('df-val').textContent=this.value;document.getElementById('df-hint').textContent=UI.downforceHint(parseInt(this.value))"
-          style="width:100%;accent-color:var(--red);margin-bottom:6px">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <span style="font-size:13px;font-weight:900;font-family:var(--fm);color:var(--red)" id="df-val">${team.downforce||50}</span>
-          <span style="font-size:11px;color:var(--tx3)" id="df-hint">${UI.downforceHint(team.downforce||50)}</span>
-        </div>
-        ${(()=>{
-          const race=State.getCurrentRace();
-          if(!race||!race.idealDownforce) return '';
-          const df=team.downforce||50;
-          const diff=Math.abs(df-race.idealDownforce);
-          const match=diff<10?'🟢 Great match':diff<20?'🟡 Decent match':diff<35?'🟠 Poor match':'🔴 Wrong setup';
-          return '<div style="background:var(--bg3);border-radius:6px;padding:8px 10px;font-size:11px;margin-top:4px"><strong>Next race: '+race.name+'</strong> — Ideal: '+race.idealDownforce+' · Your setup: '+df+' · '+match+'</div>';
-        })()}
+        ${g.autoAero ? `<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:8px 10px;font-size:11px;color:#166534">
+          🤖 Auto aero active — downforce adjusts to each circuit automatically. −2 Car Performance penalty applied.
+        </div>` : `<div>
+          <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:700;color:var(--tx3);margin-bottom:4px">
+            <span>◀ Low Drag (Power)</span><span>High Downforce ▶</span>
+          </div>
+          <input type="range" min="0" max="100" value="${team.downforce||50}"
+            oninput="GameActions.setDownforce(this.value);document.getElementById('df-val').textContent=this.value;document.getElementById('df-hint').textContent=UI.downforceHint(parseInt(this.value))"
+            style="width:100%;accent-color:var(--red);margin-bottom:6px">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span style="font-size:13px;font-weight:900;font-family:var(--fm);color:var(--red)" id="df-val">${team.downforce||50}</span>
+            <span style="font-size:11px;color:var(--tx3)" id="df-hint">${UI.downforceHint(team.downforce||50)}</span>
+          </div>
+          ${(()=>{
+            const race=State.getCurrentRace();
+            if(!race||!race.idealDownforce) return '';
+            const df=team.downforce||50;
+            const diff=Math.abs(df-race.idealDownforce);
+            const match=diff<10?'🟢 Great match':diff<20?'🟡 Decent match':diff<35?'🟠 Poor match':'🔴 Wrong setup';
+            return '<div style="background:var(--bg3);border-radius:6px;padding:8px 10px;font-size:11px;margin-top:4px"><strong>Next race: '+race.name+'</strong> — Ideal: '+race.idealDownforce+' · Your setup: '+df+' · '+match+'</div>';
+          })()}
+        </div>`}
       </div>
       ${quarterHTML}
 `;
@@ -3038,16 +3417,17 @@ const UI = {
     const g = State.game;
     val = parseInt(val);
     const team=State.getPlayerTeam();
-    const qBudget = Math.round(team.revenue*0.12);
+    const qBudget = Math.round(team.revenue*0.15); // matches 2-window budget
     const offseasonBudget = Math.round(team.revenue*0.35);
 
     if(section.startsWith('q')){
       const qi=parseInt(section[1]);
       if(!g.pendingUpgrades) g.pendingUpgrades=[];
-    if(!g.retirements) g.retirements=[];
-    if(!g.newsFeed) g.newsFeed=[];
-    if(!g.offseasonBudget) g.offseasonBudget={aero:0,engine:0,reliability:0,facilities:0};
-    if(!g.quarterDev) g.quarterDev=[{aero:0,reliability:0,engine:0,applied:false},{aero:0,reliability:0,engine:0,applied:false},{aero:0,reliability:0,engine:0,applied:false}];
+      if(!g.retirements) g.retirements=[];
+      if(!g.newsFeed) g.newsFeed=[];
+      if(!g.offseasonBudget) g.offseasonBudget={aero:0,engine:0,reliability:0,facilities:0};
+      if(!g.quarterDev) g.quarterDev=[{aero:0,reliability:0,engine:0,applied:false},{aero:0,reliability:0,engine:0,applied:false}];
+      if(!g.quarterDev[qi]) g.quarterDev[qi]={aero:0,reliability:0,engine:0,applied:false};
       g.quarterDev[qi][key]=val;
       const qd=g.quarterDev[qi];
       const cost=qd.aero*6+qd.reliability*4+qd.engine*10;
@@ -3151,7 +3531,7 @@ const UI = {
     // Sort: upcoming first (next race at top), then past races at bottom
     const indexed = g.calendar.map((race,i)=>({race,i}));
     const upcoming = indexed.filter(({race})=>!race.raceDone);
-    const done = indexed.filter(({race})=>race.raceDone).reverse(); // most recent done first
+    const done = indexed.filter(({race})=>race.raceDone); // oldest first (calendar order)
     const sorted = [...upcoming, ...done];
     document.getElementById('schedule-content').innerHTML = '<div class="sched-list">' + sorted.map(({race,i})=>{
       const isCur=i===g.raceIndex&&!race.raceDone, isDone=race.raceDone;
@@ -3475,6 +3855,122 @@ const UI = {
       </div>`;
     document.getElementById('driver-detail-modal').classList.remove('hidden');
   },
+  openStrategyPicker(){
+    const g = State.game;
+    const race = State.getCurrentRace();
+    if(!race) return;
+    const weatherRisk = Math.random() < 0.3 ? randFloat(0.1, 0.55) : 0; // stochastic forecast
+    race._weatherRisk = weatherRisk; // store so sim can use same value
+    const strat = DATA.getStrategyOptions(race, weatherRisk);
+    const tc = DATA.tires;
+    const currentStratId = race._chosenStrategy || (g.autoStrategy ? 'auto' : null);
+
+    const compoundPill = (c) => {
+      const t = tc[c]; if(!t) return '';
+      return `<span style="background:${t.color};color:#fff;font-size:10px;font-weight:800;padding:1px 6px;border-radius:10px;margin-right:3px">${t.short}</span><span style="font-size:11px;color:var(--tx2)">${t.name}</span>`;
+    };
+    const stintBar = (stints, laps) => stints.map(s=>{
+      const t = tc[s.compound]||tc.medium;
+      const w = Math.round(s.laps/laps*100);
+      return `<div style="flex:${w};background:${t.color};height:14px;border-radius:3px;display:flex;align-items:center;justify-content:center;position:relative" title="${t.name} — ${s.laps} laps">
+        <span style="font-size:9px;font-weight:800;color:#fff">${t.short}${s.laps}</span>
+      </div>`;
+    }).join('<div style="width:3px"></div>');
+
+    const degLabel = strat.tireDeg > 0.75 ? '🔴 Very High' : strat.tireDeg > 0.55 ? '🟠 High' : strat.tireDeg > 0.35 ? '🟡 Medium' : '🟢 Low';
+    const otLabel  = strat.overtakingDiff > 0.8 ? '🔴 Very Hard' : strat.overtakingDiff > 0.6 ? '🟠 Difficult' : strat.overtakingDiff > 0.4 ? '🟡 Moderate' : '🟢 Easy';
+
+    const optionCards = strat.options.map(opt => {
+      const isChosen = currentStratId === opt.id;
+      const border = isChosen ? '2px solid var(--red)' : '1px solid var(--bd)';
+      const badge = opt.recommended ? `<span style="font-size:9px;background:#dcfce7;color:#166534;border:1px solid #bbf7d0;border-radius:10px;padding:1px 7px;font-weight:700;margin-left:6px">✓ RECOMMENDED</span>` : '';
+      const bonusLabel = opt.scoreBonus > 0.5 ? `<span style="color:#16a34a;font-size:10px;font-weight:700">+${opt.scoreBonus.toFixed(1)} pace bonus</span>` :
+                         opt.scoreBonus < -0.3 ? `<span style="color:#dc2626;font-size:10px;font-weight:700">${opt.scoreBonus.toFixed(1)} pace penalty</span>` : '';
+      return `<div class="strat-card" data-strat-id="${opt.id}" onclick="UI._selectStrategy('${opt.id}')" style="border:${border};border-radius:10px;padding:12px;margin-bottom:8px;cursor:pointer;background:${isChosen?'rgba(220,38,38,.04)':'var(--bg2)'};transition:border .15s">
+        <div style="display:flex;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:4px">
+          <span style="font-size:13px;font-weight:800">${opt.label}</span>${badge}
+          <span style="margin-left:auto">${bonusLabel}</span>
+        </div>
+        <div style="display:flex;gap:2px;margin-bottom:8px;height:14px">${stintBar(opt.stints, race.laps)}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px">
+          ${opt.stints.map(s=>compoundPill(s.compound)).join('<span style="color:var(--tx3);font-size:11px;margin:0 1px">→</span>')}
+        </div>
+        <div style="font-size:11px;color:var(--tx3);line-height:1.5">${opt.desc}</div>
+        ${opt.pitWindows.length ? `<div style="font-size:10px;color:var(--tx3);margin-top:4px">Pit windows: laps ${opt.pitWindows.filter((_,i)=>i%2===0).map((w,i)=>w+'–'+opt.pitWindows[i*2+1]).join(' & ')}</div>` : ''}
+      </div>`;
+    }).join('');
+
+    const autoCard = `<div class="strat-card" data-strat-id="auto" onclick="UI._selectStrategy('auto')" style="border:${currentStratId==='auto'?'2px solid var(--red)':'1px dashed var(--bd)'};border-radius:10px;padding:12px;margin-bottom:8px;cursor:pointer;background:${currentStratId==='auto'?'rgba(220,38,38,.04)':'var(--bg3)'}">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+        <span style="font-size:13px;font-weight:800">🤖 Auto Strategy</span>
+        <span style="font-size:9px;background:#fef3c7;color:#92400e;border:1px solid #fcd34d;border-radius:10px;padding:1px 7px;font-weight:700">−1.5 PACE PENALTY</span>
+      </div>
+      <div style="font-size:11px;color:var(--tx3);line-height:1.5">The game picks and executes the optimal strategy automatically. A small penalty reflects imperfect pit timing and execution vs a human making the call.</div>
+    </div>`;
+
+    document.getElementById('strategy-modal-body').innerHTML = `
+      <div style="font-size:18px;font-weight:900;margin-bottom:2px">🧠 Race Strategy</div>
+      <div style="font-size:13px;color:var(--tx3);margin-bottom:14px">${race.name} · ${race.laps} laps</div>
+
+      <div style="display:flex;gap:8px;margin-bottom:14px">
+        <div style="flex:1;background:var(--bg3);border-radius:8px;padding:8px 10px;font-size:11px">
+          <div style="font-weight:700;color:var(--tx2);margin-bottom:2px">Tyre Degradation</div>
+          <div>${degLabel}</div>
+        </div>
+        <div style="flex:1;background:var(--bg3);border-radius:8px;padding:8px 10px;font-size:11px">
+          <div style="font-weight:700;color:var(--tx2);margin-bottom:2px">Overtaking</div>
+          <div>${otLabel}</div>
+        </div>
+        ${weatherRisk > 0.1 ? `<div style="flex:1;background:#fef3c7;border:1px solid #fcd34d;border-radius:8px;padding:8px 10px;font-size:11px">
+          <div style="font-weight:700;color:#92400e;margin-bottom:2px">⛈ Rain Forecast</div>
+          <div>${Math.round(weatherRisk*100)}% chance</div>
+        </div>` : `<div style="flex:1;background:var(--bg3);border-radius:8px;padding:8px 10px;font-size:11px">
+          <div style="font-weight:700;color:var(--tx2);margin-bottom:2px">Weather</div>
+          <div>☀️ Dry expected</div>
+        </div>`}
+      </div>
+
+      <div style="font-size:12px;font-weight:700;color:var(--tx2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em">Choose Your Strategy</div>
+      ${optionCards}
+      ${autoCard}
+
+      <div style="display:flex;gap:8px;margin-top:14px">
+        <button class="btn btn-ghost" style="flex:1" onclick="UI.closeModal()">Cancel</button>
+        <button class="btn btn-red" style="flex:2;color:#fff" onclick="UI._confirmStrategy()">Confirm Strategy &#x2192;</button>
+      </div>
+      <div id="strategy-confirm-msg" style="font-size:11px;color:var(--red);margin-top:6px;text-align:center"></div>
+    `;
+    document.getElementById('strategy-modal').classList.remove('hidden');
+  },
+
+  _selectStrategy(id){
+    const race = State.getCurrentRace();
+    if(race) race._pendingStrategy = id;
+    // Update only the strategy option cards (not Cancel/Confirm buttons)
+    document.querySelectorAll('#strategy-modal-body .strat-card').forEach(el=>{
+      const cardId = el.getAttribute('data-strat-id');
+      const isThis = cardId === id;
+      const isAuto = cardId === 'auto';
+      el.style.border = isThis ? '2px solid var(--red)' : (isAuto ? '1px dashed var(--bd)' : '1px solid var(--bd)');
+      el.style.background = isThis ? 'rgba(220,38,38,.04)' : (isAuto ? 'var(--bg3)' : 'var(--bg2)');
+    });
+  },
+
+  _confirmStrategy(){
+    const race = State.getCurrentRace();
+    if(!race) return;
+    const chosen = race._pendingStrategy;
+    if(!chosen){ document.getElementById('strategy-confirm-msg').textContent='Please select a strategy first.'; return; }
+    race._chosenStrategy = chosen;
+    State.game.autoStrategy = (chosen === 'auto');
+    Storage.autosave();
+    UI.closeModal();
+    const stratData = DATA.getStrategyOptions(race, race._weatherRisk||0);
+    const opt = stratData.options.find(o=>o.id===chosen);
+    const label = chosen==='auto' ? 'Auto Strategy' : opt?.label || chosen;
+    UI.toast(`🧠 Strategy locked: ${label}`,'success');
+    UI.renderDashboard();
+  },
   closeModal(){ document.querySelectorAll('.modal-overlay').forEach(m=>m.classList.add('hidden')); },
   _renderWinterDev(g, team){
     if(!g.offseasonBudget) g.offseasonBudget={aero:0,engine:0,reliability:0,facilities:0};
@@ -3538,9 +4034,19 @@ const UI = {
     if(!race||!race.sprintDone){UI.toast('Sprint not done','error');return;}
     if(WR.timer) clearTimeout(WR.timer);
     WR.events=race.sprintLapEvents||[]; WR.idx=0; WR.raceIdx=raceIdx; WR.paused=false; WR.timer=null; WR.isSprint=true;
+    // Seed live positions from sprint quali grid
+    WR.lastPos = {}; WR.prevPos = null;
+    const sprintGrid = race.sprintQualiResult || race.qualiResult || [];
+    sprintGrid.forEach(function(r){ WR.lastPos[r.driverId] = r.position; });
     document.getElementById('wr-race-name').textContent='🏃 Sprint — '+race.name;
     document.getElementById('wr-lap-counter').textContent=race.location+' · 17 laps';
     document.getElementById('wr-feed').innerHTML='';
+    const initBar = document.getElementById('wr-my-drivers');
+    if(initBar) initBar.innerHTML = State.getPlayerDrivers().map(function(d){
+      return '<div style="background:rgba(192,57,43,.1);border:1px solid rgba(192,57,43,.3);border-radius:5px;padding:2px 8px;font-size:11px;font-weight:700">'
+        +'<span style="color:#888">'+d.name.split(' ').slice(-1)[0]+'</span> '
+        +'<span style="color:#888">–</span></div>';
+    }).join('');
     const footer=document.getElementById('wr-footer'); footer.innerHTML=''; footer.style.display='none';
     const tb=document.getElementById('wr-toggle'); if(tb){tb.textContent='⏸ Pause';tb.disabled=false;}
     document.getElementById('wr-speed').value=State.game.watchRaceSpeed||600;
@@ -3555,9 +4061,15 @@ const UI = {
     if(WR.timer) clearTimeout(WR.timer);
     WR.events = Sim._generateLapEvents(race, race.raceResult||[], race.weather||'dry', !!race.hadSafetyCar);
     WR.idx=0; WR.raceIdx=raceIdx; WR.paused=false; WR.timer=null; WR.isSprint=false;
+    WR.pitDecisions=[]; WR.pitDecisionBonus=0;
     // Seed live positions from qualifying grid
     WR.lastPos = {}; WR.prevPos = null;
-    (race.raceResult||[]).forEach(function(r){ WR.lastPos[r.driverId] = r.startPos || r.position; });
+    // Seed from startPos in raceResult — this reflects actual grid inc. penalties
+    const raceGrid = race.raceResult || [];
+    raceGrid.forEach(function(r){ if(r.startPos) WR.lastPos[r.driverId] = r.startPos; });
+    // Fallback: fill any missing from qualiResult
+    const qualiGrid = race.qualiResult || [];
+    qualiGrid.forEach(function(r){ if(!WR.lastPos[r.driverId]) WR.lastPos[r.driverId] = r.position; });
     document.getElementById('wr-race-name').textContent = race.name;
     document.getElementById('wr-lap-counter').textContent = race.location+', '+race.country+' · '+race.laps+' laps';
     document.getElementById('wr-feed').innerHTML = '';
@@ -4792,6 +5304,24 @@ const GameActions = {
     team.downforce=clamp(parseInt(val),0,100);
     Storage.autosave();
   },
+  setAutoAero(enabled){
+    State.game.autoAero=enabled;
+    Storage.autosave();
+    UI.toast(enabled?'🤖 Auto aero enabled — −2 Car Performance penalty applied':'✋ Manual aero — set your own downforce each race','info');
+    UI.renderCar();
+  },
+  setAutoStrategyDash(){
+    // One-tap auto strategy from dashboard — also sets persistent flag
+    const race = State.getCurrentRace();
+    if(race && !race.raceDone) {
+      race._chosenStrategy = 'auto';
+      race._pendingStrategy = null;
+    }
+    State.game.autoStrategy = true;
+    Storage.autosave();
+    UI.toast('🤖 Auto strategy — engineers will manage the race','info');
+    UI.renderDashboard();
+  },
   doNextQuali() {
     const race=State.getCurrentRace();
     if(!race) return;
@@ -4850,6 +5380,15 @@ const GameActions = {
       if(!rd||!rd.results||rd.results.length===0){UI.toast('Race simulation failed — try starting a new game','error');return;}
       g.raceIndex++; Storage.autosave();
       if(typeof gtag!=='undefined') gtag('event','race_simulated',{race_name:race.name,season:g.season,is_sprint:!!race.sprint});
+      // Check if an upgrade window just unlocked
+      const _qT=[7,14], _rd=g.raceIndex;
+      if(_qT.includes(_rd)){
+        const _qi=_qT.indexOf(_rd);
+        if(_qi>=0 && g.quarterDev[_qi] && !g.quarterDev[_qi].applied){
+          setTimeout(()=>UI.toast('🔧 Upgrade window now open! Go to Car → In-Season Upgrades.','info'),800);
+          g.newsFeed.unshift({text:'🔧 In-season upgrade window open — head to the Car page to develop your car.',race:_rd,type:'upgrade'});
+        }
+      }
       // Process any scout reports that are now ready
       // Apply any pending upgrades that arrive this race
       GameActions.applyPendingUpgrades(g.raceIndex-1);
@@ -5061,9 +5600,53 @@ window._wrTick = function() {
     }).join('');
 
     const footer = document.getElementById('wr-footer');
+    // Strategy feedback
+    let stratFeedbackHtml = '';
+    if(!isSprint) {
+      const chosenId = race._strategyUsed || race._chosenStrategy;
+      const stratData = DATA.getStrategyOptions(race, race._weatherRiskUsed || race._weatherRisk || 0);
+      const opt = chosenId && chosenId!=='auto' ? stratData.options.find(o=>o.id===chosenId) : null;
+      const recommended = stratData.options.find(o=>o.recommended);
+      if(opt) {
+        const wasRecommended = opt.id === recommended?.id;
+        const good = opt.scoreBonus > 0.3;
+        const bad  = opt.scoreBonus < -0.3;
+        const icon = good ? '✅' : bad ? '⚠️' : '📋';
+        const bg   = good ? '#f0fdf4' : bad ? '#fef2f2' : 'var(--bg3)';
+        const bd   = good ? '#bbf7d0' : bad ? '#fecaca' : 'var(--bd)';
+        const col  = good ? '#166534' : bad ? '#991b1b' : 'var(--tx2)';
+        const verdict = good
+          ? `Great call — ${opt.label} was well-suited to ${race.name}.`
+          : bad
+          ? `Costly strategy — ${opt.label} wasn't ideal here. ${recommended?'Recommended: '+recommended.label+'.':''}`
+          : `${opt.label} — solid, textbook execution.`;
+        stratFeedbackHtml = `<div style="background:${bg};border:1px solid ${bd};border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:11px;color:${col}">
+          ${icon} <strong>Strategy:</strong> ${verdict}
+        </div>`;
+      } else if(!chosenId || chosenId==='auto') {
+        stratFeedbackHtml = `<div style="background:var(--bg3);border:1px solid var(--bd);border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:11px;color:var(--tx3)">
+          🤖 <strong>Auto strategy</strong> — engineers managed the race. Set your own strategy next time for a pace advantage.
+        </div>`;
+      }
+      // Pit decision summary
+      if(WR.pitDecisions && WR.pitDecisions.length > 0) {
+        const totalBonus = WR.pitDecisionBonus || 0;
+        const allManual = WR.pitDecisions.every(d => d.resolved && !d.auto);
+        const anyStayOut = WR.pitDecisions.some(d => d.resolved && !d.pitNow);
+        const bonusStr = totalBonus > 0.1 ? `+${totalBonus.toFixed(1)} pace` : totalBonus < -0.1 ? `${totalBonus.toFixed(1)} pace` : 'neutral';
+        const bg = totalBonus > 0.1 ? '#f0fdf4' : totalBonus < -0.3 ? '#fef2f2' : 'var(--bg3)';
+        const bd = totalBonus > 0.1 ? '#bbf7d0' : totalBonus < -0.3 ? '#fecaca' : 'var(--bd)';
+        const col = totalBonus > 0.1 ? '#166534' : totalBonus < -0.3 ? '#991b1b' : 'var(--tx2)';
+        const icon = totalBonus > 0.1 ? '✅' : totalBonus < -0.3 ? '⚠️' : '📋';
+        stratFeedbackHtml += `<div style="background:${bg};border:1px solid ${bd};border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:11px;color:${col}">
+          ${icon} <strong>Pit calls:</strong> ${bonusStr} impact — ${totalBonus > 0.3 ? 'sharp execution on the pit wall.' : totalBonus < -0.3 ? 'costly timing on the stops.' : 'decent pit wall management.'}
+        </div>`;
+      }
+    }
     footer.innerHTML =
       '<div style="width:100%">'
       +'<div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#aaa;margin-bottom:10px">'+(isSprint?'🏃 Sprint Result — Top 8':'Race Result')+'</div>'
+      +stratFeedbackHtml
       +'<div style="display:flex;gap:8px;margin-bottom:12px">'+podHtml+'</div>'
       +'<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">'
       +'<thead><tr style="border-bottom:2px solid #e0e0dd">'
@@ -5082,6 +5665,54 @@ window._wrTick = function() {
   // Show next event card
   const ev = WR.events[WR.idx++];
   document.getElementById('wr-lap-counter').textContent = 'Lap '+ev.lap+' / '+race.laps;
+
+  // ── PIT DECISION — pause and ask player ──────────────────────
+  if(ev.type === 'pit_decision' && !WR.isSprint) {
+    WR.paused = true;
+    if(!WR.pitDecisions) WR.pitDecisions = [];
+    const decisionId = WR.pitDecisions.length;
+    WR.pitDecisions.push({ ev, resolved: false, autoTimer: null });
+
+    const feed = document.getElementById('wr-feed');
+    const card = document.createElement('div');
+    card.id = 'pit-decision-card-' + decisionId;
+    card.style.cssText = 'background:#fff;border:2px solid #c0392b;border-radius:10px;padding:12px 14px;margin-bottom:6px;flex-shrink:0';
+    // Context hint based on position in window
+    const lapsIntoWindow = ev.lap - ev.windowOpen;
+    const windowSize = Math.max(1, ev.windowClose - ev.windowOpen);
+    const windowPct = lapsIntoWindow / windowSize;
+    const contextNote = windowPct < 0.3
+      ? '⚡ Early in window — staying out risks an undercut.'
+      : windowPct > 0.75
+      ? '⏰ Window closing — tires will start dropping off.'
+      : '✅ Right in the pit window. Good time to come in.';
+    card.innerHTML =
+      '<div style="font-size:10px;font-weight:700;letter-spacing:1px;color:#c0392b;margin-bottom:6px">L'+ev.lap+' · PIT CALL — Stop '+ev.stopNum+' of '+ev.totalStops+'</div>'
+      +'<div style="font-size:13px;font-weight:800;margin-bottom:2px">⭐ '+ev.driverName+'</div>'
+      +'<div style="font-size:11px;color:#555;margin-bottom:4px">Fitting <strong>'+ev.nextTireName+'s</strong> · Window: L'+ev.windowOpen+'–L'+ev.windowClose+'</div>'
+      +'<div style="font-size:11px;color:#888;margin-bottom:10px;font-style:italic">'+contextNote+'</div>'
+      +'<div style="display:flex;gap:8px">'
+        +'<button id="pit-now-'+decisionId+'" onclick="window._wrPitDecision('+decisionId+',true)" style="flex:1;padding:9px 0;background:#c0392b;color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:800;cursor:pointer">🔧 Box Box</button>'
+        +'<button id="pit-stay-'+decisionId+'" onclick="window._wrPitDecision('+decisionId+',false)" style="flex:1;padding:9px 0;background:#f4f4f2;color:#1a1a1a;border:1px solid #e0e0dd;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer">⏩ Stay Out</button>'
+      +'</div>'
+      +'<div id="pit-timer-'+decisionId+'" style="font-size:10px;color:#aaa;text-align:center;margin-top:6px">Auto-boxing in <span id="pit-countdown-'+decisionId+'">8</span>s…</div>';
+    feed.appendChild(card);
+    feed.scrollTop = feed.scrollHeight;
+
+    // Auto-resolve after 8s
+    let countdown = 8;
+    const tick = setInterval(function(){
+      countdown--;
+      const el = document.getElementById('pit-countdown-'+decisionId);
+      if(el) el.textContent = countdown;
+      if(countdown <= 0) {
+        clearInterval(tick);
+        if(!WR.pitDecisions[decisionId].resolved) window._wrPitDecision(decisionId, true, true);
+      }
+    }, 1000);
+    WR.pitDecisions[decisionId].autoTimer = tick;
+    return; // Don't schedule next tick — paused
+  }
 
   const pids = State.getPlayerDrivers().map(function(d){return d.id;});
   const ptid = State.game.playerTeamId;
@@ -5140,9 +5771,97 @@ window._wrTick = function() {
   WR.timer = setTimeout(window._wrTick, speed);
 };
 
-// =============================================
-// BOOT
-// =============================================
+window._wrPitDecision = function(decisionId, pitNow, auto) {
+  const WR = window._WR;
+  const dec = WR.pitDecisions && WR.pitDecisions[decisionId];
+  if(!dec || dec.resolved) return;
+  dec.resolved = true;
+  if(dec.autoTimer) clearInterval(dec.autoTimer);
+
+  const ev = dec.ev;
+  const card = document.getElementById('pit-decision-card-' + decisionId);
+
+  if(pitNow) {
+    // ── PIT NOW ─────────────────────────────────────────────────
+    const earlyInWindow = ev.lap <= ev.windowOpen + 1;
+    const lateInWindow  = ev.lap >= ev.windowClose - 1;
+    const timingNote = auto ? '' : earlyInWindow ? ' Early call — track position priority.' : lateInWindow ? ' Good timing — tires were ready.' : ' Clean execution.';
+    const outcome = auto
+      ? `🔧 ⭐ ${ev.driverName} pits (auto) — fitting ${ev.nextTireName}s.`
+      : `🔧 ⭐ ${ev.driverName} pits — fitting ${ev.nextTireName}s.${timingNote}`;
+    if(card) {
+      card.style.border = '2px solid #16a34a';
+      card.innerHTML =
+        '<div style="font-size:10px;font-weight:700;letter-spacing:1px;color:#16a34a;margin-bottom:4px">L'+ev.lap+' · PITTED'+(auto?' (AUTO)':'')+'</div>'
+        +'<div style="font-size:13px;font-weight:700">'+outcome+'</div>'
+        +(auto ? '<div style="font-size:10px;color:#aaa;margin-top:3px">No decision made — engineers called it.</div>' : '');
+    }
+    if(!WR.pitDecisionBonus) WR.pitDecisionBonus = 0;
+    WR.pitDecisionBonus += auto ? 0 : 0.4; // reward for manual call
+
+  } else {
+    // ── STAY OUT ────────────────────────────────────────────────
+    const lapsIntoWindow = ev.lap - ev.windowOpen;
+    const windowSize = (ev.windowClose - ev.windowOpen) || 6;
+    const windowPct = lapsIntoWindow / windowSize;
+    const isEarly = windowPct < 0.35;
+    const isLate  = ev.lap > ev.windowClose;
+    const lapsLeft = (ev.windowClose || ev.lap+4) - ev.lap;
+
+    let outcomeText, bonusDelta;
+    if(isEarly) {
+      const undercutRisk = Math.random() < 0.4;
+      if(undercutRisk) {
+        outcomeText = `⚠️ ⭐ ${ev.driverName} stays out — rival undercuts! Position under threat.`;
+        bonusDelta = -0.2;
+      } else {
+        outcomeText = `📋 ⭐ ${ev.driverName} stays out — track position held. ${lapsLeft} laps left in window.`;
+        bonusDelta = 0.4;
+      }
+    } else if(isLate) {
+      outcomeText = `⚠️ ⭐ ${ev.driverName} stays out past the window — tires going off fast!`;
+      bonusDelta = -0.7;
+    } else {
+      const overcutWorks = Math.random() < 0.5;
+      outcomeText = overcutWorks
+        ? `📋 ⭐ ${ev.driverName} extends the stint — overcut attempt! Clear air while rivals pit.`
+        : `⚠️ ⭐ ${ev.driverName} stays out — rivals pitting around them. Tires under pressure.`;
+      bonusDelta = overcutWorks ? 0.2 : -0.2;
+    }
+    if(card) {
+      const isGood = bonusDelta >= 0;
+      card.style.border = isGood ? '2px solid #d97706' : '2px solid #dc2626';
+      card.innerHTML =
+        '<div style="font-size:10px;font-weight:700;letter-spacing:1px;color:'+(isGood?'#d97706':'#dc2626')+';margin-bottom:4px">L'+ev.lap+' · STAYED OUT</div>'
+        +'<div style="font-size:13px;font-weight:700">'+outcomeText+'</div>'
+        +'<div style="font-size:10px;color:#888;margin-top:4px;font-style:italic">Engineers will bring them in within a few laps.</div>';
+    }
+    if(!WR.pitDecisionBonus) WR.pitDecisionBonus = 0;
+    WR.pitDecisionBonus += bonusDelta;
+
+    // Inject a forced pit event 2–5 laps later so the player sees the eventual stop
+    const lastLap = WR.events[WR.events.length-1]?.lap || 58;
+    const forcedLap = Math.min(lastLap - 1, ev.lap + (isLate ? 2 : Math.min(5, Math.floor(lapsLeft * 0.7) + 2)));
+    const forcedEvent = {
+      lap: forcedLap,
+      type: 'pit',
+      text: `🔧 ⭐ ${ev.driverName} pits — fitting ${ev.nextTireName}s. Engineers called him in.`,
+      driverPositions: null
+    };
+    // Find insertion point AFTER current WR.idx, sorted by lap
+    let insertIdx = WR.idx; // start after current position
+    while(insertIdx < WR.events.length && WR.events[insertIdx].lap <= forcedLap) insertIdx++;
+    WR.events.splice(insertIdx, 0, forcedEvent);
+  }
+
+  // Resume race
+  WR.paused = false;
+  const speedEl = document.getElementById('wr-speed');
+  const speed = speedEl ? (parseInt(speedEl.value)||600) : 600;
+  WR.timer = setTimeout(window._wrTick, speed);
+};
+
+
 document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.nav-link').forEach(link=>{
     link.addEventListener('click', e=>{ e.preventDefault(); const v=link.dataset.view; if(v) UI.showView(v); });
