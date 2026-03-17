@@ -773,6 +773,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       <a href="javascript:void(0)" class="nav-link" data-view="teams">Teams</a>
       <a href="javascript:void(0)" class="nav-link" data-view="standings-drivers">Standings</a>
       <a href="javascript:void(0)" class="nav-link" data-view="history">History</a>
+      <a href="javascript:void(0)" class="nav-link" data-view="guide">Guide</a>
     </div>
   </nav>
 
@@ -831,6 +832,10 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       <button class="drawer-item" data-view="history" onclick="UI.showView('history');UI.toggleMoreDrawer()">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="12 8 12 12 14 14"/><path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5"/></svg>
         History
+      </button>
+      <button class="drawer-item" data-view="guide" onclick="UI.showView('guide');UI.toggleMoreDrawer()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        Guide
       </button>
       <button class="drawer-item" onclick="UI.toggleMoreDrawer();UI.showSettings()">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
@@ -989,6 +994,14 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
         </div>
       </div>
       <div id="history-content"></div>
+    </div>
+
+    <div id="view-guide" class="view">
+      <div class="view-top">
+        <div class="view-title">Guide</div>
+        <div class="view-sub">How to build a dynasty</div>
+      </div>
+      <div id="guide-content"></div>
     </div>
 
   </div><!-- /game-content -->
@@ -3226,6 +3239,7 @@ const UI = {
       case'teams':          this.renderTeams(); break;
       case'standings-drivers': this.renderStandings('drivers'); break;
       case'history':        this.renderHistory('champions'); break;
+      case'guide':          this.renderGuide(); break;
     }
   },
 
@@ -5573,6 +5587,223 @@ const UI = {
       ${rc('Seasons',recH.champions.length,'In the books')}
       ${rc('Total Races',State.game.totalRaces||0,'All time')}
     </div>${hofHTML}`;
+  },
+
+  renderGuide(){
+    const el = document.getElementById('guide-content');
+    if(!el) return;
+
+    // Section builder helpers
+    const sec = (emoji, title, body) => `
+      <div class="guide-section">
+        <div class="guide-sec-header" onclick="this.parentElement.classList.toggle('open')">
+          <span class="guide-sec-icon">${emoji}</span>
+          <span class="guide-sec-title">${title}</span>
+          <span class="guide-sec-chevron">›</span>
+        </div>
+        <div class="guide-sec-body">${body}</div>
+      </div>`;
+
+    const tip = (t, body) => `<div class="guide-tip"><div class="guide-tip-label">💡 ${t}</div><div class="guide-tip-body">${body}</div></div>`;
+    const warn = (body) => `<div class="guide-warn">⚠️ ${body}</div>`;
+    const stat = (label, val) => `<div class="guide-stat"><span class="guide-stat-label">${label}</span><span class="guide-stat-val">${val}</span></div>`;
+
+    el.innerHTML = `
+    <style>
+      .guide-intro{background:linear-gradient(135deg,var(--bg2),var(--bg3));border:1px solid var(--bd);border-radius:12px;padding:16px;margin-bottom:16px}
+      .guide-intro-title{font-size:16px;font-weight:900;margin-bottom:6px}
+      .guide-intro-sub{font-size:12px;color:var(--tx3);line-height:1.6}
+      .guide-section{border:1px solid var(--bd);border-radius:10px;margin-bottom:8px;overflow:hidden}
+      .guide-sec-header{display:flex;align-items:center;gap:10px;padding:13px 14px;cursor:pointer;background:var(--bg2);user-select:none}
+      .guide-sec-header:hover{background:var(--bg3)}
+      .guide-sec-icon{font-size:18px;flex-shrink:0}
+      .guide-sec-title{font-size:14px;font-weight:700;flex:1}
+      .guide-sec-chevron{font-size:18px;color:var(--tx3);transition:transform .2s;font-weight:300}
+      .guide-section.open .guide-sec-chevron{transform:rotate(90deg)}
+      .guide-sec-body{display:none;padding:14px;background:var(--bg);border-top:1px solid var(--bd);font-size:13px;line-height:1.65;color:var(--tx2)}
+      .guide-section.open .guide-sec-body{display:block}
+      .guide-sec-body p{margin:0 0 10px}
+      .guide-sec-body p:last-child{margin-bottom:0}
+      .guide-sec-body h4{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--tx3);margin:14px 0 6px}
+      .guide-sec-body h4:first-child{margin-top:0}
+      .guide-tip{background:rgba(37,99,235,.06);border:1px solid rgba(37,99,235,.2);border-radius:7px;padding:10px 12px;margin:10px 0}
+      .guide-tip-label{font-size:11px;font-weight:700;color:#2563eb;margin-bottom:4px}
+      .guide-tip-body{font-size:12px;color:var(--tx2);line-height:1.55}
+      .guide-warn{background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.25);border-radius:7px;padding:10px 12px;margin:10px 0;font-size:12px;color:var(--tx2);line-height:1.55}
+      .guide-stats-row{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+      .guide-stat{background:var(--bg2);border:1px solid var(--bd);border-radius:6px;padding:6px 10px;font-size:11px;display:flex;flex-direction:column;gap:2px}
+      .guide-stat-label{color:var(--tx3);font-size:10px}
+      .guide-stat-val{font-weight:700;color:var(--tx1)}
+      .guide-table{width:100%;border-collapse:collapse;font-size:12px;margin:8px 0}
+      .guide-table th{text-align:left;padding:5px 8px;background:var(--bg3);color:var(--tx3);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.5px}
+      .guide-table td{padding:6px 8px;border-bottom:1px solid var(--bd)}
+      .guide-table tr:last-child td{border-bottom:none}
+      .guide-badge{display:inline-block;font-size:10px;font-weight:700;padding:1px 6px;border-radius:4px;margin:0 2px}
+      .gb-green{background:rgba(74,222,128,.15);color:#16a34a}
+      .gb-red{background:rgba(248,113,113,.15);color:#dc2626}
+      .gb-amber{background:rgba(245,158,11,.15);color:#b45309}
+      .gb-blue{background:rgba(37,99,235,.15);color:#1d4ed8}
+    </style>
+
+    <div class="guide-intro">
+      <div class="guide-intro-title">F1 Dynasty Manager — How to Win</div>
+      <div class="guide-intro-sub">This isn't a dry manual. Each section below explains how a system actually works and what decisions matter. Open the ones you're unsure about — skip the ones you've got figured out.</div>
+    </div>
+
+    ${sec('🎯','The Goal — Legacy Score & How to Win',`
+      <p>Your ultimate goal is <strong>Legacy Score</strong>, shown at the top of the dashboard. This is your all-time measure as a manager — it persists across saves and defines your place in dynasty history.</p>
+      <div class="guide-stats-row">
+        ${stat('Championship Win','+ 200 pts')}
+        ${stat('Constructor Title','+ 100 pts')}
+        ${stat('Race Win','+ 10 pts')}
+        ${stat('Podium','+ 3 pts')}
+        ${stat('Pole Position','+ 2 pts')}
+        ${stat('Points Finish','+ 1 pt')}
+      </div>
+      <p>Championships are everything. 10 wins = 1 title in legacy value. The gap between a title-winning team and a podium team is enormous — always prioritise positions that push you toward championship contention.</p>
+      ${tip('Long game', 'Your Legacy Score unlocks tiers (Rookie → Pro → Elite → Legend → Icon). Higher tiers let you start new games with bonus prestige and revenue, compounding each dynasty.')}
+    `)}
+
+    ${sec('🏎️','Car Development — The Core Loop',`
+      <p>Your car's <strong>Car Performance</strong> rating is the single biggest determinant of results. Driver talent can compensate partially, but a 65-rated car will never win a championship regardless of who's driving it.</p>
+      <h4>Three ways to improve your car</h4>
+      <p><strong>1. Offseason budget</strong> — allocated each winter via the Car screen. Split between Aero, Engine, Reliability, and Facilities. This is your biggest annual investment.</p>
+      <p><strong>2. Quarterly upgrade packages</strong> — during the season you queue upgrade packages (Q1/Q2) which arrive 2–4 races later. These are smaller but compound through the year.</p>
+      <p><strong>3. In-season development</strong> — direct mid-season investment. More expensive per point but faster.</p>
+      <h4>R&D variance — results aren't guaranteed</h4>
+      <p>Every development program has a luck roll applied to it. Investing $40M in aero doesn't always yield the same result. The outcome is labelled when it hits:</p>
+      <table class="guide-table">
+        <tr><th>Result</th><th>Multiplier</th><th>Chance</th></tr>
+        <tr><td>🚀 Breakthrough</td><td>×1.55</td><td>10%</td></tr>
+        <tr><td>✅ Better than expected</td><td>×1.25</td><td>20%</td></tr>
+        <tr><td>📋 As planned</td><td>×1.0</td><td>55%</td></tr>
+        <tr><td>⚠️ Below expectations</td><td>×0.65</td><td>10%</td></tr>
+        <tr><td>❌ Setback</td><td>×0.30</td><td>5%</td></tr>
+      </table>
+      ${tip('Facilities compound', 'Investing in Facilities raises your <strong>Development Rate</strong>, which means all future development budgets yield more gains per dollar. Early investment here pays off for the whole dynasty.')}
+      ${warn('A bad R&D year can set you back a full season. If you see a setback banner at the start of a new season, budget extra in the following offseason to recover.')}
+    `)}
+
+    ${sec('👤','Driver Ratings — What Each Stat Does',`
+      <p>Each driver has 6 attributes that affect different situations:</p>
+      <table class="guide-table">
+        <tr><th>Attribute</th><th>Affects</th></tr>
+        <tr><td><strong>Race Pace</strong></td><td>Raw speed during the race — the most important stat. Drives your base finishing position.</td></tr>
+        <tr><td><strong>Qualifying</strong></td><td>Grid position. Higher qualifying reduces overtaking difficulty and tyre wear from racing in traffic.</td></tr>
+        <tr><td><strong>Consistency</strong></td><td>Reduces variance — a consistent driver finishes where expected. Low consistency means wild swings race to race.</td></tr>
+        <tr><td><strong>Wet Weather</strong></td><td>Performance multiplier in rain. A wet race reshuffles the field — a 70-rated driver with 90 wet can beat a 90-rated dry specialist.</td></tr>
+        <tr><td><strong>Aggression</strong></td><td>Overtaking ability and risk-taking. High aggression gains places but increases DNF risk in incidents.</td></tr>
+        <tr><td><strong>Marketability</strong></td><td>Sponsor attraction. A marketable driver in your team raises sponsor offer values each offseason.</td></tr>
+      </table>
+      <p>The <strong>Overall Rating</strong> shown on cards is a weighted average, with Race Pace weighted most heavily.</p>
+      ${tip('Stars matter at the top', 'The difference between an 82 and a 92 rated driver isn\'t 10% — elite drivers (90+) get a non-linear bonus in race simulations. A 95-rated driver regularly produces results that exceed what their car alone would predict.')}
+    `)}
+
+    ${sec('📈','Driver Development — Why Potential ≠ Outcome',`
+      <p>Every driver has a hidden <strong>Potential</strong> ceiling. A driver rated 72 with 95 potential <em>could</em> become a GOAT — but only under the right conditions.</p>
+      <h4>What drives development</h4>
+      <p><strong>Facilities</strong> — the biggest lever you control. Poor facilities (below 65) actively stunt growth. Elite facilities (80+) can accelerate development significantly. This is why investing in Facilities isn't just about car performance — it shapes your drivers' careers.</p>
+      <p><strong>Morale</strong> — unhappy drivers (below 40 morale) develop at half rate. Keep your young drivers happy.</p>
+      <p><strong>Luck</strong> — each offseason every developing driver rolls a luck multiplier. Even in perfect conditions, 5% of seasons are stagnation years.</p>
+      <p><strong>Work ethic</strong> — a hidden trait seeded from the driver's identity. Some drivers just push harder.</p>
+      <h4>Potential can erode</h4>
+      <p>This is the key tension. A young driver in poor facilities with low morale doesn't just develop slowly — their <strong>ceiling drops</strong>. The window closes. Sign a wonderkid to a rebuilding team with 60-rated facilities and you may watch a 97-potential driver peak at 81.</p>
+      <table class="guide-table">
+        <tr><th>Development outcome</th><th>Multiplier</th><th>Chance</th></tr>
+        <tr><td>📈 Breakthrough season</td><td>×2.0</td><td>10%</td></tr>
+        <tr><td>✅ Good year</td><td>×1.4</td><td>20%</td></tr>
+        <tr><td>Normal</td><td>×1.0</td><td>55%</td></tr>
+        <tr><td>⚠️ Poor year</td><td>×0.4</td><td>10%</td></tr>
+        <tr><td>❌ Stagnation</td><td>×0.0</td><td>5%</td></tr>
+      </table>
+      ${tip('Development window', 'Drivers develop fastest between ages 18–24. After 27, gains slow dramatically. If you sign a 26-year-old with high potential, you\'ll likely only see modest improvement regardless of facilities.')}
+    `)}
+
+    ${sec('🌟','Wonderkids — Generational Talents',`
+      <p>Approximately every 3 seasons, a <strong>Wonderkid</strong> enters the prospect pool. They're age 16–19, initially rated 58–76, but with a potential ceiling of 95–99.</p>
+      <p>The key thing to understand: <strong>potential is not a promise</strong>. A 99-potential wonderkid who spends their formative years at a team with poor facilities and mismanaged morale might peak at 80. The same driver at a top team with great facilities and happy morale might reach 94.</p>
+      <h4>Identifying wonderkids</h4>
+      <p>You'll see a 🌟 TRANSFER BUZZ card in Scouting before your scout even files a report — your contacts know something special has emerged. Send your scout immediately; it's worth using a scouting slot.</p>
+      <h4>Signing and developing</h4>
+      <p>Wonderkids are cheap to sign — they know they're young and unproven. But the real cost is <em>opportunity cost</em>: a roster slot for 3–5 seasons while they develop, plus the pressure on your facilities budget.</p>
+      ${tip('Facilities callout', 'The Offseason Planning screen shows a facilities warning whenever you have a wonderkid in your squad. Pay attention to it — this is the most important decision about their career.')}
+      ${warn('Don\'t sign a wonderkid if your facilities are below 65. You\'re almost certainly going to erode their potential rather than unlock it.')}
+    `)}
+
+    ${sec('🔭','Scouting — Finding Hidden Gems',`
+      <p>The scouting system lets you assess junior series drivers before signing them. Without scouting, you only see a driver's current rating — not their potential ceiling.</p>
+      <h4>Scouting tiers</h4>
+      <table class="guide-table">
+        <tr><th>Tier</th><th>Accuracy</th><th>Cost</th><th>Worth it?</th></tr>
+        <tr><td>Basic Scout</td><td>±15 OVR</td><td>Low</td><td>Better than nothing</td></tr>
+        <tr><td>Pro Scout</td><td>±8 OVR</td><td>Medium</td><td>Good for most uses</td></tr>
+        <tr><td>Elite Scout</td><td>±4 OVR</td><td>High</td><td>Worth it for wonderkids</td></tr>
+      </table>
+      <p>Reports take several races to return. Queue multiple prospects simultaneously to get more options. Reports show the potential as <strong>Pot ~X (±Y)</strong> — the true value is within that band.</p>
+      ${tip('Wonderkid priority', 'When you see TRANSFER BUZZ in the scouting view, drop everything and send your scout. Wonderkid windows are short — other teams will sign them in the offseason transfer market if you hesitate.')}
+    `)}
+
+    ${sec('💰','Finance — How Money Works',`
+      <p>Revenue comes from four sources: <strong>prize money</strong> (finish position), <strong>sponsors</strong>, <strong>merchandise</strong> (tied to prestige), and a <strong>works bonus</strong> if you're a manufacturer team.</p>
+      <p>Your position in the Constructors Championship is the most direct lever — finishing P3 vs P7 is worth roughly $15–20M annually in prize money alone.</p>
+      <h4>The prestige flywheel</h4>
+      <p>Prestige is earned through results. Higher prestige attracts better sponsors and grows your merchandise revenue. Prestige grows fast with wins (+3 per win) and shrinks with poor seasons. This is the mechanism by which success compounds — winning teams get richer and can develop faster.</p>
+      <h4>Costs to manage</h4>
+      <p>Driver salaries are your biggest controllable expense. Elite drivers (85+ rated) command high wages but deliver more results. The calculus is whether their salary increase is offset by improved results revenue.</p>
+      ${warn('Overspending on driver salaries at the expense of car development is the most common mistake. A $25M driver in a 68-rated car will underperform vs a $12M driver in a 78-rated car.')}
+      ${tip('Sponsorship timing', 'Sponsors are attracted at the end of each season. Finishing strong — especially in the final few races — can tip you into a better finishing position and unlock better sponsor tiers the following year.')}
+    `)}
+
+    ${sec('📋','Board Objectives — Don\'t Ignore These',`
+      <p>Each season the board sets 3 objectives: one hard, one medium, one easy. Meeting them pays bonus revenue directly into your budget.</p>
+      <p>The objectives are generated based on your realistic performance level — they're not random. A bottom-half team won't be asked to win the championship. They scale with your situation.</p>
+      <h4>Objective types</h4>
+      <p>Position targets, win targets, podium targets, pole targets, and legacy score milestones. Each has a revenue bonus proportional to difficulty.</p>
+      ${tip('Check them early', 'Board objectives are shown on the dashboard above the news feed. Read them at the start of the season — some objectives (like "score 3 poles") require you to actively prioritise qualifying in your strategy decisions.')}
+      ${warn('Missing all 3 objectives two seasons in a row damages owner mood. Sustained poor owner mood gets you fired. Even if results are poor, meeting at least 1–2 objectives per season keeps the board onside.')}
+    `)}
+
+    ${sec('🏁','Race Strategy — Pit Stops & Weather',`
+      <p>During Watch Race mode you make live decisions. There are two main calls:</p>
+      <h4>Pit stop decisions</h4>
+      <p>When a pit window opens, you'll see a box-or-stay decision for your drivers with a countdown timer (default 8s, adjustable in Settings). The suggested strategy is shown — you can override it. Pitting early undercuts rivals but risks tyre deg; staying out defends position but risks losing out when the rival pits.</p>
+      <h4>Weather calls</h4>
+      <p>If rain starts mid-race, a weather decision fires: switch to intermediates now, wait, or stay on slicks. Switching too early costs track position; switching too late causes massive pace loss. Your drivers' Wet Weather rating affects how long they can stay out on slicks before performance falls off a cliff.</p>
+      ${tip('Speed settings', 'Use Very Fast for routine races and Normal/Slow when you\'re in a tight championship battle and want to savour the moment. Speed is set per-session and remembered.')}
+      ${tip('Auto settings', 'If you prefer to sim without decisions, turn on Auto Strategy and Auto Aero in Settings. Note: Auto Strategy applies a small pace penalty as the engineers are more conservative than you.')}
+    `)}
+
+    ${sec('📊','Understanding the Sim — How Races Are Decided',`
+      <p>Race outcomes aren't random dice rolls — they're calculated from real inputs:</p>
+      <p><strong>Base score</strong> = Car Performance × 0.55 + Race Pace × 0.35 + Qualifying × 0.10</p>
+      <p>On top of that, several modifiers apply each race:</p>
+      <p><strong>Circuit downforce</strong> — each circuit has a downforce preference (low/medium/high). If your aero setup matches, you gain a small bonus. Mismatches hurt slightly.</p>
+      <p><strong>Weather</strong> — in rain, Wet Weather replaces Race Pace in the calculation and the whole field shuffles. This is where good wet-weather drivers earn their money.</p>
+      <p><strong>Safety car</strong> — bunches up the field, creates overtaking opportunities, benefits drivers who were falling back.</p>
+      <p><strong>Elite driver bonus</strong> — drivers with 90+ Race Pace get a non-linear bonus (roughly +1.5 at 90, +5 at 95, +9 at 99). This is the Senna/Alonso effect — a genuinely elite driver can carry a midfield car to results it shouldn't achieve.</p>
+      <p><strong>Variance</strong> — a small random component ensures real F1-style unpredictability. You can never be fully certain of the result.</p>
+      ${tip('Tyre strategy matters', 'Drivers in position 11–15 start on hard tyres and have better pit flexibility. If you\'re starting mid-grid, consider a longer first stint to undercut rivals who start on softs.')}
+    `)}
+
+    ${sec('🔄','Season Flow — What Happens When',`
+      <p>Each season follows this structure:</p>
+      <p><strong>Offseason</strong> → Sign/release drivers · Set winter development budget · Review board objectives · Sign prospects from free agency</p>
+      <p><strong>Race weekend</strong> → Qualifying sim → Race (watch or sim) → Results + news → Dashboard updates</p>
+      <p><strong>Mid-season</strong> → Queue quarterly upgrade packages (arrive 2–4 races later) → Monitor standings and board objectives → In-season development if budget allows</p>
+      <p><strong>Season end</strong> → Season recap modal with championship results, objective outcomes, revenue summary → Driver aging and development runs → Transfer market opens</p>
+      ${tip('Next button', 'The red Next button (bottom centre on mobile, visible on dashboard) is your main progression button. It advances to the next pending action — next race, or next offseason — so you never have to hunt for what to do.')}
+    `)}
+
+    ${sec('💾','Saves & Multiple Dynasties',`
+      <p>You can maintain up to <strong>5 separate save slots</strong> simultaneously. Each slot is an independent dynasty with its own team, history, and legacy score.</p>
+      <p>Saves are automatic — every meaningful action (race result, offseason completion, signing a driver) triggers an autosave. You can also manually save from the menu.</p>
+      <p>The landing page shows all your active saves with their tier, legacy score, and when you last played. Use the 🗑 button to delete a slot and free it for a new dynasty.</p>
+      ${tip('Legacy carries over', 'Legacy Score from previous saves contributes to your all-time manager tier. Starting a new dynasty doesn\'t erase your history — it adds to it.')}
+    `)}
+    `;
+
+    // Auto-open first section
+    el.querySelector('.guide-section')?.classList.add('open');
   },
 
   showSeasonRecap(transfers, champs){
