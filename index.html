@@ -773,7 +773,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       <a href="javascript:void(0)" class="nav-link" data-view="teams">Teams</a>
       <a href="javascript:void(0)" class="nav-link" data-view="standings-drivers">Standings</a>
       <a href="javascript:void(0)" class="nav-link" data-view="history">History</a>
-      <a href="javascript:void(0)" class="nav-link" data-view="guide">Guide</a>
+      <a href="javascript:void(0)" class="nav-link" onclick="UI.showSettings()">Settings</a>
     </div>
   </nav>
 
@@ -832,10 +832,6 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       <button class="drawer-item" data-view="history" onclick="UI.showView('history');UI.toggleMoreDrawer()">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="12 8 12 12 14 14"/><path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5"/></svg>
         History
-      </button>
-      <button class="drawer-item" data-view="guide" onclick="UI.showView('guide');UI.toggleMoreDrawer()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-        Guide
       </button>
       <button class="drawer-item" onclick="UI.toggleMoreDrawer();UI.showSettings()">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
@@ -1008,7 +1004,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
   <div id="game-footer" class="desktop-only" style="flex-shrink:0;padding:7px 16px;border-top:1px solid var(--bd);background:var(--bg2);display:flex;align-items:center;justify-content:space-between">
     <span style="font-size:11px;color:var(--tx3);font-weight:600">F1 Dynasty</span>
     <div style="display:flex;gap:14px">
-      <button onclick="UI.showSettings()" style="background:none;border:none;font-size:11px;color:var(--tx3);cursor:pointer;font-weight:600;padding:0">⚙ Settings</button>
+      <button onclick="UI.showView('guide')" style="background:none;border:none;font-size:11px;color:var(--tx3);cursor:pointer;font-weight:600;padding:0">? Guide</button>
       <button onclick="UI.showChangelog()" style="background:none;border:none;font-size:11px;color:var(--tx3);cursor:pointer;font-weight:600;padding:0">📋 Release Notes</button>
     </div>
   </div>
@@ -1464,6 +1460,7 @@ function randFloat(min,max){return Math.random()*(max-min)+min;}
 function randNorm(mean,sd){const u=1-Math.random(),v=Math.random();return mean+sd*Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
 function formatMoney(m){if(Math.abs(m)>=1000)return`$${(m/1000).toFixed(1)}B`;return`$${m}M`;}
 function ratingColor(r){if(r>=88)return'rating-high';if(r>=76)return'rating-med';return'rating-low';}
+function escapeHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 
 // =============================================
 // STATE
@@ -1793,7 +1790,6 @@ const Sim = {
       const chemBonus = (trait==='consistent' && team.reliability<72) ? -0.5 :
                         (trait==='technical' && team.facilities>85) ? 0.8 :
                         (trait==='aggressive' && team.carPerformance>88) ? 0.6 : 0;
-      if(traitDnfMod && !dnf) { /* aggressive drivers get extra DNF re-roll */ if(Math.random()<traitDnfMod){ results[results.length-1] && (results[results.length-1].dnf = true); } }
       const circuitMod2 = race ? (()=>{
         const ideal = race.idealDownforce||50;
         const df = team.carPerformance?team.downforce||50:50;
@@ -1871,7 +1867,7 @@ const Sim = {
           if(!g.newsFeed) g.newsFeed=[];
           if(r.position===1 && driver.wins===1){
             g.newsFeed.unshift({icon:'🌟',type:'success',
-              msg:`<strong>${driver.name}</strong> takes his first F1 victory at age ${driver.age}! A star is born — this could be the start of something legendary.`,
+              msg:`<strong>${driver.name}</strong> takes their first F1 victory at age ${driver.age}! A star is born — this could be the start of something legendary.`,
               race:g.raceIndex});
           } else if(r.position===1){
             g.newsFeed.unshift({icon:'🌟',type:'success',
@@ -1879,7 +1875,7 @@ const Sim = {
               race:g.raceIndex});
           } else if(r.position<=3 && driver.podiums===1){
             g.newsFeed.unshift({icon:'🌟',type:'success',
-              msg:`<strong>${driver.name}</strong> earns his first F1 podium at age ${driver.age}! The wonderkid is delivering on the promise.`,
+              msg:`<strong>${driver.name}</strong> earns their first F1 podium at age ${driver.age}! The wonderkid is delivering on the promise.`,
               race:g.raceIndex});
           }
         }
@@ -2418,11 +2414,9 @@ const Sim = {
     // Two scores like Basketball GM: performance (-1 to +1) and finances (-1 to +1)
     // Sum below -1 = fired. Each capped at 1 to prevent one from masking the other.
     if(!g.ownerMood) g.ownerMood = {performance:0, finances:0};
-    if(!g.ownerGoal) {
-      // Goal set by prestige: top teams must win, small teams just survive
-      const p = playerTeam.prestige;
-      g.ownerGoal = p>=90?1:p>=75?3:p>=60?5:p>=45?7:9; // target constructors position
-    }
+    // Recalculate owner goal each season — prestige changes as you climb or fall
+    const p = playerTeam.prestige;
+    g.ownerGoal = p>=90?1:p>=75?3:p>=60?5:p>=45?7:9;
     // Performance score delta: beat goal = +0.25, miss by 1-2 = -0.1, miss badly = -0.3, terrible = -0.5
     const goal = g.ownerGoal;
     const perfDelta = constrPos<=goal ? 0.25
@@ -2444,7 +2438,8 @@ const Sim = {
     const opsB2=35,engC2=['mercedes','ferrari','redbull','audi','cadillac'].includes(playerTeam.id)?0:12;
     const staffC2=Math.round(playerTeam.facilities*0.35+10);
     const qSpend2=(g.quarterDev||[]).filter(q=>q.applied).reduce((s,q)=>s+(q.aero*6+q.reliability*4+q.engine*10),0);
-    const netFinance=totalInc2-(dSals+rSals+scC+opsB2+engC2+staffC2+qSpend2);
+    const offSpend2=(()=>{ const rd=g._lastOffseasonDevResult; if(!rd) return 0; const b=rd.spent||{}; return (b.aero||0)*6+(b.engine||0)*8+(b.reliability||0)*4+(b.facilities||0)*3; })();
+    const netFinance=totalInc2-(dSals+rSals+scC+opsB2+engC2+staffC2+qSpend2+offSpend2);
     const finDelta = netFinance>20?0.2:netFinance>0?0:netFinance>-20?-0.2:-0.4;
     g.ownerMood.finances = clamp(g.ownerMood.finances + finDelta, -3, 1);
     // Save for display
@@ -2529,7 +2524,7 @@ const Sim = {
         if(!g.newsFeed) g.newsFeed=[];
         if(d._devStatus==='breakthrough') {
           g.newsFeed.unshift({icon:'🌟',type:'success',
-            msg:`<strong>${d.name}</strong> has had a breakthrough season — now ${Math.round(d.rating)} OVR and closing in on his ceiling. The investment is paying off.`,
+            msg:`<strong>${d.name}</strong> has had a breakthrough season — now ${Math.round(d.rating)} OVR and closing in on their ceiling. The investment is paying off.`,
             race:undefined});
         } else if(d._devStatus==='struggling') {
           g.newsFeed.unshift({icon:'⚠️',type:'warning',
@@ -2646,9 +2641,19 @@ const Sim = {
     g.drivers.forEach(d=>{
       if(!d.isProspect||d.retired) return;
       d.age = (d.age||18)+1;
-      // Develop prospects
+      // Develop prospects — wonderkids in the pool use variance too (potential not guaranteed)
       const gap=d.potential-d.rating;
-      d.rating=clamp(d.rating+Math.max(0,gap*0.2+randFloat(0,1)),40,99);
+      if(d.isWonderkid) {
+        // Same luck/variance system as signed drivers — potential is not guaranteed even before signing
+        const luckRoll = Math.random();
+        const luckMod = luckRoll<0.05?0.0:luckRoll<0.15?0.4:luckRoll<0.70?1.0:luckRoll<0.90?1.4:2.0;
+        const growth = luckMod * (gap*0.14 + Math.random()*0.8);
+        d.rating = clamp(d.rating + Math.max(0, growth), 40, 99);
+        // Poor luck while unscouted erodes potential slightly
+        if(luckMod < 0.4 && gap > 5) d.potential = clamp(d.potential - (Math.random()*1.0), d.rating+2, 99);
+      } else {
+        d.rating=clamp(d.rating+Math.max(0,gap*0.2+Math.random()),40,99);
+      }
       // Graduate if talented enough or old enough
       if(d.rating>=74||(d.age>=22&&d.rating>=70)){
         d.isProspect=false; d.isFreeAgent=true;
@@ -2773,7 +2778,7 @@ const Sim = {
       g.drivers.push(wk);
       // Breaking news in feed
       if(!g.newsFeed) g.newsFeed=[];
-      g.newsFeed.unshift({icon:'🌟',type:'success',msg:`<strong>${wk.name}</strong> is turning heads in ${wk.prospectSeries} — scouts are calling him a once-in-a-decade talent. He's available to sign.`,race:undefined});
+      g.newsFeed.unshift({icon:'🌟',type:'success',msg:`<strong>${wk.name}</strong> is turning heads in ${wk.prospectSeries} — scouts are calling them a once-in-a-decade talent. They're available to sign.`,race:undefined});
     }
 
     // ── CAR FIELD BALANCE ──
@@ -2897,21 +2902,6 @@ const Sim = {
     g.drivers.forEach(d=>{d.seasonPoints=0;d.wins=0;d.poles=0;d.podiums=0;});
     g.teams.forEach(t=>{t.seasonPoints=0;t.wins=0;t.poles=0;t.podiums=0;});
 
-    // Age all drivers and tick contracts down
-    g.drivers.forEach(d=>{
-      if(d.retired) return;
-      if(d.age) d.age++;
-      if(d.contract > 0) d.contract--;
-      // Natural retirements: drivers over 38 have increasing chance, hard cap at 45
-      if(d.age >= 38 && !d.isReserve && !d.isProspect && d.teamId) {
-        const retireChance = Math.min(0.9, (d.age - 37) * 0.15);
-        if(Math.random() < retireChance || d.age >= 45) {
-          d.retired = true;
-          d.teamId = null;
-          // Will be caught by offseason driver replacement logic
-        }
-      }
-    });
     g.season++; g.raceIndex=0;
     g.inSeasonDev={aero:0,reliability:0,engine:0};
     g.poachAttempts=[];
@@ -3292,7 +3282,7 @@ const UI = {
             onclick="Storage._loadSlotAndGo(${info.slot})">
             <div style="flex:1;min-width:0">
               <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px">
-                <span style="font-size:14px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${info.managerName} · ${info.teamName}</span>
+                <span style="font-size:14px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(info.managerName)} · ${escapeHtml(info.teamName)}</span>
                 ${champBadge}
               </div>
               <div style="font-size:11px;color:var(--tx3)">Season ${info.season} · Race ${info.race}/${DATA.calendar.length}${info.seasonsPlayed > 0 ? ' · ' + info.seasonsPlayed + ' seasons' : ''}</div>
@@ -3394,7 +3384,7 @@ const UI = {
             <span style="font-size:15px;font-weight:900;font-family:var(--fm);color:var(--tx)">${cs.legacyScore.toLocaleString()}</span>
           </div>
           <div style="height:5px;background:var(--bd);border-radius:3px"><div style="width:${barPct}%;height:100%;background:${tc};border-radius:3px;transition:width .4s"></div></div>
-          ${nextTierPts?`<div style="font-size:10px;color:var(--tx3);margin-top:4px">${(nextTierPts-cs.legacyScore).toLocaleString()} pts to ${['','RISING','ESTABLISHED','DOMINANT','DYNASTY','LEGENDARY'][Object.keys(tierColors).indexOf(cs.legacyTier)+1]||'max'}</div>`:'<div style="font-size:10px;color:#f59e0b;margin-top:4px;font-weight:700">Maximum tier achieved 🏆</div>'}
+          ${nextTierPts?`<div style="font-size:10px;color:var(--tx3);margin-top:4px">${(nextTierPts-cs.legacyScore).toLocaleString()} pts to ${(['NEWCOMER','RISING','ESTABLISHED','DOMINANT','DYNASTY','LEGENDARY'].indexOf(cs.legacyTier)+1 < 6 ? ['NEWCOMER','RISING','ESTABLISHED','DOMINANT','DYNASTY','LEGENDARY'][['NEWCOMER','RISING','ESTABLISHED','DOMINANT','DYNASTY','LEGENDARY'].indexOf(cs.legacyTier)+1] : 'max')}</div>`:'<div style="font-size:10px;color:#f59e0b;margin-top:4px;font-weight:700">Maximum tier achieved 🏆</div>'}
         </div>`;
       } else {
         legacyEl.style.display = 'none';
@@ -3658,7 +3648,7 @@ const UI = {
           ${feed.map(item=>`<div style="display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid var(--bd);font-size:12px">
             <span style="flex-shrink:0;font-size:13px;margin-top:1px">${item.icon||'📋'}</span>
             <div style="flex:1;line-height:1.4;color:${typeColors[item.type]||'var(--tx)'}">
-              ${item.msg}
+              ${item.msg||item.text||''}
               ${item.race!==undefined?`<span style="font-size:10px;color:var(--tx3);margin-left:5px">· Race ${item.race+1}</span>`:''}
             </div>
           </div>`).join('')}
@@ -3672,7 +3662,8 @@ const UI = {
       const myDrivers = State.getPlayerDrivers();
       const wk = myDrivers.find(d=>d.isWonderkid && d.age<=26);
       if(wk) {
-        const progPct = Math.min(100, Math.round(((wk.rating - 55) / (wk.potential - 55)) * 100));
+        const potRange = Math.max(1, wk.potential - 55);
+        const progPct = Math.min(100, Math.round(((wk.rating - 55) / potRange) * 100));
         const ptsToGo = Math.max(0, Math.round(wk.potential - wk.rating));
         wkEl.innerHTML = `<div style="background:linear-gradient(135deg,#1a1100 0%,#2d1f00 100%);border:1px solid #f59e0b;border-radius:12px;padding:14px;color:#fff">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
@@ -4517,7 +4508,7 @@ const UI = {
         <span style="font-size:22px">🌟</span>
         <div>
           <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#f59e0b">Generational Talent</div>
-          <div style="font-size:11px;color:rgba(255,255,255,.6);margin-top:2px">One of the rarest prospects in a generation. Ceiling: elite. Give him time.</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.6);margin-top:2px">One of the rarest prospects in a generation. Ceiling: elite. Give them time.</div>
         </div>
       </div>` : ''}
       <div class="modal-name">${d.name}</div>
@@ -4793,9 +4784,17 @@ const UI = {
     }).join('');
     const footer=document.getElementById('wr-footer'); footer.innerHTML=''; footer.style.display='none';
     const tb=document.getElementById('wr-toggle'); if(tb){tb.textContent='⏸ Pause';tb.disabled=false;tb.style.opacity='1';}
-    // Apply saved default speed
+    // Apply saved default speed and highlight matching button
     const savedSpd = State.game.watchRaceSpeed || 600;
     document.getElementById('wr-speed').value = savedSpd;
+    const spdMap = {2400:'Very Slow',1200:'Slow',600:'Normal',250:'Fast',80:'Very Fast'};
+    document.querySelectorAll('.wr-spd-btn').forEach(function(b){
+      const active = b.textContent === (spdMap[savedSpd]||'Normal');
+      b.style.border = active ? '1.5px solid #c0392b' : '1.5px solid #e0e0dd';
+      b.style.background = active ? '#fef2f2' : '#fff';
+      b.style.color = active ? '#c0392b' : '#888';
+      b.style.fontWeight = active ? '700' : '600';
+    });
     const wm=document.getElementById('watch-race-modal'); wm.style.display='flex';
       WR.timer = setTimeout(window._wrTick, 250);
   },
@@ -4912,12 +4911,13 @@ const UI = {
     const staffCost=Math.round(team.facilities*0.35+10);
     // Marketing is small and fixed-ish
     const marketingCost=Math.round(team.prestige*0.1);
-    // Car development: this is the CONTROLLABLE cost — quarterly upgrades come from revenue budget
-    // We show it as % of revenue allocated (12% per quarter * up to 4 quarters)
+    // Car development: all sources of dev spend this season
     const quarterSpend=(g.quarterDev||[]).filter(q=>q.applied).reduce((s,q)=>s+(q.aero*6+q.reliability*4+q.engine*10),0);
-    const carDevCost=quarterSpend; // only what player actually chose to spend
+    const offseasonSpend=(()=>{ const rd=g._lastOffseasonDevResult; if(!rd) return 0; const b=rd.spent||{}; return (b.aero||0)*6+(b.engine||0)*8+(b.reliability||0)*4+(b.facilities||0)*3; })();
+    const inSeasonSpend=g.inSeasonDevApplied ? ((g.inSeasonDev?.aero||0)*8+(g.inSeasonDev?.reliability||0)*5+(g.inSeasonDev?.engine||0)*12) : 0;
+    const carDevCost=quarterSpend+inSeasonSpend; // offseason budget shown separately
 
-    const totalExpenses=driverSalaries+reserveSalaries+scoutCost+opsBase+engineCost+staffCost+marketingCost+carDevCost;
+    const totalExpenses=driverSalaries+reserveSalaries+scoutCost+opsBase+engineCost+staffCost+marketingCost+carDevCost+offseasonSpend;
     const net=totalIncome-totalExpenses;
     const netColor=net>15?'var(--grn)':net>0?'var(--amber)':'var(--red)';
 
@@ -4937,7 +4937,8 @@ const UI = {
           <div class="finance-row"><span class="finance-row-label">Driver Salaries <span style="font-size:10px;color:var(--tx3)">(choose in market)</span></span><span class="finance-row-val neg">-${formatMoney(driverSalaries)}</span></div>
           <div class="finance-row"><span class="finance-row-label">Reserve Drivers</span><span class="finance-row-val neg">-${formatMoney(reserveSalaries)}</span></div>
           <div class="finance-row"><span class="finance-row-label">Staff & Factory <span style="font-size:10px;color:var(--tx3)">(scales with Facilities)</span></span><span class="finance-row-val neg">-${formatMoney(staffCost)}</span></div>
-          <div class="finance-row"><span class="finance-row-label">Car Development <span style="font-size:10px;color:var(--tx3)">(your quarterly spend)</span></span><span class="finance-row-val neg">${carDevCost>0?'-'+formatMoney(carDevCost):'$0M (none this season)'}</span></div>
+          <div class="finance-row"><span class="finance-row-label">Car Development <span style="font-size:10px;color:var(--tx3)">(in-season upgrades)</span></span><span class="finance-row-val neg">${carDevCost>0?'-'+formatMoney(carDevCost):'$0M (none this season)'}</span></div>
+          ${offseasonSpend>0?`<div class="finance-row"><span class="finance-row-label">Winter Development <span style="font-size:10px;color:var(--tx3)">(offseason budget)</span></span><span class="finance-row-val neg">-${formatMoney(offseasonSpend)}</span></div>`:''}
           <div class="finance-row"><span class="finance-row-label">Operations & Travel</span><span class="finance-row-val neg">-${formatMoney(opsBase)}</span></div>
           ${engineCost>0?`<div class="finance-row"><span class="finance-row-label">Engine Supply</span><span class="finance-row-val neg">-${formatMoney(engineCost)}</span></div>`:''}
           <div class="finance-row"><span class="finance-row-label">Marketing</span><span class="finance-row-val neg">-${formatMoney(marketingCost)}</span></div>
@@ -5048,7 +5049,7 @@ const UI = {
                   <div style="font-size:32px;font-weight:900;color:#f59e0b;line-height:1">${sp}<span style="font-size:12px;font-weight:600;color:rgba(255,255,255,.35);margin-left:4px">/ 99</span></div>
                   <div style="font-size:10px;color:rgba(255,255,255,.35);margin-top:2px">±${Math.round((100-accuracy)/5)} accuracy</div>
                 </div>
-                <div style="font-size:11px;color:rgba(255,255,255,.5);line-height:1.5;margin-bottom:12px;font-style:italic">"Raw, aggressive, and ceiling-less. Give him time and he could be the best on the grid."</div>
+                <div style="font-size:11px;color:rgba(255,255,255,.5);line-height:1.5;margin-bottom:12px;font-style:italic">"Raw, aggressive, and ceiling-less. Give them time and they could be the best on the grid."</div>
                 <div style="display:flex;gap:8px">
                   <button class="btn btn-sm" style="background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2)" onclick="UI.showDriverModal(${d.id})">View Profile</button>
                   ${!d.teamId?`<button class="btn btn-sm" style="background:#f59e0b;color:#000;border:none;font-weight:700" onclick="GameActions.signDriverOffseason(${d.id})">Sign Wonderkid →</button>`:'<span style="font-size:11px;color:rgba(255,255,255,.4);padding:4px 8px">Already signed</span>'}
@@ -5202,9 +5203,9 @@ const UI = {
           return `<div style="background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.3);border-radius:8px;padding:10px 12px;margin-top:4px">
             <div style="font-size:11px;font-weight:700;color:#f59e0b;margin-bottom:4px">🌟 Wonderkid in squad — facilities matter</div>
             <div style="font-size:11px;color:var(--tx2);line-height:1.5">Your facilities are <strong style="color:${facCol}">${facLabel} (${Math.round(fac)})</strong>. 
-            ${fac<65?`Low facilities are <strong>stunting ${wk.name}'s development</strong> and eroding his potential ceiling. Invest in facilities now.`
+            ${fac<65?`Low facilities are <strong>stunting ${wk.name}'s development</strong> and eroding their potential ceiling. Invest in facilities now.`
             :fac<80?`${wk.name} is developing adequately. Better facilities could unlock a breakthrough.`
-            :`${wk.name} has the best environment to reach his ceiling.`}</div>
+            :`${wk.name} has the best environment to reach their ceiling.`}</div>
           </div>`;
         })()}
 
@@ -5216,7 +5217,7 @@ const UI = {
 
         <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--tx3);margin:12px 0 6px">Optional — won't block season start</div>
 
-        ${g.season > (g.startSeason||g.season) || (g.pendingSponsors&&g.pendingSponsors.length>0) ? `
+        ${(g.pendingSponsors&&g.pendingSponsors.length>0) || (g.sponsors&&g.sponsors.length>0) ? `
         <div class="offseason-item">
           <div><div class="offseason-item-name">Sponsorship Review</div>
           <div class="offseason-item-sub">${g.sponsors?.length||0} active sponsors · ${formatMoney((g.sponsors||[]).reduce((s,sp)=>s+sp.value,0))} total${g.pendingSponsors?.length>0?' · '+g.pendingSponsors.length+' new offer(s)':''}</div></div>
@@ -5479,7 +5480,7 @@ const UI = {
             +'</div>'
             +'<div style="text-align:right">'
               +'<div style="font-size:13px;font-weight:700;color:rgba(255,255,255,.6)">'+team.name+'</div>'
-              +'<div style="font-size:11px;color:rgba(255,255,255,.35)">'+State.game.managerName+' · '+numSeasons+' season'+(numSeasons!==1?'s':'')+'</div>'
+              +'<div style="font-size:11px;color:rgba(255,255,255,.35)">'+escapeHtml(State.game.managerName)+' · '+numSeasons+' season'+(numSeasons!==1?'s':'')+'</div>'
             +'</div>'
           +'</div>'
           +'<div style="height:6px;background:rgba(255,255,255,.1);border-radius:3px;margin-bottom:6px">'
@@ -5795,10 +5796,9 @@ const UI = {
     `)}
 
     ${sec('💾','Saves & Multiple Dynasties',`
-      <p>You can maintain up to <strong>5 separate save slots</strong> simultaneously. Each slot is an independent dynasty with its own team, history, and legacy score.</p>
+      <p>You can maintain up to <strong>5 separate save slots</strong> simultaneously. Each slot is a completely independent dynasty — separate history, separate legacy score, separate everything.</p>
       <p>Saves are automatic — every meaningful action (race result, offseason completion, signing a driver) triggers an autosave. You can also manually save from the menu.</p>
-      <p>The landing page shows all your active saves with their tier, legacy score, and when you last played. Use the 🗑 button to delete a slot and free it for a new dynasty.</p>
-      ${tip('Legacy carries over', 'Legacy Score from previous saves contributes to your all-time manager tier. Starting a new dynasty doesn\'t erase your history — it adds to it.')}
+      <p>The landing page shows all your active saves with their tier, legacy score, and when you last played. Use the 🗑 button to delete a slot and start fresh.</p>
     `)}
     `;
 
@@ -6030,7 +6030,8 @@ const UI = {
     const opsB=35, engC=['mercedes','ferrari','redbull','audi','cadillac'].includes(team.id)?0:12;
     const staffC=Math.round(team.facilities*0.35+10);
     const qSpend=(g.quarterDev||[]).filter(q=>q.applied).reduce((s,q)=>s+(q.aero*6+q.reliability*4+q.engine*10),0);
-    const totalExp=driverSals+reserveSals+scoutCost2+opsB+engC+staffC+qSpend;
+    const offSpend=(()=>{ const rd=g._lastOffseasonDevResult; if(!rd) return 0; const b=rd.spent||{}; return (b.aero||0)*6+(b.engine||0)*8+(b.reliability||0)*4+(b.facilities||0)*3; })();
+    const totalExp=driverSals+reserveSals+scoutCost2+opsB+engC+staffC+qSpend+offSpend;
     const net=totalInc-totalExp;
     const netCol=net>15?'var(--grn)':net>0?'var(--amber)':'var(--red)';
 
@@ -6476,7 +6477,7 @@ const UI = {
             ${feed.map(item=>`<div style="display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid var(--bd);font-size:12px">
               <span style="flex-shrink:0;font-size:13px;margin-top:1px">${item.icon||'📋'}</span>
               <div style="flex:1;line-height:1.4;color:${typeColors[item.type]||'var(--tx)'}">
-                ${item.msg}
+                ${item.msg||item.text||''}
                 ${item.race!==undefined?`<span style="font-size:10px;color:var(--tx3);margin-left:5px">· Race ${item.race+1}</span>`:''}
               </div>
             </div>`).join('')}
@@ -6592,11 +6593,11 @@ const GameActions = {
       UI.toast('Set up your scouting department before starting','warning');
       UI.showView('scouting'); return;
     }
-    // Check reserve drivers
+    // Check reserve drivers (optional — just warn if missing)
     const reserves_check=State.getPlayerReserves();
-    if(reserves_check.length<2){
-      UI.toast('Sign at least 2 reserve drivers before starting','warning');
-      UI.showView('drivers'); return;
+    if(reserves_check.length<1){
+      UI.toast('No reserve drivers signed — if a race driver gets injured you\'ll have no cover','warning');
+      // Don't block — just warn
     }
     // Check winter budget allocated
     const bw=g.offseasonBudget||{};
@@ -6606,6 +6607,7 @@ const GameActions = {
       UI.showView('car'); return;
     }
     g.offseasonPending=false;
+    g._lastOffseasonDevResult = null; // clear R&D banner once season starts
     UI.renderDashboard();
     UI.showView('dashboard');
     UI.toast(`Season ${g.season} underway!`,'success');
@@ -6708,7 +6710,7 @@ const GameActions = {
     if(!g.quarterDev) return;
     const qd=g.quarterDev[qi];
     if(!qd || qd.applied){UI.toast('Already applied this quarter!','warning');return;}
-    const qBudget=Math.round(team.revenue*0.12);
+    const qBudget=Math.round(team.revenue*0.15);
     const cost=qd.aero*6+qd.reliability*4+qd.engine*10;
     if(cost>qBudget){UI.toast('Over quarterly budget!','error');return;}
     if(qd.aero===0&&qd.reliability===0&&qd.engine===0){UI.toast('No upgrades selected.','warning');return;}
@@ -7062,7 +7064,7 @@ window._wrTick = function() {
   if(WR.idx >= WR.events.length) {
     // Done — render results inside modal footer
     const isSprint=!!WR.isSprint;
-    document.getElementById('wr-lap-counter').textContent = 'Finished · ' + (isSprint?'17':race.laps) + ' laps';
+    document.getElementById('wr-lap-counter').textContent = 'Finished · ' + (isSprint ? (race.laps ? Math.round(race.laps*0.30) : 17) : race.laps) + ' laps';
     const tb = document.getElementById('wr-toggle'); if(tb) tb.disabled=true;
 
     const pids = State.getPlayerDrivers().map(function(d){return d.id;});
@@ -7248,6 +7250,7 @@ window._wrTick = function() {
     const skillNote = wetSkill >= 88 ? `🌧 Excellent wet weather driver — could hold on a lap or two longer.` :
                       wetSkill >= 78 ? `🌦 Decent in the wet — switch recommended.` :
                                        `⚠️ Struggles in these conditions — switch immediately.`;
+    const autoBoxSecsW = (State.game.autoBoxSecs !== undefined ? State.game.autoBoxSecs : 8);
     card.innerHTML =
       '<div style="font-size:10px;font-weight:700;letter-spacing:1px;color:#2563eb;margin-bottom:6px">L'+ev.lap+' · WEATHER CALL — '+(isFullWet?'Wets needed!':'Rain arriving!')+'</div>'
       +'<div style="font-size:13px;font-weight:800;margin-bottom:2px">⭐ '+ev.driverName+'</div>'
@@ -7261,7 +7264,6 @@ window._wrTick = function() {
     feed.appendChild(card);
     feed.scrollTop = feed.scrollHeight;
 
-    const autoBoxSecsW = (State.game.autoBoxSecs !== undefined ? State.game.autoBoxSecs : 8);
     let wdCountdown = autoBoxSecsW;
     if(autoBoxSecsW > 0) {
       const wdTick = setInterval(function(){
@@ -7535,7 +7537,7 @@ document.addEventListener('DOMContentLoaded', () => {
       gtag('event','new_game',{team_id:teamId,team_name:t?t.name:'?',start_year:startYear,difficulty:t?t.difficulty:'?'});
     }
     UI.showPage('game'); UI.showView('offseason');
-    UI.toast(`Welcome to ${State.getTeam(teamId).name}, ${managerName}!`,'success');
+    UI.toast(`Welcome to ${State.getTeam(teamId).name}, ${escapeHtml(managerName)}!`,'success');
   });
   UI.renderLanding();
 });
