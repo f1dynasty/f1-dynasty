@@ -6853,6 +6853,37 @@ const UI = {
         <div style="font-family:var(--fm);font-weight:800;color:var(--tx2);min-width:30px;text-align:right">${d.seasonPoints}pts</div>
       </div>`).join('');
 
+    // Final championship standings (top 5 constructors + top 5 drivers)
+    const finalConStr = State.getConstructorStandings().slice(0,5);
+    const finalDrvStr = State.getDriverStandings().slice(0,5);
+    const playerDriverIds = State.getPlayerDrivers().map(d=>d.id);
+    const standingsHtml = `
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
+        <div>
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--tx3);margin-bottom:6px">Constructors</div>
+          ${finalConStr.map((s,i)=>{
+            const mine = s.team.id === team.id;
+            return `<div style="display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid var(--bd);font-size:11px;font-weight:${mine?'800':'400'};background:${mine?'rgba(192,57,43,.04)':''}">
+              <span style="font-family:var(--fm);font-weight:700;color:${i===0?'var(--amber)':'var(--tx3)'};width:16px">${i+1}</span>
+              <div style="width:6px;height:6px;border-radius:50%;background:${s.team.color||'#888'};flex-shrink:0"></div>
+              <span style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.team.name.replace('Scuderia ','').replace(' F1 Team','').replace(' Racing','').replace('-AMG F1','')}</span>
+              <span style="font-family:var(--fm);font-weight:700;color:${mine?'var(--red)':'var(--tx)'}">${s.points}</span>
+            </div>`;
+          }).join('')}
+        </div>
+        <div>
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--tx3);margin-bottom:6px">Drivers</div>
+          ${finalDrvStr.map((s,i)=>{
+            const mine = playerDriverIds.includes(s.driver.id);
+            return `<div style="display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid var(--bd);font-size:11px;font-weight:${mine?'800':'400'};background:${mine?'rgba(192,57,43,.04)':''}">
+              <span style="font-family:var(--fm);font-weight:700;color:${i===0?'var(--amber)':'var(--tx3)'};width:16px">${i+1}</span>
+              <span style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.driver.name.split(' ').pop()}</span>
+              <span style="font-family:var(--fm);font-weight:700;color:${mine?'var(--red)':'var(--tx)'}">${s.driver.seasonPoints}</span>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>`;
+
     // Retirements this season
     const retRows = (champs.retirements||[]).map(r=>`
       <div style="font-size:12px;color:var(--tx2);padding:4px 0">👋 ${r.name}, age ${r.age} — ${r.reason}</div>`).join('');
@@ -6898,6 +6929,8 @@ const UI = {
           <div style="font-size:13px;font-weight:700;margin-top:2px">${bigGainText}</div></div>
         </div>` : ''}
 
+        ${standingsHtml}
+
         ${legacyGain > 0 ? `<div style="background:linear-gradient(135deg,var(--bg3),rgba(0,0,0,.2));border:1px solid ${tc}33;border-radius:8px;padding:10px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between">
           <div style="display:flex;align-items:center;gap:10px">
             <span style="font-size:20px">🏰</span>
@@ -6906,6 +6939,7 @@ const UI = {
           </div>
           <div style="font-size:20px;font-weight:900;color:${tc};font-family:var(--fm)">${legacyTotal.toLocaleString()}</div>
         </div>` : ''}
+
 
         ${(()=>{
           // Development-enriched driver cards
@@ -7254,6 +7288,7 @@ const UI = {
     }).join('');
 
     // Notable grid moves (departures + signings condensed)
+    const digestGrads = transfers.filter(t=>t.graduated);
     const gridMoveRows = [];
     allDepartures.forEach(t=>{
       const d = g2.drivers.find(x=>x.name===t.driverName);
@@ -7357,7 +7392,6 @@ const UI = {
 
     const retirements2=retirements;
     const retRows=retirements2.map(r=>tfRow(r.name,'Age '+r.age+' · '+r.reason+(r.championships>0?' · '+r.championships+'× champion':''),null,'',null)).join('');
-    const digestGrads=transfers.filter(t=>t.graduated);
     const gradRows=graduates.map(t=>{
       const d=State.game.drivers.find(x=>x.name===t.driverName);
       if(d?.isWonderkid) {
