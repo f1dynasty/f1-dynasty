@@ -23,7 +23,34 @@
   })();
 </script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>F1 Dynasty</title>
+<title>F1 Dynasty — Formula 1 Management Game</title>
+
+<!-- SEO -->
+<meta name="description" content="F1 Dynasty is a Formula 1 team management game. Build your dynasty, sign and develop drivers, upgrade your car, and race to the championship across multiple seasons.">
+<meta name="keywords" content="F1, Formula 1, management game, racing game, team manager, dynasty, championship, motorsport">
+<meta name="author" content="F1 Dynasty">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="F1 Dynasty — Formula 1 Management Game">
+<meta property="og:description" content="Build your F1 team from the ground up. Sign drivers, develop your car, and race to the championship across multiple seasons.">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f3ce.png">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="F1 Dynasty">
+<meta name="twitter:description" content="Formula 1 team management — build your dynasty, season by season.">
+
+<!-- Favicon -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏎️</text></svg>">
+<link rel="alternate icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏎️</text></svg>">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏎️</text></svg>">
+
+<!-- PWA / Mobile -->
+<meta name="theme-color" content="#C0012E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="F1 Dynasty">
 <style>
 :root{--bg:#f4f4f2;--bg2:#fff;--bg3:#ededeb;--bd:#e0e0dd;--tx:#1a1a1a;--tx2:#666;--tx3:#aaa;--red:#c0392b;--grn:#27ae60;--amber:#b8860b;--blu:#2980b9;--sh:rgba(0,0,0,.07);--ff:system-ui,sans-serif;--fm:'JetBrains Mono',ui-monospace,monospace}
 [data-theme="dark"]{--bg:#111;--bg2:#1a1a1a;--bg3:#222;--bd:#333;--tx:#f0f0ee;--tx2:#aaa;--tx3:#666;--sh:rgba(0,0,0,.4)}
@@ -87,11 +114,11 @@ input:focus,select:focus{border-color:var(--red)}
 }
 .land-left-inner{position:relative;z-index:1}
 .land-kicker{
-  font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;
+  font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
   color:var(--red);margin-bottom:20px;
-  display:flex;align-items:center;gap:8px;
+  display:flex;align-items:center;gap:10px;
 }
-.land-kicker::before{content:'';display:block;width:16px;height:2px;background:var(--red)}
+.land-kicker::before{content:'';display:block;width:20px;height:2px;background:var(--red)}
 .land-title{
   font-size:clamp(52px,9vw,76px);font-weight:900;line-height:1.0;
   color:#111;letter-spacing:-3px;margin-bottom:16px;
@@ -324,24 +351,26 @@ input:focus,select:focus{border-color:var(--red)}
 .dash-panels{display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:14px}
 @media(min-width:600px){.dash-panels{grid-template-columns:1fr 1fr}}
 /* Dashboard responsive layout */
-/* Mobile: Next Event → Results → Car Status */
+/* Mobile: Next Event → Quali → Results → Car Status */
 .dash-layout{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
 .dash-next-event{order:1}
-.dash-results{order:2;display:flex;flex-direction:column;gap:10px}
-.dash-car-status{order:3}
-/* Desktop: Next Event + Car Status side by side, Results full width below */
+.dash-quali-desktop{order:2;display:flex;flex-direction:column;gap:10px}
+.dash-results{order:3;display:flex;flex-direction:column;gap:10px}
+.dash-car-status{order:4}
+/* Desktop: Next Event + Car Status side by side, Quali grid full width, Results full width below */
 @media(min-width:600px){
-  .dash-layout{display:grid;grid-template-columns:1fr 1fr;grid-template-areas:"next car" "results results"}
+  .dash-layout{display:grid;grid-template-columns:1fr 1fr;grid-template-areas:"next car" "quali quali" "results results"}
   .dash-next-event{grid-area:next;order:0}
   .dash-car-status{grid-area:car;order:0}
+  .dash-quali-desktop{grid-area:quali;order:0}
   .dash-results{grid-area:results;order:0}
-}
-.panel{background:var(--bg2);border:1px solid var(--bd);border-radius:9px;padding:14px;box-shadow:0 2px 6px var(--sh)}
+}.panel{background:var(--bg2);border:1px solid var(--bd);border-radius:9px;padding:14px;box-shadow:0 2px 6px var(--sh)}
 .panel-title{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);margin-bottom:12px;padding-bottom:9px;border-bottom:1px solid var(--bd)}
 .action-btns{display:flex;flex-direction:column;gap:7px}
 .race-name-big{font-size:15px;font-weight:800;color:var(--tx);margin-bottom:2px}
 .race-sub{font-size:12px;color:var(--tx2);margin-bottom:10px}
 .quali-tag{display:inline-block;background:#eafaf1;color:var(--grn);font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;margin-bottom:10px}
+@media(min-width:600px){.quali-grid-cols{grid-template-columns:1fr 1fr!important}}
 
 /* ── DEV OPTIONS ── */
 .dev-list{display:flex;flex-direction:column;gap:5px}
@@ -901,10 +930,6 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
               </div>
             </details>
           </div>
-          <div id="dash-quali-panel" class="result-panel hidden" style="margin-bottom:10px">
-            <div class="panel-title" style="border-bottom:1px solid var(--bd);padding-bottom:10px;margin-bottom:12px">Qualifying Grid</div>
-            <div id="dash-quali-content"></div>
-          </div>
           <div id="dash-news" style="margin-top:12px;border-top:1px solid var(--bd);padding-top:10px"></div>
         </div>
 
@@ -912,6 +937,12 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
           <div class="panel-title">Car Status</div>
           <div id="dash-car-summary"></div>
           <a href="javascript:void(0)" onclick="UI.showView('car')" class="btn btn-ghost" style="margin-top:10px;width:100%;text-align:center;display:block">Manage Development →</a>
+        </div>
+        <div class="dash-quali-desktop">
+          <div id="dash-quali-panel" class="result-panel hidden">
+            <div class="panel-title" style="border-bottom:1px solid var(--bd);padding-bottom:10px;margin-bottom:12px">Qualifying Grid</div>
+            <div id="dash-quali-content"></div>
+          </div>
         </div>
         <div class="dash-results">
           <div id="dash-last-race" class="hidden"></div>
@@ -1701,6 +1732,32 @@ const Sim = {
 
     events.sort((a,b)=>a.lap-b.lap);
 
+    // Post-sort: fix any direction text mismatches from DNF renumbering
+    const _spLastPos = {};
+    events.forEach(ev => {
+      if(ev.type !== 'overtake' || !ev.text || ev.text[0] !== '\u2B50') return;
+      const pm = ev.text.match(/P(\d+)/);
+      if(!pm) return;
+      const evPos = parseInt(pm[1]);
+      const finisherIds = results.filter(r=>r.teamId===ptid&&!r.dnf).map(r=>r.driverId);
+      const mid = finisherIds.find(id => {
+        const d = results.find(x => x.driverId === id);
+        return d && ev.text.indexOf(d.driverName) !== -1;
+      });
+      if(!mid) return;
+      if(_spLastPos[mid] === undefined) { _spLastPos[mid] = evPos; return; }
+      const prev = _spLastPos[mid];
+      const gained = prev - evPos;
+      const d = results.find(x => x.driverId === mid);
+      const nm = d ? d.driverName : '';
+      if(gained > 0 && ev.text.indexOf('drops') !== -1) {
+        ev.text = '\u2B50 ' + nm + ' moves up to P' + evPos + '!';
+      } else if(gained < 0 && (ev.text.indexOf('moves up') !== -1 || ev.text.indexOf('up to P') !== -1)) {
+        ev.text = '\u2B50 ' + nm + ' drops to P' + evPos + '.';
+      }
+      _spLastPos[mid] = evPos;
+    });
+
     // Final — lock to real positions
     results.forEach(r=>{ livePos[r.driverId]=r.position||null; });
     const finalSnap=snapPos();
@@ -1709,6 +1766,7 @@ const Sim = {
     if(finishers[2]) events.push({lap:laps,type:'finish',text:`P3: ${finishers[2].driverName}`, driverPositions:finalSnap});
     finishers.forEach(r=>{if(r.teamId===ptid&&r.position>3) events.push({lap:laps,type:'finish',text:`⭐ ${r.driverName} finishes P${r.position} — ${r.points}pts`, driverPositions:finalSnap});});
     race.sprintDone=true; race.sprintResult=results; race.sprintLapEvents=events;
+    State.game.lastRaceResult={race:{...race, isSprint:true, name: race.name + ' Sprint'}, results};
     return results;
   },
   simSprintQualifying(race) {
@@ -2329,6 +2387,41 @@ const Sim = {
 
     // Sort by lap
     events.sort((a,b)=>a.lap-b.lap);
+
+    // Post-sort: correct any player-driver overtake events where direction text
+    // contradicts the actual position change (interpolation oscillation artifact).
+    // Track from first seen position for each driver, not driverStart.
+    const _lastPPos = {};
+    events.forEach(ev => {
+      if(ev.type !== 'overtake' || !ev.text || ev.text[0] !== '\u2B50') return;
+      const pm = ev.text.match(/P(\d+)/);
+      if(!pm) return;
+      const evPos = parseInt(pm[1]);
+      const mid = playerIds.find(id => {
+        const d = results.find(x => x.driverId === id);
+        return d && ev.text.indexOf(d.driverName) !== -1;
+      });
+      if(!mid) return;
+      if(_lastPPos[mid] === undefined) {
+        // First event for this driver — just record, don't correct
+        _lastPPos[mid] = evPos;
+        return;
+      }
+      const prev = _lastPPos[mid];
+      const gained = prev - evPos; // positive = position number got smaller = gained
+      const d = results.find(x => x.driverId === mid);
+      const nm = d ? d.driverName : '';
+      if(gained > 0 && ev.text.indexOf('drops') !== -1) {
+        // Text says drop but position improved — fix to "moves up"
+        const ex = evPos <= 1 ? ' P1!' : evPos <= 3 ? ' ' : evPos <= 6 ? ' ' : '';
+        ev.text = '\u2B50 ' + nm + ' moves up to P' + evPos + '!' + ex;
+      } else if(gained < 0 && (ev.text.indexOf('moves up') !== -1 || ev.text.indexOf('up to P') !== -1)) {
+        // Text says gain but position worsened — fix to "drops"
+        ev.text = '\u2B50 ' + nm + ' drops to P' + evPos + ' \u2014 under pressure.';
+      }
+      _lastPPos[mid] = evPos;
+    });
+
     return events;
   },
 
@@ -2368,113 +2461,171 @@ const Sim = {
   },
 
   generateRivalNews(race, results) {
-    // Fires after each race — generates world news about rival teams/drivers
     const g = State.game;
     if(!g.newsFeed) g.newsFeed = [];
     const ptid = g.playerTeamId;
-    const raceN = g.raceIndex; // already incremented
+    const raceN = g.raceIndex;
 
-    // Championship context
     const drvStandings = State.getDriverStandings();
     const conStandings = State.getConstructorStandings();
     const leader = drvStandings[0]?.driver;
+    const p2Driver = drvStandings[1]?.driver;
     const conLeader = conStandings[0]?.team;
-
-    // Finishers sorted
     const finishers = (results||[]).filter(r=>!r.dnf).sort((a,b)=>a.position-b.position);
     const winner = finishers[0];
+    const p2 = finishers[1];
+    const p3 = finishers[2];
     const dnfs = (results||[]).filter(r=>r.dnf);
+    const totalRaces = g.calendar.length;
+    const pick = arr => arr[Math.floor(Math.random()*arr.length)];
 
     const push = (msg, type='rival', icon='📰') => {
       g.newsFeed.unshift({msg, type, icon, race:raceN, ts:Date.now()});
     };
 
-    // 1. Championship leader narrative (every ~3 races)
-    if(leader && leader.teamId !== ptid && raceN % 3 === 0) {
+    // ── 1. Race winner narrative (every race, non-player winner) ──
+    if(winner && winner.teamId !== ptid) {
+      const wTeam = State.getTeam(winner.teamId);
+      const wConPos = conStandings.findIndex(s=>s.team.id===winner.teamId)+1;
+      const wDrvPos = drvStandings.findIndex(s=>s.driver.id===winner.driverId)+1;
+      if(wConPos >= 5) {
+        push(pick([
+          `Shock result at ${race.location}: <strong>${winner.driverName}</strong> wins from P${winner.startPos||'?'} — ${wTeam?.name||winner.teamName} celebrates a stunning upset.`,
+          `<strong>${winner.driverName}</strong> delivers ${wTeam?.name||winner.teamName}'s best result of the season with a surprise win at ${race.location}.`,
+        ]), 'rival', '😮');
+      } else if(wDrvPos === 1) {
+        push(pick([
+          `<strong>${winner.driverName}</strong> extends the championship lead with another dominant win at ${race.location}.`,
+          `Another win for <strong>${winner.driverName}</strong> — the championship looks increasingly like a one-horse race.`,
+          `<strong>${winner.driverName}</strong> takes ${race.location}, putting the championship gap to ${(drvStandings[0]?.driver?.seasonPoints||0)-(drvStandings[1]?.driver?.seasonPoints||0)}pts.`,
+        ]), 'rival', '🏆');
+      } else if(wDrvPos <= 3) {
+        push(pick([
+          `<strong>${winner.driverName}</strong> strikes back at ${race.location} — this championship fight is far from over.`,
+          `A timely win for <strong>${winner.driverName}</strong> at ${race.location} closes the gap at the top.`,
+        ]), 'rival', '⚔️');
+      } else {
+        push(pick([
+          `<strong>${winner.driverName}</strong> takes victory at ${race.location} — a deserved reward after a consistent run of results.`,
+          `<strong>${winner.driverName}</strong> and ${wTeam?.name||winner.teamName} celebrate a well-earned win at ${race.location}.`,
+        ]), 'rival', '🏁');
+      }
+    }
+
+    // ── 2. Championship battle (varies by gap and stage of season) ──
+    if(leader && leader.teamId !== ptid && Math.random() < 0.5) {
       const leadPts = drvStandings[0].driver.seasonPoints;
       const p2Pts = drvStandings[1]?.driver?.seasonPoints || 0;
       const gap = leadPts - p2Pts;
-      if(gap > 40) {
-        push(`<strong>${leader.name}</strong> is pulling away in the Drivers' Championship — ${gap}pts clear of the field. Looks dominant.`, 'rival', '🏆');
-      } else if(gap < 10 && gap >= 0) {
-        const p2 = drvStandings[1]?.driver;
-        push(`Championship battle intensifying: <strong>${leader.name}</strong> leads by just ${gap}pts over ${p2?.name||'P2'}. Every point counts.`, 'rival', '⚔️');
+      const seasonFrac = raceN / totalRaces;
+      if(gap > 60 && seasonFrac > 0.4) {
+        push(pick([
+          `<strong>${leader.name}</strong> is in a class of their own — ${gap}pts clear with ${totalRaces-raceN} races left. The championship may already be decided.`,
+          `The maths is looking bleak for the chasing pack. <strong>${leader.name}</strong> leads by ${gap}pts.`,
+        ]), 'rival', '🏆');
+      } else if(gap <= 15 && seasonFrac > 0.5) {
+        push(pick([
+          `Championship showdown: <strong>${leader.name}</strong> leads <strong>${p2Driver?.name||'P2'}</strong> by just ${gap}pts. Nerves building in both camps.`,
+          `It's knife-edge at the top — <strong>${leader.name}</strong> and <strong>${p2Driver?.name||'P2'}</strong> separated by just ${gap} points.`,
+          `Pressure mounting on <strong>${leader.name}</strong> as <strong>${p2Driver?.name||'P2'}</strong> closes to within ${gap}pts.`,
+        ]), 'rival', '⚔️');
+      } else if(gap === 0) {
+        push(`<strong>${leader.name}</strong> and <strong>${p2Driver?.name||'P2'}</strong> are level on points — a championship thriller is developing.`, 'rival', '🔥');
       }
     }
 
-    // 2. Rival team form story (surprise result or slump)
-    if(winner && winner.teamId !== ptid) {
-      const winTeam = State.getTeam(winner.teamId);
-      const winTeamPos = conStandings.findIndex(s=>s.team.id===winner.teamId)+1;
-      // Surprise win — low-ranked team wins
-      if(winTeamPos >= 4 && winner.teamId !== ptid) {
-        push(`Shock result: <strong>${winner.driverName}</strong> (${winTeam?.name||winner.teamName}) takes a surprise win at ${race.location}. Grid order scrambled.`, 'rival', '😮');
-      }
-    }
-
-    // 3. Notable DNF story — top driver DNF
+    // ── 3. Notable DNFs ──
     dnfs.forEach(r => {
       if(r.teamId === ptid) return;
       const d = State.getDriver(r.driverId);
       if(!d) return;
       const dPos = drvStandings.findIndex(s=>s.driver.id===d.id)+1;
+      const dnfReasons = ['mechanical failure', 'collision damage', 'brake failure', 'power unit failure', 'hydraulics issue', 'gearbox problem', 'suspension failure'];
+      const reason = pick(dnfReasons);
       if(dPos <= 3) {
-        // Championship contender DNFs — big story
-        const dnfReasons = ['mechanical failure', 'collision damage', 'brake issue', 'power unit failure'];
-        const reason = dnfReasons[Math.floor(Math.random()*dnfReasons.length)];
-        push(`<strong>${r.driverName}</strong> retires from ${race.location} with ${reason} — a costly blow to their championship campaign.`, 'rival', '💥');
+        push(pick([
+          `<strong>${r.driverName}</strong> retires from ${race.location} with ${reason} — a potentially championship-defining blow.`,
+          `Disaster for <strong>${r.driverName}</strong> at ${race.location}: ${reason} ends their race, handing rivals a gift.`,
+        ]), 'rival', '💥');
+      } else if(dPos <= 6 && Math.random() < 0.5) {
+        push(`<strong>${r.driverName}</strong> out of ${race.location} with ${reason}. Points haemorrhaging at a critical time.`, 'rival', '💥');
       }
     });
 
-    // 4. Contract / transfer rumour (low frequency, mid-season only)
-    if(raceN >= 6 && raceN <= g.calendar.length - 4 && Math.random() < 0.22) {
-      // Pick a driver not on the player team with expiring contract
-      const rumourDrivers = g.drivers.filter(d=>d.teamId&&d.teamId!==ptid&&!d.retired&&!d.isReserve&&d.contract<=1&&d.rating>=78);
+    // ── 4. Podium stories ──
+    if(p2 && p2.teamId !== ptid && Math.random() < 0.35) {
+      push(pick([
+        `<strong>${p2.driverName}</strong> bags a crucial P2 at ${race.location} — keeping the pressure on at the front.`,
+        `Solid points for <strong>${p2.driverName}</strong> in ${race.location} — podiums matter when the championship is this tight.`,
+      ]), 'rival', '🥈');
+    }
+
+    // ── 5. Transfer rumours (mid-season, expiring contracts) ──
+    if(raceN >= 5 && raceN <= totalRaces - 3 && Math.random() < 0.30) {
+      const rumourDrivers = g.drivers.filter(d=>d.teamId&&d.teamId!==ptid&&!d.retired&&!d.isReserve&&d.contract<=1&&d.rating>=76);
       if(rumourDrivers.length > 0) {
-        const d = rumourDrivers[Math.floor(Math.random()*rumourDrivers.length)];
+        const d = pick(rumourDrivers);
         const t = State.getTeam(d.teamId);
-        const rumours = [
+        push(pick([
           `Transfer buzz: <strong>${d.name}</strong> (${t?.name||d.teamId}) is out of contract at season end. Multiple teams reportedly interested.`,
-          `<strong>${d.name}</strong>'s future at ${t?.name||d.teamId} is uncertain — contract talks reportedly stalled.`,
-          `Sources suggest <strong>${d.name}</strong> is being linked with a move. His deal expires after this season.`,
-        ];
-        push(rumours[Math.floor(Math.random()*rumours.length)], 'transfers', '🔀');
+          `<strong>${d.name}</strong>'s future at ${t?.name||d.teamId} is uncertain — contract talks have reportedly stalled heading into the second half of the season.`,
+          `Sources suggest <strong>${d.name}</strong> is being linked with a move away from ${t?.name||d.teamId}. His deal expires after this season.`,
+          `The paddock is buzzing about <strong>${d.name}</strong>'s contract situation. Agent confirms "all options are open."`,
+          `${t?.name||d.teamId} yet to confirm <strong>${d.name}</strong> for next year. Rival teams circling.`,
+        ]), 'transfers', '🔀');
       }
     }
 
-    // 5. Rival team development / regulation story (occasional)
-    if(raceN % 5 === 0 && Math.random() < 0.5) {
-      const topTeams = conStandings.slice(0,3).map(s=>s.team).filter(t=>t.id!==ptid);
-      if(topTeams.length) {
-        const t = topTeams[Math.floor(Math.random()*topTeams.length)];
-        const devLines = [
-          `<strong>${t.name}</strong> reportedly running a significant upgrade package from next round — engineers confident in the new spec.`,
-          `Technical sources: <strong>${t.name}</strong> have found performance through a new floor concept. Rivals watching closely.`,
-          `<strong>${t.name}</strong> focused on reliability after recent issues. Short-term pace sacrifice for long-term points.`,
-        ];
-        push(devLines[Math.floor(Math.random()*devLines.length)], 'rival', '🔧');
+    // ── 6. Technical / upgrade stories ──
+    if(raceN % 4 === 0 && Math.random() < 0.6) {
+      const nonPlayerTeams = conStandings.map(s=>s.team).filter(t=>t.id!==ptid);
+      if(nonPlayerTeams.length) {
+        const t = pick(nonPlayerTeams.slice(0, 5));
+        push(pick([
+          `<strong>${t.name}</strong> reportedly running a significant upgrade package from next round.`,
+          `Technical sources: <strong>${t.name}</strong> found performance through a revised floor concept. Rivals watching closely.`,
+          `<strong>${t.name}</strong> introducing a new front wing spec next round. Performance gain expected to be 0.2–0.4s per lap.`,
+          `Rumours of an engine upgrade for <strong>${t.name}</strong> — could reshuffle the midfield order.`,
+          `<strong>${t.name}</strong> focusing development resources on ${Math.random()<0.5?'qualifying trim':'race pace'} after recent struggles.`,
+        ]), 'rival', '🔧');
       }
     }
 
-    // 6. Sponsor pressure — if player team finishes bottom 5 in constructors 3+ races in a row
+    // ── 7. Team form / narrative stories ──
+    if(Math.random() < 0.25) {
+      const streakTeams = conStandings.filter(s=>s.team.id!==ptid);
+      if(streakTeams.length) {
+        const s = pick(streakTeams.slice(0,4));
+        const t = s.team;
+        push(pick([
+          `<strong>${t.name}</strong> in strong form lately — the factory is humming and the drivers are confident.`,
+          `Tensions reportedly building inside <strong>${t.name}</strong> after a difficult run of results. Internal review underway.`,
+          `<strong>${t.name}</strong> principal defends strategy calls after criticism following ${race.location}: "We executed our plan perfectly."`,
+          `Morale high at <strong>${t.name}</strong> following recent results. Looking like a genuine championship contender.`,
+          `<strong>${t.name}</strong> struggling with tyre degradation under the new regulations — engineers working overnight to find answers.`,
+        ]), 'rival', pick(['📊','💬','📢','🏎️']));
+      }
+    }
+
+    // ── 8. Sponsor pressure on player team ──
     if(!g._bottomFinishStreak) g._bottomFinishStreak = 0;
     const playerConPos = conStandings.findIndex(s=>s.team.id===ptid)+1;
     if(playerConPos >= 7) {
       g._bottomFinishStreak++;
       if(g._bottomFinishStreak === 3) {
         const sponsor = (g.sponsors||[])[0];
-        if(sponsor) push(`<strong>${sponsor.name}</strong> expressing concern over recent results. They expect improvement in the coming rounds.`, 'your-team', '⚠️');
+        if(sponsor) push(`<strong>${sponsor.name}</strong> expressing concern over recent results. Expecting improvement in the coming rounds or they may reassess their investment.`, 'your-team', '⚠️');
       }
     } else {
       if(g._bottomFinishStreak >= 3) {
         const sponsor = (g.sponsors||[])[0];
-        if(sponsor) push(`<strong>${sponsor.name}</strong> pleased with the recent turnaround — relationship back on solid footing.`, 'your-team', '✅');
+        if(sponsor) push(`<strong>${sponsor.name}</strong> pleased with the recent turnaround — the partnership is back on solid footing.`, 'your-team', '✅');
       }
       g._bottomFinishStreak = 0;
     }
 
-    // Trim feed
-    if(g.newsFeed.length > 60) g.newsFeed.length = 60;
+    // Trim feed to 80 items
+    if(g.newsFeed.length > 80) g.newsFeed.length = 80;
   },
 
   processSeasonEnd() {
@@ -3209,7 +3360,9 @@ const Sim = {
       } else {
         if(!race.qualiDone) Sim.simQualifying(race);
       }
-      results.push(Sim.simRace(race));
+      const r=Sim.simRace(race);
+      results.push(r);
+      Sim.generateRivalNews(race, race.raceResult||[]);
       g.raceIndex++;
     }
     return results;
@@ -4100,12 +4253,13 @@ const UI = {
         lrPanel.innerHTML = `
           <div class="panel">
             <div style="display:flex;align-items:center;gap:0;margin-bottom:10px;border-bottom:1px solid var(--bd);padding-bottom:0">
-              <button onclick="UI._dashTab('race')" id="dtab-race" style="background:none;border:none;border-bottom:2px solid var(--red);font-size:12px;font-weight:700;color:var(--tx);padding:6px 12px 8px;cursor:pointer;margin-bottom:-1px">Last Race</button>
+              <button onclick="UI._dashTab('race')" id="dtab-race" style="background:none;border:none;border-bottom:2px solid var(--red);font-size:12px;font-weight:700;color:var(--tx);padding:6px 12px 8px;cursor:pointer;margin-bottom:-1px">${lr.race.isSprint ? 'Last Sprint' : 'Last Race'}</button>
               <button onclick="UI._dashTab('constructors')" id="dtab-constructors" style="background:none;border:none;border-bottom:2px solid transparent;font-size:12px;font-weight:600;color:var(--tx3);padding:6px 12px 8px;cursor:pointer;margin-bottom:-1px">Constructors</button>
               <button onclick="UI._dashTab('drivers')" id="dtab-drivers" style="background:none;border:none;border-bottom:2px solid transparent;font-size:12px;font-weight:600;color:var(--tx3);padding:6px 12px 8px;cursor:pointer;margin-bottom:-1px">Drivers</button>
             </div>
 
             <div id="dtab-race-content">
+              <div style="font-size:11px;color:var(--tx3);margin-bottom:8px">${lr.race.name}${lr.race.isSprint ? ' · <span style="color:var(--amber);font-weight:700">Sprint Race</span>' : ''}</div>
               ${myResults.length ? `<div style="margin-bottom:10px;padding:8px 10px;background:rgba(192,57,43,.06);border-radius:7px;border-left:3px solid var(--red)">
                 <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--red);margin-bottom:5px">Your Drivers</div>
                 ${myResults.map(r=>`<div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;padding:2px 0">
@@ -4211,18 +4365,22 @@ const UI = {
         qPanel.classList.remove('hidden');
         const pids = State.getPlayerDrivers().map(d=>d.id);
         const pole = gridResult[0];
+        const top10 = gridResult.slice(0,10);
+        const bot10 = gridResult.slice(10);
+        const mkRows = rows => rows.map(r=>`<tr class="${pids.includes(r.driverId)?'my-row':''}">
+          <td><span class="pos-cell p${r.position}">${r.position}</span></td>
+          <td class="name-cell">${r.driverName}</td><td class="muted-cell">${r.teamName}</td>
+        </tr>`).join('');
         document.getElementById('dash-quali-content').innerHTML = `
           <div class="quali-pole-hero" style="margin-bottom:10px">
             <div><div class="quali-pole-label">${showingSprintQuali?'Sprint Pole':'Pole Position'}</div>
             <div class="quali-pole-name">${pole?.driverName||'?'}</div>
             <div class="quali-pole-team">${pole?.teamName||''}</div></div>
           </div>
-          <div class="tbl-scroll"><table><thead><tr><th>#</th><th>Driver</th><th>Team</th></tr></thead><tbody>
-          ${gridResult.map(r=>`<tr class="${pids.includes(r.driverId)?'my-row':''}">
-            <td><span class="pos-cell p${r.position}">${r.position}</span></td>
-            <td class="name-cell">${r.driverName}</td><td class="muted-cell">${r.teamName}</td>
-          </tr>`).join('')}
-          </tbody></table></div>`;
+          <div style="display:grid;grid-template-columns:1fr;gap:12px" class="quali-grid-cols">
+            <div class="tbl-scroll"><table style="width:100%"><thead><tr><th>#</th><th>Driver</th><th>Team</th></tr></thead><tbody>${mkRows(top10)}</tbody></table></div>
+            ${bot10.length?`<div class="tbl-scroll"><table style="width:100%"><thead><tr><th>#</th><th>Driver</th><th>Team</th></tr></thead><tbody>${mkRows(bot10)}</tbody></table></div>`:''}
+          </div>`;
       } else {
         qPanel.classList.add('hidden');
       }
@@ -7249,13 +7407,42 @@ const UI = {
       ||'<div style="color:var(--tx3);font-size:13px;padding:8px 0">No transfers this offseason.</div>';
 
     const pd=State.getPlayerDrivers();
+    const reserves=State.getPlayerReserves();
     document.getElementById('offseason-team-actions').innerHTML=
-      `<div style="margin-bottom:10px;font-size:13px;color:var(--tx2)">Revenue: <strong style="color:var(--amber)">${formatMoney(team.revenue)}</strong></div>
+      `<div style="margin-bottom:12px;font-size:13px;color:var(--tx2)">Revenue: <strong style="color:var(--amber)">${formatMoney(team.revenue)}</strong></div>
+       <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--tx3);margin-bottom:8px">Race Drivers</div>
        ${pd.map(d=>{
          const mc=d.morale>=75?'var(--grn)':d.morale>=50?'var(--amber)':'var(--red)';
-         return `<div class="os-contract-row"><div><div class="oc-name">${d.name}</div><div class="oc-meta">${Math.round(d.rating)} OVR · ${formatMoney(d.salary)}/yr · <span style="color:${mc}">Morale ${d.morale}</span></div></div><span class="${d.contract>0?'tag-ok':'tag-exp'}">${d.contract>0?d.contract+'yr left':'Expired'}</span></div>`;
+         const expiring = d.contract <= 1;
+         return '<div style="padding:10px 12px;background:var(--bg3);border-radius:8px;margin-bottom:8px;border:1px solid '+(expiring?'var(--amber)':'var(--bd)')+'">'
+           +'<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">'
+           +'<div><div style="font-size:13px;font-weight:800">'+d.name+'</div>'
+           +'<div style="font-size:11px;color:var(--tx3);margin-top:2px">'+Math.round(d.rating)+' OVR · '+formatMoney(d.salary)+'/yr · <span style="color:'+mc+'">Morale '+d.morale+'</span></div></div>'
+           +'<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:'+(expiring?'rgba(245,158,11,.15)':'rgba(34,197,94,.1)')+';color:'+(expiring?'var(--amber)':'var(--grn)')+'">'+( d.contract>0 ? d.contract+'yr left' : 'Expired')+'</span>'
+           +'</div>'
+           +'<div style="display:flex;gap:6px;flex-wrap:wrap">'
+           +'<button class="btn btn-outline btn-sm" onclick="GameActions.extendContract('+d.id+');UI.renderOffseason(window._recapTransfers,window._recapChamps?.driverChamp,window._recapChamps?.constructorChamp,window._recapChamps?.retirements||[])">📝 Extend</button>'
+           +'<button class="btn btn-ghost btn-sm" onclick="UI.showDriverModal('+d.id+')">Profile</button>'
+           +'<button class="btn btn-danger btn-sm" onclick="GameActions.releaseDriver('+d.id+');UI.renderOffseason(window._recapTransfers,window._recapChamps?.driverChamp,window._recapChamps?.constructorChamp,window._recapChamps?.retirements||[])">Release</button>'
+           +'</div>'
+           +'</div>';
        }).join('')}
-       ${pd.length<2?'<div style="color:var(--red);font-size:13px;margin-top:8px">⚠ Need more drivers!</div>':''}`;
+       ${reserves.length ? '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--tx3);margin:12px 0 8px">Reserve Drivers</div>'
+         + reserves.map(d=>{
+           return '<div style="padding:10px 12px;background:var(--bg3);border-radius:8px;margin-bottom:8px;border:1px solid var(--bd)">'
+             +'<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">'
+             +'<div><div style="font-size:13px;font-weight:800">'+d.name+' <span style="font-size:9px;background:rgba(99,102,241,.2);color:#818cf8;padding:1px 6px;border-radius:8px;font-weight:700">RSV</span></div>'
+             +'<div style="font-size:11px;color:var(--tx3);margin-top:2px">'+Math.round(d.rating)+' OVR · Pot '+Math.round(d.potential||80)+' · '+formatMoney(d.salary)+'/yr</div></div>'
+             +'<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:rgba(156,163,175,.1);color:var(--tx3)">'+( d.contract>0 ? d.contract+'yr' : 'Expired')+'</span>'
+             +'</div>'
+             +'<div style="display:flex;gap:6px;flex-wrap:wrap">'
+             +'<button class="btn btn-success btn-sm" onclick="GameActions.promoteReserve('+d.id+');UI.renderOffseason(window._recapTransfers,window._recapChamps?.driverChamp,window._recapChamps?.constructorChamp,window._recapChamps?.retirements||[])">⬆️ Promote to Race Seat</button>'
+             +'<button class="btn btn-ghost btn-sm" onclick="UI.showDriverModal('+d.id+')">Profile</button>'
+             +'<button class="btn btn-danger btn-sm" onclick="GameActions.releaseDriver('+d.id+');UI.renderOffseason(window._recapTransfers,window._recapChamps?.driverChamp,window._recapChamps?.constructorChamp,window._recapChamps?.retirements||[])">Release</button>'
+             +'</div>'
+             +'</div>';
+         }).join('') : ''}
+       ${pd.length<2?'<div style="color:var(--red);font-size:13px;margin-top:8px;padding:10px;background:rgba(192,57,43,.08);border-radius:8px;border:1px solid var(--red)">⚠️ You need at least 2 race drivers to start the next season. Sign a free agent from the Transfers section below.</div>':''}`;
     this.showPage('offseason');
   },
 
