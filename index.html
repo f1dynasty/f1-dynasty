@@ -139,7 +139,9 @@ input:focus,select:focus{border-color:var(--red)}
   display:flex;flex-direction:column;gap:0;position:relative;overflow:hidden;
 }
 .land-tcard:hover{border-color:#bbb;box-shadow:0 2px 8px rgba(0,0,0,.07)}
-.land-tcard.selected{border-color:#111;background:#fafafa;box-shadow:0 2px 12px rgba(0,0,0,.1)}
+.land-tcard.selected{border-color:#16a34a;border-width:2px;background:#f0fdf4;box-shadow:0 0 0 3px rgba(22,163,74,.15)}
+.land-tcard-check{display:none;position:absolute;top:6px;right:6px;background:#16a34a;color:#fff;font-size:9px;font-weight:800;padding:2px 6px;border-radius:10px;letter-spacing:.3px}
+.land-tcard.selected .land-tcard-check{display:block}
 .land-tcard-accent{position:absolute;top:0;left:0;right:0;height:3px}
 .land-tcard-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:5px}
 .land-tcard-name{font-size:12px;font-weight:800;color:#111;line-height:1.3;flex:1;margin-right:4px}
@@ -173,9 +175,11 @@ input:focus,select:focus{border-color:var(--red)}
 .form-group input,.form-group select{width:100%}
 .team-pick-grid{display:grid;grid-template-columns:1fr;gap:8px}
 @media(min-width:480px){.team-pick-grid{grid-template-columns:1fr 1fr}}
-.tpcard{background:var(--bg2);border:2px solid var(--bd);border-radius:9px;padding:13px;cursor:pointer;transition:all .15s}
+.tpcard{background:var(--bg2);border:2px solid var(--bd);border-radius:9px;padding:13px;cursor:pointer;transition:all .15s;position:relative}
 .tpcard:hover{border-color:var(--red);transform:translateY(-1px);box-shadow:0 4px 12px rgba(192,57,43,.12)}
-.tpcard.selected{border-color:var(--red);background:rgba(192,57,43,.06);box-shadow:0 0 0 3px rgba(192,57,43,.12)}
+.tpcard.selected{border-color:#16a34a;background:rgba(22,163,74,.05);box-shadow:0 0 0 3px rgba(22,163,74,.15);transform:none}
+.tpcard-check{display:none;position:absolute;top:8px;right:8px;background:#16a34a;color:#fff;font-size:9px;font-weight:800;padding:2px 7px;border-radius:10px;letter-spacing:.3px}
+.tpcard.selected .tpcard-check{display:block}
 .tpcard-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:3px}
 .tpcard-name{font-size:14px;font-weight:800}
 .diff-tag{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;flex-shrink:0}
@@ -1066,155 +1070,155 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
 const DATA = {
   firstNames: ["Luca","Marco","Matteo","Lorenzo","Giulio","Enzo","Fabio","Dante","Nico","Felix","Tobias","Jan","Lukas","Moritz","Leon","Finn","Erik","Viktor","Jonas","Lars","Henrik","Kai","Rafael","Diego","Gabriel","Mateo","Santiago","Emilio","Ricardo","Roberto","Eduardo","Miguel","Alejandro","Rodrigo","Andrés","Thiago","Sean","Ryan","Connor","Brendan","Patrick","Callum","Jamie","Scott","Oliver","Harry","Jack","Tom","Ben","Josh","Ethan","Arjun","Jehan","Kush","Ryo","Ren","Sota","Haruki","Daiki","Sho","Kenji","Théo","Hugo","Baptiste","Clément","Robin","Julien","Antoine","Florian","Maxime","Adrien","Romain","Sven","Pieter","Bram","Joris","Daan","Tomas","Pavel","Andrei","Nicolás","Iñaki","Dario","Simone","Gianluca","Andrea","Thibault","Cédric","Alexis","Nuno","Diogo","Afonso","Tarso","Vitor","Takeshi","Naoki","Hiroshi","Yusuke","Kohei","Shun","Ollie","Archie","Rory","Alastair","Cian","Declan","Piers","Rupert","Hamish","Alistair","Stefan","Markus","Philipp","Hannes","Dominik","Bastian"],
   lastNames: ["Ferretti","Colombo","Moretti","Romano","Conti","Esposito","De Luca","Mancini","Brunetti","Caruso","Ricci","Fabbri","Galli","Cattaneo","Bernardi","Mueller","Hoffmann","Brandt","Kessler","Ritter","Bergmann","Hartmann","Krüger","Werner","Bauer","Schulze","Lindqvist","Eriksson","Björk","Halvorsen","Andersen","Christensen","Strand","Virtanen","Mäkinen","Korhonen","Gonzalez","Medina","Reyes","Herrera","Delgado","Vega","Rios","Castillo","Navarro","Palomino","Gutiérrez","Vargas","Montoya","Cardenas","Ferreira","Alves","Costa","Neves","Barros","Pinheiro","Nogueira","Teixeira","Murphy","Walsh","Callaghan","Doyle","Brennan","Flanagan","Sheridan","Cassidy","Devlin","Nolan","Smith","Hughes","Clarke","Fletcher","Mason","Shaw","Dawson","Cooper","Hardy","Burns","Morrison","Suzuki","Yamamoto","Tanaka","Nakamura","Fujiwara","Hayashi","Ogawa","Matsuda","Inoue","Kobayashi","Dubois","Lefebvre","Moreau","Laurent","Renard","Girard","Fontaine","Chevalier","Rousseau","Garnier","Schmidt","Fischer","Wagner","Klein","Wolf","Braun","Richter","Koenig","Gruber","Reiter","Papadopoulos","Stavros","Nkosi","Diallo","Okonkwo","Svensson","Nilsson","Holm","Magnusson"],
-  nationalities: ["British","German","Dutch","Spanish","Finnish","French","Australian","Brazilian","Italian","Canadian","Mexican","Japanese","Chinese","Indian","American","Belgian","Austrian","Swiss","Russian","Danish","Swedish","Norwegian","New Zealand","Thai","Monegasque","Polish","Czech","Hungarian","Portuguese","Argentine","Colombian"],
+  nationalities: ["British","German","Dutch","Spanish","Finnish","French","Australian","Brazilian","Italian","Canadian","Mexican","Japanese","Chinese","Indian","American","Belgian","Austrian","Swiss","Russian","Danish","Swedish","Norwegian","New Zealand","Thai","Monegasque","Polish","Czech","Hungarian","Portuguese","Argentine","Colombian","Estonian"],
   teams: [
     { id:"redbull",   name:"Red Bull Racing",    nation:"Austrian", prestige:95, carPerformance:86, downforce:55, reliability:85, developmentRate:84, facilities:95, revenue:280, color:"#1E41FF", difficulty:"easy",
       baseDrivers:[
-        {name:"Max Verstappen",trait:"aggressive", age:28, rating:97, potential:97, qualifying:96, racePace:97, consistency:93, wet:91, aggression:75, marketability:92, morale:88, salary:20, contract:3},
-        {name:"Isack Hadjar",   age:20, rating:78, potential:92, qualifying:79, racePace:77, consistency:74, wet:72, aggression:70, marketability:72, morale:88, salary:3,  contract:2}
+        {name:"Max Verstappen",nationality:"Dutch",    trait:"aggressive", age:28, rating:97, potential:97, qualifying:96, racePace:97, consistency:93, wet:91, aggression:75, marketability:92, morale:88, salary:20, contract:3},
+        {name:"Isack Hadjar",   nationality:"French",                      age:20, rating:78, potential:92, qualifying:79, racePace:77, consistency:74, wet:72, aggression:70, marketability:72, morale:88, salary:3,  contract:2}
       ]},
     { id:"ferrari",   name:"Scuderia Ferrari",   nation:"Italian",  prestige:100, carPerformance:91, downforce:52, reliability:85, developmentRate:84, facilities:95, revenue:320, color:"#DC0000", difficulty:"easy",
       baseDrivers:[
-        {name:"Charles Leclerc",trait:"qualifier",  age:28, rating:94, potential:96, qualifying:97, racePace:93, consistency:84, wet:89, aggression:72, marketability:96, morale:85, salary:15, contract:4},
-        {name:"Lewis Hamilton",trait:"rainy",   age:41, rating:93, potential:88, qualifying:90, racePace:94, consistency:92, wet:96, aggression:68, marketability:99, morale:80, salary:20, contract:2}
+        {name:"Charles Leclerc",nationality:"Monegasque", trait:"qualifier", age:28, rating:94, potential:96, qualifying:97, racePace:93, consistency:84, wet:89, aggression:72, marketability:96, morale:85, salary:15, contract:4},
+        {name:"Lewis Hamilton", nationality:"British",    trait:"rainy",     age:41, rating:93, potential:88, qualifying:90, racePace:94, consistency:92, wet:96, aggression:68, marketability:99, morale:80, salary:20, contract:2}
       ]},
     { id:"mercedes",  name:"Mercedes-AMG F1",    nation:"German",   prestige:96, carPerformance:93, downforce:50, reliability:91, developmentRate:90, facilities:97, revenue:295, color:"#00D2BE", difficulty:"easy",
       baseDrivers:[
-        {name:"George Russell",trait:"technical",   age:28, rating:90, potential:94, qualifying:91, racePace:89, consistency:88, wet:86, aggression:70, marketability:88, morale:87, salary:10, contract:2},
-        {name:"Kimi Antonelli",trait:"overtaker",   age:19, rating:80, potential:95, qualifying:82, racePace:79, consistency:75, wet:76, aggression:68, marketability:82, morale:90, salary:4,  contract:3}
+        {name:"George Russell", nationality:"British", trait:"technical", age:28, rating:90, potential:94, qualifying:91, racePace:89, consistency:88, wet:86, aggression:70, marketability:88, morale:87, salary:10, contract:2},
+        {name:"Kimi Antonelli", nationality:"Italian", trait:"overtaker", age:19, rating:80, potential:95, qualifying:82, racePace:79, consistency:75, wet:76, aggression:68, marketability:82, morale:90, salary:4,  contract:3}
       ]},
     { id:"mclaren",   name:"McLaren F1 Team",    nation:"British",  prestige:92, carPerformance:90, downforce:48, reliability:88, developmentRate:92, facilities:90, revenue:260, color:"#FF8000", difficulty:"easy",
       baseDrivers:[
-        {name:"Lando Norris",trait:"overtaker",     age:26, rating:95, potential:97, qualifying:95, racePace:94, consistency:88, wet:89, aggression:72, marketability:96, morale:92, salary:18, contract:3},
-        {name:"Oscar Piastri",trait:"consistent",    age:25, rating:90, potential:95, qualifying:89, racePace:91, consistency:87, wet:84, aggression:65, marketability:87, morale:90, salary:8,  contract:3}
+        {name:"Lando Norris",  nationality:"British",    trait:"overtaker",  age:26, rating:95, potential:97, qualifying:95, racePace:94, consistency:88, wet:89, aggression:72, marketability:96, morale:92, salary:18, contract:3},
+        {name:"Oscar Piastri", nationality:"Australian", trait:"consistent", age:25, rating:90, potential:95, qualifying:89, racePace:91, consistency:87, wet:84, aggression:65, marketability:87, morale:90, salary:8,  contract:3}
       ]},
     { id:"aston",     name:"Aston Martin F1",    nation:"British",  prestige:62, carPerformance:69, downforce:58, reliability:73, developmentRate:67, facilities:78, revenue:155, color:"#006F62", difficulty:"hard",
       baseDrivers:[
-        {name:"Fernando Alonso",trait:"rainy",  age:44, rating:89, potential:80, qualifying:87, racePace:90, consistency:91, wet:93, aggression:85, marketability:90, morale:80, salary:12, contract:1},
-        {name:"Lance Stroll",trait:"consistent",     age:27, rating:76, potential:79, qualifying:74, racePace:77, consistency:73, wet:74, aggression:65, marketability:70, morale:72, salary:8,  contract:2}
+        {name:"Fernando Alonso", nationality:"Spanish",  trait:"rainy",      age:44, rating:89, potential:80, qualifying:87, racePace:90, consistency:91, wet:93, aggression:85, marketability:90, morale:80, salary:12, contract:1},
+        {name:"Lance Stroll",    nationality:"Canadian", trait:"consistent", age:27, rating:76, potential:79, qualifying:74, racePace:77, consistency:73, wet:74, aggression:65, marketability:70, morale:72, salary:8,  contract:2}
       ]},
     { id:"alpine",    name:"Alpine F1 Team",     nation:"French",   prestige:55, carPerformance:78, downforce:52, reliability:78, developmentRate:73, facilities:74, revenue:140, color:"#0090FF", difficulty:"medium",
       baseDrivers:[
-        {name:"Pierre Gasly",trait:"technical",     age:30, rating:82, potential:84, qualifying:83, racePace:82, consistency:81, wet:80, aggression:74, marketability:78, morale:74, salary:7,  contract:3},
-        {name:"Franco Colapinto",trait:"aggressive", age:22, rating:76, potential:88, qualifying:77, racePace:75, consistency:72, wet:73, aggression:76, marketability:80, morale:84, salary:3,  contract:2}
+        {name:"Pierre Gasly",    nationality:"French",    trait:"technical",  age:30, rating:82, potential:84, qualifying:83, racePace:82, consistency:81, wet:80, aggression:74, marketability:78, morale:74, salary:7,  contract:3},
+        {name:"Franco Colapinto",nationality:"Argentine", trait:"aggressive", age:22, rating:76, potential:88, qualifying:77, racePace:75, consistency:72, wet:73, aggression:76, marketability:80, morale:84, salary:3,  contract:2}
       ]},
     { id:"williams",  name:"Williams Racing",    nation:"British",  prestige:65, carPerformance:71, downforce:45, reliability:74, developmentRate:70, facilities:66, revenue:115, color:"#005AFF", difficulty:"hard",
       baseDrivers:[
-        {name:"Alex Albon",trait:"consistent",       age:30, rating:82, potential:84, qualifying:81, racePace:83, consistency:83, wet:79, aggression:62, marketability:76, morale:82, salary:6,  contract:2},
-        {name:"Carlos Sainz",trait:"technical",     age:31, rating:89, potential:89, qualifying:90, racePace:89, consistency:88, wet:85, aggression:68, marketability:84, morale:80, salary:10, contract:2}
+        {name:"Alex Albon",  nationality:"Thai",    trait:"consistent", age:30, rating:82, potential:84, qualifying:81, racePace:83, consistency:83, wet:79, aggression:62, marketability:76, morale:82, salary:6,  contract:2},
+        {name:"Carlos Sainz",nationality:"Spanish", trait:"technical",  age:31, rating:89, potential:89, qualifying:90, racePace:89, consistency:88, wet:85, aggression:68, marketability:84, morale:80, salary:10, contract:2}
       ]},
     { id:"racingbulls", name:"Racing Bulls",     nation:"Italian",  prestige:50, carPerformance:73, downforce:50, reliability:75, developmentRate:68, facilities:68, revenue:120, color:"#6692FF", difficulty:"medium",
       baseDrivers:[
-        {name:"Liam Lawson",trait:"aggressive",      age:23, rating:80, potential:87, qualifying:80, racePace:81, consistency:76, wet:78, aggression:76, marketability:72, morale:78, salary:4,  contract:2},
-        {name:"Arvid Lindblad",trait:"qualifier",   age:18, rating:72, potential:93, qualifying:73, racePace:71, consistency:68, wet:68, aggression:66, marketability:68, morale:88, salary:2,  contract:2}
+        {name:"Liam Lawson",    nationality:"New Zealand", trait:"aggressive", age:23, rating:80, potential:87, qualifying:80, racePace:81, consistency:76, wet:78, aggression:76, marketability:72, morale:78, salary:4,  contract:2},
+        {name:"Arvid Lindblad", nationality:"British",     trait:"qualifier",  age:18, rating:72, potential:93, qualifying:73, racePace:71, consistency:68, wet:68, aggression:66, marketability:68, morale:88, salary:2,  contract:2}
       ]},
     { id:"haas",      name:"Haas F1 Team",       nation:"American", prestige:48, carPerformance:75, downforce:50, reliability:74, developmentRate:68, facilities:65, revenue:110, color:"#E8002D", difficulty:"medium",
       baseDrivers:[
-        {name:"Esteban Ocon",trait:"consistent",     age:29, rating:80, potential:82, qualifying:80, racePace:80, consistency:79, wet:78, aggression:72, marketability:73, morale:76, salary:6,  contract:2},
-        {name:"Oliver Bearman",trait:"aggressive",   age:20, rating:77, potential:90, qualifying:77, racePace:77, consistency:74, wet:74, aggression:74, marketability:76, morale:86, salary:3,  contract:2}
+        {name:"Esteban Ocon",   nationality:"French",  trait:"consistent", age:29, rating:80, potential:82, qualifying:80, racePace:80, consistency:79, wet:78, aggression:72, marketability:73, morale:76, salary:6,  contract:2},
+        {name:"Oliver Bearman", nationality:"British", trait:"aggressive", age:20, rating:77, potential:90, qualifying:77, racePace:77, consistency:74, wet:74, aggression:74, marketability:76, morale:86, salary:3,  contract:2}
       ]},
     { id:"audi",      name:"Audi F1 Team",       nation:"German",   prestige:55, carPerformance:72, downforce:52, reliability:72, developmentRate:79, facilities:81, revenue:165, color:"#C0012E", difficulty:"hard",
       baseDrivers:[
-        {name:"Nico Hulkenberg",trait:"consistent",  age:38, rating:79, potential:78, qualifying:80, racePace:79, consistency:83, wet:80, aggression:62, marketability:68, morale:76, salary:5,  contract:3},
-        {name:"Gabriel Bortoleto",trait:"overtaker",age:21, rating:76, potential:91, qualifying:77, racePace:75, consistency:72, wet:71, aggression:68, marketability:74, morale:86, salary:3,  contract:3}
+        {name:"Nico Hulkenberg",   nationality:"German",    trait:"consistent", age:38, rating:79, potential:78, qualifying:80, racePace:79, consistency:83, wet:80, aggression:62, marketability:68, morale:76, salary:5,  contract:3},
+        {name:"Gabriel Bortoleto", nationality:"Brazilian", trait:"overtaker",  age:21, rating:76, potential:91, qualifying:77, racePace:75, consistency:72, wet:71, aggression:68, marketability:74, morale:86, salary:3,  contract:3}
       ]},
     { id:"cadillac",  name:"Cadillac F1 Team",   nation:"American", prestige:35, carPerformance:67, downforce:50, reliability:69, developmentRate:65, facilities:58, revenue:110, color:"#C8102E", difficulty:"hard",
       baseDrivers:[
-        {name:"Sergio Perez",trait:"rainy",     age:36, rating:81, potential:80, qualifying:80, racePace:82, consistency:77, wet:81, aggression:65, marketability:84, morale:72, salary:7,  contract:2},
-        {name:"Valtteri Bottas",trait:"qualifier",  age:36, rating:78, potential:76, qualifying:78, racePace:78, consistency:83, wet:81, aggression:58, marketability:68, morale:68, salary:5,  contract:2}
+        {name:"Sergio Perez",    nationality:"Mexican",  trait:"rainy",     age:36, rating:81, potential:80, qualifying:80, racePace:82, consistency:77, wet:81, aggression:65, marketability:84, morale:72, salary:7,  contract:2},
+        {name:"Valtteri Bottas", nationality:"Finnish",  trait:"qualifier", age:36, rating:78, potential:76, qualifying:78, racePace:78, consistency:83, wet:81, aggression:58, marketability:68, morale:68, salary:5,  contract:2}
       ]}
   ],
   // Per-season driver lineups keyed by teamId
   seasonDrivers: {
     2026: {}, // uses baseDrivers (already set above)
     2025: {
-      redbull:     [{name:"Max Verstappen",trait:"aggressive",age:27,rating:97,potential:97,qualifying:96,racePace:97,consistency:93,wet:91,aggression:75,marketability:92,morale:88,salary:20,contract:2},
-                   {name:"Sergio Perez",trait:"rainy",       age:35,rating:82,potential:80,qualifying:80,racePace:83,consistency:77,wet:81,aggression:65,marketability:84,morale:72,salary:8,contract:1}],
-      ferrari:     [{name:"Charles Leclerc",trait:"qualifier",age:27,rating:93,potential:96,qualifying:97,racePace:92,consistency:84,wet:89,aggression:72,marketability:96,morale:85,salary:15,contract:3},
-                   {name:"Carlos Sainz",trait:"technical",   age:30,rating:89,potential:89,qualifying:90,racePace:89,consistency:88,wet:85,aggression:68,marketability:84,morale:80,salary:12,contract:1}],
-      mercedes:    [{name:"Lewis Hamilton",trait:"rainy",    age:40,rating:94,potential:90,qualifying:91,racePace:94,consistency:92,wet:96,aggression:68,marketability:99,morale:82,salary:20,contract:1},
-                   {name:"George Russell",trait:"technical", age:27,rating:89,potential:94,qualifying:91,racePace:88,consistency:87,wet:86,aggression:70,marketability:88,morale:87,salary:10,contract:2}],
-      mclaren:     [{name:"Lando Norris",trait:"overtaker",  age:25,rating:94,potential:97,qualifying:94,racePace:93,consistency:87,wet:89,aggression:72,marketability:96,morale:92,salary:15,contract:2},
-                   {name:"Oscar Piastri",trait:"consistent", age:24,rating:89,potential:95,qualifying:88,racePace:90,consistency:86,wet:84,aggression:65,marketability:87,morale:90,salary:6,contract:2}],
-      aston:       [{name:"Fernando Alonso",trait:"rainy",   age:43,rating:90,potential:82,qualifying:88,racePace:91,consistency:92,wet:94,aggression:85,marketability:90,morale:80,salary:12,contract:1},
-                   {name:"Lance Stroll",trait:"consistent",  age:26,rating:75,potential:79,qualifying:73,racePace:76,consistency:72,wet:74,aggression:65,marketability:70,morale:70,salary:8,contract:1}],
-      alpine:      [{name:"Pierre Gasly",trait:"technical",  age:29,rating:82,potential:84,qualifying:83,racePace:82,consistency:81,wet:80,aggression:74,marketability:78,morale:74,salary:7,contract:2},
-                   {name:"Jack Doohan",                      age:21,rating:74,potential:86,qualifying:74,racePace:73,consistency:70,wet:71,aggression:68,marketability:70,morale:82,salary:2,contract:1}],
-      williams:    [{name:"Alex Albon",trait:"consistent",   age:29,rating:82,potential:84,qualifying:81,racePace:83,consistency:83,wet:79,aggression:62,marketability:76,morale:82,salary:6,contract:1},
-                   {name:"Carlos Sainz",trait:"technical",   age:30,rating:89,potential:89,qualifying:90,racePace:89,consistency:88,wet:85,aggression:68,marketability:84,morale:80,salary:10,contract:1}],
-      racingbulls: [{name:"Yuki Tsunoda",                    age:25,rating:79,potential:83,qualifying:80,racePace:79,consistency:75,wet:76,aggression:78,marketability:74,morale:76,salary:4,contract:1},
-                   {name:"Liam Lawson",trait:"aggressive",   age:22,rating:78,potential:87,qualifying:78,racePace:79,consistency:74,wet:76,aggression:76,marketability:70,morale:80,salary:3,contract:1}],
-      haas:        [{name:"Nico Hulkenberg",trait:"consistent",age:37,rating:80,potential:80,qualifying:81,racePace:80,consistency:83,wet:80,aggression:62,marketability:68,morale:76,salary:5,contract:1},
-                   {name:"Oliver Bearman",trait:"aggressive", age:19,rating:75,potential:90,qualifying:75,racePace:75,consistency:72,wet:72,aggression:72,marketability:74,morale:86,salary:2,contract:1}],
-      audi:        [{name:"Nico Hulkenberg",trait:"consistent",age:37,rating:80,potential:80,qualifying:81,racePace:80,consistency:83,wet:80,aggression:62,marketability:68,morale:76,salary:5,contract:1},
-                   {name:"Gabriel Bortoleto",trait:"overtaker",age:20,rating:74,potential:91,qualifying:75,racePace:73,consistency:70,wet:69,aggression:66,marketability:72,morale:86,salary:2,contract:1}],
-      cadillac:    [{name:"Sergio Perez",trait:"rainy",      age:35,rating:82,potential:80,qualifying:80,racePace:83,consistency:77,wet:81,aggression:65,marketability:84,morale:72,salary:7,contract:1},
-                   {name:"Valtteri Bottas",trait:"qualifier", age:35,rating:79,potential:76,qualifying:78,racePace:79,consistency:83,wet:81,aggression:58,marketability:68,morale:68,salary:5,contract:1}],
+      redbull:     [{name:"Max Verstappen",nationality:"Dutch",        trait:"aggressive",age:27,rating:97,potential:97,qualifying:96,racePace:97,consistency:93,wet:91,aggression:75,marketability:92,morale:88,salary:20,contract:2},
+                   {name:"Sergio Perez",   nationality:"Mexican",      trait:"rainy",     age:35,rating:82,potential:80,qualifying:80,racePace:83,consistency:77,wet:81,aggression:65,marketability:84,morale:72,salary:8,contract:1}],
+      ferrari:     [{name:"Charles Leclerc",nationality:"Monegasque",  trait:"qualifier", age:27,rating:93,potential:96,qualifying:97,racePace:92,consistency:84,wet:89,aggression:72,marketability:96,morale:85,salary:15,contract:3},
+                   {name:"Carlos Sainz",   nationality:"Spanish",      trait:"technical", age:30,rating:89,potential:89,qualifying:90,racePace:89,consistency:88,wet:85,aggression:68,marketability:84,morale:80,salary:12,contract:1}],
+      mercedes:    [{name:"Lewis Hamilton", nationality:"British",     trait:"rainy",     age:40,rating:94,potential:90,qualifying:91,racePace:94,consistency:92,wet:96,aggression:68,marketability:99,morale:82,salary:20,contract:1},
+                   {name:"George Russell",  nationality:"British",     trait:"technical", age:27,rating:89,potential:94,qualifying:91,racePace:88,consistency:87,wet:86,aggression:70,marketability:88,morale:87,salary:10,contract:2}],
+      mclaren:     [{name:"Lando Norris",   nationality:"British",     trait:"overtaker", age:25,rating:94,potential:97,qualifying:94,racePace:93,consistency:87,wet:89,aggression:72,marketability:96,morale:92,salary:15,contract:2},
+                   {name:"Oscar Piastri",   nationality:"Australian",  trait:"consistent",age:24,rating:89,potential:95,qualifying:88,racePace:90,consistency:86,wet:84,aggression:65,marketability:87,morale:90,salary:6,contract:2}],
+      aston:       [{name:"Fernando Alonso",nationality:"Spanish",     trait:"rainy",     age:43,rating:90,potential:82,qualifying:88,racePace:91,consistency:92,wet:94,aggression:85,marketability:90,morale:80,salary:12,contract:1},
+                   {name:"Lance Stroll",    nationality:"Canadian",    trait:"consistent",age:26,rating:75,potential:79,qualifying:73,racePace:76,consistency:72,wet:74,aggression:65,marketability:70,morale:70,salary:8,contract:1}],
+      alpine:      [{name:"Pierre Gasly",   nationality:"French",      trait:"technical", age:29,rating:82,potential:84,qualifying:83,racePace:82,consistency:81,wet:80,aggression:74,marketability:78,morale:74,salary:7,contract:2},
+                   {name:"Jack Doohan",     nationality:"Australian",                     age:21,rating:74,potential:86,qualifying:74,racePace:73,consistency:70,wet:71,aggression:68,marketability:70,morale:82,salary:2,contract:1}],
+      williams:    [{name:"Alex Albon",     nationality:"Thai",        trait:"consistent",age:29,rating:82,potential:84,qualifying:81,racePace:83,consistency:83,wet:79,aggression:62,marketability:76,morale:82,salary:6,contract:1},
+                   {name:"Carlos Sainz",    nationality:"Spanish",     trait:"technical", age:30,rating:89,potential:89,qualifying:90,racePace:89,consistency:88,wet:85,aggression:68,marketability:84,morale:80,salary:10,contract:1}],
+      racingbulls: [{name:"Yuki Tsunoda",   nationality:"Japanese",                       age:25,rating:79,potential:83,qualifying:80,racePace:79,consistency:75,wet:76,aggression:78,marketability:74,morale:76,salary:4,contract:1},
+                   {name:"Liam Lawson",     nationality:"New Zealand", trait:"aggressive",age:22,rating:78,potential:87,qualifying:78,racePace:79,consistency:74,wet:76,aggression:76,marketability:70,morale:80,salary:3,contract:1}],
+      haas:        [{name:"Nico Hulkenberg",nationality:"German",      trait:"consistent",age:37,rating:80,potential:80,qualifying:81,racePace:80,consistency:83,wet:80,aggression:62,marketability:68,morale:76,salary:5,contract:1},
+                   {name:"Oliver Bearman",  nationality:"British",     trait:"aggressive",age:19,rating:75,potential:90,qualifying:75,racePace:75,consistency:72,wet:72,aggression:72,marketability:74,morale:86,salary:2,contract:1}],
+      audi:        [{name:"Nico Hulkenberg",nationality:"German",      trait:"consistent",age:37,rating:80,potential:80,qualifying:81,racePace:80,consistency:83,wet:80,aggression:62,marketability:68,morale:76,salary:5,contract:1},
+                   {name:"Gabriel Bortoleto",nationality:"Brazilian",  trait:"overtaker", age:20,rating:74,potential:91,qualifying:75,racePace:73,consistency:70,wet:69,aggression:66,marketability:72,morale:86,salary:2,contract:1}],
+      cadillac:    [{name:"Sergio Perez",   nationality:"Mexican",     trait:"rainy",     age:35,rating:82,potential:80,qualifying:80,racePace:83,consistency:77,wet:81,aggression:65,marketability:84,morale:72,salary:7,contract:1},
+                   {name:"Valtteri Bottas", nationality:"Finnish",     trait:"qualifier", age:35,rating:79,potential:76,qualifying:78,racePace:79,consistency:83,wet:81,aggression:58,marketability:68,morale:68,salary:5,contract:1}],
     },
     2024: {
-      redbull:     [{name:"Max Verstappen",trait:"aggressive",age:26,rating:98,potential:98,qualifying:97,racePace:98,consistency:94,wet:92,aggression:75,marketability:92,morale:90,salary:20,contract:3},
-                   {name:"Sergio Perez",trait:"rainy",       age:34,rating:83,potential:80,qualifying:81,racePace:84,consistency:77,wet:82,aggression:65,marketability:84,morale:74,salary:8,contract:2}],
-      ferrari:     [{name:"Charles Leclerc",trait:"qualifier",age:26,rating:93,potential:96,qualifying:97,racePace:91,consistency:83,wet:88,aggression:72,marketability:96,morale:85,salary:15,contract:2},
-                   {name:"Carlos Sainz",trait:"technical",   age:29,rating:90,potential:90,qualifying:91,racePace:90,consistency:89,wet:86,aggression:68,marketability:84,morale:82,salary:12,contract:1}],
-      mercedes:    [{name:"Lewis Hamilton",trait:"rainy",    age:39,rating:95,potential:92,qualifying:92,racePace:95,consistency:93,wet:97,aggression:68,marketability:99,morale:84,salary:20,contract:2},
-                   {name:"George Russell",trait:"technical", age:26,rating:88,potential:94,qualifying:90,racePace:87,consistency:86,wet:85,aggression:70,marketability:88,morale:87,salary:8,contract:3}],
-      mclaren:     [{name:"Lando Norris",trait:"overtaker",  age:24,rating:92,potential:97,qualifying:93,racePace:91,consistency:85,wet:88,aggression:72,marketability:96,morale:90,salary:12,contract:3},
-                   {name:"Oscar Piastri",trait:"consistent", age:23,rating:87,potential:95,qualifying:86,racePace:88,consistency:84,wet:82,aggression:65,marketability:85,morale:88,salary:4,contract:3}],
-      aston:       [{name:"Fernando Alonso",trait:"rainy",   age:42,rating:91,potential:84,qualifying:89,racePace:92,consistency:93,wet:95,aggression:85,marketability:90,morale:82,salary:12,contract:2},
-                   {name:"Lance Stroll",trait:"consistent",  age:25,rating:75,potential:79,qualifying:73,racePace:76,consistency:72,wet:74,aggression:65,marketability:70,morale:70,salary:8,contract:2}],
-      alpine:      [{name:"Esteban Ocon",trait:"consistent", age:27,rating:80,potential:82,qualifying:80,racePace:80,consistency:79,wet:78,aggression:72,marketability:73,morale:76,salary:6,contract:1},
-                   {name:"Pierre Gasly",trait:"technical",   age:28,rating:81,potential:84,qualifying:82,racePace:81,consistency:80,wet:79,aggression:74,marketability:78,morale:74,salary:6,contract:2}],
-      williams:    [{name:"Alex Albon",trait:"consistent",   age:28,rating:81,potential:84,qualifying:80,racePace:82,consistency:82,wet:78,aggression:62,marketability:76,morale:82,salary:5,contract:2},
-                   {name:"Logan Sargeant",                   age:23,rating:70,potential:78,qualifying:70,racePace:69,consistency:67,wet:66,aggression:60,marketability:66,morale:72,salary:2,contract:1}],
-      racingbulls: [{name:"Yuki Tsunoda",                    age:24,rating:79,potential:83,qualifying:80,racePace:79,consistency:74,wet:75,aggression:78,marketability:74,morale:76,salary:4,contract:2},
-                   {name:"Daniel Ricciardo",                 age:35,rating:80,potential:78,qualifying:79,racePace:80,consistency:76,wet:78,aggression:68,marketability:88,morale:70,salary:6,contract:1}],
-      haas:        [{name:"Kevin Magnussen",                 age:31,rating:76,potential:77,qualifying:75,racePace:77,consistency:74,wet:73,aggression:80,marketability:66,morale:72,salary:4,contract:1},
-                   {name:"Nico Hulkenberg",trait:"consistent",age:36,rating:80,potential:80,qualifying:81,racePace:80,consistency:83,wet:80,aggression:62,marketability:68,morale:76,salary:4,contract:1}],
-      audi:        [{name:"Valtteri Bottas",trait:"qualifier",age:34,rating:79,potential:76,qualifying:79,racePace:79,consistency:83,wet:81,aggression:58,marketability:68,morale:66,salary:5,contract:1},
-                   {name:"Zhou Guanyu",                      age:25,rating:73,potential:78,qualifying:73,racePace:73,consistency:74,wet:72,aggression:62,marketability:72,morale:72,salary:3,contract:1}],
-      cadillac:    [{name:"Kevin Magnussen",                 age:31,rating:76,potential:77,qualifying:75,racePace:77,consistency:74,wet:73,aggression:80,marketability:66,morale:70,salary:4,contract:1},
-                   {name:"Nico Hulkenberg",trait:"consistent",age:36,rating:80,potential:80,qualifying:81,racePace:80,consistency:83,wet:80,aggression:62,marketability:68,morale:74,salary:4,contract:1}],
+      redbull:     [{name:"Max Verstappen",nationality:"Dutch",        trait:"aggressive",age:26,rating:98,potential:98,qualifying:97,racePace:98,consistency:94,wet:92,aggression:75,marketability:92,morale:90,salary:20,contract:3},
+                   {name:"Sergio Perez",   nationality:"Mexican",      trait:"rainy",     age:34,rating:83,potential:80,qualifying:81,racePace:84,consistency:77,wet:82,aggression:65,marketability:84,morale:74,salary:8,contract:2}],
+      ferrari:     [{name:"Charles Leclerc",nationality:"Monegasque",  trait:"qualifier", age:26,rating:93,potential:96,qualifying:97,racePace:91,consistency:83,wet:88,aggression:72,marketability:96,morale:85,salary:15,contract:2},
+                   {name:"Carlos Sainz",   nationality:"Spanish",      trait:"technical", age:29,rating:90,potential:90,qualifying:91,racePace:90,consistency:89,wet:86,aggression:68,marketability:84,morale:82,salary:12,contract:1}],
+      mercedes:    [{name:"Lewis Hamilton", nationality:"British",     trait:"rainy",     age:39,rating:95,potential:92,qualifying:92,racePace:95,consistency:93,wet:97,aggression:68,marketability:99,morale:84,salary:20,contract:2},
+                   {name:"George Russell",  nationality:"British",     trait:"technical", age:26,rating:88,potential:94,qualifying:90,racePace:87,consistency:86,wet:85,aggression:70,marketability:88,morale:87,salary:8,contract:3}],
+      mclaren:     [{name:"Lando Norris",   nationality:"British",     trait:"overtaker", age:24,rating:92,potential:97,qualifying:93,racePace:91,consistency:85,wet:88,aggression:72,marketability:96,morale:90,salary:12,contract:3},
+                   {name:"Oscar Piastri",   nationality:"Australian",  trait:"consistent",age:23,rating:87,potential:95,qualifying:86,racePace:88,consistency:84,wet:82,aggression:65,marketability:85,morale:88,salary:4,contract:3}],
+      aston:       [{name:"Fernando Alonso",nationality:"Spanish",     trait:"rainy",     age:42,rating:91,potential:84,qualifying:89,racePace:92,consistency:93,wet:95,aggression:85,marketability:90,morale:82,salary:12,contract:2},
+                   {name:"Lance Stroll",    nationality:"Canadian",    trait:"consistent",age:25,rating:75,potential:79,qualifying:73,racePace:76,consistency:72,wet:74,aggression:65,marketability:70,morale:70,salary:8,contract:2}],
+      alpine:      [{name:"Esteban Ocon",   nationality:"French",      trait:"consistent",age:27,rating:80,potential:82,qualifying:80,racePace:80,consistency:79,wet:78,aggression:72,marketability:73,morale:76,salary:6,contract:1},
+                   {name:"Pierre Gasly",    nationality:"French",      trait:"technical", age:28,rating:81,potential:84,qualifying:82,racePace:81,consistency:80,wet:79,aggression:74,marketability:78,morale:74,salary:6,contract:2}],
+      williams:    [{name:"Alex Albon",     nationality:"Thai",        trait:"consistent",age:28,rating:81,potential:84,qualifying:80,racePace:82,consistency:82,wet:78,aggression:62,marketability:76,morale:82,salary:5,contract:2},
+                   {name:"Logan Sargeant",  nationality:"American",                       age:23,rating:70,potential:78,qualifying:70,racePace:69,consistency:67,wet:66,aggression:60,marketability:66,morale:72,salary:2,contract:1}],
+      racingbulls: [{name:"Yuki Tsunoda",   nationality:"Japanese",                       age:24,rating:79,potential:83,qualifying:80,racePace:79,consistency:74,wet:75,aggression:78,marketability:74,morale:76,salary:4,contract:2},
+                   {name:"Daniel Ricciardo",nationality:"Australian",                     age:35,rating:80,potential:78,qualifying:79,racePace:80,consistency:76,wet:78,aggression:68,marketability:88,morale:70,salary:6,contract:1}],
+      haas:        [{name:"Kevin Magnussen",nationality:"Danish",                         age:31,rating:76,potential:77,qualifying:75,racePace:77,consistency:74,wet:73,aggression:80,marketability:66,morale:72,salary:4,contract:1},
+                   {name:"Nico Hulkenberg", nationality:"German",      trait:"consistent",age:36,rating:80,potential:80,qualifying:81,racePace:80,consistency:83,wet:80,aggression:62,marketability:68,morale:76,salary:4,contract:1}],
+      audi:        [{name:"Valtteri Bottas",nationality:"Finnish",     trait:"qualifier", age:34,rating:79,potential:76,qualifying:79,racePace:79,consistency:83,wet:81,aggression:58,marketability:68,morale:66,salary:5,contract:1},
+                   {name:"Zhou Guanyu",     nationality:"Chinese",                        age:25,rating:73,potential:78,qualifying:73,racePace:73,consistency:74,wet:72,aggression:62,marketability:72,morale:72,salary:3,contract:1}],
+      cadillac:    [{name:"Kevin Magnussen",nationality:"Danish",                         age:31,rating:76,potential:77,qualifying:75,racePace:77,consistency:74,wet:73,aggression:80,marketability:66,morale:70,salary:4,contract:1},
+                   {name:"Nico Hulkenberg", nationality:"German",      trait:"consistent",age:36,rating:80,potential:80,qualifying:81,racePace:80,consistency:83,wet:80,aggression:62,marketability:68,morale:74,salary:4,contract:1}],
     },
   },
 
   // Real reserve/academy drivers per team (2026)
   reserveDrivers: {
-    redbull:     [{name:"Yuki Tsunoda",       age:25, rating:79, potential:83, qualifying:80, racePace:79, consistency:75, wet:76, aggression:78, marketability:74, morale:76, salary:4, contract:1},
-                  {name:"Ayumu Iwasa",        age:23, rating:75, potential:84, qualifying:76, racePace:74, consistency:72, wet:71, aggression:68, marketability:68, morale:82, salary:2, contract:1}],
-    ferrari:     [{name:"Antonio Giovinazzi", age:32, rating:75, potential:74, qualifying:74, racePace:75, consistency:76, wet:74, aggression:64, marketability:68, morale:70, salary:3, contract:1},
-                  {name:"Rafael Camara",      age:21, rating:72, potential:85, qualifying:73, racePace:71, consistency:69, wet:68, aggression:70, marketability:66, morale:82, salary:1, contract:1}],
-    mercedes:    [{name:"Frederik Vesti",    age:22, rating:74, potential:86, qualifying:75, racePace:73, consistency:72, wet:71, aggression:66, marketability:68, morale:84, salary:2, contract:2},
-                  {name:"Mick Schumacher",    age:26, rating:76, potential:80, qualifying:75, racePace:76, consistency:74, wet:78, aggression:66, marketability:84, morale:72, salary:2, contract:1}],
-    mclaren:     [{name:"Pato O'Ward",        age:25, rating:78, potential:84, qualifying:77, racePace:79, consistency:76, wet:74, aggression:72, marketability:78, morale:80, salary:2, contract:1},
-                  {name:"Leonardo Fornaroli", age:21, rating:74, potential:88, qualifying:75, racePace:73, consistency:71, wet:70, aggression:66, marketability:68, morale:86, salary:1, contract:1}],
-    aston:       [{name:"Jak Crawford",       age:20, rating:77, potential:88, qualifying:78, racePace:76, consistency:73, wet:74, aggression:72, marketability:70, morale:86, salary:2, contract:2, trait:"qualifier"},
-                  {name:"Stoffel Vandoorne",  age:33, rating:76, potential:74, qualifying:76, racePace:75, consistency:78, wet:76, aggression:60, marketability:70, morale:70, salary:2, contract:1}],
-    alpine:      [{name:"Paul Aron",          age:21, rating:73, potential:86, qualifying:74, racePace:72, consistency:70, wet:70, aggression:68, marketability:66, morale:84, salary:1, contract:2},
-                  {name:"Kush Maini",         age:25, rating:72, potential:79, qualifying:72, racePace:71, consistency:71, wet:70, aggression:64, marketability:66, morale:76, salary:1, contract:1}],
-    williams:    [{name:"Luke Browning",      age:22, rating:71, potential:82, qualifying:72, racePace:70, consistency:69, wet:68, aggression:66, marketability:64, morale:82, salary:1, contract:2},
-                  {name:"Victor Martins",     age:23, rating:73, potential:81, qualifying:74, racePace:72, consistency:71, wet:70, aggression:66, marketability:68, morale:78, salary:2, contract:1}],
-    racingbulls: [{name:"Yuki Tsunoda",       age:25, rating:79, potential:83, qualifying:80, racePace:79, consistency:75, wet:76, aggression:78, marketability:74, morale:76, salary:4, contract:1},
-                  {name:"Ayumu Iwasa",        age:23, rating:75, potential:84, qualifying:76, racePace:74, consistency:72, wet:71, aggression:68, marketability:68, morale:82, salary:2, contract:1}],
-    haas:        [{name:"Jack Doohan",        age:21, rating:74, potential:86, qualifying:74, racePace:73, consistency:70, wet:71, aggression:68, marketability:70, morale:80, salary:2, contract:1},
-                  {name:"Ryo Hirakawa",       age:31, rating:74, potential:76, qualifying:73, racePace:74, consistency:76, wet:72, aggression:60, marketability:66, morale:74, salary:2, contract:1}],
-    audi:        [{name:"Theo Pourchaire",    age:22, rating:74, potential:86, qualifying:74, racePace:73, consistency:72, wet:71, aggression:66, marketability:70, morale:80, salary:2, contract:2},
-                  {name:"Freddie Slater",     age:19, rating:68, potential:85, qualifying:69, racePace:67, consistency:65, wet:64, aggression:66, marketability:62, morale:84, salary:1, contract:1}],
-    cadillac:    [{name:"Guanyu Zhou",        age:26, rating:73, potential:78, qualifying:73, racePace:73, consistency:74, wet:72, aggression:62, marketability:72, morale:72, salary:3, contract:1},
-                  {name:"Colton Herta",       age:24, rating:76, potential:83, qualifying:75, racePace:77, consistency:74, wet:72, aggression:70, marketability:74, morale:78, salary:2, contract:2}],
+    redbull:     [{name:"Yuki Tsunoda",       nationality:"Japanese",      age:25, rating:79, potential:83, qualifying:80, racePace:79, consistency:75, wet:76, aggression:78, marketability:74, morale:76, salary:4, contract:1},
+                  {name:"Ayumu Iwasa",        nationality:"Japanese",      age:23, rating:75, potential:84, qualifying:76, racePace:74, consistency:72, wet:71, aggression:68, marketability:68, morale:82, salary:2, contract:1}],
+    ferrari:     [{name:"Antonio Giovinazzi", nationality:"Italian",       age:32, rating:75, potential:74, qualifying:74, racePace:75, consistency:76, wet:74, aggression:64, marketability:68, morale:70, salary:3, contract:1},
+                  {name:"Rafael Camara",      nationality:"Brazilian",     age:21, rating:72, potential:85, qualifying:73, racePace:71, consistency:69, wet:68, aggression:70, marketability:66, morale:82, salary:1, contract:1}],
+    mercedes:    [{name:"Frederik Vesti",     nationality:"Danish",        age:22, rating:74, potential:86, qualifying:75, racePace:73, consistency:72, wet:71, aggression:66, marketability:68, morale:84, salary:2, contract:2},
+                  {name:"Mick Schumacher",    nationality:"German",        age:26, rating:76, potential:80, qualifying:75, racePace:76, consistency:74, wet:78, aggression:66, marketability:84, morale:72, salary:2, contract:1}],
+    mclaren:     [{name:"Pato O'Ward",        nationality:"Mexican",       age:25, rating:78, potential:84, qualifying:77, racePace:79, consistency:76, wet:74, aggression:72, marketability:78, morale:80, salary:2, contract:1},
+                  {name:"Leonardo Fornaroli", nationality:"Italian",       age:21, rating:74, potential:88, qualifying:75, racePace:73, consistency:71, wet:70, aggression:66, marketability:68, morale:86, salary:1, contract:1}],
+    aston:       [{name:"Jak Crawford",       nationality:"American",      age:20, rating:77, potential:88, qualifying:78, racePace:76, consistency:73, wet:74, aggression:72, marketability:70, morale:86, salary:2, contract:2, trait:"qualifier"},
+                  {name:"Stoffel Vandoorne",  nationality:"Belgian",       age:33, rating:76, potential:74, qualifying:76, racePace:75, consistency:78, wet:76, aggression:60, marketability:70, morale:70, salary:2, contract:1}],
+    alpine:      [{name:"Paul Aron",          nationality:"Estonian",      age:21, rating:73, potential:86, qualifying:74, racePace:72, consistency:70, wet:70, aggression:68, marketability:66, morale:84, salary:1, contract:2},
+                  {name:"Kush Maini",         nationality:"Indian",        age:25, rating:72, potential:79, qualifying:72, racePace:71, consistency:71, wet:70, aggression:64, marketability:66, morale:76, salary:1, contract:1}],
+    williams:    [{name:"Luke Browning",      nationality:"British",       age:22, rating:71, potential:82, qualifying:72, racePace:70, consistency:69, wet:68, aggression:66, marketability:64, morale:82, salary:1, contract:2},
+                  {name:"Victor Martins",     nationality:"French",        age:23, rating:73, potential:81, qualifying:74, racePace:72, consistency:71, wet:70, aggression:66, marketability:68, morale:78, salary:2, contract:1}],
+    racingbulls: [{name:"Yuki Tsunoda",       nationality:"Japanese",      age:25, rating:79, potential:83, qualifying:80, racePace:79, consistency:75, wet:76, aggression:78, marketability:74, morale:76, salary:4, contract:1},
+                  {name:"Ayumu Iwasa",        nationality:"Japanese",      age:23, rating:75, potential:84, qualifying:76, racePace:74, consistency:72, wet:71, aggression:68, marketability:68, morale:82, salary:2, contract:1}],
+    haas:        [{name:"Jack Doohan",        nationality:"Australian",    age:21, rating:74, potential:86, qualifying:74, racePace:73, consistency:70, wet:71, aggression:68, marketability:70, morale:80, salary:2, contract:1},
+                  {name:"Ryo Hirakawa",       nationality:"Japanese",      age:31, rating:74, potential:76, qualifying:73, racePace:74, consistency:76, wet:72, aggression:60, marketability:66, morale:74, salary:2, contract:1}],
+    audi:        [{name:"Theo Pourchaire",    nationality:"French",        age:22, rating:74, potential:86, qualifying:74, racePace:73, consistency:72, wet:71, aggression:66, marketability:70, morale:80, salary:2, contract:2},
+                  {name:"Freddie Slater",     nationality:"British",       age:19, rating:68, potential:85, qualifying:69, racePace:67, consistency:65, wet:64, aggression:66, marketability:62, morale:84, salary:1, contract:1}],
+    cadillac:    [{name:"Guanyu Zhou",        nationality:"Chinese",       age:26, rating:73, potential:78, qualifying:73, racePace:73, consistency:74, wet:72, aggression:62, marketability:72, morale:72, salary:3, contract:1},
+                  {name:"Colton Herta",       nationality:"American",      age:24, rating:76, potential:83, qualifying:75, racePace:77, consistency:74, wet:72, aggression:70, marketability:74, morale:78, salary:2, contract:2}],
   },
 
   // Named free agents (experienced drivers not currently in F1)
   namedFreeAgents: [
-    {name:"Daniel Ricciardo",  age:36, rating:78, potential:76, qualifying:78, racePace:79, consistency:74, wet:77, aggression:68, marketability:90, morale:68, salary:5, contract:0, series:"IndyCar"},
-    {name:"Mick Schumacher",   age:26, rating:76, potential:80, qualifying:75, racePace:76, consistency:74, wet:78, aggression:66, marketability:84, morale:72, salary:4, contract:0, series:"WEC"},
-    {name:"Kevin Magnussen",   age:32, rating:75, potential:75, qualifying:74, racePace:76, consistency:73, wet:72, aggression:80, marketability:66, morale:72, salary:4, contract:0, series:"IndyCar"},
-    {name:"Nyck de Vries",     age:30, rating:74, potential:75, qualifying:73, racePace:74, consistency:75, wet:73, aggression:62, marketability:70, morale:68, salary:3, contract:0, series:"FE"},
-    {name:"Antonio Giovinazzi",age:31, rating:75, potential:74, qualifying:74, racePace:75, consistency:76, wet:74, aggression:64, marketability:68, morale:70, salary:3, contract:0, series:"WEC"},
-    {name:"Stoffel Vandoorne", age:33, rating:76, potential:74, qualifying:76, racePace:75, consistency:78, wet:76, aggression:60, marketability:70, morale:70, salary:3, contract:0, series:"FE"},
-    {name:"Guanyu Zhou",       age:26, rating:73, potential:78, qualifying:73, racePace:73, consistency:74, wet:72, aggression:62, marketability:72, morale:72, salary:3, contract:0, series:"FE"},
-    {name:"Logan Sargeant",    age:24, rating:70, potential:78, qualifying:70, racePace:69, consistency:67, wet:66, aggression:60, marketability:66, morale:70, salary:2, contract:0, series:"IndyCar"},
-    {name:"Pato O'Ward",       age:25, rating:78, potential:84, qualifying:77, racePace:79, consistency:76, wet:74, aggression:72, marketability:78, morale:80, salary:4, contract:0, series:"IndyCar"},
-    {name:"Felipe Drugovich",  age:24, rating:75, potential:83, qualifying:75, racePace:74, consistency:73, wet:72, aggression:66, marketability:68, morale:78, salary:3, contract:0, series:"F2"},
+    {name:"Daniel Ricciardo",  nationality:"Australian", age:36, rating:78, potential:76, qualifying:78, racePace:79, consistency:74, wet:77, aggression:68, marketability:90, morale:68, salary:5, contract:0, series:"IndyCar"},
+    {name:"Mick Schumacher",   nationality:"German",     age:26, rating:76, potential:80, qualifying:75, racePace:76, consistency:74, wet:78, aggression:66, marketability:84, morale:72, salary:4, contract:0, series:"WEC"},
+    {name:"Kevin Magnussen",   nationality:"Danish",     age:32, rating:75, potential:75, qualifying:74, racePace:76, consistency:73, wet:72, aggression:80, marketability:66, morale:72, salary:4, contract:0, series:"IndyCar"},
+    {name:"Nyck de Vries",     nationality:"Dutch",      age:30, rating:74, potential:75, qualifying:73, racePace:74, consistency:75, wet:73, aggression:62, marketability:70, morale:68, salary:3, contract:0, series:"FE"},
+    {name:"Antonio Giovinazzi",nationality:"Italian",    age:31, rating:75, potential:74, qualifying:74, racePace:75, consistency:76, wet:74, aggression:64, marketability:68, morale:70, salary:3, contract:0, series:"WEC"},
+    {name:"Stoffel Vandoorne", nationality:"Belgian",    age:33, rating:76, potential:74, qualifying:76, racePace:75, consistency:78, wet:76, aggression:60, marketability:70, morale:70, salary:3, contract:0, series:"FE"},
+    {name:"Guanyu Zhou",       nationality:"Chinese",    age:26, rating:73, potential:78, qualifying:73, racePace:73, consistency:74, wet:72, aggression:62, marketability:72, morale:72, salary:3, contract:0, series:"FE"},
+    {name:"Logan Sargeant",    nationality:"American",   age:24, rating:70, potential:78, qualifying:70, racePace:69, consistency:67, wet:66, aggression:60, marketability:66, morale:70, salary:2, contract:0, series:"IndyCar"},
+    {name:"Pato O'Ward",       nationality:"Mexican",    age:25, rating:78, potential:84, qualifying:77, racePace:79, consistency:76, wet:74, aggression:72, marketability:78, morale:80, salary:4, contract:0, series:"IndyCar"},
+    {name:"Felipe Drugovich",  nationality:"Brazilian",  age:24, rating:75, potential:83, qualifying:75, racePace:74, consistency:73, wet:72, aggression:66, marketability:68, morale:78, salary:3, contract:0, series:"F2"},
   ],
 
   // Named prospects (F2/F3/academy drivers)
@@ -1607,7 +1611,7 @@ const State = {
   getCurrentRace(){return this.game.calendar[this.game.raceIndex];},
   getFreeAgents(){return this.game.drivers.filter(d=>!d.teamId&&!d.retired&&!d.isProspect&&!d.isReserve);},
   getProspects(){return this.game.drivers.filter(d=>d.isProspect&&!d.retired).sort((a,b)=>b.potential-a.potential);},
-  getDriverStandings(){return this.game.drivers.filter(d=>!d.retired).map(d=>({driver:d,points:d.seasonPoints,wins:d.wins})).sort((a,b)=>b.points-a.points||b.wins-a.wins);},
+  getDriverStandings(){return this.game.drivers.filter(d=>!d.retired&&d.teamId&&!d.isReserve&&!d.isProspect&&!d.isFreeAgent).map(d=>({driver:d,points:d.seasonPoints,wins:d.wins})).sort((a,b)=>b.points-a.points||b.wins-a.wins);},
   getConstructorStandings(){return this.game.teams.map(t=>({team:t,points:t.seasonPoints,wins:t.wins})).sort((a,b)=>b.points-a.points||b.wins-a.wins);},
   addPoints(driverId, pts){const d=this.getDriver(driverId);if(!d)return;d.seasonPoints+=pts;d.totalPoints+=pts;const team=this.getTeam(d.teamId);if(team){team.seasonPoints+=pts;team.totalPoints+=pts;}},
   getDriverSeasonPos(driverId){const idx=this.getDriverStandings().findIndex(s=>s.driver.id===driverId);return idx>=0?idx+1:null;},
@@ -3243,6 +3247,7 @@ const UI = {
         const drivers = lineup.map(d=>d.name.split(' ').pop()).join(' & ');
         return `
         <div class="land-tcard" data-team-id="${t.id}" onclick="UI.selectLandTeam('${t.id}')">
+          <div class="land-tcard-check">✓ Selected</div>
           <div class="land-tcard-accent" style="background:${t.color}"></div>
           <div class="land-tcard-top">
             <div class="land-tcard-name">${t.name}</div>
@@ -3308,6 +3313,7 @@ const UI = {
   renderTeamSelect(){
     document.getElementById('team-select-grid').innerHTML = DATA.teams.map(t => `
       <div class="tpcard" data-team-id="${t.id}" onclick="UI.selectTeam('${t.id}')">
+        <div class="tpcard-check">✓ Selected</div>
         <div class="tpcard-top">
           <div class="tpcard-name" style="color:${t.color}">${t.name}</div>
           <span class="diff-tag diff-${t.difficulty}">${t.difficulty==='easy'?'Frontrunner':t.difficulty==='medium'?'Midfield':'Backmarker'}</span>
