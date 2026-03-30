@@ -3922,10 +3922,11 @@ const UI = {
         <div style="display:flex;align-items:flex-end;gap:2px;height:32px;margin-bottom:8px">${fieldBar}</div>
         <div style="font-size:9px;color:var(--tx3);text-align:center;margin-bottom:10px">Car performance vs all ${g.teams.length} constructors (red = you)</div>
       ` + abar('Car Performance',team.carPerformance,'#dc2626')+abar('Reliability',team.reliability,'#16a34a')+abar('Development Rate',team.developmentRate,'#2563eb')
-        + `<div style="margin-top:8px;padding:8px 10px;background:var(--bg3);border-radius:7px;display:flex;justify-content:space-between;align-items:center">
+        + `<div onclick="UI.showView('car')" style="margin-top:8px;padding:8px 10px;background:var(--bg3);border-radius:7px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;border:1px solid ${dfMatch==='🔴'?'#dc2626':dfMatch==='🟡'?'#d97706':'var(--bd)'}" title="Go to Car setup">
           <div>
-            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--tx3)">Aero Balance</div>
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--tx3)">Aero Balance <span style="font-weight:400;opacity:.6">— tap to adjust</span></div>
             <div style="font-size:12px;font-weight:700;margin-top:2px">${UI.downforceHint(team.downforce||50)}</div>
+            ${dfMatch==='🔴'?`<div style="font-size:10px;color:#dc2626;font-weight:700;margin-top:2px">Wrong setup for next race</div>`:dfMatch==='🟡'?`<div style="font-size:10px;color:#d97706;font-weight:600;margin-top:2px">Setup could be better</div>`:''}
           </div>
           <div style="text-align:right">
             <div style="font-size:16px;font-weight:900;font-family:var(--fm)">${team.downforce||50}</div>
@@ -3975,7 +3976,7 @@ const UI = {
         <div class="race-sub">${race.location}, ${race.country} · Round ${n}${sprintStep?'  ·  <strong style="color:var(--red)">'+sprintStep+'</strong>':''}</div>
         ${race.circuitType?`<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">
           <span style="font-size:11px;background:var(--bg3);border:1px solid var(--bd);border-radius:20px;padding:2px 8px;font-weight:600">${race.circuitType==='power'?'⚡ Power Circuit':race.circuitType==='technical'?'⚙️ Technical Circuit':race.circuitType==='street'?'🏙️ Street Circuit':'⚖️ Balanced Circuit'}</span>
-          ${(()=>{const team=State.getPlayerTeam();if(State.game.autoAero) return '<span style="font-size:11px;background:var(--bg3);border:1px solid var(--bd);border-radius:20px;padding:2px 8px;font-weight:700;color:var(--grn)">🤖 Auto setup</span>';const df=team?.downforce||50;const diff=Math.abs(df-(race.idealDownforce||50));const col=diff<10?'var(--grn)':diff<25?'var(--amber)':'var(--red)';const lbl=diff<10?'✓ Good setup':diff<25?'~ Decent setup':'✗ Wrong setup';return '<span style="font-size:11px;background:var(--bg3);border:1px solid var(--bd);border-radius:20px;padding:2px 8px;font-weight:700;color:'+col+'">'+lbl+'</span>'})()}
+          ${(()=>{const team=State.getPlayerTeam();if(State.game.autoAero) return '<span style="font-size:11px;background:var(--bg3);border:1px solid var(--bd);border-radius:20px;padding:2px 8px;font-weight:700;color:var(--grn)">🤖 Auto setup</span>';const df=team?.downforce||50;const diff=Math.abs(df-(race.idealDownforce||50));const col=diff<10?'var(--grn)':diff<25?'var(--amber)':'var(--red)';const lbl=diff<10?'✓ Good setup':diff<25?'~ Adjust setup':'✗ Fix setup';return '<span onclick="UI.showView(\'car\')" style="font-size:11px;background:var(--bg3);border:1px solid '+col+';border-radius:20px;padding:2px 8px;font-weight:700;color:'+col+';cursor:pointer" title="Tap to adjust aero">'+lbl+'</span>'})()}
         </div>`:''}
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
           <span style="font-size:11px;background:var(--bg3);padding:3px 8px;border-radius:10px;font-weight:600">${circuitType.icon} ${circuitType.label}</span>
@@ -7173,6 +7174,7 @@ const UI = {
       </table>
       ${tip('Facilities compound', 'Investing in Facilities raises your <strong>Development Rate</strong>, which means all future development budgets yield more gains per dollar. Early investment here pays off for the whole dynasty.')}
       ${tip('Read your calendar', 'Before the offseason, look at how many street circuits and high-downforce tracks are in the coming season. Monaco, Singapore, Hungary and Zandvoort all punish a bad aero setup. If you have several of those in a row, lean heavier into Aero that winter.')}
+      ${tip('Check your setup before every race', 'The Next Event panel on your dashboard shows a setup badge — green means you are good, amber means you could do better, red means you are leaving pace on the table. Tap it to jump straight to the Car page and adjust your downforce before the race.')}
       ${warn('A bad R&D year can set you back a full season. If you see a setback banner at the start of a new season, budget extra in the following offseason to recover.')}
     `)}
 
@@ -7257,11 +7259,11 @@ const UI = {
     `)}
 
     ${sec('🏁','Race Strategy — Pit Stops & Weather',`
-      <p>During Watch Race mode you make live decisions. There are two main calls:</p>
+      <p>During Watch Race, your decisions genuinely affect the result. Good calls gain places. Bad ones cost them.</p>
       <h4>Pit stop decisions</h4>
-      <p>When a pit window opens, you'll see a box-or-stay decision for your drivers with a countdown timer (default 8s, adjustable in Settings). The suggested strategy is shown — you can override it. Pitting early undercuts rivals but risks tyre deg; staying out defends position but risks losing out when the rival pits.</p>
+      <p>When a pit window opens you will see a box-or-stay call with a countdown timer (adjustable in Settings). The suggested strategy is shown but you can override it. Pitting early undercuts rivals; staying out defends track position but risks being caught on worn rubber. Your call is reflected in the final result.</p>
       <h4>Weather calls</h4>
-      <p>If rain starts mid-race, a weather decision fires: switch to intermediates now, wait, or stay on slicks. Switching too early costs track position; switching too late causes massive pace loss. Your drivers' Wet Weather rating affects how long they can stay out on slicks before performance falls off a cliff.</p>
+      <p>If rain arrives mid-race, you decide when to switch. Read your driver's wet weather skill. A strong wet-weather driver can hold on longer and gain places over rivals who panic-pit. A driver who struggles in the wet and stays out will lose ground fast. The post-race debrief shows exactly how many places your calls gained or cost you.</p>
       ${tip('Speed settings', 'Use Very Fast for routine races and Normal/Slow when you\'re in a tight championship battle and want to savour the moment. Speed is set per-session and remembered.')}
       ${tip('Auto settings', 'If you prefer to sim without decisions, turn on Auto Strategy and Auto Aero in Settings. Note: Auto Strategy applies a small pace penalty as the engineers are more conservative than you.')}
     `)}
@@ -8136,25 +8138,27 @@ const UI = {
           ['v1.8.4','Mar 2026',[
             'Auto-sim races now carry a 15% chance of losing 1 place due to suboptimal engineer calls — Watch Race with good decisions is now genuinely the better path',
           ]],
+          ['v1.8.4','Mar 2026',[
+            'Aero setup is no longer buried. The setup badge on your Next Event panel now tells you when something needs fixing and takes you straight there. Wrong setup for the next race? You will know about it.',
+          ]],
           ['v1.8.3','Mar 2026',[
-            '🏁 Your pit wall calls now matter. Nail the undercut, read the weather right, and your driver moves up the order. For real. Get it wrong and you\'ll pay for it in the standings. Watch Race is no longer just a spectator sport.',
+            '🏁 Your pit wall calls now matter. Nail the undercut, read the weather right, and your driver moves up the order. For real. Get it wrong and you will pay for it in the standings. Watch Race is no longer just a spectator sport.',
             'Post-race debrief now tells you exactly how many places your strategy gained or cost you.',
           ]],
           ['v1.8.2','Mar 2026',[
-            'Bug fix — Watch Race dark mode now fully supported: modal, feed, pit/weather decision cards, and results table all use theme colours',
-            'Bug fix — Rain probability reduced from 30% to 15% to better reflect real F1 seasons',
-            'Guide updated — qualifying improvement tip added for drivers',
+            'Watch Race now fully supports dark mode — modal, feed, pit and weather decision cards, and the results table all respect your theme',
+            'Rain frequency tuned to better reflect a real F1 season',
+            'Guide updated — new tip on how to improve driver qualifying performance',
           ]],
           ['v1.8.1','Mar 2026',[
-            'Contact / Feedback form added — report bugs or send suggestions directly from the game',
+            'Contact and feedback form added — report bugs or send suggestions without leaving the game',
             'Community links added throughout — find r/f1dynasty from the landing page, mobile menu, and contact form',
-            'SEO improvements — better social sharing cards, canonical link added',
+            'Improved social sharing — better preview cards when you share the game link',
           ]],
           ['v1.8','Mar 2026',[
-            'Bug fix — season recap standings now correctly show final points instead of 0 after season reset',
-            'Bug fix — pause button during Watch Race now correctly stops the race; timer chain fully cleared on pause',
-            'Bug fix — pause no longer conflicts with pit stop or weather decision cards',
-            'Version number added to landing page for quick confirmation of latest deployment',
+            'Season recap standings now correctly show final points — no more zeroes after a hard-fought season',
+            'Pause button during Watch Race now actually pauses. No more races running away from you',
+            'Version number added to the landing page',
           ]],
           ['v1.7','Mar 2026',[
             'Bug fix — winter development budget now correctly required each season before starting; Begin Season button stays disabled until budget is allocated',
