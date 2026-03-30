@@ -8102,10 +8102,10 @@ const UI = {
     if(btn){ btn.disabled=true; btn.textContent='Sending...'; }
 
     try {
-      const res = await fetch('https://f1dynasty-contact.f1dynastygame.workers.dev/', {
+      const res = await fetch('https://formspree.io/f/xreoqgpn', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, type, message, honeypot })
+        body: JSON.stringify({ name, email, type, message, _gotcha: honeypot })
       });
       const data = await res.json();
       if(data.ok){
