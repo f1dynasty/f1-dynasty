@@ -1411,7 +1411,7 @@ const DATA = {
     qualifier:  {icon:'🎯',label:'Qualifier',   color:'#059669',desc:'Exceptional single-lap speed'},
   },
   points: [25,18,15,12,10,8,6,4,2,1,0,0,0,0,0,0,0,0,0,0],
-  pointsFastestLap: 1,
+  pointsFastestLap: 0, // removed from F1 in 2026
 
   // Tire compounds: pace bonus at start, degradation per lap (0-1 scale), cliff lap (% of race)
   tires: {
@@ -1833,7 +1833,17 @@ const Sim = {
         playerTeam.downforce = race.idealDownforce;
       }
     }
-    const drivers = State.game.drivers.filter(d=>d.teamId&&!d.retired&&!d.isReserve&&!d.isProspect);
+    const activeInjuries = Sim._getActiveInjuries ? Sim._getActiveInjuries() : [];
+    const injuredDriverIds = new Set(activeInjuries.map(inj=>inj.driverId));
+    const drivers = State.game.drivers.filter(d=>d.teamId&&!d.retired&&!d.isReserve&&!d.isProspect)
+      .map(d=>{
+        // Substitute injured driver with best available reserve from same team
+        if(injuredDriverIds.has(d.id)){
+          const reserve = State.game.drivers.find(r=>r.teamId===d.teamId&&r.isReserve&&!r.retired&&!injuredDriverIds.has(r.id));
+          return reserve || d; // fall back to injured driver if no reserve
+        }
+        return d;
+      });
     const entries = [];
     drivers.forEach(d => {
       const team = State.getTeam(d.teamId);
@@ -1915,9 +1925,10 @@ const Sim = {
       const isPlayerTeamRace = team.id === g.playerTeamId;
       let stratBonus = 0;
       if(isPlayerTeamRace && race) {
-        const chosenId = race._chosenStrategy;
+        // Check per-driver strategy first, fall back to team strategy
+        const driverStratId = race._driverStrategies && race._driverStrategies[d.id];
+        const chosenId = driverStratId || race._chosenStrategy;
         if(!chosenId || chosenId === 'auto') {
-          // Auto or no strategy chosen — slight penalty
           stratBonus = -1.5;
         } else {
           const stratData = DATA.getStrategyOptions(race, race._weatherRisk||0);
@@ -1968,8 +1979,7 @@ const Sim = {
     results.forEach(r=>{
       if(r.dnf)return;
       const pts=DATA.points[r.position-1]||0;
-      const flPts=(r.fastestLap&&r.position<=10)?DATA.pointsFastestLap:0;
-      r.points=pts+flPts;
+      r.points=pts; // no fastest lap point from 2026 season
       State.addPoints(r.driverId,r.points);
       const driver=State.getDriver(r.driverId);
       if(driver){
@@ -5319,6 +5329,27 @@ const UI = {
       </div>
 
       <div style="font-size:12px;font-weight:700;color:var(--tx2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em">Choose Your Strategy</div>
+      ${(()=>{
+        const myDrivers = State.getPlayerDrivers();
+        if(myDrivers.length < 2) return '';
+        return `<div style="background:var(--bg3);border:1px solid var(--bd);border-radius:8px;padding:10px 12px;margin-bottom:12px;font-size:12px">
+          <div style="font-weight:700;color:var(--tx2);margin-bottom:6px">Split strategy — set different strategies per driver</div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            ${myDrivers.map(d=>{
+              const dStratId = race._driverStrategies && race._driverStrategies[d.id];
+              const label = dStratId ? (dStratId==='auto'?'Auto':DATA.getStrategyOptions(race,race._weatherRisk||0).options.find(o=>o.id===dStratId)?.label||dStratId) : 'Same as team';
+              return `<div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+                <span style="font-weight:700;color:var(--tx)">${d.name.split(' ').pop()}</span>
+                <select onchange="UI._setDriverStrategy('${d.id}',this.value)" style="font-size:11px;padding:4px 6px;border:1px solid var(--bd);border-radius:5px;background:var(--bg2);color:var(--tx);flex:1;max-width:180px">
+                  <option value="" ${!dStratId?'selected':''}>Same as team</option>
+                  ${DATA.getStrategyOptions(race,race._weatherRisk||0).options.map(o=>`<option value="${o.id}" ${dStratId===o.id?'selected':''}>${o.label}</option>`).join('')}
+                  <option value="auto" ${dStratId==='auto'?'selected':''}>Auto</option>
+                </select>
+              </div>`;
+            }).join('')}
+          </div>
+        </div>`;
+      })()}
       ${optionCards}
       ${autoCard}
 
@@ -5329,6 +5360,17 @@ const UI = {
       <div id="strategy-confirm-msg" style="font-size:11px;color:var(--red);margin-top:6px;text-align:center"></div>
     `;
     document.getElementById('strategy-modal').classList.remove('hidden');
+  },
+
+  _setDriverStrategy(driverId, stratId){
+    const race = State.getCurrentRace();
+    if(!race) return;
+    if(!race._driverStrategies) race._driverStrategies = {};
+    if(stratId === '') {
+      delete race._driverStrategies[driverId];
+    } else {
+      race._driverStrategies[driverId] = stratId;
+    }
   },
 
   _selectStrategy(id){
@@ -7413,7 +7455,7 @@ const UI = {
       <p>After every race or sprint — whether you sim it or watch it live — a <strong>Race Recap</strong> screen appears before you return to the dashboard.</p>
       <h4>What it shows</h4>
       <p>The <strong>hero banner</strong> at the top shows the race winner, circuit, weather conditions, and where you are in the season. Wins and podiums get a dark dramatic background; DNF races get a neutral tone — so you know at a glance how it went.</p>
-      <p><strong>Your Drivers</strong> cards show each driver's finish position (or DNF lap), where they started on the grid, points scored, and their championship standing movement with ▲▼ arrows. If a driver set the fastest lap, it shows the ⚡ badge here.</p>
+      <p><strong>Your Drivers</strong> cards show each driver's finish position (or DNF lap), where they started on the grid, points scored, and their championship standing movement with ▲▼ arrows. If a driver set the fastest lap it shows the ⚡ badge — fastest lap no longer awards a bonus point from the 2026 season.</p>
       <p>The <strong>Race Story</strong> section is a prose narrative of the race. It covers how the winner got there (pole convert, strategy-based win, or on-track move), championship battle context, weather and safety car impact, your team's story arc, and rival retirements. At the end it adds a pundit-style comment on each of your drivers — explaining why they over or underperformed based on their actual attributes. A driver with low consistency will be called out for errors; a wet-weather specialist will be credited for their conditions performance. The commentary pool is large enough that you should rarely see the same phrase twice in a season.</p>
       <p>The <strong>Performance Gap</strong> panel appears when your constructor standing is noticeably lower than your car rating should produce. It flags specific reasons: season DNF count with estimated points lost, whether the championship leader has had zero retirements (compounding the gap), and early-season variance if only a few races have been run.</p>
       <p>The <strong>Championship Standing</strong> panel shows your drivers' and constructor's current position and how many places moved since last race, plus the points gap to the championship leader.</p>
@@ -8320,8 +8362,16 @@ const UI = {
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-        <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v1.9.2 · Release Notes</div>
+        <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v1.9.4 · Release Notes</div>
         ${[
+          ['v1.9.4','Mar 2026',[
+            'Fastest lap bonus point removed — F1 dropped this award from the 2026 season.',
+          ]],
+          ['v1.9.3','Mar 2026',[
+            'Split strategy — you can now set different race strategies for each of your drivers. Use the strategy picker before each race to run one driver on a different tyre compound or stop sequence to the other.',
+            'Bug fix — injured drivers are now correctly substituted by reserve drivers during qualifying and races.',
+            'Bug fix — Watch Race finish position commentary now matches the final result table.',
+          ]],
           ['v1.9.2','Mar 2026',[
             'Bug fix — upgrade packages ordered mid-season no longer stack up indefinitely. Any upgrades that were stuck are applied automatically when you load your save.',
             'Bug fix — upgrades are now fully cleared at the start of each new season instead of carrying over incorrectly.',
@@ -9339,6 +9389,17 @@ window._wrTick = function() {
 
             if(!WR.positionDeltas) WR.positionDeltas = {};
             WR.positionDeltas[myEntry.driverId] = { old: oldPos, new: newPos, delta: oldPos - newPos };
+
+            // Update any finish commentary events that referenced the old position
+            // so the commentary matches the adjusted result
+            const driverName = myEntry.driverName;
+            WR.events.forEach(function(ev){
+              if(ev.type === 'finish' && ev.text && ev.text.includes(driverName)){
+                ev.text = ev.text
+                  .replace(/finishes P\d+/, 'finishes P' + newPos)
+                  .replace(/— \d+ pts/, '— ' + (myEntry.points||0) + ' pts');
+              }
+            });
           }
         }
       }
