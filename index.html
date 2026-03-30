@@ -2680,46 +2680,7 @@ const Sim = {
     // A single number that grows across the dynasty. Visible on the dashboard.
     // Scoring: Championships are the core currency. Wins, podiums, dominance add depth.
     // Consecutive titles give a multiplier — building a dynasty is worth more than one-offs.
-    const prevLegacy = cs.legacyScore || 0;
-    // Consecutive title streak
-    const recentSeasons = cs.seasons.slice(-5);
-    const streak = (()=>{
-      let s = 0;
-      for(let i = cs.seasons.length - 1; i >= 0; i--) {
-        if(cs.seasons[i].constructorChamp || cs.seasons[i].driverChamp) s++;
-        else break;
-      }
-      return s;
-    })();
-    const streakMultiplier = streak >= 3 ? 2.0 : streak >= 2 ? 1.5 : 1.0;
-    // Points this season
-    let legacyGain = 0;
-    if(isConstrChampSeason) legacyGain += 500 * streakMultiplier;
-    if(isDriverChampSeason) legacyGain += 400 * streakMultiplier;
-    legacyGain += seasonWins * 25;
-    legacyGain += seasonPodiums * 8;
-    legacyGain += seasonPoles * 5;
-    // Dominance bonus: if constructor champion, add points gap over 2nd
-    if(isConstrChampSeason) {
-      const standings = State.getConstructorStandings();
-      const gap = standings.length >= 2 ? standings[0].points - standings[1].points : 0;
-      legacyGain += Math.round(gap * 0.5); // big gaps = dominance bonus
-    }
-    // Position bonus even without title
-    if(!isConstrChampSeason) {
-      const posPts = [0, 150, 80, 50, 30, 15, 5, 0, 0, 0, 0];
-      legacyGain += posPts[Math.min(constrPos||10, 10)];
-    }
-    cs.legacyScore = (prevLegacy + Math.round(legacyGain));
-    cs.legacyGainThisSeason = Math.round(legacyGain);
-    cs.streak = streak;
-    // Tier label
-    cs.legacyTier = cs.legacyScore >= 5000 ? 'LEGENDARY' :
-                    cs.legacyScore >= 2500 ? 'DYNASTY' :
-                    cs.legacyScore >= 1000 ? 'DOMINANT' :
-                    cs.legacyScore >= 400  ? 'ESTABLISHED' :
-                    cs.legacyScore >= 100  ? 'RISING' : 'NEWCOMER';
-    // ── END LEGACY SCORE ──────────────────────────────────────────────────────
+    // ── LEGACY SCORE REMOVED ─────────────────────────────────────────────────
 
     // ── BOARD OBJECTIVE EVALUATION ────────────────────────────────────────────
     const objectives = g.boardObjectives || [];
@@ -2731,7 +2692,7 @@ const Sim = {
         case 'wins':     achieved = seasonWins >= obj.target; break;
         case 'podiums':  achieved = seasonPodiums >= obj.target; break;
         case 'poles':    achieved = seasonPoles >= obj.target; break;
-        case 'legacy':   achieved = cs.legacyScore >= obj.target; break;
+        case 'legacy':   achieved = false; break; // legacy score removed
         default:         achieved = false;
       }
       if(achieved) objBonusRevenue += obj.reward;
@@ -3314,6 +3275,7 @@ const Sim = {
     g.teams.forEach(t=>{t.seasonPoints=0;t.wins=0;t.poles=0;t.podiums=0;});
 
     g.season++; g.raceIndex=0;
+    g.scoutingChosen=false; // reset each season so player confirms scouting setup
     g.inSeasonDev={aero:0,reliability:0,engine:0};
     g.poachAttempts=[];
     if(g.injuries) g.injuries = g.injuries.map(inj=>({...inj,cleared:true}));
@@ -3352,11 +3314,6 @@ const Sim = {
     // Poles — easy goal
     objPool.push({id:'poles',label:'Secure at least 3 pole positions',type:'poles',target:3,reward:60,difficulty:'easy',icon:'⚡'});
     // Legacy milestone
-    const legacyNow = g.careerStats?.legacyScore || 0;
-    if(legacyNow > 0) {
-      const legacyTarget = legacyNow + Math.max(200, Math.round(legacyNow * 0.25));
-      objPool.push({id:'legacy',label:`Reach ${legacyTarget.toLocaleString()} Legacy Score`,type:'legacy',target:legacyTarget,reward:150,difficulty:'medium',icon:'🏰'});
-    }
     // Rookie season — special goal
     if(totalSeasons === 0) {
       objPool.push({id:'first_win',label:'Win your first race',type:'wins',target:1,reward:200,difficulty:'medium',icon:'🎯'});
@@ -3522,8 +3479,7 @@ const Storage = {
         season: g?.season,
         race: g?.raceIndex,
         savedAt: data.savedAt,
-        legacyScore: cs?.legacyScore || 0,
-        legacyTier: cs?.legacyTier || '',
+
         championships: cs?.championships || 0,
         constructorChampionships: cs?.constructorChampionships || 0,
         totalWins: cs?.totalWins || 0,
@@ -3570,6 +3526,48 @@ const Storage = {
     if(!g.poachAttempts) g.poachAttempts=[];
     if(!g.injuries) g.injuries=[];
     if(!g.careerStats) g.careerStats={seasons:[],totalWins:0,totalPodiums:0,totalPoles:0,championships:0,constructorChampionships:0};
+    // ── New field patches — safe defaults for all fields added after v1.0 ──────
+    if(g.lastSprintResult===undefined) g.lastSprintResult=null;
+    if(g.autoAero===undefined) g.autoAero=false;
+    if(g.autoStrategy===undefined) g.autoStrategy=false;
+    if(g.autoBoxSecs===undefined) g.autoBoxSecs=8;
+    if(!g.inSeasonDev) g.inSeasonDev={aero:0,reliability:0,engine:0};
+    if(g.inSeasonDevApplied===undefined) g.inSeasonDevApplied=false;
+    if(!g.ownerMood) g.ownerMood={performance:0,finances:0};
+    if(g.ownerGoal===undefined) g.ownerGoal=5;
+    if(g._bottomFinishStreak===undefined) g._bottomFinishStreak=0;
+    if(!g.boardObjectives) g.boardObjectives=[];
+    if(!g.boardObjectivesResult) g.boardObjectivesResult=[];
+    if(!g.lastSeasonSnapshot) g.lastSeasonSnapshot={};
+    if(!g.nextDriverId) g.nextDriverId=g.drivers?g.drivers.reduce((m,d)=>Math.max(m,d.id+1),1):500;
+    if(g.scoutingTier===undefined) g.scoutingTier='none';
+    if(g.scoutingChosen===undefined) g.scoutingChosen=!!g.scoutingTier&&g.scoutingTier!=='none';
+    if(!g.sponsors) g.sponsors=[];
+    if(!g.pendingSponsors) g.pendingSponsors=[];
+    if(g.playerFired===undefined) g.playerFired=false;
+    // Patch teams for new fields
+    if(g.teams) g.teams.forEach(t=>{
+      if(t.downforce===undefined) t.downforce=50;
+      if(t.developmentRate===undefined) t.developmentRate=70;
+      if(t.facilities===undefined) t.facilities=65;
+      if(t.seasonPoints===undefined) t.seasonPoints=0;
+      if(t.wins===undefined) t.wins=0;
+      if(t.poles===undefined) t.poles=0;
+      if(t.podiums===undefined) t.podiums=0;
+    });
+    // Patch drivers for new fields
+    if(g.drivers) g.drivers.forEach(d=>{
+      if(d.podiums===undefined) d.podiums=0;
+      if(d.poles===undefined) d.poles=0;
+      if(d.fastestLaps===undefined) d.fastestLaps=0;
+      if(d.championships===undefined) d.championships=0;
+      if(d.isReserve===undefined) d.isReserve=false;
+      if(d.isProspect===undefined) d.isProspect=false;
+      if(d.isFreeAgent===undefined) d.isFreeAgent=(!d.teamId&&!d.retired&&!d.isProspect);
+      if(d.morale===undefined) d.morale=75;
+      if(d.aggression===undefined) d.aggression=65;
+      if(d.marketability===undefined) d.marketability=65;
+    });
     // Ensure quarterDev always has 3 valid entries
     if(!g.quarterDev || g.quarterDev.length < 3) {
       g.quarterDev=[{aero:0,reliability:0,engine:0,applied:false},{aero:0,reliability:0,engine:0,applied:false},{aero:0,reliability:0,engine:0,applied:false}];
@@ -3599,6 +3597,16 @@ const Storage = {
       addNat(DATA.namedProspects);
       Object.values(DATA.reserveDrivers||{}).forEach(arr=>addNat(arr));
       g.drivers.forEach(d=>{if(natLookup[d.name])d.nationality=natLookup[d.name];});
+    }
+    // ── Compatibility: for saves already in offseason, ensure scoutingChosen is
+    // set correctly so the allReady check doesn't lock them out ──────────────────
+    // If offseasonPending and scoutingTier is set, treat scoutingChosen as true
+    if(g.offseasonPending && g.scoutingTier && g.scoutingTier !== 'none') {
+      g.scoutingChosen = true;
+    }
+    // If offseasonBudget was never initialised properly, reset it
+    if(!g.offseasonBudget || typeof g.offseasonBudget !== 'object') {
+      g.offseasonBudget = {aero:0,engine:0,reliability:0,facilities:0};
     }
     return g;
   }
@@ -3692,9 +3700,8 @@ const UI = {
       const saves = Storage.getAllSaveInfos();
       if(saves.length > 0) {
         savesSection.style.display = 'block';
-        const tierColors = {LEGENDARY:'#f59e0b',DYNASTY:'#a855f7',DOMINANT:'#3b82f6',ESTABLISHED:'#10b981',RISING:'#6b7280',NEWCOMER:'#9ca3af'};
         slotsEl.innerHTML = saves.map(info => {
-          const tc = tierColors[info.legacyTier] || 'var(--tx3)';
+          const tc = 'var(--tx3)';
           const ago = info.savedAt ? (() => {
             const diff = Date.now() - info.savedAt;
             if(diff < 60000) return 'just now';
@@ -3712,7 +3719,7 @@ const UI = {
                 ${champBadge}
               </div>
               <div style="font-size:11px;color:var(--tx3)">Season ${info.season} · Race ${info.race}/${DATA.calendar.length}${info.seasonsPlayed > 0 ? ' · ' + info.seasonsPlayed + ' seasons' : ''}</div>
-              ${info.legacyScore > 0 ? `<div style="font-size:10px;font-weight:700;color:${tc};margin-top:2px">${info.legacyTier} · ${info.legacyScore.toLocaleString()} legacy pts</div>` : ''}
+
             </div>
             <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0">
               <span style="font-size:10px;color:var(--tx3)">${ago}</span>
@@ -3847,32 +3854,7 @@ const UI = {
     if(sbEl) sbEl.innerHTML = `<div style="height:4px;background:var(--bd);border-radius:2px"><div style="width:${pct}%;height:100%;background:var(--red);border-radius:2px;transition:width .3s"></div></div><div style="font-size:10px;color:var(--tx3);margin-top:3px">${pct}% complete</div>`;
 
     // Legacy Score bar
-    const legacyEl = document.getElementById('dash-legacy-bar');
-    if(legacyEl){
-      const cs = g.careerStats;
-      if(cs && cs.legacyScore > 0){
-        const tierColors = {LEGENDARY:'#f59e0b',DYNASTY:'#a855f7',DOMINANT:'#3b82f6',ESTABLISHED:'#10b981',RISING:'#6b7280',NEWCOMER:'#9ca3af'};
-        const tc = tierColors[cs.legacyTier] || '#6b7280';
-        const nextTierPts = cs.legacyScore >= 5000 ? null : cs.legacyScore >= 2500 ? 5000 : cs.legacyScore >= 1000 ? 2500 : cs.legacyScore >= 400 ? 1000 : cs.legacyScore >= 100 ? 400 : 100;
-        const prevTierPts = cs.legacyScore >= 5000 ? 2500 : cs.legacyScore >= 2500 ? 1000 : cs.legacyScore >= 1000 ? 400 : cs.legacyScore >= 400 ? 100 : 0;
-        const barPct = nextTierPts ? Math.min(100, Math.round((cs.legacyScore - prevTierPts) / (nextTierPts - prevTierPts) * 100)) : 100;
-        const streakTxt = cs.streak >= 2 ? ` · ${cs.streak}× streak 🔥` : '';
-        legacyEl.style.display = 'block';
-        legacyEl.innerHTML = `<div style="background:var(--bg2);border:1px solid var(--bd);border-radius:10px;padding:10px 14px;cursor:pointer" onclick="UI.showView('history');UI.showHistoryTab('dynasty')">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-            <div style="display:flex;align-items:center;gap:8px">
-              <span style="font-size:11px;font-weight:800;letter-spacing:.5px;color:${tc}">${cs.legacyTier}</span>
-              ${cs.streak>=2?`<span style="font-size:10px;background:rgba(245,158,11,.15);color:#f59e0b;padding:2px 6px;border-radius:4px;font-weight:700">${cs.streak}× STREAK 🔥</span>`:''}
-            </div>
-            <span style="font-size:15px;font-weight:900;font-family:var(--fm);color:var(--tx)">${cs.legacyScore.toLocaleString()}</span>
-          </div>
-          <div style="height:5px;background:var(--bd);border-radius:3px"><div style="width:${barPct}%;height:100%;background:${tc};border-radius:3px;transition:width .4s"></div></div>
-          ${nextTierPts?`<div style="font-size:10px;color:var(--tx3);margin-top:4px">${(nextTierPts-cs.legacyScore).toLocaleString()} pts to ${(['NEWCOMER','RISING','ESTABLISHED','DOMINANT','DYNASTY','LEGENDARY'].indexOf(cs.legacyTier)+1 < 6 ? ['NEWCOMER','RISING','ESTABLISHED','DOMINANT','DYNASTY','LEGENDARY'][['NEWCOMER','RISING','ESTABLISHED','DOMINANT','DYNASTY','LEGENDARY'].indexOf(cs.legacyTier)+1] : 'max')}</div>`:'<div style="font-size:10px;color:#f59e0b;margin-top:4px;font-weight:700">Maximum tier achieved 🏆</div>'}
-        </div>`;
-      } else {
-        legacyEl.style.display = 'none';
-      }
-    }
+    const legacyEl = document.getElementById('dash-legacy-bar'); if(legacyEl) legacyEl.style.display='none';
 
     // Car summary panel
     const csum = document.getElementById('dash-car-summary');
@@ -4089,7 +4071,7 @@ const UI = {
               case 'wins':     return seasonW>=o.target;
               case 'podiums':  return seasonP>=o.target;
               case 'poles':    return seasonPl>=o.target;
-              case 'legacy':   return (g.careerStats?.legacyScore||0)>=o.target;
+              case 'legacy':   return false;
             }
           }).length}/${objectives.length} on track</span>
         </div>
@@ -4106,7 +4088,7 @@ const UI = {
             case 'wins':     current=seasonW; done=seasonW>=obj.target; break;
             case 'podiums':  current=seasonP; done=seasonP>=obj.target; break;
             case 'poles':    current=seasonPl; done=seasonPl>=obj.target; break;
-            case 'legacy':   current=g.careerStats?.legacyScore||0; done=current>=obj.target; break;
+            case 'legacy':   current=0; done=false; break;
           }
           const pct = obj.type==='position' ? (done?100:0) : Math.min(100,Math.round(current/obj.target*100));
           const col = done ? 'var(--grn)' : pct>=60 ? 'var(--amber)' : 'var(--tx3)';
@@ -4478,7 +4460,8 @@ const UI = {
         const reserves=State.getPlayerReserves();
         const expiringDrivers=drivers.filter(d=>d.contract<=0);
         const scoutDone = !!g.scoutingChosen;
-        const allReady = drivers.length>=2 && expiringDrivers.length===0 && scoutDone;
+        const bwCheck=g.offseasonBudget||{}; const winterAllocated=(bwCheck.aero||0)+(bwCheck.engine||0)+(bwCheck.reliability||0)+(bwCheck.facilities||0)>0;
+        const allReady = drivers.length>=2 && expiringDrivers.length===0 && scoutDone && winterAllocated;
         const item=(icon,name,sub,done,actionLabel,actionFn)=>`
           <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--bd)">
             <div style="display:flex;align-items:center;gap:9px">
@@ -5534,7 +5517,7 @@ const UI = {
     const netColor=net>15?'var(--grn)':net>0?'var(--amber)':'var(--red)';
 
     document.getElementById('finance-content').innerHTML = `
-      ${this._fromOffseason?`<div style="margin-bottom:12px"><button class="btn btn-outline btn-sm" onclick="UI._fromOffseason=false;UI.showPage('offseason')">← Back to Season Review</button></div>`:''}
+      ${this._fromOffseason?`<div style="margin-bottom:12px"><button class="btn btn-outline btn-sm" onclick="UI._fromOffseason=false;UI.showPage('offseason');if(window._recapTransfers)UI.renderOffseason(window._recapTransfers,window._recapChamps&&window._recapChamps.driverChamp,window._recapChamps&&window._recapChamps.constructorChamp,window._recapChamps&&window._recapChamps.retirements||[])">← Back to Season Review</button></div>`:''}
       <div class="finance-grid">
         <div class="finance-card">
           <div class="finance-card-title">Income</div>
@@ -6981,54 +6964,7 @@ const UI = {
       const numSeasons = cs.seasons.length;
       const totalPts = cs.seasons.reduce((acc,r)=>acc+r.points,0);
       const bestPos = cs.seasons.reduce((b,r)=>r.position<b?r.position:b, 99);
-      const tierColors = {LEGENDARY:'#f59e0b',DYNASTY:'#a855f7',DOMINANT:'#3b82f6',ESTABLISHED:'#10b981',RISING:'#6b7280',NEWCOMER:'#9ca3af'};
-      const tc = tierColors[cs.legacyTier||'NEWCOMER'] || '#6b7280';
-      const nextTierPts = !cs.legacyScore||cs.legacyScore>=5000?null:cs.legacyScore>=2500?5000:cs.legacyScore>=1000?2500:cs.legacyScore>=400?1000:cs.legacyScore>=100?400:100;
-      const prevTierPts = !cs.legacyScore?0:cs.legacyScore>=5000?2500:cs.legacyScore>=2500?1000:cs.legacyScore>=1000?400:cs.legacyScore>=400?100:0;
-      const barPct = nextTierPts?Math.min(100,Math.round(((cs.legacyScore||0)-prevTierPts)/(nextTierPts-prevTierPts)*100)):100;
-      const tierNames = ['NEWCOMER','RISING','ESTABLISHED','DOMINANT','DYNASTY','LEGENDARY'];
-      const tierIdx = tierNames.indexOf(cs.legacyTier||'NEWCOMER');
-      const nextTierName = tierIdx < tierNames.length-1 ? tierNames[tierIdx+1] : null;
 
-      const seasonRows = [...cs.seasons].reverse().map(r=>
-        '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.07);font-size:12px">'
-        +'<span style="color:rgba(255,255,255,.4);font-weight:700;min-width:38px">'+r.season+'</span>'
-        +'<span style="font-weight:900;min-width:28px;color:'+(r.position<=3?'#f59e0b':r.position<=6?'#4ade80':'rgba(255,255,255,.7)')+'">P'+r.position+'</span>'
-        +'<span style="color:rgba(255,255,255,.5);min-width:54px">'+r.points+'pts</span>'
-        +'<span style="flex:1;font-size:10px;color:rgba(255,255,255,.4)">'+(r.driverChampName&&r.driverChampName!=='?'?'WDC: '+r.driverChampName:'')+'</span>'
-        +'<span style="font-size:10px;font-weight:700;color:'+(r.constructorChamp||r.driverChamp?'#f59e0b':'rgba(255,255,255,.5)')+'">'+
-          (r.constructorChamp?'🏆 Constructors':r.driverChamp?'🥇 Driver Champ':r.wins>0?('🏁 '+r.wins+'W'):'')+'</span>'
-        +'</div>').join('');
-
-      const injTotal = (State.game.injuries||[]).filter(inj=>inj.teamId===State.game.playerTeamId).length;
-      const injRows = injTotal===0?'':
-        (State.game.injuries||[]).filter(inj=>inj.teamId===State.game.playerTeamId).reverse().map(inj=>
-          '<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--bd);font-size:12px">'
-          +'<div><div style="font-weight:700">'+inj.driverName+'</div><div style="color:var(--tx3);font-size:11px">'+inj.type+' &middot; '+inj.missRaces+' race'+(inj.missRaces>1?'s':'')+' missed</div></div>'
-          +'<div style="font-size:10px;color:var(--tx3)">'+(inj.raceName||'')+'</div>'
-          +'</div>').join('');
-
-      c.innerHTML=
-        // Legacy Score hero card
-        '<div style="background:linear-gradient(135deg,#111 0%,#1a1a2e 100%);border-radius:14px;padding:20px;margin-bottom:14px;color:#fff;border:1px solid rgba(255,255,255,.1)">'
-          +'<div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:6px">Legacy Score</div>'
-          +'<div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:12px">'
-            +'<div>'
-              +'<div style="font-size:48px;font-weight:900;line-height:1;color:#fff;font-family:var(--fm)">'+(cs.legacyScore||0).toLocaleString()+'</div>'
-              +'<div style="display:flex;align-items:center;gap:8px;margin-top:6px">'
-                +'<span style="font-size:13px;font-weight:800;color:'+tc+';letter-spacing:.5px">'+(cs.legacyTier||'NEWCOMER')+'</span>'
-                +(cs.streak>=2?'<span style="font-size:11px;background:rgba(245,158,11,.2);color:#f59e0b;padding:3px 8px;border-radius:6px;font-weight:700">'+cs.streak+'× STREAK 🔥</span>':'')
-              +'</div>'
-            +'</div>'
-            +'<div style="text-align:right">'
-              +'<div style="font-size:13px;font-weight:700;color:rgba(255,255,255,.6)">'+team.name+'</div>'
-              +'<div style="font-size:11px;color:rgba(255,255,255,.35)">'+escapeHtml(State.game.managerName)+' · '+numSeasons+' season'+(numSeasons!==1?'s':'')+'</div>'
-            +'</div>'
-          +'</div>'
-          +'<div style="height:6px;background:rgba(255,255,255,.1);border-radius:3px;margin-bottom:6px">'
-            +'<div style="width:'+barPct+'%;height:100%;background:'+tc+';border-radius:3px;transition:width .4s"></div>'
-          +'</div>'
-          +(nextTierName?'<div style="font-size:10px;color:rgba(255,255,255,.35)">'+((nextTierPts||0)-(cs.legacyScore||0)).toLocaleString()+' pts to '+nextTierName+'</div>':'<div style="font-size:11px;color:#f59e0b;font-weight:700">🏆 Maximum tier achieved</div>')
         +'</div>'
         // Stats grid
         +'<div style="background:#111;border-radius:12px;padding:18px;margin-bottom:14px;color:#fff">'
@@ -7193,20 +7129,6 @@ const UI = {
       <div class="guide-intro-sub">This isn't a dry manual. Each section below explains how a system actually works and what decisions matter. Open the ones you're unsure about — skip the ones you've got figured out.</div>
     </div>
 
-    ${sec('🎯','The Goal — Legacy Score & How to Win',`
-      <p>Your ultimate goal is <strong>Legacy Score</strong>, shown at the top of the dashboard. This is your all-time measure as a manager — it persists across saves and defines your place in dynasty history.</p>
-      <div class="guide-stats-row">
-        ${stat('Championship Win','+ 200 pts')}
-        ${stat('Constructor Title','+ 100 pts')}
-        ${stat('Race Win','+ 10 pts')}
-        ${stat('Podium','+ 3 pts')}
-        ${stat('Pole Position','+ 2 pts')}
-        ${stat('Points Finish','+ 1 pt')}
-      </div>
-      <p>Championships are everything. 10 wins = 1 title in legacy value. The gap between a title-winning team and a podium team is enormous — always prioritise positions that push you toward championship contention.</p>
-      ${tip('Long game', 'Your Legacy Score unlocks tiers (Rookie → Pro → Elite → Legend → Icon). Higher tiers let you start new games with bonus prestige and revenue, compounding each dynasty.')}
-    `)}
-
     ${sec('🏎️','Car Development — The Core Loop',`
       <p>Your car's <strong>Car Performance</strong> rating is the single biggest determinant of results. Driver talent can compensate partially, but a 65-rated car will never win a championship regardless of who's driving it.</p>
       <h4>Three ways to improve your car</h4>
@@ -7309,7 +7231,7 @@ const UI = {
       <p>Each season the board sets 3 objectives: one hard, one medium, one easy. Meeting them pays bonus revenue directly into your budget.</p>
       <p>The objectives are generated based on your realistic performance level — they're not random. A bottom-half team won't be asked to win the championship. They scale with your situation.</p>
       <h4>Objective types</h4>
-      <p>Position targets, win targets, podium targets, pole targets, and legacy score milestones. Each has a revenue bonus proportional to difficulty.</p>
+      <p>Position targets, win targets, podium targets, and pole targets. Each has a revenue bonus proportional to difficulty.</p>
       ${tip('Check them early', 'Board objectives are shown on the dashboard above the news feed. Read them at the start of the season — some objectives (like "score 3 poles") require you to actively prioritise qualifying in your strategy decisions.')}
       ${warn('Missing all 3 objectives two seasons in a row damages owner mood. Sustained poor owner mood gets you fired. Even if results are poor, meeting at least 1–2 objectives per season keeps the board onside.')}
     `)}
@@ -7414,9 +7336,9 @@ const UI = {
     `)}
 
     ${sec('💾','Saves & Multiple Dynasties',`
-      <p>You can maintain up to <strong>5 separate save slots</strong> simultaneously. Each slot is a completely independent dynasty — separate history, separate legacy score, separate everything.</p>
+      <p>You can maintain up to <strong>5 separate save slots</strong> simultaneously. Each slot is a completely independent dynasty — separate history, separate drivers, separate everything.</p>
       <p>Saves are automatic — every meaningful action (race result, offseason completion, signing a driver) triggers an autosave. You can also manually save from the menu.</p>
-      <p>The landing page shows all your active saves with their tier, legacy score, and when you last played. Use the 🗑 button to delete a slot and start fresh.</p>
+      <p>The landing page shows all your active saves with their season, championship count, and when you last played. Use the 🗑 button to delete a slot and start fresh.</p>
     `)}
     `;
 
@@ -7424,12 +7346,15 @@ const UI = {
     el.querySelector('.guide-section')?.classList.add('open');
   },
 
-  showSeasonRecap(transfers, champs){
+  showSeasonRecap(transfers, champs, finalConStr, finalDrvStr){
     const g = State.game;
     const team = State.getPlayerTeam();
     const cs = g.careerStats;
     const snap = g.lastSeasonSnapshot || {};
     const season = g.season - 1; // season just completed
+    // Use passed-in snapshots if available, otherwise fall back to current standings
+    const _conStr = finalConStr || State.getConstructorStandings().map(s=>({id:s.team.id,name:s.team.name,color:s.team.color,points:s.team.seasonPoints,wins:s.team.wins}));
+    const _drvStr = finalDrvStr || State.getDriverStandings().slice(0,10).map(s=>({id:s.driver.id,name:s.driver.name,teamId:s.driver.teamId,points:s.driver.seasonPoints,wins:s.driver.wins}));
 
     // Championship banners
     const isConstrChamp = champs.constructorChamp && champs.constructorChamp.team.id === team.id;
@@ -7464,11 +7389,7 @@ const UI = {
     });
 
     // Legacy score gain this season
-    const legacyGain = cs?.legacyGainThisSeason || 0;
-    const legacyTotal = cs?.legacyScore || 0;
-    const legacyTier = cs?.legacyTier || '';
-    const tierColors = {LEGENDARY:'#f59e0b',DYNASTY:'#a855f7',DOMINANT:'#3b82f6',ESTABLISHED:'#10b981',RISING:'#6b7280',NEWCOMER:'#9ca3af'};
-    const tc = tierColors[legacyTier] || '#6b7280';
+
 
     // Stat improvements from drivers
     const driverRows = (snap.drivers||[]).map(d=>`
@@ -7478,32 +7399,30 @@ const UI = {
         <div style="font-family:var(--fm);font-weight:800;color:var(--tx2);min-width:30px;text-align:right">${d.seasonPoints}pts</div>
       </div>`).join('');
 
-    // Final championship standings (top 5 constructors + top 5 drivers)
-    const finalConStr = State.getConstructorStandings().slice(0,5);
-    const finalDrvStr = State.getDriverStandings().slice(0,5);
+    // Final championship standings — use pre-reset snapshot passed in from _promptSeasonEnd
     const playerDriverIds = State.getPlayerDrivers().map(d=>d.id);
     const standingsHtml = `
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
         <div>
           <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--tx3);margin-bottom:6px">Constructors</div>
-          ${finalConStr.map((s,i)=>{
-            const mine = s.team.id === team.id;
+          ${_conStr.slice(0,5).map((s,i)=>{
+            const mine = s.id === team.id;
             return `<div style="display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid var(--bd);font-size:11px;font-weight:${mine?'800':'400'};background:${mine?'rgba(192,57,43,.04)':''}">
               <span style="font-family:var(--fm);font-weight:700;color:${i===0?'var(--amber)':'var(--tx3)'};width:16px">${i+1}</span>
-              <div style="width:6px;height:6px;border-radius:50%;background:${s.team.color||'#888'};flex-shrink:0"></div>
-              <span style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.team.name.replace('Scuderia ','').replace(' F1 Team','').replace(' Racing','').replace('-AMG F1','')}</span>
+              <div style="width:6px;height:6px;border-radius:50%;background:${s.color||'#888'};flex-shrink:0"></div>
+              <span style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.name.replace('Scuderia ','').replace(' F1 Team','').replace(' Racing','').replace('-AMG F1','')}</span>
               <span style="font-family:var(--fm);font-weight:700;color:${mine?'var(--red)':'var(--tx)'}">${s.points}</span>
             </div>`;
           }).join('')}
         </div>
         <div>
           <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--tx3);margin-bottom:6px">Drivers</div>
-          ${finalDrvStr.map((s,i)=>{
-            const mine = playerDriverIds.includes(s.driver.id);
+          ${_drvStr.slice(0,5).map((s,i)=>{
+            const mine = playerDriverIds.includes(s.id);
             return `<div style="display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid var(--bd);font-size:11px;font-weight:${mine?'800':'400'};background:${mine?'rgba(192,57,43,.04)':''}">
               <span style="font-family:var(--fm);font-weight:700;color:${i===0?'var(--amber)':'var(--tx3)'};width:16px">${i+1}</span>
-              <span style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.driver.name.split(' ').pop()}</span>
-              <span style="font-family:var(--fm);font-weight:700;color:${mine?'var(--red)':'var(--tx)'}">${s.driver.seasonPoints}</span>
+              <span style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.name.split(' ').pop()}</span>
+              <span style="font-family:var(--fm);font-weight:700;color:${mine?'var(--red)':'var(--tx)'}">${s.points}</span>
             </div>`;
           }).join('')}
         </div>
@@ -7555,15 +7474,6 @@ const UI = {
         </div>` : ''}
 
         ${standingsHtml}
-
-        ${legacyGain > 0 ? `<div style="background:linear-gradient(135deg,var(--bg3),rgba(0,0,0,.2));border:1px solid ${tc}33;border-radius:8px;padding:10px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between">
-          <div style="display:flex;align-items:center;gap:10px">
-            <span style="font-size:20px">🏰</span>
-            <div><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--tx3)">Legacy Score</div>
-            <div style="font-size:13px;font-weight:700;color:${tc};margin-top:2px">+${legacyGain.toLocaleString()} pts · ${legacyTier}</div></div>
-          </div>
-          <div style="font-size:20px;font-weight:900;color:${tc};font-family:var(--fm)">${legacyTotal.toLocaleString()}</div>
-        </div>` : ''}
 
 
         ${(()=>{
@@ -7882,7 +7792,7 @@ const UI = {
     const otherSignings = transfers.filter(t=>!t.left&&!t.graduated&&!t.rookie&&t.to&&t.to!=='Free Agency'&&State.getTeam(t.to.replace ? null : null));
     const allSignings = transfers.filter(t=>!t.left&&!t.graduated&&!t.rookie&&t.teamId&&t.teamId!==g2.playerTeamId);
     const allDepartures = transfers.filter(t=>t.left&&t.teamId&&t.teamId!==g2.playerTeamId);
-    const retList = champs.retirements||[];
+    const retList = retirements||[];
     const graduates = transfers.filter(t=>t.graduated);
 
     // Car field sorted by performance for comparison
@@ -8109,8 +8019,15 @@ const UI = {
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-        <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v1.6 · Release Notes</div>
+        <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v1.7 · Release Notes</div>
         ${[
+          ['v1.7','Mar 2026',[
+            'Bug fix — winter development budget now correctly required each season before starting; Begin Season button stays disabled until budget is allocated',
+            'Bug fix — scoutingChosen now resets each offseason so players confirm their scout tier annually',
+            'Bug fix — ReferenceError: champs is not defined in offseason digest fixed',
+            'Bug fix — Back to Season Review button on finance page now correctly restores the full offseason recap',
+            'Removed — Legacy Score / Dynasty Points system removed as it was too complex and not adding to the experience',
+          ]],
           ['v1.6','Mar 2026',[
             'Race Recap — Race Story section now generates a prose narrative paragraph: how the win was taken, championship context, weather/safety car drama, your team storyline, and rival retirements',
             'Race Recap — Performance Gap panel explains when your standing does not match your car rating: flags season DNF count and estimated points lost, whether the championship leader has been retirement-free, and early-season variance',
@@ -8757,6 +8674,9 @@ const GameActions = {
     // Snapshot car performance before offseason dev runs (for digest delta display)
     const _preOffseasonCarSnap = {};
     State.game.teams.forEach(t=>{ _preOffseasonCarSnap[t.id] = {car:t.carPerformance, rel:t.reliability}; });
+    // Snapshot final standings BEFORE processSeasonEnd resets points to 0
+    const _finalConStr = State.getConstructorStandings().map(s=>({id:s.team.id,name:s.team.name,color:s.team.color,points:s.team.seasonPoints,wins:s.team.wins}));
+    const _finalDrvStr = State.getDriverStandings().slice(0,10).map(s=>({id:s.driver.id,name:s.driver.name,teamId:s.driver.teamId,points:s.driver.seasonPoints,wins:s.driver.wins}));
     const champs=Sim.processSeasonEnd(), transfers=Sim.processOffseason();
     // Attach car deltas to transfers data for digest
     transfers._carSnap = _preOffseasonCarSnap;
@@ -8775,7 +8695,7 @@ const GameActions = {
       UI.showFiredScreen(); return;
     }
     // Show Season Recap before the offseason screen
-    UI.showSeasonRecap(transfers, champs);
+    UI.showSeasonRecap(transfers, champs, _finalConStr, _finalDrvStr);
   },
   _simNRaces(n, label){
     const g=State.game;
