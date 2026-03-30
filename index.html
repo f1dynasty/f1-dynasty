@@ -607,6 +607,8 @@ tr.clickable-row:hover td{background:rgba(192,57,43,.07)!important}
 .dev-slider-val{font-family:var(--fm);font-size:11px;color:var(--red);font-weight:700}
 .dev-slider-desc{font-size:11px;color:var(--tx2);margin-top:3px}
 input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
+[data-theme="dark"] input[type=range]::-webkit-slider-thumb{background:#fff}
+[data-theme="dark"] input[type=range]::-moz-range-thumb{background:#fff}
 .dev-cost-bar{background:var(--bg3);border:1px solid var(--bd);border-radius:7px;padding:9px 13px;display:flex;justify-content:space-between;align-items:center;margin-top:8px}
 .dev-cost-label{font-size:11px;color:var(--tx3)}
 .dev-cost-val{font-family:var(--fm);font-weight:800;font-size:13px}
@@ -744,7 +746,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </div>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game" class="land-start">Start Career →</button>
-      <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px">v1.8.4 · <a href="javascript:void(0)" onclick="UI.showContact()" style="color:#aaa;text-decoration:none;cursor:pointer">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+      <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v1.9.1</a> · <a href="javascript:void(0)" onclick="UI.showContact()" style="color:#aaa;text-decoration:none;cursor:pointer">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -883,6 +885,9 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       <button class="drawer-item" onclick="UI.toggleMoreDrawer();UI.showSettings()">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
         Settings
+      </button>
+      <button class="drawer-item" onclick="UI.toggleMoreDrawer();UI.showView('history');UI.showHistoryTab('achievements')">
+        <span class="drawer-item-icon">🏆</span><span>Achievements</span>
       </button>
       <button class="drawer-item" onclick="UI.toggleMoreDrawer();UI.showView('guide')">
         <span class="drawer-item-icon">📖</span><span>Guide</span>
@@ -1057,6 +1062,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
           <button class="tab-pill" onclick="UI.showHistoryTab('goat')">GOAT</button>
           <button class="tab-pill" onclick="UI.showHistoryTab('records')">Records</button>
           <button class="tab-pill" onclick="UI.showHistoryTab('dynasty')">Dynasty</button>
+          <button class="tab-pill" onclick="UI.showHistoryTab('achievements')">Achievements</button>
         </div>
       </div>
       <div id="history-content"></div>
@@ -2177,7 +2183,8 @@ const Sim = {
 
     stepLaps.forEach(lap => {
       const frac = lap / laps;
-      const curOrder = lap >= laps
+      const isLastLap = lap >= laps;
+      const curOrder = isLastLap
         ? allDriverIds.map(id => ({ id, pos: driverFinal[id] }))
         : getOrderAtFrac(frac);
 
@@ -2190,8 +2197,14 @@ const Sim = {
       const snap = snapPos();
 
       playerIds.forEach(id => {
-        const curPos = curOrder.find(x => x.id === id)?.pos;
+        let curPos = curOrder.find(x => x.id === id)?.pos;
         const prevPos = lastEmittedPos[id];
+        // Cap position jumps on the final lap to max 2 places to avoid jarring P3->P1 snaps
+        if(isLastLap && curPos !== undefined && prevPos !== undefined) {
+          const maxJump = 2;
+          if(prevPos - curPos > maxJump) curPos = prevPos - maxJump;
+          if(curPos - prevPos > maxJump) curPos = prevPos + maxJump;
+        }
         if(curPos === undefined || curPos === prevPos) return;
 
         const r = results.find(x => x.driverId === id);
@@ -2678,11 +2691,46 @@ const Sim = {
     const constrPos = State.getConstructorSeasonPos(playerTeam.id);
     const isConstrChampSeason = constructorChamp && constructorChamp.team.id === playerTeam.id;
     const isDriverChampSeason = driverChamp && playerDrivers.some(d=>d.id===driverChamp.driver.id);
+
+    // ── Achievement tracking ───────────────────────────────────────────────────
+    const allRaces = g.calendar.filter(r=>r.raceDone&&r.raceResult);
+    const playerTeamId = g.playerTeamId;
+    // Perfect weekend: pole + win + fastest lap in same race
+    const perfectWeekend = allRaces.some(r=>{
+      const myResult = r.raceResult.find(res=>playerDrivers.some(d=>d.id===res.driverId)&&res.position===1&&!res.dnf);
+      const myQuali = r.qualiResult && r.qualiResult.find(res=>playerDrivers.some(d=>d.id===res.driverId)&&res.position===1);
+      const myFL = r.raceResult.find(res=>playerDrivers.some(d=>d.id===res.driverId)&&res.fastestLap);
+      return !!(myResult&&myQuali&&myFL);
+    });
+    // 1-2 finish
+    const oneTwo = allRaces.some(r=>{
+      const myPos = r.raceResult.filter(res=>playerDrivers.some(d=>d.id===res.driverId)&&!res.dnf).map(res=>res.position).sort((a,b)=>a-b);
+      return myPos[0]===1&&myPos[1]===2;
+    });
+    // Comeback win: won from outside top 10 on grid
+    const comebackWin = allRaces.some(r=>{
+      const winner = r.raceResult.find(res=>playerDrivers.some(d=>d.id===res.driverId)&&res.position===1&&!res.dnf);
+      return winner&&winner.startPos>10;
+    });
+    // Wet race win
+    const wetRaceWin = allRaces.some(r=>{
+      return (r.weather==='wet'||r.weather==='mixed')&&r.raceResult.find(res=>playerDrivers.some(d=>d.id===res.driverId)&&res.position===1&&!res.dnf);
+    });
+    // Big dev gain: any player driver improved 5+ rating this season
+    const bigDevGain = playerDrivers.some(d=>{
+      const pre = g._preDevRatings&&g._preDevRatings[d.id];
+      return pre&&(d.rating-pre.rating)>=5;
+    });
+    // Start difficulty
+    const startTeam = State.getTeam(playerTeamId);
+    const startDifficulty = startTeam?.difficulty || 'medium';
+
     cs.seasons.push({season:g.season, position:constrPos||99, points:playerTeam.seasonPoints,
       wins:seasonWins, podiums:seasonPodiums, poles:seasonPoles,
       constructorChamp:isConstrChampSeason, driverChamp:isDriverChampSeason,
       driverChampName:driverChamp?driverChamp.driver.name:'?',
-      constructorChampName:constructorChamp?constructorChamp.team.name:'?'});
+      constructorChampName:constructorChamp?constructorChamp.team.name:'?',
+      perfectWeekend, oneTwo, comebackWin, wetRaceWin, bigDevGain, startDifficulty});
     cs.totalWins += seasonWins;
     cs.totalPodiums += seasonPodiums;
     cs.totalPoles += seasonPoles;
@@ -3485,6 +3533,9 @@ const Storage = {
       const data = JSON.parse(raw);
       const g = data.game;
       const cs = g?.careerStats;
+      // Count unlocked achievements for display on save slot
+      let achievementCount = 0;
+      try { achievementCount = UI._getUnlockedAchievementsForGame ? UI._getUnlockedAchievementsForGame(g) : 0; } catch(e){}
       return {
         slot,
         managerName: g?.managerName,
@@ -3492,11 +3543,11 @@ const Storage = {
         season: g?.season,
         race: g?.raceIndex,
         savedAt: data.savedAt,
-
         championships: cs?.championships || 0,
         constructorChampionships: cs?.constructorChampionships || 0,
         totalWins: cs?.totalWins || 0,
         seasonsPlayed: cs?.seasons?.length || 0,
+        achievementCount,
       };
     } catch(e) { return null; }
   },
@@ -3611,6 +3662,8 @@ const Storage = {
       Object.values(DATA.reserveDrivers||{}).forEach(arr=>addNat(arr));
       g.drivers.forEach(d=>{if(natLookup[d.name])d.nationality=natLookup[d.name];});
     }
+    // Initialise achievement tracking if missing
+    if(!g._unlockedAchievements) g._unlockedAchievements = [];
     // ── Compatibility: for saves already in offseason, ensure scoutingChosen is
     // set correctly so the allReady check doesn't lock them out ──────────────────
     // If offseasonPending and scoutingTier is set, treat scoutingChosen as true
@@ -3723,13 +3776,14 @@ const UI = {
             return Math.floor(diff/86400000) + 'd ago';
           })() : '';
           const champBadge = info.constructorChampionships > 0 ? `<span style="font-size:10px;background:rgba(245,158,11,.15);color:#f59e0b;padding:2px 6px;border-radius:4px;font-weight:700;margin-left:4px">🏆 ${info.constructorChampionships}</span>` : '';
+          const achBadge = info.achievementCount > 0 ? `<span style="font-size:10px;background:rgba(192,57,43,.1);color:var(--red);padding:2px 6px;border-radius:4px;font-weight:700;margin-left:4px">⭐ ${info.achievementCount}</span>` : '';
           return `<div style="background:var(--bg2);border:1px solid var(--bd);border-radius:10px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:border-color .15s" 
             onmouseenter="this.style.borderColor='var(--red)'" onmouseleave="this.style.borderColor='var(--bd)'"
             onclick="Storage._loadSlotAndGo(${info.slot})">
             <div style="flex:1;min-width:0">
               <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px">
                 <span style="font-size:14px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(info.managerName)} · ${escapeHtml(info.teamName)}</span>
-                ${champBadge}
+                ${champBadge}${achBadge}
               </div>
               <div style="font-size:11px;color:var(--tx3)">Season ${info.season} · Race ${info.race}/${DATA.calendar.length}${info.seasonsPlayed > 0 ? ' · ' + info.seasonsPlayed + ' seasons' : ''}</div>
 
@@ -6944,7 +6998,7 @@ const UI = {
   },
 
   showHistoryTab(tab){
-    document.querySelectorAll('#view-history .tab-pill').forEach((b,i)=>b.classList.toggle('active',['champions','goat','records','dynasty'][i]===tab));
+    document.querySelectorAll('#view-history .tab-pill').forEach((b,i)=>b.classList.toggle('active',['champions','goat','records','dynasty','achievements'][i]===tab));
     this.renderHistory(tab);
   },
   renderHistory(tab){
@@ -7006,6 +7060,51 @@ const UI = {
           +'<div style="font-size:12px;color:var(--tx3);margin-bottom:8px">'+injTotal+' incident'+(injTotal!==1?'s':'')+' across your career</div>'
           +'<div style="display:flex;flex-direction:column;gap:0;max-height:200px;overflow-y:auto">'+injRows+'</div>'
           +'</div>':'');
+      return;
+    }
+    // default: records
+    if(tab==='achievements'){
+      const defs = UI._getAchievementDefs();
+      const unlocked = new Set(UI._getUnlockedAchievements());
+      const cats = [...new Set(defs.map(d=>d.cat))];
+      const total = defs.length;
+      const done = unlocked.size;
+      const pct = Math.round(done/total*100);
+
+      const rows = cats.map(cat=>{
+        const catDefs = defs.filter(d=>d.cat===cat);
+        const catDone = catDefs.filter(d=>unlocked.has(d.id)).length;
+        const cards = catDefs.map(d=>{
+          const isUnlocked = unlocked.has(d.id);
+          return `<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;background:${isUnlocked?'var(--bg2)':'var(--bg3)'};border:1px solid ${isUnlocked?'var(--red)':'var(--bd)'};opacity:${isUnlocked?1:0.45}">
+            <div style="font-size:22px;flex-shrink:0">${isUnlocked?d.icon:'🔒'}</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:13px;font-weight:${isUnlocked?'800':'600'};color:${isUnlocked?'var(--tx)':'var(--tx3)'}">${d.name}</div>
+              <div style="font-size:11px;color:var(--tx3);margin-top:1px">${d.desc}</div>
+            </div>
+            ${isUnlocked?'<div style="color:var(--grn);font-size:18px;flex-shrink:0;font-weight:900">✓</div>':''}
+          </div>`;
+        }).join('');
+        return `<div style="margin-bottom:20px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--tx3)">${cat}</div>
+            <div style="font-size:10px;color:var(--tx3)">${catDone}/${catDefs.length}</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px">${cards}</div>
+        </div>`;
+      }).join('');
+
+      c.innerHTML = `
+        <div style="padding:4px 0 16px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+            <div style="font-size:13px;font-weight:700">${done} of ${total} unlocked</div>
+            <div style="font-size:13px;font-weight:900;color:var(--red)">${pct}%</div>
+          </div>
+          <div style="height:6px;background:var(--bd);border-radius:3px;margin-bottom:20px">
+            <div style="width:${pct}%;height:100%;background:var(--red);border-radius:3px;transition:width .4s"></div>
+          </div>
+          ${rows}
+        </div>`;
       return;
     }
     // default: records
@@ -8037,6 +8136,72 @@ const UI = {
     this.showPage('offseason');
   },
 
+  // ── ACHIEVEMENTS ──────────────────────────────────────────────────────────
+  _getAchievementDefs(){
+    return [
+      // Championship
+      {id:'first_win',         cat:'Racing',       icon:'🏆', name:'First Blood',          desc:'Win your first race',                      check:g=>g.careerStats.totalWins>=1},
+      {id:'first_pole',        cat:'Racing',       icon:'🔴', name:'Pole Position',         desc:'Claim your first pole position',           check:g=>g.careerStats.totalPoles>=1},
+      {id:'first_podium',      cat:'Racing',       icon:'🥉', name:'On the Podium',         desc:'Score your first podium finish',           check:g=>g.careerStats.totalPodiums>=1},
+      {id:'ten_wins',          cat:'Racing',       icon:'🔟', name:'Win Machine',           desc:'Win 10 races',                             check:g=>g.careerStats.totalWins>=10},
+      {id:'fifty_wins',        cat:'Racing',       icon:'💯', name:'Half Century',          desc:'Win 50 races',                             check:g=>g.careerStats.totalWins>=50},
+      {id:'perfect_weekend',   cat:'Racing',       icon:'✨', name:'Perfect Weekend',       desc:'Take pole, win the race, and set fastest lap in the same race', check:g=>(g.careerStats.seasons||[]).some(s=>s.perfectWeekend)},
+      {id:'one_two',           cat:'Racing',       icon:'👯', name:'One-Two',               desc:'Score a 1-2 finish with both your drivers', check:g=>(g.careerStats.seasons||[]).some(s=>s.oneTwo)},
+      {id:'comeback_win',      cat:'Racing',       icon:'📈', name:'From the Back',         desc:'Win a race from outside the top 10 on the grid', check:g=>(g.careerStats.seasons||[]).some(s=>s.comebackWin)},
+      // Championships
+      {id:'first_drivers',     cat:'Championships',icon:'🏅', name:'Champions',             desc:'Win the Drivers Championship',            check:g=>g.careerStats.championships>=1},
+      {id:'first_constructors',cat:'Championships',icon:'🏗', name:'Constructors Champions',desc:'Win the Constructors Championship',        check:g=>g.careerStats.constructorChampionships>=1},
+      {id:'double_champ',      cat:'Championships',icon:'🎯', name:'Double',                desc:'Win both championships in the same season', check:g=>(g.careerStats.seasons||[]).some(s=>s.constructorChamp&&s.driverChamp)},
+      {id:'back_to_back',      cat:'Championships',icon:'🔁', name:'Back to Back',          desc:'Win the Constructors Championship two seasons in a row', check:g=>{const s=g.careerStats.seasons||[];for(let i=1;i<s.length;i++){if(s[i].constructorChamp&&s[i-1].constructorChamp)return true;}return false;}},
+      {id:'dynasty',           cat:'Championships',icon:'👑', name:'Dynasty',               desc:'Win the Constructors Championship three seasons in a row', check:g=>{const s=g.careerStats.seasons||[];for(let i=2;i<s.length;i++){if(s[i].constructorChamp&&s[i-1].constructorChamp&&s[i-2].constructorChamp)return true;}return false;}},
+      {id:'five_titles',       cat:'Championships',icon:'⭐', name:'Living Legend',         desc:'Win five Constructors Championships',      check:g=>g.careerStats.constructorChampionships>=5},
+      // Driver development
+      {id:'first_dev',         cat:'Development',  icon:'📈', name:'Rising Star',           desc:'Develop a driver by more than 5 rating in a single season', check:g=>(g.careerStats.seasons||[]).some(s=>s.bigDevGain)},
+      {id:'made_a_champ',      cat:'Development',  icon:'🌟', name:'Driver Maker',          desc:'A driver you signed becomes World Champion', check:g=>(g.careerStats.seasons||[]).some(s=>s.driverChamp)},
+      {id:'goat_maker',        cat:'Development',  icon:'🐐', name:'GOAT Maker',            desc:'A driver in your team retires with a rating above 93', check:g=>g.drivers.filter(d=>d.retired&&d.teamId===g.playerTeamId||d._lastTeamId===g.playerTeamId).some(d=>d.rating>=93)},
+      {id:'youth_movement',    cat:'Development',  icon:'🌱', name:'Youth Movement',        desc:'Sign a driver aged 19 or younger',         check:g=>g.drivers.some(d=>d.teamId===g.playerTeamId&&d.age<=19)},
+      // Team building
+      {id:'five_seasons',      cat:'Legacy',       icon:'📅', name:'Long Haul',             desc:'Complete five seasons',                    check:g=>(g.careerStats.seasons||[]).length>=5},
+      {id:'ten_seasons',       cat:'Legacy',       icon:'🗓', name:'A Decade',              desc:'Complete ten seasons',                     check:g=>(g.careerStats.seasons||[]).length>=10},
+      {id:'from_the_bottom',   cat:'Legacy',       icon:'🚀', name:'Against All Odds',      desc:'Win the Constructors Championship with a team that started in the bottom half of the grid', check:g=>(g.careerStats.seasons||[]).some(s=>s.constructorChamp&&s.startDifficulty==='hard')},
+      {id:'top_three',         cat:'Legacy',       icon:'📊', name:'Consistent',            desc:'Finish in the top 3 constructors for three consecutive seasons', check:g=>{const s=g.careerStats.seasons||[];for(let i=2;i<s.length;i++){if(s[i].position<=3&&s[i-1].position<=3&&s[i-2].position<=3)return true;}return false;}},
+      {id:'rain_master',       cat:'Legacy',       icon:'🌧', name:'Rain Master',           desc:'Win a wet race',                           check:g=>(g.careerStats.seasons||[]).some(s=>s.wetRaceWin)},
+    ];
+  },
+
+  _getUnlockedAchievements(){
+    const g = State.game;
+    if(!g) return [];
+    const defs = this._getAchievementDefs();
+    return defs.filter(d=>{ try{ return d.check(g); }catch(e){ return false; } }).map(d=>d.id);
+  },
+
+  checkNewAchievements(){
+    const g = State.game;
+    if(!g) return;
+    if(!g._unlockedAchievements) g._unlockedAchievements = [];
+    const nowUnlocked = this._getUnlockedAchievements();
+    const newOnes = nowUnlocked.filter(id=>!g._unlockedAchievements.includes(id));
+    if(newOnes.length===0) return;
+    g._unlockedAchievements = [...g._unlockedAchievements, ...newOnes];
+    const defs = this._getAchievementDefs();
+    newOnes.forEach((id,i)=>{
+      const def = defs.find(d=>d.id===id);
+      if(!def) return;
+      setTimeout(()=>{
+        UI.toast(`${def.icon} Achievement unlocked: ${def.name}`,'success');
+      }, i * 1200);
+    });
+  },
+
+  // Static version for getSaveInfo — works on any game object
+  _getUnlockedAchievementsForGame(g){
+    if(!g) return 0;
+    const defs = UI._getAchievementDefs ? UI._getAchievementDefs() : [];
+    return defs.filter(d=>{ try{ return d.check(g); }catch(e){ return false; } }).length;
+  },
+
+
   showContact(){
     const existing = document.getElementById('contact-overlay');
     if(existing) existing.remove();
@@ -8133,8 +8298,17 @@ const UI = {
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-        <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v1.8.4 · Release Notes</div>
+        <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v1.9.1 · Release Notes</div>
         ${[
+          ['v1.9.1','Mar 2026',[
+            'Bug fix — Watch Race results table and points now match the actual finishing positions correctly',
+            'Bug fix — Driver position commentary no longer jumps more than 2 places in a single update, preventing jarring last-lap swings',
+            'Dark mode — aero balance slider thumb is now white and visible in dark mode',
+          ]],
+          ['v1.9','Mar 2026',[
+            '🏆 Achievements are here. 24 milestones across Racing, Championships, Development and Legacy. From your first win to building a dynasty that spans a decade. Find them in History and watch for unlock notifications mid-career.',
+            'Achievement count shown on your save slots on the landing page so you can track progress across careers.',
+          ]],
           ['v1.8.4','Mar 2026',[
             'Auto-sim races now carry a 15% chance of losing 1 place due to suboptimal engineer calls — Watch Race with good decisions is now genuinely the better path',
           ]],
@@ -8281,8 +8455,18 @@ const UI = {
             <ul style="margin:0;padding-left:18px">${items.map(i=>`<li style="font-size:12px;color:var(--tx2);margin-bottom:4px;line-height:1.4">${i}</li>`).join('')}</ul>
           </div>`).join('')}
       </div>`;
-    document.getElementById('modal-body').innerHTML=html;
-    document.getElementById('driver-detail-modal').classList.remove('hidden');
+    // Use standalone overlay so it works from landing page and in-game
+    const existing = document.getElementById('changelog-overlay');
+    if(existing) existing.remove();
+    const overlay = document.createElement('div');
+    overlay.id = 'changelog-overlay';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;display:flex;align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto';
+    overlay.innerHTML = `<div style="background:var(--bg2);border-radius:12px;width:100%;max-width:520px;padding:20px;margin:auto;border:1px solid var(--bd);box-shadow:0 20px 60px rgba(0,0,0,.4);position:relative">
+      <button onclick="document.getElementById('changelog-overlay').remove()" style="position:absolute;top:14px;right:14px;background:none;border:none;font-size:22px;cursor:pointer;color:var(--tx3);line-height:1">&times;</button>
+      ${html}
+    </div>`;
+    document.body.appendChild(overlay);
+    overlay.addEventListener('click', e=>{ if(e.target===overlay) overlay.remove(); });
   },
   showSettings(){
     const g = State.game;
@@ -8835,6 +9019,7 @@ const GameActions = {
       const win=rd.results.find(r=>r&&r.position===1);
       UI.toast(`🏁 Winner: ${win?.driverName||'?'}${win?.teamName?' ('+win.teamName+')':''}`,'success');
       UI.renderDashboard(); UI.renderRaceResult(rd); UI.showView('dashboard');
+      UI.checkNewAchievements();
       if(g.raceIndex>=g.calendar.length) setTimeout(()=>this._promptSeasonEnd(),1500);
     } catch(e) { console.error('simRace error:', e); UI.toast('Race error: '+e.message+' — try starting a new game','error'); }
   },
@@ -8863,6 +9048,7 @@ const GameActions = {
       UI.showFiredScreen(); return;
     }
     // Show Season Recap before the offseason screen
+    UI.checkNewAchievements();
     UI.showSeasonRecap(transfers, champs, _finalConStr, _finalDrvStr);
   },
   _simNRaces(n, label){
@@ -9064,68 +9250,73 @@ window._wrTick = function() {
     const tb = document.getElementById('wr-toggle'); if(tb) tb.disabled=true;
 
     // ── Apply decision bonuses to actual race result ──────────────────────────
-    // Pit and weather decisions now genuinely affect finishing positions.
-    // Bonuses accumulate during the race; here we shift positions accordingly.
+    // Decisions affect the PRIMARY (higher-finishing) player driver only to avoid
+    // conflicts when both drivers are in the same team.
     const resultKey = isSprint ? 'sprintResult' : 'raceResult';
     const resultArr = race[resultKey] || [];
     const playerDriverIds = State.getPlayerDrivers().map(function(d){return d.id;});
 
-    playerDriverIds.forEach(function(dId) {
-      const pitBonus     = WR.pitDecisionBonus     || 0;
-      const weatherBonus = WR.weatherCallBonus      || 0;
-      const totalBonus   = pitBonus + weatherBonus;
+    const pitBonus     = WR.pitDecisionBonus  || 0;
+    const weatherBonus = WR.weatherCallBonus  || 0;
+    const totalBonus   = pitBonus + weatherBonus;
 
-      // Calculate position delta — larger bonuses needed for bigger swings
-      let posDelta = 0;
-      if     (totalBonus >=  2.0) posDelta = -3; // gain 3 places
-      else if(totalBonus >=  1.2) posDelta = -2; // gain 2 places
-      else if(totalBonus >=  0.5) posDelta = -1; // gain 1 place
-      else if(totalBonus <= -1.5) posDelta =  3; // lose 3 places
-      else if(totalBonus <= -0.8) posDelta =  2; // lose 2 places
-      else if(totalBonus <= -0.3) posDelta =  1; // lose 1 place
+    // Only apply if there's a meaningful bonus
+    if(Math.abs(totalBonus) >= 0.3) {
+      // Apply to the better-finishing player driver only
+      const myFinishers = resultArr
+        .filter(function(r){ return playerDriverIds.indexOf(r.driverId) >= 0 && !r.dnf; })
+        .sort(function(a,b){ return a.position - b.position; });
+      const myEntry = myFinishers[0]; // best-finishing player driver
 
-      if(posDelta === 0) return;
+      if(myEntry) {
+        let posDelta = 0;
+        if     (totalBonus >=  2.0) posDelta = -3;
+        else if(totalBonus >=  1.2) posDelta = -2;
+        else if(totalBonus >=  0.5) posDelta = -1;
+        else if(totalBonus <= -1.5) posDelta =  3;
+        else if(totalBonus <= -0.8) posDelta =  2;
+        else if(totalBonus <= -0.3) posDelta =  1;
 
-      const myEntry = resultArr.find(function(r){return r.driverId === dId && !r.dnf;});
-      if(!myEntry) return;
+        if(posDelta !== 0) {
+          const oldPos = myEntry.position;
+          const newPos = Math.max(1, Math.min(resultArr.length, oldPos + posDelta));
 
-      const oldPos = myEntry.position;
-      const newPos = Math.max(1, Math.min(resultArr.length, oldPos + posDelta));
-      if(newPos === oldPos) return;
+          if(newPos !== oldPos) {
+            // Swap with the driver currently at newPos — but only if they're not another player driver
+            const swapEntry = resultArr.find(function(r){
+              return r.position === newPos && !r.dnf && playerDriverIds.indexOf(r.driverId) < 0;
+            });
+            if(swapEntry) swapEntry.position = oldPos;
+            myEntry.position = newPos;
 
-      // Find driver currently at newPos and swap
-      const swapEntry = resultArr.find(function(r){return r.position === newPos && !r.dnf;});
-      if(swapEntry) swapEntry.position = oldPos;
-      myEntry.position = newPos;
+            // Recalculate points for affected drivers
+            const ptScale = isSprint
+              ? [0,8,7,6,5,4,3,2,1]
+              : [0,25,18,15,12,10,8,6,4,2,1];
+            [myEntry, swapEntry].forEach(function(r){
+              if(!r || r.dnf) return;
+              const pts = ptScale[r.position] || 0;
+              const ptsWere = r.points || 0;
+              r.points = pts;
+              const drv = State.getDriver(r.driverId);
+              const team = r.teamId ? State.getTeam(r.teamId) : null;
+              if(drv) drv.seasonPoints = Math.max(0, (drv.seasonPoints||0) - ptsWere + pts);
+              if(team) team.seasonPoints = Math.max(0, (team.seasonPoints||0) - ptsWere + pts);
+              if(r.position === 1 && ptsWere < 25) {
+                if(drv) drv.wins = (drv.wins||0) + 1;
+                if(team) team.wins = (team.wins||0) + 1;
+              } else if(r.position !== 1 && ptsWere === 25) {
+                if(drv) drv.wins = Math.max(0, (drv.wins||0) - 1);
+                if(team) team.wins = Math.max(0, (team.wins||0) - 1);
+              }
+            });
 
-      // Recalculate points for affected drivers
-      const ptScale = isSprint
-        ? [0,8,7,6,5,4,3,2,1]
-        : [0,25,18,15,12,10,8,6,4,2,1];
-      [myEntry, swapEntry].forEach(function(r){
-        if(!r || r.dnf) return;
-        const pts = ptScale[r.position] || 0;
-        const ptsWere = r.points || 0;
-        r.points = pts;
-        // Update driver and team season points
-        const drv = State.getDriver(r.driverId);
-        const team = r.teamId ? State.getTeam(r.teamId) : null;
-        if(drv) drv.seasonPoints = Math.max(0, (drv.seasonPoints||0) - ptsWere + pts);
-        if(team) team.seasonPoints = Math.max(0, (team.seasonPoints||0) - ptsWere + pts);
-        // Update wins
-        if(r.position === 1 && ptsWere < 25) {
-          if(drv) drv.wins = (drv.wins||0) + 1;
-          if(team) team.wins = (team.wins||0) + 1;
-        } else if(r.position !== 1 && ptsWere === 25) {
-          if(drv) drv.wins = Math.max(0, (drv.wins||0) - 1);
-          if(team) team.wins = Math.max(0, (team.wins||0) - 1);
+            if(!WR.positionDeltas) WR.positionDeltas = {};
+            WR.positionDeltas[myEntry.driverId] = { old: oldPos, new: newPos, delta: oldPos - newPos };
+          }
         }
-      });
-
-      // Store delta for feedback display
-      if(!WR.positionDeltas) WR.positionDeltas = {};
-      WR.positionDeltas[dId] = { old: oldPos, new: newPos, delta: oldPos - newPos };
-    });
+      }
+    }
     // ── End position adjustment ───────────────────────────────────────────────
 
     const pids = State.getPlayerDrivers().map(function(d){return d.id;});
