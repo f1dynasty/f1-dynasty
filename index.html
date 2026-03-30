@@ -746,7 +746,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </div>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game" class="land-start">Start Career →</button>
-      <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v1.9.1</a> · <a href="javascript:void(0)" onclick="UI.showContact()" style="color:#aaa;text-decoration:none;cursor:pointer">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+      <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v1.9.2</a> · <a href="javascript:void(0)" onclick="UI.showContact()" style="color:#aaa;text-decoration:none;cursor:pointer">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -1150,8 +1150,8 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
 // DATA
 // =============================================
 const DATA = {
-  firstNames: ["Luca","Marco","Matteo","Lorenzo","Giulio","Enzo","Fabio","Dante","Nico","Felix","Tobias","Jan","Lukas","Moritz","Leon","Finn","Erik","Viktor","Jonas","Lars","Henrik","Kai","Rafael","Diego","Gabriel","Mateo","Santiago","Emilio","Ricardo","Roberto","Eduardo","Miguel","Alejandro","Rodrigo","Andrés","Thiago","Sean","Ryan","Connor","Brendan","Patrick","Callum","Jamie","Scott","Oliver","Harry","Jack","Tom","Ben","Josh","Ethan","Arjun","Jehan","Kush","Ryo","Ren","Sota","Haruki","Daiki","Sho","Kenji","Théo","Hugo","Baptiste","Clément","Robin","Julien","Antoine","Florian","Maxime","Adrien","Romain","Sven","Pieter","Bram","Joris","Daan","Tomas","Pavel","Andrei","Nicolás","Iñaki","Dario","Simone","Gianluca","Andrea","Thibault","Cédric","Alexis","Nuno","Diogo","Afonso","Tarso","Vitor","Takeshi","Naoki","Hiroshi","Yusuke","Kohei","Shun","Ollie","Archie","Rory","Alastair","Cian","Declan","Piers","Rupert","Hamish","Alistair","Stefan","Markus","Philipp","Hannes","Dominik","Bastian"],
-  lastNames: ["Ferretti","Colombo","Moretti","Romano","Conti","Esposito","De Luca","Mancini","Brunetti","Caruso","Ricci","Fabbri","Galli","Cattaneo","Bernardi","Mueller","Hoffmann","Brandt","Kessler","Ritter","Bergmann","Hartmann","Krüger","Werner","Bauer","Schulze","Lindqvist","Eriksson","Björk","Halvorsen","Andersen","Christensen","Strand","Virtanen","Mäkinen","Korhonen","Gonzalez","Medina","Reyes","Herrera","Delgado","Vega","Rios","Castillo","Navarro","Palomino","Gutiérrez","Vargas","Montoya","Cardenas","Ferreira","Alves","Costa","Neves","Barros","Pinheiro","Nogueira","Teixeira","Murphy","Walsh","Callaghan","Doyle","Brennan","Flanagan","Sheridan","Cassidy","Devlin","Nolan","Smith","Hughes","Clarke","Fletcher","Mason","Shaw","Dawson","Cooper","Hardy","Burns","Morrison","Suzuki","Yamamoto","Tanaka","Nakamura","Fujiwara","Hayashi","Ogawa","Matsuda","Inoue","Kobayashi","Dubois","Lefebvre","Moreau","Laurent","Renard","Girard","Fontaine","Chevalier","Rousseau","Garnier","Schmidt","Fischer","Wagner","Klein","Wolf","Braun","Richter","Koenig","Gruber","Reiter","Papadopoulos","Stavros","Nkosi","Diallo","Okonkwo","Svensson","Nilsson","Holm","Magnusson"],
+  firstNames: ["Luca","Marco","Matteo","Lorenzo","Giulio","Enzo","Fabio","Dante","Nico","Felix","Tobias","Jan","Lukas","Moritz","Leon","Finn","Erik","Viktor","Jonas","Lars","Henrik","Kai","Rafael","Diego","Gabriel","Mateo","Santiago","Emilio","Ricardo","Roberto","Eduardo","Miguel","Alejandro","Rodrigo","Andres","Thiago","Sean","Ryan","Connor","Brendan","Patrick","Callum","Jamie","Scott","Oliver","Harry","Jack","Tom","Ben","Josh","Ethan","Arjun","Jehan","Kush","Ryo","Ren","Sota","Haruki","Daiki","Sho","Kenji","Theo","Hugo","Baptiste","Clement","Robin","Julien","Antoine","Florian","Maxime","Adrien","Romain","Sven","Pieter","Bram","Joris","Daan","Tomas","Pavel","Andrei","Nicolas","Inaki","Dario","Simone","Gianluca","Andrea","Thibault","Cedric","Alexis","Nuno","Diogo","Afonso","Tarso","Vitor","Takeshi","Naoki","Hiroshi","Yusuke","Kohei","Shun","Ollie","Archie","Rory","Alastair","Cian","Declan","Piers","Rupert","Hamish","Alistair","Stefan","Markus","Philipp","Hannes","Dominik","Bastian"],
+  lastNames: ["Ferretti","Colombo","Moretti","Romano","Conti","Esposito","De Luca","Mancini","Brunetti","Caruso","Ricci","Fabbri","Galli","Cattaneo","Bernardi","Mueller","Hoffmann","Brandt","Kessler","Ritter","Bergmann","Hartmann","Kruger","Werner","Bauer","Schulze","Lindqvist","Eriksson","Bjork","Halvorsen","Andersen","Christensen","Strand","Virtanen","Makinen","Korhonen","Gonzalez","Medina","Reyes","Herrera","Delgado","Vega","Rios","Castillo","Navarro","Palomino","Gutierrez","Vargas","Montoya","Cardenas","Ferreira","Alves","Costa","Neves","Barros","Pinheiro","Nogueira","Teixeira","Murphy","Walsh","Callaghan","Doyle","Brennan","Flanagan","Sheridan","Cassidy","Devlin","Nolan","Smith","Hughes","Clarke","Fletcher","Mason","Shaw","Dawson","Cooper","Hardy","Burns","Morrison","Suzuki","Yamamoto","Tanaka","Nakamura","Fujiwara","Hayashi","Ogawa","Matsuda","Inoue","Kobayashi","Dubois","Lefebvre","Moreau","Laurent","Renard","Girard","Fontaine","Chevalier","Rousseau","Garnier","Schmidt","Fischer","Wagner","Klein","Wolf","Braun","Richter","Koenig","Gruber","Reiter","Papadopoulos","Stavros","Nkosi","Diallo","Okonkwo","Svensson","Nilsson","Holm","Magnusson"],
   nationalities: ["British","German","Dutch","Spanish","Finnish","French","Australian","Brazilian","Italian","Canadian","Mexican","Japanese","Chinese","Indian","American","Belgian","Austrian","Swiss","Russian","Danish","Swedish","Norwegian","New Zealand","Thai","Monegasque","Polish","Czech","Hungarian","Portuguese","Argentine","Colombian","Estonian"],
   teams: [
     { id:"redbull",   name:"Red Bull Racing",    nation:"Austrian", prestige:90, carPerformance:74, downforce:55, reliability:72, developmentRate:84, facilities:95, revenue:270, color:"#1E41FF", difficulty:"medium",
@@ -1875,10 +1875,17 @@ const Sim = {
       return {race,results:[],weather:'dry',hadSafetyCar:false};
     }
     // Filter out any stale entries where driver or team no longer valid
+    const activeInjuriesForRace = Sim._getActiveInjuries ? Sim._getActiveInjuries() : [];
+    const injuredIdsForRace = new Set(activeInjuriesForRace.map(i=>i.driverId));
     const qualiOrder=[...race.qualiResult].filter(e=>{
       if(!e||e.driverId==null) return false;
       const d=State.getDriver(e.driverId);
-      if(!d||d.retired||d.isReserve||d.isProspect||!d.teamId) return false;
+      if(!d||d.retired||d.isProspect||!d.teamId) return false;
+      // Allow reserve drivers only if they subbed for an injured teammate
+      if(d.isReserve){
+        const hasInjuredTeammate=activeInjuriesForRace.some(inj=>inj.teamId===d.teamId&&injuredIdsForRace.has(inj.driverId));
+        if(!hasInjuredTeammate) return false;
+      }
       const t=State.getTeam(d.teamId);
       return !!t;
     });
@@ -2188,8 +2195,9 @@ const Sim = {
     const lastEmittedPos = {};
     playerIds.forEach(id => { lastEmittedPos[id] = driverStart[id] || 99; });
 
-    // Check every 3 laps — always include the final lap
-    const stepSize = 3;
+    // Check every 5 laps — always include the final lap
+    // Larger steps = fewer jarring snaps between commentary events
+    const stepSize = 5;
     const stepLaps = [];
     for(let lap = stepSize; lap < laps; lap += stepSize) stepLaps.push(lap);
     stepLaps.push(laps); // always include final lap
@@ -2212,9 +2220,10 @@ const Sim = {
       playerIds.forEach(id => {
         let curPos = curOrder.find(x => x.id === id)?.pos;
         const prevPos = lastEmittedPos[id];
-        // Cap position jumps on the final lap to max 2 places to avoid jarring P3->P1 snaps
-        if(isLastLap && curPos !== undefined && prevPos !== undefined) {
-          const maxJump = 2;
+        // Cap position jumps per step to avoid unrealistic swings mid-race
+        // Max 3 places per 3-lap step normally, 2 places on final lap
+        if(curPos !== undefined && prevPos !== undefined) {
+          const maxJump = isLastLap ? 2 : 3;
           if(prevPos - curPos > maxJump) curPos = prevPos - maxJump;
           if(curPos - prevPos > maxJump) curPos = prevPos + maxJump;
         }
@@ -2237,7 +2246,7 @@ const Sim = {
             const placeExclaim = p <= 1 ? ' 🔥 P1!' : p <= 3 ? ' 🔥' : p <= 6 ? ' 💪' : '';
             // On tight circuits, position gains are almost always through pit stops / DNFs
             const howText = od >= 0.85
-              ? `${r.driverName} up to P${p} — likely through pit strategy or a retirement.${placeExclaim}`
+              ? `${r.driverName} up to P${p}, likely through pit strategy or a retirement.${placeExclaim}`
               : `${r.driverName} moves up to P${p}!${placeExclaim}`;
             events.push({
               lap: placeLap,
@@ -2255,7 +2264,7 @@ const Sim = {
             events.push({
               lap: placeLap,
               type: 'overtake',
-              text: `⭐ ${r.driverName} drops to P${p} — under pressure.`,
+              text: `⭐ ${r.driverName} drops to P${p}. Under pressure.`,
               driverPositions: snap
             });
           }
@@ -2332,8 +2341,8 @@ const Sim = {
       livePos[id] = driverFinal[id];
       const snap = snapPos();
       const txt = totalMoved > 0
-        ? `⚡ ${r.driverName} on the move — up to P${driverFinal[id]}.${trait_txt}`
-        : `⚡ ${r.driverName} struggling — down to P${driverFinal[id]}.`;
+        ? `⚡ ${r.driverName} on the move, up to P${driverFinal[id]}.${trait_txt}`
+        : `⚡ ${r.driverName} struggling. Down to P${driverFinal[id]}.`;
       events.push({ lap: evLap, type:'overtake', text: txt, driverPositions: snap });
     });
 
@@ -2417,7 +2426,7 @@ const Sim = {
                       :        `📋 ${chosenOpt.label} — solid execution from the pit wall.`;
       events.push({lap: outcomeLap, type:'pit', text: stratNote});
     } else if(!chosenStratId || chosenStratId === 'auto') {
-      events.push({lap: Math.floor(laps*0.85), type:'pit', text:`📋 Auto strategy in play — engineers managing the race from the pit wall.`});
+      events.push({lap: Math.floor(laps*0.85), type:'pit', text:`📋 Auto strategy in play. Engineers managing the race from the pit wall.`});
     }
 
     // Fastest lap moment
@@ -2549,23 +2558,23 @@ const Sim = {
       const wDrvPos = drvStandings.findIndex(s=>s.driver.id===winner.driverId)+1;
       if(wConPos >= 5) {
         push(pick([
-          `Shock result at ${race.location}: <strong>${winner.driverName}</strong> wins from P${winner.startPos||'?'} — ${wTeam?.name||winner.teamName} celebrates a stunning upset.`,
+          `Shock result at ${race.location}: <strong>${winner.driverName}</strong> wins from P${winner.startPos||'?'}. ${wTeam?.name||winner.teamName} celebrates a stunning upset.`,
           `<strong>${winner.driverName}</strong> delivers ${wTeam?.name||winner.teamName}'s best result of the season with a surprise win at ${race.location}.`,
         ]), 'rival', '😮');
       } else if(wDrvPos === 1) {
         push(pick([
           `<strong>${winner.driverName}</strong> extends the championship lead with another dominant win at ${race.location}.`,
-          `Another win for <strong>${winner.driverName}</strong> — the championship looks increasingly like a one-horse race.`,
+          `Another win for <strong>${winner.driverName}</strong> . The championship looks increasingly like a one-horse race.`,
           `<strong>${winner.driverName}</strong> takes ${race.location}, putting the championship gap to ${(drvStandings[0]?.driver?.seasonPoints||0)-(drvStandings[1]?.driver?.seasonPoints||0)}pts.`,
         ]), 'rival', '🏆');
       } else if(wDrvPos <= 3) {
         push(pick([
-          `<strong>${winner.driverName}</strong> strikes back at ${race.location} — this championship fight is far from over.`,
+          `<strong>${winner.driverName}</strong> strikes back at ${race.location}. This championship fight is far from over.`,
           `A timely win for <strong>${winner.driverName}</strong> at ${race.location} closes the gap at the top.`,
         ]), 'rival', '⚔️');
       } else {
         push(pick([
-          `<strong>${winner.driverName}</strong> takes victory at ${race.location} — a deserved reward after a consistent run of results.`,
+          `<strong>${winner.driverName}</strong> takes victory at ${race.location}. A deserved reward after a consistent run of results.`,
           `<strong>${winner.driverName}</strong> and ${wTeam?.name||winner.teamName} celebrate a well-earned win at ${race.location}.`,
         ]), 'rival', '🏁');
       }
@@ -2579,17 +2588,17 @@ const Sim = {
       const seasonFrac = raceN / totalRaces;
       if(gap > 60 && seasonFrac > 0.4) {
         push(pick([
-          `<strong>${leader.name}</strong> is in a class of their own — ${gap}pts clear with ${totalRaces-raceN} races left. The championship may already be decided.`,
+          `<strong>${leader.name}</strong> is in a class of their own. ${gap}pts clear with ${totalRaces-raceN} races left. The championship may already be decided.`,
           `The maths is looking bleak for the chasing pack. <strong>${leader.name}</strong> leads by ${gap}pts.`,
         ]), 'rival', '🏆');
       } else if(gap <= 15 && seasonFrac > 0.5) {
         push(pick([
           `Championship showdown: <strong>${leader.name}</strong> leads <strong>${p2Driver?.name||'P2'}</strong> by just ${gap}pts. Nerves building in both camps.`,
-          `It's knife-edge at the top — <strong>${leader.name}</strong> and <strong>${p2Driver?.name||'P2'}</strong> separated by just ${gap} points.`,
+          `Knife-edge at the top. <strong>${leader.name}</strong> and <strong>${p2Driver?.name||'P2'}</strong> separated by just ${gap} points.`,
           `Pressure mounting on <strong>${leader.name}</strong> as <strong>${p2Driver?.name||'P2'}</strong> closes to within ${gap}pts.`,
         ]), 'rival', '⚔️');
       } else if(gap === 0) {
-        push(`<strong>${leader.name}</strong> and <strong>${p2Driver?.name||'P2'}</strong> are level on points — a championship thriller is developing.`, 'rival', '🔥');
+        push(`<strong>${leader.name}</strong> and <strong>${p2Driver?.name||'P2'}</strong> are level on points. A championship thriller is developing.`, 'rival', '🔥');
       }
     }
 
@@ -2603,7 +2612,7 @@ const Sim = {
       const reason = pick(dnfReasons);
       if(dPos <= 3) {
         push(pick([
-          `<strong>${r.driverName}</strong> retires from ${race.location} with ${reason} — a potentially championship-defining blow.`,
+          `<strong>${r.driverName}</strong> retires from ${race.location} with ${reason}. A potentially championship-defining blow.`,
           `Disaster for <strong>${r.driverName}</strong> at ${race.location}: ${reason} ends their race, handing rivals a gift.`,
         ]), 'rival', '💥');
       } else if(dPos <= 6 && Math.random() < 0.5) {
@@ -2614,8 +2623,8 @@ const Sim = {
     // ── 4. Podium stories ──
     if(p2 && p2.teamId !== ptid && Math.random() < 0.35) {
       push(pick([
-        `<strong>${p2.driverName}</strong> bags a crucial P2 at ${race.location} — keeping the pressure on at the front.`,
-        `Solid points for <strong>${p2.driverName}</strong> in ${race.location} — podiums matter when the championship is this tight.`,
+        `<strong>${p2.driverName}</strong> bags a crucial P2 at ${race.location}. Keeping the pressure on at the front.`,
+        `Solid points for <strong>${p2.driverName}</strong> in ${race.location}. Podiums matter when the championship is this tight.`,
       ]), 'rival', '🥈');
     }
 
@@ -2627,7 +2636,7 @@ const Sim = {
         const t = State.getTeam(d.teamId);
         push(pick([
           `Transfer buzz: <strong>${d.name}</strong> (${t?.name||d.teamId}) is out of contract at season end. Multiple teams reportedly interested.`,
-          `<strong>${d.name}</strong>'s future at ${t?.name||d.teamId} is uncertain — contract talks have reportedly stalled heading into the second half of the season.`,
+          `<strong>${d.name}</strong>'s future at ${t?.name||d.teamId} is uncertain. Contract talks have reportedly stalled heading into the second half of the season.`,
           `Sources suggest <strong>${d.name}</strong> is being linked with a move away from ${t?.name||d.teamId}. His deal expires after this season.`,
           `The paddock is buzzing about <strong>${d.name}</strong>'s contract situation. Agent confirms "all options are open."`,
           `${t?.name||d.teamId} yet to confirm <strong>${d.name}</strong> for next year. Rival teams circling.`,
@@ -2644,7 +2653,7 @@ const Sim = {
           `<strong>${t.name}</strong> reportedly running a significant upgrade package from next round.`,
           `Technical sources: <strong>${t.name}</strong> found performance through a revised floor concept. Rivals watching closely.`,
           `<strong>${t.name}</strong> introducing a new front wing spec next round. Performance gain expected to be 0.2–0.4s per lap.`,
-          `Rumours of an engine upgrade for <strong>${t.name}</strong> — could reshuffle the midfield order.`,
+          `Rumours of an engine upgrade for <strong>${t.name}</strong>. Could shake up the midfield order.`,
           `<strong>${t.name}</strong> focusing development resources on ${Math.random()<0.5?'qualifying trim':'race pace'} after recent struggles.`,
         ]), 'rival', '🔧');
       }
@@ -2657,11 +2666,11 @@ const Sim = {
         const s = pick(streakTeams.slice(0,4));
         const t = s.team;
         push(pick([
-          `<strong>${t.name}</strong> in strong form lately — the factory is humming and the drivers are confident.`,
+          `<strong>${t.name}</strong> in strong form lately. The factory is humming and the drivers are confident.`,
           `Tensions reportedly building inside <strong>${t.name}</strong> after a difficult run of results. Internal review underway.`,
           `<strong>${t.name}</strong> principal defends strategy calls after criticism following ${race.location}: "We executed our plan perfectly."`,
           `Morale high at <strong>${t.name}</strong> following recent results. Looking like a genuine championship contender.`,
-          `<strong>${t.name}</strong> struggling with tyre degradation under the new regulations — engineers working overnight to find answers.`,
+          `<strong>${t.name}</strong> struggling with tyre degradation under the new regulations. Engineers working overnight to find answers.`,
         ]), 'rival', pick(['📊','💬','📢','🏎️']));
       }
     }
@@ -2678,7 +2687,7 @@ const Sim = {
     } else {
       if(g._bottomFinishStreak >= 3) {
         const sponsor = (g.sponsors||[])[0];
-        if(sponsor) push(`<strong>${sponsor.name}</strong> pleased with the recent turnaround — the partnership is back on solid footing.`, 'your-team', '✅');
+        if(sponsor) push(`<strong>${sponsor.name}</strong> pleased with the recent turnaround. The partnership is back on solid footing.`, 'your-team', '✅');
       }
       g._bottomFinishStreak = 0;
     }
@@ -3139,13 +3148,18 @@ const Sim = {
     });
     State.getPlayerDrivers().forEach(d=>{
       if(d.contract>1) return;
-      const suitor=teamsInOrder.find(t=>{
+      // Shuffle suitors so it's not always the top prestige team
+      const shuffled=[...teamsInOrder].sort(()=>Math.random()-0.5);
+      const suitor=shuffled.find(t=>{
         if(t.id===g.playerTeamId) return false;
         const curr=State.getTeamDrivers(t.id);
         const worst=curr.length>0?curr.reduce((w,x)=>x.rating<w.rating?x:w,curr[0]):null;
-        return worst&&d.rating>worst.rating+4&&d.salary<=t.revenue/12;
+        // Harder threshold — rival needs clear quality advantage
+        return worst&&d.rating>worst.rating+8&&d.salary<=t.revenue/14;
       });
-      if(suitor&&Math.random()<0.6){
+      // Reduced from 60% to 35% — and only if driver has poor morale or explicit interest
+      const poachChance = d.morale < 55 ? 0.5 : d.morale < 70 ? 0.35 : 0.2;
+      if(suitor&&Math.random()<poachChance){
         g.poachAttempts.push({driverId:d.id,driverName:d.name,teamId:suitor.id,teamName:suitor.name,offerSalary:Math.ceil(d.salary*1.3),offerYears:2});
       }
     });
@@ -3345,7 +3359,13 @@ const Sim = {
       if(d.contract===1) moraleDelta-=4; // contract anxiety
       d.morale=clamp((d.morale||75)+moraleDelta,30,98);
     });
-    g.drivers.forEach(d=>{d.seasonPoints=0;d.wins=0;d.poles=0;d.podiums=0;});
+    g.drivers.forEach(d=>{
+      // Accumulate into career totals before resetting seasonal counters
+      d.totalWins   = (d.totalWins   || 0) + (d.wins   || 0);
+      d.totalPodiums= (d.totalPodiums|| 0) + (d.podiums|| 0);
+      d.totalPoles  = (d.totalPoles  || 0) + (d.poles  || 0);
+      d.seasonPoints=0; d.wins=0; d.poles=0; d.podiums=0;
+    });
     g.teams.forEach(t=>{t.seasonPoints=0;t.wins=0;t.poles=0;t.podiums=0;});
 
     g.season++; g.raceIndex=0;
@@ -3642,6 +3662,9 @@ const Storage = {
     });
     // Patch drivers for new fields
     if(g.drivers) g.drivers.forEach(d=>{
+      if(d.totalWins===undefined)    d.totalWins=0;
+      if(d.totalPodiums===undefined) d.totalPodiums=0;
+      if(d.totalPoles===undefined)   d.totalPoles=0;
       if(d.podiums===undefined) d.podiums=0;
       if(d.poles===undefined) d.poles=0;
       if(d.fastestLaps===undefined) d.fastestLaps=0;
@@ -4937,11 +4960,17 @@ const UI = {
           <div class="quali-pole-team">${race.qualiResult[0]?.teamName||''}</div></div>
         </div>
         <div class="tbl-scroll"><table><thead><tr><th>#</th><th>Driver</th><th>Team</th></tr></thead><tbody>
-        ${race.qualiResult.map(r=>`<tr class="${pids.includes(r.driverId)?'my-row':''}">
-          <td><span class="pos-cell p${r.position}">${r.position}</span></td>
-          <td class="name-cell">${r.driverName}</td>
-          <td class="muted-cell">${r.teamName}</td>
-        </tr>`).join('')}
+        ${race.qualiResult.map(r=>{
+          const isMyDriver = pids.includes(r.driverId);
+          const drvObj = State.getDriver(r.driverId);
+          const isReserveSub = drvObj && drvObj.isReserve && isMyDriver;
+          const subBadge = isReserveSub ? ' <span style="font-size:9px;background:rgba(245,158,11,.15);color:#b45309;padding:1px 5px;border-radius:4px;font-weight:700">SUB</span>' : '';
+          return `<tr class="${isMyDriver?'my-row':''}">
+            <td><span class="pos-cell p${r.position}">${r.position}</span></td>
+            <td class="name-cell">${r.driverName}${subBadge}</td>
+            <td class="muted-cell">${r.teamName}</td>
+          </tr>`;
+        }).join('')}
         </tbody></table></div>
       </div>`;
     }
@@ -6411,11 +6440,11 @@ const UI = {
     const headline = isMyWin
       ? `🏆 Victory for ${winner.driverName}!`
       : isMyTeamOnPodium
-        ? `🥂 Podium finish${myResults.filter(r=>!r.dnf&&r.position<=3).length>1?' — double podium!':'!'}`
+        ? `🥂 Podium finish${myResults.filter(r=>!r.dnf&&r.position<=3).length>1?': double podium!':'!'}`
         : myResults.every(r=>r.dnf)
-          ? `💥 Double DNF — a race to forget`
+          ? `💥 Double DNF. A race to forget`
           : myResults.some(r=>r.dnf)
-            ? `⚠️ Mixed result — DNF mars the weekend`
+            ? `⚠️ Mixed result. DNF mars the weekend`
             : `🏁 Race complete`;
 
     const weatherBadge = race.weather==='wet'
@@ -6448,9 +6477,9 @@ const UI = {
 
     // Key moments
     const moments = [];
-    if(race.weather==='wet') moments.push({icon:'🌧', text:'Wet race — wet weather specialists had the advantage'});
-    if(race.weather==='mixed') moments.push({icon:'🌦', text:`Rain arrived lap ${race.rainStartLap||'?'} — tyre calls were critical`});
-    if(race.hadSafetyCar) moments.push({icon:'🚗', text:'Safety car deployed — the field bunched up mid-race'});
+    if(race.weather==='wet') moments.push({icon:'🌧', text:'Wet race. Wet weather specialists had the advantage'});
+    if(race.weather==='mixed') moments.push({icon:'🌦', text:`Rain arrived lap ${race.rainStartLap||'?'}. Tyre calls were critical`});
+    if(race.hadSafetyCar) moments.push({icon:'🚗', text:'Safety car deployed. The field bunched up mid-race'});
     if(flDriver) moments.push({icon:'⚡', text:`Fastest lap: ${flDriver.driverName} (${flDriver.teamName})`});
     dnfs.forEach(r=>moments.push({icon:'💥', text:r.driverName+' retired'+(r.dnfLap?' on lap '+r.dnfLap:'')}));
     const polesitter = (race.qualiResult||[])[0];
@@ -6565,7 +6594,7 @@ const UI = {
         if(startedFromBack && placesGained >= 8) {
           perfLine = pick([
             shortName+' started P'+startPos+' and finished P'+r.position+'. That is a serious recovery drive.',
-            'Starting P'+startPos+' and coming through to P'+r.position+' — '+shortName+' was in a different class today.',
+            'Starting P'+startPos+' and coming through to P'+r.position+'. '+shortName+' was in a different class today.',
             shortName+' made up '+placesGained+' places from P'+startPos+'. Extraordinary race from the back.',
             'Whatever happened in qualifying, '+shortName+' more than made up for it. P'+startPos+' to P'+r.position+' is a brilliant drive.',
             'From P'+startPos+' on the grid to P'+r.position+' at the flag. '+shortName+' was flying today.',
@@ -6723,7 +6752,7 @@ const UI = {
         if(startedFromFront && placesGained <= -6) {
           perfLine = pick([
             shortName+' qualified well but lost '+Math.abs(placesGained)+' places during the race. A lot of ground to give back from P'+startPos+'.',
-            'Starting P'+startPos+' and finishing P'+r.position+' — that is not what you want from '+shortName+' when the car is in that position.',
+            'Starting P'+startPos+' and finishing P'+r.position+'. That is not what you want from '+shortName+' when the car is in that position.',
             shortName+' had every advantage from P'+startPos+' but could not hold on. Fell back '+Math.abs(placesGained)+' places.',
             'From P'+startPos+' on the grid to P'+r.position+' is a tough result. '+shortName+' will know he gave that away.',
             'The grid slot was there for '+shortName+' but the race was not. Lost '+Math.abs(placesGained)+' positions from where he started.',
@@ -6752,7 +6781,7 @@ const UI = {
             shortName+' was untidy when he needed to be clean. Cost him several places.',
             'You cannot afford the errors '+shortName+' made today. Each one cost him track position.',
             shortName+' made life hard for himself with a string of unforced mistakes.',
-            'A lock-up here, a missed apex there — '+shortName+' gave away more than the car deserved.',
+            'A lock-up here, a missed apex there. '+shortName+' gave away more than the car deserved.',
             'The errors from '+shortName+' today were the story of his race. Too many, too costly.',
             shortName+' needs a cleaner afternoon than that. The potential is there but the execution was not today.',
             'Whenever '+shortName+' got into a battle today he came off worse. Just not his cleanest race.',
@@ -6794,7 +6823,7 @@ const UI = {
             shortName+' was off the pace from early on and never managed to turn it around.',
             'A disappointing afternoon for '+shortName+'. Far more was possible in that car.',
             'Something was not clicking for '+shortName+' today. Whether setup or just one of those days, the result suffered.',
-            shortName+' ran a quiet race in the worst sense — just never in the fight where he should have been.',
+            shortName+' ran a quiet race in the worst sense. Just never in the fight where he should have been.',
             'The team will be having a long debrief after that from '+shortName+'. Plenty to work through.'
           ]);
         } // end startedFromFront check
@@ -6941,7 +6970,7 @@ const UI = {
               if(dnfDriver) {
                 const dnfName = dnfDriver.driverName.split(' ').pop();
                 if(dnfStartPos && dnfStartPos <= 5) {
-                  dnfNote = dnfName+' retired from P'+dnfStartPos+' — a big loss of points from that grid slot. ';
+                  dnfNote = dnfName+' retired from P'+dnfStartPos+'. A big loss of points from that grid slot. ';
                 } else if(dnfStartPos && dnfStartPos <= 10) {
                   dnfNote = dnfName+' was running in the points before the retirement. Costly. ';
                 } else {
@@ -6949,7 +6978,7 @@ const UI = {
                 }
               }
               if(startedBack) {
-                narrativeParts.push(bestResult.driverName+' came from P'+bestResult.startPos+' to score P'+bestResult.position+' — a real highlight today. '+dnfNote);
+                narrativeParts.push(bestResult.driverName+' came from P'+bestResult.startPos+' to score P'+bestResult.position+'. A real highlight today. '+dnfNote);
               } else {
                 narrativeParts.push(bestResult.driverName+' got '+teamName+' P'+bestResult.position+' but '+dnfNote);
               }
@@ -7179,9 +7208,9 @@ const UI = {
     const recH=State.game.history;
     const cs=State.game.careerStats;
 
-    // Record holders
-    const mw=drvs.reduce((b,d)=>d.wins>(b?.wins||0)?d:b,null);
-    const mp=drvs.reduce((b,d)=>d.poles>(b?.poles||0)?d:b,null);
+    // Record holders — use career totals (totalWins/totalPodiums/totalPoles)
+    const mw=drvs.reduce((b,d)=>((d.totalWins||0)+(d.wins||0))>((b?.totalWins||0)+(b?.wins||0))?d:b,null);
+    const mp=drvs.reduce((b,d)=>((d.totalPoles||0)+(d.poles||0))>((b?.totalPoles||0)+(b?.poles||0))?d:b,null);
     const mpt=drvs.reduce((b,d)=>d.totalPoints>(b?.totalPoints||0)?d:b,null);
     const mc=drvs.reduce((b,d)=>d.championships>(b?.championships||0)?d:b,null);
     const mfl=drvs.reduce((b,d)=>(d.fastestLaps||0)>(b?.fastestLaps||0)?d:b,null);
@@ -7318,16 +7347,16 @@ const UI = {
     ${sec('🏎️','Car Development — The Core Loop',`
       <p>Your car's <strong>Car Performance</strong> rating is the single biggest determinant of results. Driver talent can compensate partially, but a 65-rated car will never win a championship regardless of who's driving it.</p>
       <h4>Three ways to improve your car</h4>
-      <p><strong>1. Offseason budget</strong> — allocated each winter via the Car screen. Split between Aero, Engine, Reliability, and Facilities. This is your biggest annual investment.</p>
-      <p><strong>2. Quarterly upgrade packages</strong> — during the season you queue upgrade packages (Q1/Q2) which arrive 2–4 races later. These are smaller but compound through the year.</p>
-      <p><strong>3. In-season development</strong> — direct mid-season investment. More expensive per point but faster.</p>
+      <p><strong>1. Offseason budget</strong>: allocated each winter via the Car screen. Split between Aero, Engine, Reliability, and Facilities. This is your biggest annual investment.</p>
+      <p><strong>2. Quarterly upgrade packages</strong>: during the season you queue upgrade packages (Q1/Q2) which arrive 2–4 races later. These are smaller but compound through the year.</p>
+      <p><strong>3. In-season development</strong>: direct mid-season investment. More expensive per point but faster.</p>
       <h4>Aero vs Engine — not the same investment</h4>
-      <p>Both Aero and Engine increase Car Performance, but they are not interchangeable. <strong>Power Unit</strong> gives more raw Car Performance per dollar and the gains apply equally at every circuit — Monza, Monaco, everywhere. It is the most direct way to go faster.</p>
-      <p><strong>Aerodynamics</strong> gives slightly less Car Performance per dollar, but it also widens your setup range — meaning your car is competitive across a broader spread of circuits without losing as much pace when the ideal downforce level changes round to round. A team that neglects aero might be brilliant at Silverstone but lose half a second at Monaco or Hungary purely because the car cannot be set up to match the circuit.</p>
-      <p>The practical upshot: if you are chasing raw pace and your circuit setup is already working well, invest more in Engine. If you are struggling to get a green setup match across the calendar — particularly if your schedule includes several high-downforce street circuits — Aero investment pays back through consistent car performance across the season rather than just peak pace at favourable tracks.</p>
+      <p>Both Aero and Engine increase Car Performance, but they are not interchangeable. <strong>Power Unit</strong> gives more raw Car Performance per dollar and the gains apply equally at every circuit. Monza, Monaco, everywhere. It is the most direct way to go faster.</p>
+      <p><strong>Aerodynamics</strong> gives slightly less Car Performance per dollar, but it also widens your setup range, meaning your car is competitive across a broader spread of circuits without losing as much pace when the ideal downforce level changes round to round. A team that neglects aero might be brilliant at Silverstone but lose half a second at Monaco or Hungary purely because the car cannot be set up to match the circuit.</p>
+      <p>The practical upshot: if you are chasing raw pace and your circuit setup is already working well, invest more in Engine. If you are struggling to get a green setup match across the calendar . If your schedule includes several high-downforce street circuits, Aero investment pays back through consistent car performance across the season rather than just peak pace at favourable tracks.</p>
       <h4>Reliability and Facilities</h4>
-      <p><strong>Reliability</strong> does not raise Car Performance at all — it reduces your DNF and retirement risk. A team with 50 reliability will throw away points through mechanical failures that a team with 80 reliability rarely sees. This is especially damaging at the front of the field where every retirement costs championship points.</p>
-      <p><strong>Facilities</strong> is the longest-term investment. It raises your Development Rate, which means all future development budgets — Aero, Engine, everything — yield more gains per dollar. Early investment in Facilities compresses over multiple seasons into a significant advantage.</p>
+      <p><strong>Reliability</strong> does not raise Car Performance at all. It reduces your DNF and retirement risk. A team with 50 reliability will throw away points through mechanical failures that a team with 80 reliability rarely sees. This is especially damaging at the front of the field where every retirement costs championship points.</p>
+      <p><strong>Facilities</strong> is the longest-term investment. It raises your Development Rate, which means all future development budgets (Aero, Engine, everything) yield more gains per dollar. Early investment in Facilities compresses over multiple seasons into a significant advantage.</p>
       <h4>R&D variance — results aren't guaranteed</h4>
       <p>Every development program has a luck roll applied to it. Investing $40M in aero doesn't always yield the same result. The outcome is labelled when it hits:</p>
       <table class="guide-table">
@@ -7348,10 +7377,10 @@ const UI = {
       <p>Each driver has 6 attributes that affect different situations:</p>
       <table class="guide-table">
         <tr><th>Attribute</th><th>Affects</th></tr>
-        <tr><td><strong>Race Pace</strong></td><td>Raw speed during the race — the most important stat. Drives your base finishing position.</td></tr>
+        <tr><td><strong>Race Pace</strong></td><td>Raw speed during the race. The most important stat. Drives your base finishing position.</td></tr>
         <tr><td><strong>Qualifying</strong></td><td>Grid position. Higher qualifying reduces overtaking difficulty and tyre wear from racing in traffic.</td></tr>
-        <tr><td><strong>Consistency</strong></td><td>Reduces variance — a consistent driver finishes where expected. Low consistency means wild swings race to race.</td></tr>
-        <tr><td><strong>Wet Weather</strong></td><td>Performance multiplier in rain. A wet race reshuffles the field — a 70-rated driver with 90 wet can beat a 90-rated dry specialist.</td></tr>
+        <tr><td><strong>Consistency</strong></td><td>Reduces variance. A consistent driver finishes where expected. Low consistency means wild swings race to race.</td></tr>
+        <tr><td><strong>Wet Weather</strong></td><td>Performance multiplier in rain. A wet race reshuffles the field. A 70-rated driver with 90 wet can beat a 90-rated dry specialist.</td></tr>
         <tr><td><strong>Aggression</strong></td><td>Overtaking ability and risk-taking. High aggression gains places but increases DNF risk in incidents.</td></tr>
         <tr><td><strong>Marketability</strong></td><td>Sponsor attraction. A marketable driver in your team raises sponsor offer values each offseason.</td></tr>
       </table>
@@ -7361,11 +7390,11 @@ const UI = {
     `)}
 
     ${sec('📈','Driver Development — Why Potential ≠ Outcome',`
-      <p>Every driver has a hidden <strong>Potential</strong> ceiling. A driver rated 72 with 95 potential <em>could</em> become a GOAT — but only under the right conditions.</p>
+      <p>Every driver has a hidden <strong>Potential</strong> ceiling. A driver rated 72 with 95 potential <em>could</em> become a GOAT, but only under the right conditions.</p>
       <h4>What drives development</h4>
-      <p><strong>Facilities</strong> — the biggest lever you control. Poor facilities (below 65) actively stunt growth. Elite facilities (80+) can accelerate development significantly. This is why investing in Facilities isn't just about car performance — it shapes your drivers' careers.</p>
-      <p><strong>Morale</strong> — unhappy drivers (below 40 morale) develop at half rate. Keep your young drivers happy.</p>
-      <p><strong>Luck</strong> — each offseason every developing driver rolls a luck multiplier. Even in perfect conditions, 5% of seasons are stagnation years.</p>
+      <p><strong>Facilities</strong> is the biggest lever you control. Poor facilities (below 65) actively stunt growth. Elite facilities (80+) can accelerate development significantly. This is why investing in Facilities isn't just about car performance. It shapes your drivers' careers.</p>
+      <p><strong>Morale</strong>: unhappy drivers (below 40 morale) develop at half rate. Keep your young drivers happy.</p>
+      <p><strong>Luck</strong>: each offseason every developing driver rolls a luck multiplier. Even in perfect conditions, 5% of seasons are stagnation years.</p>
       <p><strong>Work ethic</strong> — a hidden trait seeded from the driver's identity. Some drivers just push harder.</p>
       <h4>Potential can erode</h4>
       <p>This is the key tension. A young driver in poor facilities with low morale doesn't just develop slowly — their <strong>ceiling drops</strong>. The window closes. Sign a wonderkid to a rebuilding team with 60-rated facilities and you may watch a 97-potential driver peak at 81.</p>
@@ -8180,6 +8209,7 @@ const UI = {
            +'<div style="display:flex;gap:6px;flex-wrap:wrap">'
            +'<button class="btn btn-outline btn-sm" onclick="GameActions.extendContract('+d.id+');UI.renderOffseason(window._recapTransfers,window._recapChamps?.driverChamp,window._recapChamps?.constructorChamp,window._recapChamps?.retirements||[])">📝 Extend</button>'
            +'<button class="btn btn-ghost btn-sm" onclick="UI.showDriverModal('+d.id+')">Profile</button>'
+           +'<button class="btn btn-outline btn-sm" onclick="GameActions.demoteToReserve('+d.id+')">⬇️ Reserve</button>'
            +'<button class="btn btn-danger btn-sm" onclick="GameActions.releaseDriver('+d.id+');UI.renderOffseason(window._recapTransfers,window._recapChamps?.driverChamp,window._recapChamps?.constructorChamp,window._recapChamps?.retirements||[])">Release</button>'
            +'</div>'
            +'</div>';
@@ -8365,25 +8395,23 @@ const UI = {
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-        <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v1.9.6 · Release Notes</div>
+        <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v1.9.2 · Release Notes</div>
         ${[
-          ['v1.9.6','Mar 2026',[
-            'Critical bug fix — race crash "d is not defined" resolved. All saves affected by this can now race normally.',
-          ]],
-          ['v1.9.5','Mar 2026',[
-            'Rain now lasts a realistic amount of time. Tracks no longer dry out 2 laps after getting wet — wet conditions persist for at least 20 laps before a slick tyre window can open.',
-          ]],
-          ['v1.9.4','Mar 2026',[
-            'Fastest lap bonus point removed — F1 dropped this award from the 2026 season.',
-          ]],
-          ['v1.9.3','Mar 2026',[
-            'Split strategy — you can now set different race strategies for each of your drivers. Use the strategy picker before each race to run one driver on a different tyre compound or stop sequence to the other.',
-            'Bug fix — injured drivers are now correctly substituted by reserve drivers during qualifying and races.',
-            'Bug fix — Watch Race finish position commentary now matches the final result table.',
-          ]],
           ['v1.9.2','Mar 2026',[
-            'Bug fix — upgrade packages ordered mid-season no longer stack up indefinitely. Any upgrades that were stuck are applied automatically when you load your save.',
-            'Bug fix — upgrades are now fully cleared at the start of each new season instead of carrying over incorrectly.',
+            '🐛 Critical crash fix — race error "d is not defined" resolved for all saves.',
+            '🐛 Upgrade packages no longer stack up permanently. Any stuck upgrades apply automatically on load.',
+            '🐛 Win, podium and pole history now tracked correctly across seasons. Records page shows career totals.',
+            '🐛 Injured drivers now correctly race with their reserve substitute, not just qualify. Reserve shown with SUB badge in the grid.',
+            '🐛 Watch Race results table and points now match finishing positions correctly.',
+            '🐛 Watch Race finish commentary now matches the final result.',
+            '🐛 Fastest lap bonus point removed — F1 dropped this from the 2026 season.',
+            '🐛 Rain now lasts a realistic amount of time before the track dries.',
+            '⚙️ Drivers can now be demoted to reserve instead of being forced to release. Use the Reserve button in offseason.',
+            '⚙️ Rival teams are less aggressive about poaching your drivers. Morale and early contract extensions now matter.',
+            '⚙️ Split strategy — set different tyre strategies per driver from the strategy picker.',
+            '⚙️ Position swings in Watch Race are smoother and more realistic.',
+            '⚙️ Guide rewritten to remove AI-sounding phrasing throughout.',
+            '⚙️ Commentary and news feed updated to read more naturally.',
           ]],
           ['v1.9.1','Mar 2026',[
             'Bug fix — Watch Race results table and points now match the actual finishing positions correctly',
@@ -9254,6 +9282,20 @@ const GameActions = {
     UI.closeModal();
     UI.toast(`${d.name} promoted to race driver!`,'success');
     Storage.autosave(); UI.renderOffseasonPlanning();
+  },
+
+  demoteToReserve(driverId){
+    const d=State.getDriver(driverId); if(!d) return;
+    const team=State.getPlayerTeam();
+    const current=State.getPlayerDrivers();
+    if(current.length<=1){UI.toast('You need at least 1 race driver.','warning');return;}
+    d.isReserve=true; d.isFreeAgent=false;
+    d.morale=clamp((d.morale||75)-10,30,98);
+    UI.closeModal();
+    UI.toast(`${d.name} moved to reserve.`,'info');
+    Storage.autosave();
+    UI.renderOffseasonPlanning();
+    if(document.getElementById('view-drivers')?.classList.contains('active')) UI.renderDrivers();
   },
 
   extendContract(driverId){
