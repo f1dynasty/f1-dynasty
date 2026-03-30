@@ -3340,7 +3340,15 @@ const Sim = {
     g.inSeasonDev={aero:0,reliability:0,engine:0};
     g.poachAttempts=[];
     if(g.injuries) g.injuries = g.injuries.map(inj=>({...inj,cleared:true}));
-    g.pendingUpgrades=(g.pendingUpgrades||[]).filter(u=>!u.applied); // carry over unapplied
+    // Apply any upgrades that were never consumed last season, then clear the list
+    // (they were ordered but the season ended before delivery — apply them now silently)
+    const team=State.getPlayerTeam();
+    (g.pendingUpgrades||[]).filter(u=>!u.applied).forEach(u=>{
+      if(u.stat==='carPerformance') team.carPerformance=clamp(team.carPerformance+u.value,40,100);
+      if(u.stat==='reliability')    team.reliability=clamp(team.reliability+u.value,40,100);
+      u.applied=true;
+    });
+    g.pendingUpgrades=[]; // start each season with a clean slate
     g.inSeasonDevApplied=false;
     g.quarterDev=[{aero:0,reliability:0,engine:0,applied:false},{aero:0,reliability:0,engine:0,applied:false},{aero:0,reliability:0,engine:0,applied:false}];
     const nextCal=g.season<=2026?DATA.calendar:DATA.calendarFull;
@@ -3664,6 +3672,20 @@ const Storage = {
     }
     // Initialise achievement tracking if missing
     if(!g._unlockedAchievements) g._unlockedAchievements = [];
+    // Fix stale pendingUpgrades — if arrivesAfterRace <= raceIndex and still unapplied,
+    // they are stuck. Apply them silently now so they stop showing as "Arriving now!"
+    if(g.pendingUpgrades && g.pendingUpgrades.length > 0) {
+      const t = g.teams ? g.teams.find(t=>t.id===g.playerTeamId) : null;
+      g.pendingUpgrades.forEach(u=>{
+        if(!u.applied && u.arrivesAfterRace <= g.raceIndex) {
+          if(t) {
+            if(u.stat==='carPerformance') t.carPerformance = clamp(t.carPerformance + (u.value||0), 40, 100);
+            if(u.stat==='reliability')    t.reliability    = clamp(t.reliability    + (u.value||0), 40, 100);
+          }
+          u.applied = true;
+        }
+      });
+    }
     // ── Compatibility: for saves already in offseason, ensure scoutingChosen is
     // set correctly so the allReady check doesn't lock them out ──────────────────
     // If offseasonPending and scoutingTier is set, treat scoutingChosen as true
@@ -8298,8 +8320,12 @@ const UI = {
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-        <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v1.9.1 · Release Notes</div>
+        <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v1.9.2 · Release Notes</div>
         ${[
+          ['v1.9.2','Mar 2026',[
+            'Bug fix — upgrade packages ordered mid-season no longer stack up indefinitely. Any upgrades that were stuck are applied automatically when you load your save.',
+            'Bug fix — upgrades are now fully cleared at the start of each new season instead of carrying over incorrectly.',
+          ]],
           ['v1.9.1','Mar 2026',[
             'Bug fix — Watch Race results table and points now match the actual finishing positions correctly',
             'Bug fix — Driver position commentary no longer jumps more than 2 places in a single update, preventing jarring last-lap swings',
