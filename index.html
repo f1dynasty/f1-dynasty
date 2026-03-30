@@ -744,7 +744,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </div>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game" class="land-start">Start Career →</button>
-      <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px">v1.8.1 · <a href="javascript:void(0)" onclick="UI.showContact()" style="color:#aaa;text-decoration:none;cursor:pointer">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+      <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px">v1.8.4 · <a href="javascript:void(0)" onclick="UI.showContact()" style="color:#aaa;text-decoration:none;cursor:pointer">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -1868,7 +1868,7 @@ const Sim = {
     });
     const results=[];
     const weatherRoll = Math.random();
-    const weather = weatherRoll < 0.15 ? 'wet' : weatherRoll < 0.30 ? 'mixed' : 'dry';
+    const weather = weatherRoll < 0.07 ? 'wet' : weatherRoll < 0.15 ? 'mixed' : 'dry';
     const rainStartLap = weather === 'mixed' ? randInt(Math.floor(race.laps * 0.25), Math.floor(race.laps * 0.65)) : null;
     const scProb = race.safetyCar !== undefined ? race.safetyCar : 0.35;
     const hadSafetyCar = Math.random() < scProb;
@@ -5375,7 +5375,7 @@ const UI = {
       : Sim._generateLapEvents(race, race.raceResult||[], race.weather||'dry', !!race.hadSafetyCar, race.rainStartLap||null);
     WR.idx=0; WR.raceIdx=raceIdx; WR.paused=false; WR.timer=null; WR.isSprint=false; WR.dnfs={};
     WR.pitDecisions=[]; WR.pitDecisionBonus=0;
-    WR.weatherDecisions=[]; WR.weatherCallBonus=0; WR.weatherCalls=[];
+    WR.weatherDecisions=[]; WR.weatherCallBonus=0; WR.weatherCalls=[]; WR.positionDeltas={};
     // Seed live positions from qualifying grid
     WR.lastPos = {}; WR.prevPos = null;
     // Seed from startPos in raceResult — this reflects actual grid inc. penalties
@@ -7189,6 +7189,7 @@ const UI = {
       </table>
       <p>The <strong>Overall Rating</strong> shown on cards is a weighted average, with Race Pace weighted most heavily.</p>
       ${tip('Stars matter at the top', 'The difference between an 82 and a 92 rated driver isn\'t 10% — elite drivers (90+) get a non-linear bonus in race simulations. A 95-rated driver regularly produces results that exceed what their car alone would predict.')}
+      ${tip('Improving qualifying', 'A driver\'s Qualifying attribute improves naturally through development over seasons — it\'s not separate from their overall growth. To speed it up: invest in Facilities (the biggest lever), keep morale high, and sign drivers who have the qualifier trait. The qualifier trait specifically boosts qualifying performance beyond what their raw attribute suggests. You can see traits on each driver\'s profile card.')}
     `)}
 
     ${sec('📈','Driver Development — Why Potential ≠ Outcome',`
@@ -8130,8 +8131,20 @@ const UI = {
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-        <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v1.8.1 · Release Notes</div>
+        <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v1.8.4 · Release Notes</div>
         ${[
+          ['v1.8.4','Mar 2026',[
+            'Auto-sim races now carry a 15% chance of losing 1 place due to suboptimal engineer calls — Watch Race with good decisions is now genuinely the better path',
+          ]],
+          ['v1.8.3','Mar 2026',[
+            '🏁 Your pit wall calls now matter. Nail the undercut, read the weather right, and your driver moves up the order. For real. Get it wrong and you\'ll pay for it in the standings. Watch Race is no longer just a spectator sport.',
+            'Post-race debrief now tells you exactly how many places your strategy gained or cost you.',
+          ]],
+          ['v1.8.2','Mar 2026',[
+            'Bug fix — Watch Race dark mode now fully supported: modal, feed, pit/weather decision cards, and results table all use theme colours',
+            'Bug fix — Rain probability reduced from 30% to 15% to better reflect real F1 seasons',
+            'Guide updated — qualifying improvement tip added for drivers',
+          ]],
           ['v1.8.1','Mar 2026',[
             'Contact / Feedback form added — report bugs or send suggestions directly from the game',
             'Community links added throughout — find r/f1dynasty from the landing page, mobile menu, and contact form',
@@ -8767,6 +8780,35 @@ const GameActions = {
       const _preConstrStandings = State.getConstructorStandings().map(({team},i)=>({id:team.id,name:team.name,pos:i+1,pts:team.seasonPoints}));
       const rd=Sim.simRace(race);
       if(!rd||!rd.results||rd.results.length===0){UI.toast('Race simulation failed — try starting a new game','error');return;}
+      // 15% chance auto-sim costs a player driver 1 place — engineers aren't perfect
+      // This makes watch race + good decisions genuinely better than auto-simming
+      if(Math.random() < 0.15) {
+        const playerDriverIds = State.getPlayerDrivers().map(d=>d.id);
+        const driverToHit = playerDriverIds[Math.floor(Math.random()*playerDriverIds.length)];
+        const myEntry = rd.results.find(r=>r.driverId===driverToHit && !r.dnf);
+        const ptScale = [0,25,18,15,12,10,8,6,4,2,1];
+        if(myEntry && myEntry.position < rd.results.filter(r=>!r.dnf).length) {
+          const newPos = myEntry.position + 1;
+          const swapEntry = rd.results.find(r=>r.position===newPos && !r.dnf);
+          if(swapEntry) {
+            const oldPts = myEntry.points || 0;
+            const swapOldPts = swapEntry.points || 0;
+            swapEntry.position = myEntry.position;
+            myEntry.position = newPos;
+            myEntry.points = ptScale[newPos] || 0;
+            swapEntry.points = ptScale[swapEntry.position] || 0;
+            // Update season points
+            const myDrv = State.getDriver(myEntry.driverId);
+            const myTeam = State.getTeam(myEntry.teamId);
+            const swDrv = State.getDriver(swapEntry.driverId);
+            const swTeam = State.getTeam(swapEntry.teamId);
+            if(myDrv) myDrv.seasonPoints = Math.max(0,(myDrv.seasonPoints||0) - oldPts + myEntry.points);
+            if(myTeam) myTeam.seasonPoints = Math.max(0,(myTeam.seasonPoints||0) - oldPts + myEntry.points);
+            if(swDrv) swDrv.seasonPoints = Math.max(0,(swDrv.seasonPoints||0) - swapOldPts + swapEntry.points);
+            if(swTeam) swTeam.seasonPoints = Math.max(0,(swTeam.seasonPoints||0) - swapOldPts + swapEntry.points);
+          }
+        }
+      }
       rd.preDriverStandings = _preDriverStandings;
       rd.preConstrStandings = _preConstrStandings;
       g.raceIndex++; Storage.autosave();
@@ -9017,6 +9059,71 @@ window._wrTick = function() {
     document.getElementById('wr-lap-counter').textContent = 'Finished · ' + (isSprint ? (race.laps ? Math.round(race.laps*0.30) : 17) : race.laps) + ' laps';
     const tb = document.getElementById('wr-toggle'); if(tb) tb.disabled=true;
 
+    // ── Apply decision bonuses to actual race result ──────────────────────────
+    // Pit and weather decisions now genuinely affect finishing positions.
+    // Bonuses accumulate during the race; here we shift positions accordingly.
+    const resultKey = isSprint ? 'sprintResult' : 'raceResult';
+    const resultArr = race[resultKey] || [];
+    const playerDriverIds = State.getPlayerDrivers().map(function(d){return d.id;});
+
+    playerDriverIds.forEach(function(dId) {
+      const pitBonus     = WR.pitDecisionBonus     || 0;
+      const weatherBonus = WR.weatherCallBonus      || 0;
+      const totalBonus   = pitBonus + weatherBonus;
+
+      // Calculate position delta — larger bonuses needed for bigger swings
+      let posDelta = 0;
+      if     (totalBonus >=  2.0) posDelta = -3; // gain 3 places
+      else if(totalBonus >=  1.2) posDelta = -2; // gain 2 places
+      else if(totalBonus >=  0.5) posDelta = -1; // gain 1 place
+      else if(totalBonus <= -1.5) posDelta =  3; // lose 3 places
+      else if(totalBonus <= -0.8) posDelta =  2; // lose 2 places
+      else if(totalBonus <= -0.3) posDelta =  1; // lose 1 place
+
+      if(posDelta === 0) return;
+
+      const myEntry = resultArr.find(function(r){return r.driverId === dId && !r.dnf;});
+      if(!myEntry) return;
+
+      const oldPos = myEntry.position;
+      const newPos = Math.max(1, Math.min(resultArr.length, oldPos + posDelta));
+      if(newPos === oldPos) return;
+
+      // Find driver currently at newPos and swap
+      const swapEntry = resultArr.find(function(r){return r.position === newPos && !r.dnf;});
+      if(swapEntry) swapEntry.position = oldPos;
+      myEntry.position = newPos;
+
+      // Recalculate points for affected drivers
+      const ptScale = isSprint
+        ? [0,8,7,6,5,4,3,2,1]
+        : [0,25,18,15,12,10,8,6,4,2,1];
+      [myEntry, swapEntry].forEach(function(r){
+        if(!r || r.dnf) return;
+        const pts = ptScale[r.position] || 0;
+        const ptsWere = r.points || 0;
+        r.points = pts;
+        // Update driver and team season points
+        const drv = State.getDriver(r.driverId);
+        const team = r.teamId ? State.getTeam(r.teamId) : null;
+        if(drv) drv.seasonPoints = Math.max(0, (drv.seasonPoints||0) - ptsWere + pts);
+        if(team) team.seasonPoints = Math.max(0, (team.seasonPoints||0) - ptsWere + pts);
+        // Update wins
+        if(r.position === 1 && ptsWere < 25) {
+          if(drv) drv.wins = (drv.wins||0) + 1;
+          if(team) team.wins = (team.wins||0) + 1;
+        } else if(r.position !== 1 && ptsWere === 25) {
+          if(drv) drv.wins = Math.max(0, (drv.wins||0) - 1);
+          if(team) team.wins = Math.max(0, (team.wins||0) - 1);
+        }
+      });
+
+      // Store delta for feedback display
+      if(!WR.positionDeltas) WR.positionDeltas = {};
+      WR.positionDeltas[dId] = { old: oldPos, new: newPos, delta: oldPos - newPos };
+    });
+    // ── End position adjustment ───────────────────────────────────────────────
+
     const pids = State.getPlayerDrivers().map(function(d){return d.id;});
     const resultData = isSprint ? (race.sprintResult||[]) : (race.raceResult||[]);
     const showRows = isSprint ? 8 : 10;
@@ -9028,8 +9135,8 @@ window._wrTick = function() {
       const bd = i===0?'#f0d060':i===1?'#e0e0dd':'#fed7aa';
       return '<div style="flex:1;min-width:80px;background:'+bg+';border:1px solid '+bd+';border-radius:8px;padding:8px 6px;text-align:center">'
         +'<div style="font-size:22px">'+medals[i]+'</div>'
-        +'<div style="font-size:12px;font-weight:800;color:#1a1a1a">'+r.driverName.split(' ').slice(-1)[0]+'</div>'
-        +'<div style="font-size:10px;color:#888">'+r.teamName+'</div>'
+        +'<div style="font-size:12px;font-weight:800;color:var(--tx)">'+r.driverName.split(' ').slice(-1)[0]+'</div>'
+        +'<div style="font-size:10px;color:var(--tx3)">'+r.teamName+'</div>'
         +'<div style="font-size:11px;font-weight:700;color:#b8860b;margin-top:2px">'+r.points+'pts</div>'
         +'</div>';
     }).join('');
@@ -9040,7 +9147,7 @@ window._wrTick = function() {
       return '<tr style="border-bottom:1px solid #e0e0dd'+(mine?';background:rgba(192,57,43,.05)':'')+'">'
         +'<td style="padding:5px 2px;font-weight:700;width:28px">'+r.position+'</td>'
         +'<td style="padding:5px 4px;font-weight:'+(mine?'800':'500')+'">'+r.driverName+fl+'</td>'
-        +'<td style="padding:5px 4px;color:#888;font-size:11px">'+r.teamName+'</td>'
+        +'<td style="padding:5px 4px;color:var(--tx3);font-size:11px">'+r.teamName+'</td>'
         +'<td style="padding:5px 2px;text-align:right;font-weight:700">'+r.points+'</td>'
         +'</tr>';
     }).join('');
@@ -9082,8 +9189,13 @@ window._wrTick = function() {
         const bd = totalBonus > 0.1 ? '#bbf7d0' : totalBonus < -0.3 ? '#fecaca' : 'var(--bd)';
         const col = totalBonus > 0.1 ? '#166534' : totalBonus < -0.3 ? '#991b1b' : 'var(--tx2)';
         const icon = totalBonus > 0.1 ? '✅' : totalBonus < -0.3 ? '⚠️' : '📋';
+        const posNote = (()=>{
+          const deltas = WR.positionDeltas || {};
+          const msgs = pids.map(function(id){ const d=deltas[id]; if(!d||d.delta===0) return null; return (d.delta>0?'gained '+d.delta:'lost '+Math.abs(d.delta))+' place'+(Math.abs(d.delta)>1?'s':''); }).filter(Boolean);
+          return msgs.length ? ' ('+msgs.join(', ')+')' : '';
+        })();
         stratFeedbackHtml += `<div style="background:${bg};border:1px solid ${bd};border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:11px;color:${col}">
-          ${icon} <strong>Pit calls:</strong> ${bonusStr} impact — ${totalBonus > 0.3 ? 'sharp execution on the pit wall.' : totalBonus < -0.3 ? 'costly timing on the stops.' : 'decent pit wall management.'}
+          ${icon} <strong>Pit calls:</strong> ${bonusStr} impact${posNote} — ${totalBonus > 0.3 ? 'sharp execution on the pit wall.' : totalBonus < -0.3 ? 'costly timing on the stops.' : 'decent pit wall management.'}
         </div>`;
       }
       // Weather decision summary
@@ -9096,24 +9208,29 @@ window._wrTick = function() {
         const col = wb > 0 ? '#166534' : wb < -0.3 ? '#991b1b' : 'var(--tx2)';
         const icon = wb > 0 ? '✅' : wb < -0.3 ? '⚠️' : '🌧';
         const verdict = wb > 0.3 ? 'decisive weather read.' : wb < -0.3 ? 'stayed out too long in the wet.' : 'managed the conditions.';
+        const posNote = (()=>{
+          const deltas = WR.positionDeltas || {};
+          const msgs = pids.map(function(id){ const d=deltas[id]; if(!d||d.delta===0) return null; return (d.delta>0?'gained '+d.delta:'lost '+Math.abs(d.delta))+' place'+(Math.abs(d.delta)>1?'s':''); }).filter(Boolean);
+          return msgs.length ? ' ('+msgs.join(', ')+')' : '';
+        })();
         stratFeedbackHtml += `<div style="background:${bg};border:1px solid ${bd};border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:11px;color:${col}">
-          ${icon} <strong>Weather calls:</strong> ${bonusStr} impact — ${verdict}
+          ${icon} <strong>Weather calls:</strong> ${bonusStr} impact${posNote} — ${verdict}
         </div>`;
       }
     }
     footer.innerHTML =
       '<div style="width:100%">'
-      +'<div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#aaa;margin-bottom:10px">'+(isSprint?'🏃 Sprint Result — Top 8':'Race Result')+'</div>'
+      +'<div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);margin-bottom:10px">'+(isSprint?'🏃 Sprint Result — Top 8':'Race Result')+'</div>'
       +stratFeedbackHtml
       +'<div style="display:flex;gap:8px;margin-bottom:12px">'+podHtml+'</div>'
       +'<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">'
-      +'<thead><tr style="border-bottom:2px solid #e0e0dd">'
-      +'<th style="text-align:left;padding:4px 2px;color:#aaa;font-weight:600;width:28px">P</th>'
-      +'<th style="text-align:left;padding:4px 4px;color:#aaa;font-weight:600">Driver</th>'
-      +'<th style="text-align:left;padding:4px 4px;color:#aaa;font-weight:600">Team</th>'
-      +'<th style="text-align:right;padding:4px 2px;color:#aaa;font-weight:600">Pts</th>'
+      +'<thead><tr style="border-bottom:2px solid var(--bd)">'
+      +'<th style="text-align:left;padding:4px 2px;color:var(--tx3);font-weight:600;width:28px">P</th>'
+      +'<th style="text-align:left;padding:4px 4px;color:var(--tx3);font-weight:600">Driver</th>'
+      +'<th style="text-align:left;padding:4px 4px;color:var(--tx3);font-weight:600">Team</th>'
+      +'<th style="text-align:right;padding:4px 2px;color:var(--tx3);font-weight:600">Pts</th>'
       +'</tr></thead><tbody>'+rowsHtml+'</tbody></table></div>'
-      +(isSprint?'<div style="font-size:10px;color:#888;margin-top:6px;text-align:center">Points: 8-7-6-5-4-3-2-1 (top 8 only)</div>':'')
+      +(isSprint?'<div style="font-size:10px;color:var(--tx3);margin-top:6px;text-align:center">Points: 8-7-6-5-4-3-2-1 (top 8 only)</div>':'')
       +'<button class="btn btn-red" style="width:100%;margin-top:12px" onclick="UI.closeWatchRace()">Continue &#x2192;</button>'
       +'</div>';
     footer.style.display='block';
@@ -9134,7 +9251,7 @@ window._wrTick = function() {
     const feed = document.getElementById('wr-feed');
     const card = document.createElement('div');
     card.id = 'pit-decision-card-' + decisionId;
-    card.style.cssText = 'background:#fff;border:2px solid #c0392b;border-radius:10px;padding:12px 14px;margin-bottom:6px;flex-shrink:0';
+    card.style.cssText = 'background:var(--bg2);border:2px solid #c0392b;border-radius:10px;padding:12px 14px;margin-bottom:6px;flex-shrink:0;color:var(--tx)';
     // Context hint based on position in window
     const lapsIntoWindow = ev.lap - ev.windowOpen;
     const windowSize = Math.max(1, ev.windowClose - ev.windowOpen);
@@ -9147,13 +9264,13 @@ window._wrTick = function() {
     card.innerHTML =
       '<div style="font-size:10px;font-weight:700;letter-spacing:1px;color:#c0392b;margin-bottom:6px">L'+ev.lap+' · PIT CALL — Stop '+ev.stopNum+' of '+ev.totalStops+'</div>'
       +'<div style="font-size:13px;font-weight:800;margin-bottom:2px">⭐ '+ev.driverName+'</div>'
-      +'<div style="font-size:11px;color:#555;margin-bottom:4px">Fitting <strong>'+ev.nextTireName+'s</strong> · Window: L'+ev.windowOpen+'–L'+ev.windowClose+'</div>'
-      +'<div style="font-size:11px;color:#888;margin-bottom:10px;font-style:italic">'+contextNote+'</div>'
+      +'<div style="font-size:11px;color:var(--tx2);margin-bottom:4px">Fitting <strong>'+ev.nextTireName+'s</strong> · Window: L'+ev.windowOpen+'–L'+ev.windowClose+'</div>'
+      +'<div style="font-size:11px;color:var(--tx3);margin-bottom:10px;font-style:italic">'+contextNote+'</div>'
       +'<div style="display:flex;gap:8px">'
         +'<button id="pit-now-'+decisionId+'" onclick="window._wrPitDecision('+decisionId+',true)" style="flex:1;padding:9px 0;background:#c0392b;color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:800;cursor:pointer">🔧 Box Box</button>'
-        +'<button id="pit-stay-'+decisionId+'" onclick="window._wrPitDecision('+decisionId+',false)" style="flex:1;padding:9px 0;background:#f4f4f2;color:#1a1a1a;border:1px solid #e0e0dd;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer">⏩ Stay Out</button>'
+        +'<button id="pit-stay-'+decisionId+'" onclick="window._wrPitDecision('+decisionId+',false)" style="flex:1;padding:9px 0;background:var(--bg3);color:var(--tx);border:1px solid var(--bd);border-radius:7px;font-size:13px;font-weight:700;cursor:pointer">⏩ Stay Out</button>'
       +'</div>'
-      +'<div id="pit-timer-'+decisionId+'" style="font-size:10px;color:#aaa;text-align:center;margin-top:6px">Auto-boxing in <span id="pit-countdown-'+decisionId+'">8</span>s…</div>';
+      +'<div id="pit-timer-'+decisionId+'" style="font-size:10px;color:var(--tx3);text-align:center;margin-top:6px">Auto-boxing in <span id="pit-countdown-'+decisionId+'">8</span>s…</div>';
     feed.appendChild(card);
     feed.scrollTop = feed.scrollHeight;
 
@@ -9189,7 +9306,7 @@ window._wrTick = function() {
     const feed = document.getElementById('wr-feed');
     const card = document.createElement('div');
     card.id = 'wd-card-' + wdId;
-    card.style.cssText = 'background:#fff;border:2px solid #2563eb;border-radius:10px;padding:12px 14px;margin-bottom:6px;flex-shrink:0';
+    card.style.cssText = 'background:var(--bg2);border:2px solid #2563eb;border-radius:10px;padding:12px 14px;margin-bottom:6px;flex-shrink:0;color:var(--tx)';
     const d = State.getDriver(ev.driverId);
     const wetSkill = d ? d.wet : 80;
     const isFullWet = ev.isFullWet || false;
@@ -9204,13 +9321,13 @@ window._wrTick = function() {
     card.innerHTML =
       '<div style="font-size:10px;font-weight:700;letter-spacing:1px;color:#2563eb;margin-bottom:6px">L'+ev.lap+' · WEATHER CALL — '+(isFullWet?'Wets needed!':'Rain arriving!')+'</div>'
       +'<div style="font-size:13px;font-weight:800;margin-bottom:2px">⭐ '+ev.driverName+'</div>'
-      +'<div style="font-size:11px;color:#555;margin-bottom:4px">Switch to <strong>'+tireLabel+'</strong>? '+situation+'</div>'
-      +'<div style="font-size:11px;color:#888;margin-bottom:10px;font-style:italic">'+skillNote+'</div>'
+      +'<div style="font-size:11px;color:var(--tx2);margin-bottom:4px">Switch to <strong>'+tireLabel+'</strong>? '+situation+'</div>'
+      +'<div style="font-size:11px;color:var(--tx3);margin-bottom:10px;font-style:italic">'+skillNote+'</div>'
       +'<div style="display:flex;gap:8px">'
         +'<button onclick="window._wrWeatherDecision('+wdId+',true)" style="flex:1;padding:9px 0;background:#2563eb;color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:800;cursor:pointer">🌧 Pit for '+tireLabel+'</button>'
-        +'<button onclick="window._wrWeatherDecision('+wdId+',false)" style="flex:1;padding:9px 0;background:#f4f4f2;color:#1a1a1a;border:1px solid #e0e0dd;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer">⏩ Stay Out</button>'
+        +'<button onclick="window._wrWeatherDecision('+wdId+',false)" style="flex:1;padding:9px 0;background:var(--bg3);color:var(--tx);border:1px solid var(--bd);border-radius:7px;font-size:13px;font-weight:700;cursor:pointer">⏩ Stay Out</button>'
       +'</div>'
-      +'<div id="wd-timer-'+wdId+'" style="font-size:10px;color:#aaa;text-align:center;margin-top:6px">Auto-switching in <span id="wd-countdown-'+wdId+'">'+autoBoxSecsW+'</span>s…</div>';
+      +'<div id="wd-timer-'+wdId+'" style="font-size:10px;color:var(--tx3);text-align:center;margin-top:6px">Auto-switching in <span id="wd-countdown-'+wdId+'">'+autoBoxSecsW+'</span>s…</div>';
     feed.appendChild(card);
     feed.scrollTop = feed.scrollHeight;
 
@@ -9247,7 +9364,7 @@ window._wrTick = function() {
   const el = document.createElement('div');
   if(isMyEvent) {
     // My driver event — strong red highlight
-    el.style.cssText = 'background:#fff5f5;border:1px solid #fca5a5;border-left:3px solid #c0392b;border-radius:7px;padding:8px 12px;font-size:13px;flex-shrink:0;margin-bottom:4px;line-height:1.4;font-weight:600';
+    el.style.cssText = 'background:var(--bg3);border:1px solid var(--bd);border-left:3px solid #c0392b;border-radius:7px;padding:8px 12px;font-size:13px;flex-shrink:0;margin-bottom:4px;line-height:1.4;font-weight:600;color:var(--tx)';
   } else {
     el.style.cssText = 'background:'+s.bg+';border:1px solid '+s.bd+';border-radius:7px;padding:8px 12px;font-size:13px;flex-shrink:0;margin-bottom:4px;line-height:1.4';
   }
@@ -9269,7 +9386,7 @@ window._wrTick = function() {
     myBar.innerHTML = myDrivers.map(function(d) {
       const isDnf = !!WR.dnfs[d.id];
       return '<div style="background:rgba(192,57,43,.1);border:1px solid rgba(192,57,43,.3);border-radius:5px;padding:2px 8px;font-size:11px;font-weight:700">'
-        +'<span style="color:#888">'+d.name.split(' ').slice(-1)[0]+'</span>'
+        +'<span style="color:var(--tx3)">'+d.name.split(' ').slice(-1)[0]+'</span>'
         +(isDnf?' <span style="color:#dc2626">DNF</span>':'')
         +'</div>';
     }).join('');
@@ -9301,7 +9418,7 @@ window._wrPitDecision = function(decisionId, pitNow, auto) {
       card.innerHTML =
         '<div style="font-size:10px;font-weight:700;letter-spacing:1px;color:#16a34a;margin-bottom:4px">L'+ev.lap+' · PITTED'+(auto?' (AUTO)':'')+'</div>'
         +'<div style="font-size:13px;font-weight:700">'+outcome+'</div>'
-        +(auto ? '<div style="font-size:10px;color:#aaa;margin-top:3px">No decision made — engineers called it.</div>' : '');
+        +(auto ? '<div style="font-size:10px;color:var(--tx3);margin-top:3px">No decision made — engineers called it.</div>' : '');
     }
     if(!WR.pitDecisionBonus) WR.pitDecisionBonus = 0;
     WR.pitDecisionBonus += auto ? 0 : 0.4; // reward for manual call
@@ -9341,7 +9458,7 @@ window._wrPitDecision = function(decisionId, pitNow, auto) {
       card.innerHTML =
         '<div style="font-size:10px;font-weight:700;letter-spacing:1px;color:'+(isGood?'#d97706':'#dc2626')+';margin-bottom:4px">L'+ev.lap+' · STAYED OUT</div>'
         +'<div style="font-size:13px;font-weight:700">'+outcomeText+'</div>'
-        +'<div style="font-size:10px;color:#888;margin-top:4px;font-style:italic">Engineers will bring them in within a few laps.</div>';
+        +'<div style="font-size:10px;color:var(--tx3);margin-top:4px;font-style:italic">Engineers will bring them in within a few laps.</div>';
     }
     if(!WR.pitDecisionBonus) WR.pitDecisionBonus = 0;
     WR.pitDecisionBonus += bonusDelta;
@@ -9507,32 +9624,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
 <!-- WATCH RACE MODAL -->
 <div id="watch-race-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;align-items:center;justify-content:center;padding:12px">
-  <div style="background:#fff;border-radius:12px;width:92%;max-width:560px;max-height:calc(100dvh - 24px);box-shadow:0 20px 60px rgba(0,0,0,.3);overflow:hidden;font-family:system-ui,sans-serif;display:flex;flex-direction:column">
-    <div style="background:#f4f4f2;border-bottom:1px solid #e0e0dd;flex-shrink:0">
+  <div style="background:var(--bg2);border-radius:12px;width:92%;max-width:560px;max-height:calc(100dvh - 24px);box-shadow:0 20px 60px rgba(0,0,0,.3);overflow:hidden;font-family:system-ui,sans-serif;display:flex;flex-direction:column">
+    <div style="background:var(--bg2);border-bottom:1px solid var(--bd);flex-shrink:0">
       <div style="padding:12px 16px;display:flex;align-items:center;justify-content:space-between">
         <div>
-          <div id="wr-race-name" style="font-size:15px;font-weight:900;color:#1a1a1a"></div>
-          <div id="wr-lap-counter" style="font-size:11px;color:#888;margin-top:2px;font-variant-numeric:tabular-nums">Lap 0</div>
+          <div id="wr-race-name" style="font-size:15px;font-weight:900;color:var(--tx)"></div>
+          <div id="wr-lap-counter" style="font-size:11px;color:var(--tx3);margin-top:2px;font-variant-numeric:tabular-nums">Lap 0</div>
               <div id="wr-my-drivers" style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap"></div>
         </div>
         <div style="display:flex;align-items:center;gap:8px">
           <button id="wr-toggle" onclick="UI.wrToggle()" style="background:#c0392b;color:#fff;border:none;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;min-width:72px">⏸ Pause</button>
-          <button onclick="UI.closeWatchRace()" style="background:none;border:none;font-size:22px;cursor:pointer;color:#bbb;line-height:1;padding:0 2px">✕</button>
+          <button onclick="UI.closeWatchRace()" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--tx3);line-height:1;padding:0 2px">✕</button>
         </div>
       </div>
       <!-- Speed buttons -->
       <div style="padding:0 16px 10px;display:flex;gap:5px;align-items:center">
-        <span style="font-size:10px;color:#999;font-weight:600;margin-right:2px">Speed:</span>
-        <button class="wr-spd-btn" onclick="WRSpeed(2400,this)" style="font-size:10px;font-weight:600;padding:3px 8px;border-radius:5px;border:1.5px solid #e0e0dd;background:#fff;color:#888;cursor:pointer">Very Slow</button>
-        <button class="wr-spd-btn" onclick="WRSpeed(1200,this)" style="font-size:10px;font-weight:600;padding:3px 8px;border-radius:5px;border:1.5px solid #e0e0dd;background:#fff;color:#888;cursor:pointer">Slow</button>
-        <button class="wr-spd-btn" onclick="WRSpeed(600,this)"  style="font-size:10px;font-weight:600;padding:3px 8px;border-radius:5px;border:1.5px solid #e0e0dd;background:#fff;color:#888;cursor:pointer">Normal</button>
-        <button class="wr-spd-btn" onclick="WRSpeed(250,this)"  style="font-size:10px;font-weight:600;padding:3px 8px;border-radius:5px;border:1.5px solid #e0e0dd;background:#fff;color:#888;cursor:pointer">Fast</button>
-        <button class="wr-spd-btn" onclick="WRSpeed(80,this)"   style="font-size:10px;font-weight:600;padding:3px 8px;border-radius:5px;border:1.5px solid #e0e0dd;background:#fff;color:#888;cursor:pointer">Very Fast</button>
+        <span style="font-size:10px;color:var(--tx3);font-weight:600;margin-right:2px">Speed:</span>
+        <button class="wr-spd-btn" onclick="WRSpeed(2400,this)" style="font-size:10px;font-weight:600;padding:3px 8px;border-radius:5px;border:1.5px solid var(--bd);background:var(--bg2);color:var(--tx3);cursor:pointer">Very Slow</button>
+        <button class="wr-spd-btn" onclick="WRSpeed(1200,this)" style="font-size:10px;font-weight:600;padding:3px 8px;border-radius:5px;border:1.5px solid var(--bd);background:var(--bg2);color:var(--tx3);cursor:pointer">Slow</button>
+        <button class="wr-spd-btn" onclick="WRSpeed(600,this)"  style="font-size:10px;font-weight:600;padding:3px 8px;border-radius:5px;border:1.5px solid var(--bd);background:var(--bg2);color:var(--tx3);cursor:pointer">Normal</button>
+        <button class="wr-spd-btn" onclick="WRSpeed(250,this)"  style="font-size:10px;font-weight:600;padding:3px 8px;border-radius:5px;border:1.5px solid var(--bd);background:var(--bg2);color:var(--tx3);cursor:pointer">Fast</button>
+        <button class="wr-spd-btn" onclick="WRSpeed(80,this)"   style="font-size:10px;font-weight:600;padding:3px 8px;border-radius:5px;border:1.5px solid var(--bd);background:var(--bg2);color:var(--tx3);cursor:pointer">Very Fast</button>
       </div>
       <input type="hidden" id="wr-speed" value="600">
     </div>
-    <div id="wr-feed" style="flex:1;min-height:0;overflow-y:auto;padding:10px 14px;background:#fff;display:flex;flex-direction:column;gap:4px"></div>
-    <div id="wr-footer" style="display:none;background:#f4f4f2;border-top:1px solid #e0e0dd;padding:12px 16px;flex-shrink:0;overflow-y:auto;max-height:55vh"></div>
+    <div id="wr-feed" style="flex:1;min-height:0;overflow-y:auto;padding:10px 14px;background:var(--bg);display:flex;flex-direction:column;gap:4px"></div>
+    <div id="wr-footer" style="display:none;background:var(--bg2);border-top:1px solid var(--bd);padding:12px 16px;flex-shrink:0;overflow-y:auto;max-height:55vh;color:var(--tx)"></div>
   </div>
 </div><!-- /watch-race-modal -->
 
