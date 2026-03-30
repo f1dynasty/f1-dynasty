@@ -1926,7 +1926,7 @@ const Sim = {
       let stratBonus = 0;
       if(isPlayerTeamRace && race) {
         // Check per-driver strategy first, fall back to team strategy
-        const driverStratId = race._driverStrategies && race._driverStrategies[d.id];
+        const driverStratId = race._driverStrategies && race._driverStrategies[driver.id];
         const chosenId = driverStratId || race._chosenStrategy;
         if(!chosenId || chosenId === 'auto') {
           stratBonus = -1.5;
@@ -2111,8 +2111,11 @@ const Sim = {
       });
 
       // If rain clears later — optional dry-out event
-      const clearLap = Math.min(laps - 3, rainStartLap + randInt(12, 20));
-      if(clearLap < laps - 5) {
+      // Minimum 20 laps of wet conditions before track starts drying
+      // Also need enough laps remaining to make a slick switch worthwhile (at least 8)
+      const minRainLaps = 20;
+      const clearLap = Math.min(laps - 8, rainStartLap + minRainLaps + randInt(0, 10));
+      if(clearLap < laps - 8 && clearLap > rainStartLap + minRainLaps) {
         events.push({lap: clearLap, type:'weather', text:'☀️ Rain easing off — track starting to dry. Slick tire window opening.'});
       }
     }
@@ -8362,8 +8365,14 @@ const UI = {
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-        <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v1.9.4 · Release Notes</div>
+        <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v1.9.6 · Release Notes</div>
         ${[
+          ['v1.9.6','Mar 2026',[
+            'Critical bug fix — race crash "d is not defined" resolved. All saves affected by this can now race normally.',
+          ]],
+          ['v1.9.5','Mar 2026',[
+            'Rain now lasts a realistic amount of time. Tracks no longer dry out 2 laps after getting wet — wet conditions persist for at least 20 laps before a slick tyre window can open.',
+          ]],
           ['v1.9.4','Mar 2026',[
             'Fastest lap bonus point removed — F1 dropped this award from the 2026 season.',
           ]],
