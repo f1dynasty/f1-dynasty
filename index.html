@@ -741,6 +741,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </div>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game" class="land-start">Start Career →</button>
+      <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px">v1.8</div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -5398,10 +5399,16 @@ const UI = {
   },
   wrToggle(){
     const WR=window._WR; if(!WR) return;
+    // Don't allow manual pause toggle while a pit or weather decision is pending
+    const pitPending = WR.pitDecisions && WR.pitDecisions.some(d=>!d.resolved);
+    const wxPending  = WR.weatherDecisions && WR.weatherDecisions.some(d=>!d.resolved);
+    if(pitPending || wxPending) return;
     WR.paused=!WR.paused;
+    // Always clear the existing timer when pausing to stop any queued tick
+    if(WR.timer){ clearTimeout(WR.timer); WR.timer=null; }
     const tb=document.getElementById('wr-toggle');
     if(tb) tb.textContent=WR.paused?'▶ Resume':'⏸ Pause';
-    if(!WR.paused){ if(WR.timer) clearTimeout(WR.timer); WR.timer=setTimeout(window._wrTick,100); }
+    if(!WR.paused){ WR.timer=setTimeout(window._wrTick,100); }
   },
   closeWatchRace(){
     const WR=window._WR;
@@ -8019,8 +8026,14 @@ const UI = {
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-        <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v1.7 · Release Notes</div>
+        <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v1.8 · Release Notes</div>
         ${[
+          ['v1.8','Mar 2026',[
+            'Bug fix — season recap standings now correctly show final points instead of 0 after season reset',
+            'Bug fix — pause button during Watch Race now correctly stops the race; timer chain fully cleared on pause',
+            'Bug fix — pause no longer conflicts with pit stop or weather decision cards',
+            'Version number added to landing page for quick confirmation of latest deployment',
+          ]],
           ['v1.7','Mar 2026',[
             'Bug fix — winter development budget now correctly required each season before starting; Begin Season button stays disabled until budget is allocated',
             'Bug fix — scoutingChosen now resets each offseason so players confirm their scout tier annually',
@@ -8881,7 +8894,7 @@ window.WRSpeed = function(ms, btn) {
 
 window._wrTick = function() {
   const WR = window._WR;
-  if(!WR || WR.paused) return;
+  if(!WR || WR.paused) { if(WR) WR.timer=null; return; }
 
   const race = State.game.calendar[WR.raceIdx];
   if(!race) return;
