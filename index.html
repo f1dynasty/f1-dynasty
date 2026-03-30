@@ -8058,7 +8058,7 @@ const UI = {
                   style="width:100%;padding:9px 10px;border:1.5px solid var(--bd);border-radius:6px;font-size:13px;background:var(--bg);color:var(--tx);box-sizing:border-box">
               </div>
               <div>
-                <label style="font-size:11px;font-weight:700;color:var(--tx3);display:block;margin-bottom:4px">Your Email <span style="font-weight:400;opacity:.6">(optional)</span></label>
+                <label style="font-size:11px;font-weight:700;color:var(--tx3);display:block;margin-bottom:4px">Your Email</label>
                 <input id="cf-email" type="email" placeholder="for a reply"
                   style="width:100%;padding:9px 10px;border:1.5px solid var(--bd);border-radius:6px;font-size:13px;background:var(--bg);color:var(--tx);box-sizing:border-box">
               </div>
@@ -8097,6 +8097,7 @@ const UI = {
     const btn = document.querySelector('#contact-overlay button[onclick="UI._submitContact()"]');
 
     if(!name){ UI.toast('Please enter your name','warning'); return; }
+    if(!email || !email.includes('@')){ UI.toast('Please enter a valid email address','warning'); return; }
     if(!message){ UI.toast('Please enter a message','warning'); return; }
 
     if(btn){ btn.disabled=true; btn.textContent='Sending...'; }
