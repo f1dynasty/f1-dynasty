@@ -2408,9 +2408,15 @@ const Sim = {
         const totalStops = chosenOpt.stints.length - 1;
         playerDrivers.forEach((r, driverIdx) => {
           // Don't generate a pit card if the driver DNFs before or shortly after the pit window
-          // — showing a pit card for a driver who retires would spoil the DNF
           const driverDnfLapForPit = driverDnfLap[r.driverId];
           if(driverDnfLapForPit && driverDnfLapForPit <= windowClose + 5) return;
+          // Don't generate a slick-tyre pit card if it falls during active rain
+          // (rainStartLap to rainStartLap+20 minimum) — avoids prompting for Hards in a downpour
+          const isSlick = nextCompound !== 'inter' && nextCompound !== 'wet';
+          const pitLapCentre = Math.round((windowOpen + windowClose) / 2);
+          const isRaining = weather === 'wet' ||
+            (weather === 'mixed' && rainStartLap && pitLapCentre >= rainStartLap && pitLapCentre <= rainStartLap + 20);
+          if(isSlick && isRaining) return;
           // Spread drivers across the window: driver 0 at 40%, driver 1 at 65%
           const fractions = [0.4, 0.65, 0.8];
           const frac = fractions[driverIdx] || (0.4 + driverIdx * 0.2);
@@ -2481,7 +2487,9 @@ const Sim = {
       }
     });
     results.filter(r=>r.dnf&&isPlayer(r)).forEach(r=>{
-      events.push({lap:r.dnfLap||laps-5, type:'dnf', text:`⭐ YOUR DRIVER: ${r.driverName} — DNF on lap ${r.dnfLap||'?'}`});
+      const reasons = ['mechanical failure','brake failure','hydraulics issue','collision damage','power unit failure','gearbox failure'];
+      const reason = reasons[Math.floor(Math.random()*reasons.length)];
+      events.push({lap:r.dnfLap||laps-5, type:'dnf', driverId:r.driverId, text:`⭐ ${r.driverName} is OUT — ${reason} on lap ${r.dnfLap||'?'}. A bitter end to a tough race.`});
     });
 
     // Sort by lap
@@ -8497,12 +8505,16 @@ const UI = {
             '🐛 Reserve drivers now appear in race standings and the race recap with a SUB badge when filling in for an injured driver.',
             '🐛 Injuries now cover the full race weekend including Sprint qualifying and the Sprint race.',
             '🐛 Pit stop decision cards no longer appear for drivers who will retire shortly after the pit window — no more DNF spoilers.',
+            '🐛 Split strategy now works correctly — you can set per-driver strategies without also needing to select a team strategy.',
+            '🐛 Your driver retiring mid-race now shows a clear message in the Watch Race feed with the reason for retirement.',
+            '🐛 Pit stop cards for slick tyres no longer appear during active rain — no more prompts to pit for Hards in a downpour.',
             '⚙️ Driver stats now grow in sync with overall rating. No more 90 OVR drivers with 72 race pace.',
             '⚙️ Wonderkid dominance reduced. Soft decline now starts at 31, rival teams develop their own talent faster, and rivals get a boost when one driver wins 3+ titles in a row.',
             '⚙️ Sponsor offers now guaranteed every offseason. Position determines quality — top teams get Title and Primary offers, backmarkers get Technical and Associate.',
             '⚙️ Drivers can now be demoted to reserve without releasing them.',
             '⚙️ New player guide banner now stays on screen until dismissed.',
             '⚙️ Contract renewal warning now appears on the dashboard in the final 3 races of the season when a driver is in their last year.',
+            '⚙️ Guide updated throughout to reflect all changes.',
           ]],
           ['v1.9.2','Mar 2026',[
             '🐛 Critical crash fix — race error "d is not defined" resolved for all saves.',
