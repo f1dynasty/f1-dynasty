@@ -2478,7 +2478,7 @@ const Sim = {
     // Strategy outcome note near end of race
     if(chosenOpt) {
       const outcomeLap = Math.floor(laps * 0.88);
-      const recommended = chosenStrat.options.find(o=>o.recommended);
+      const recommended = stratData.options.find(o=>o.recommended);
       const wasRecommended = recommended && chosenOpt.id === recommended.id;
       const td2 = race.tireDeg || 0.6;
       const laps2 = race.laps || 58;
