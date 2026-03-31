@@ -748,7 +748,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </div>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game" class="land-start">Start Career →</button>
-      <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v1.9.3</a> · <a href="javascript:void(0)" onclick="UI.showContact()" style="color:#aaa;text-decoration:none;cursor:pointer">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+      <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v1.9.4</a> · <a href="javascript:void(0)" onclick="UI.showContact()" style="color:#aaa;text-decoration:none;cursor:pointer">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -3846,7 +3846,7 @@ const UI = {
       case'finance':        this.renderFinance(); break;
       case'scouting':       this.renderScouting(); break;
       case'offseason':      this.renderOffseasonPlanning(); break;
-      case'drivers':        this.renderDrivers('my-team'); break;
+      case'drivers':        this.renderDrivers(this._activeDriverTab||'my-team'); break;
       case'teams':          this.renderTeams(); break;
       case'standings-drivers': this.renderStandings('drivers'); break;
       case'history':        this.renderHistory('champions'); break;
@@ -5108,6 +5108,7 @@ const UI = {
   },
 
   showDriverTab(tab){
+    this._activeDriverTab=tab;
     document.querySelectorAll('#view-drivers .tab-pill').forEach(b=>b.classList.remove('active'));
     const tabs=['my-team','reserves','all-drivers','free-agents','prospects'];
     const idx=tabs.indexOf(tab);
@@ -7872,6 +7873,29 @@ const UI = {
     const perfBar=this._ownerMoodBar(mood.performance,'Performance');
     const finBar=this._ownerMoodBar(mood.finances,'Finances');
     const total=(mood.performance+mood.finances).toFixed(1);
+
+    // Find two bottom-ranked teams (excluding the player's old team) to offer as new jobs
+    const standings=State.getConstructorStandings();
+    const offerTeams=standings.filter(s=>s.team.id!==team.id).slice(-3).reverse().slice(0,2).map(s=>s.team);
+
+    const teamOfferCards=offerTeams.map(t=>{
+      const tPos=standings.findIndex(s=>s.team.id===t.id)+1;
+      const tDrivers=State.getTeamDrivers(t.id);
+      const drvNames=tDrivers.map(d=>d.name.split(' ').pop()).join(' & ')||'No drivers signed';
+      return `<div style="background:var(--bg3);border:2px solid var(--bd);border-radius:10px;padding:12px;cursor:pointer;transition:border-color .15s"
+        onmouseover="this.style.borderColor='${t.color}'" onmouseout="this.style.borderColor='var(--bd)'"
+        onclick="UI.acceptNewTeamOffer('${t.id}')">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <div style="width:12px;height:12px;border-radius:50%;background:${t.color};flex-shrink:0"></div>
+          <div style="font-weight:800;font-size:14px">${t.name}</div>
+          <div style="margin-left:auto;font-size:11px;color:var(--tx3);font-weight:600">P${tPos}</div>
+        </div>
+        <div style="font-size:11px;color:var(--tx3);margin-bottom:4px">Current drivers: ${drvNames}</div>
+        <div style="font-size:11px;color:var(--tx3)">Car: ${t.carPerformance} · Reliability: ${t.reliability}</div>
+        <div style="margin-top:10px;text-align:center;font-size:12px;font-weight:700;color:var(--acc)">Accept Offer →</div>
+      </div>`;
+    }).join('');
+
     document.getElementById('offseason-summary').innerHTML=`
       <div style="text-align:center;padding:20px 0 14px">
         <div style="font-size:48px">🪑</div>
@@ -7897,10 +7921,38 @@ const UI = {
         ${perfBar}${finBar}
         <div style="font-size:11px;color:var(--tx3);margin-top:8px">Combined score: <strong style="color:var(--red)">${total}</strong> (fired below −1.0)</div>
       </div>
-      <button class="btn btn-red" style="width:100%;margin-top:4px" onclick="UI.showPage('landing')">Back to Main Menu</button>`;
+      <div style="margin-bottom:14px">
+        <div style="font-size:13px;font-weight:700;margin-bottom:10px">Two teams are willing to take a chance on you:</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">${teamOfferCards}</div>
+      </div>
+      <div style="text-align:center;margin-bottom:4px;font-size:11px;color:var(--tx3)">or</div>
+      <button class="btn" style="width:100%;margin-top:4px;background:var(--bg3);color:var(--tx2);border:1px solid var(--bd)" onclick="UI.showPage('landing')">Start a New Game</button>`;
     document.getElementById('offseason-transfers').innerHTML='';
     document.getElementById('offseason-team-actions').innerHTML='';
     this.showPage('offseason');
+  },
+
+  acceptNewTeamOffer(newTeamId){
+    const g=State.game;
+    const oldTeamId=g.playerTeamId;
+    g.playerTeamId=newTeamId;
+    g.playerFired=false;
+    g.ownerMood={performance:0, finances:0};
+    g.ownerMoodHistory=[];
+    // Reset board objectives for the new team
+    g.boardObjectives=[];
+    g.objectivesMetCount=0;
+    // Flash a confirmation then go to offseason planning
+    Storage.autosave();
+    this.showPage('offseason');
+    this.renderOffseasonPlanning();
+    // Show a brief welcome toast
+    const toast=document.createElement('div');
+    toast.style.cssText='position:fixed;top:70px;left:50%;transform:translateX(-50%);background:var(--grn);color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;font-weight:700;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,.3)';
+    const newTeam=State.getTeam(newTeamId);
+    toast.textContent=`Welcome to ${newTeam?.name||'your new team'}. Time to prove yourself.`;
+    document.body.appendChild(toast);
+    setTimeout(()=>toast.remove(),3500);
   },
   _ownerMoodBar(score, label){
     const pct=Math.round(((clamp(score,-3,1)+3)/4)*100);
@@ -8498,8 +8550,12 @@ const UI = {
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-        <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v1.9.3 · Release Notes</div>
+        <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v1.9.4 · Release Notes</div>
         ${[
+          ['v1.9.4','Mar 2026',[
+            '⚙️ Getting fired now offers you two struggling teams to take over rather than forcing you back to the main menu. Pick a new challenge or start fresh.',
+            '🐛 Driver list filter now retains your selected tab (My Team, Free Agents, etc.) when you navigate away and return.',
+          ]],
           ['v1.9.3','Mar 2026',[
             '🐛 Reliability fixed — at 88 reliability expect roughly 3% DNF chance per driver per race, not 7%.',
             '🐛 Upgrade packages now arrive correctly when using Watch Race or Sim Remaining Season. Previously upgrades were only applied when using the Simulate button.',
