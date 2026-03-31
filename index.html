@@ -748,7 +748,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </div>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game" class="land-start">Start Career →</button>
-      <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v1.9.4</a> · <a href="javascript:void(0)" onclick="UI.showContact()" style="color:#aaa;text-decoration:none;cursor:pointer">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+      <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v1.9.5</a> · <a href="javascript:void(0)" onclick="UI.showContact()" style="color:#aaa;text-decoration:none;cursor:pointer">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -1436,9 +1436,9 @@ const DATA = {
 
     // Calculate effective stint lengths
     // High tireDeg = tires last fewer laps before cliff
-    const softLife  = Math.round(laps * (1 - td) * 0.42);  // soft dies first
-    const medLife   = Math.round(laps * (1 - td) * 0.72);
-    const hardLife  = Math.round(laps * (1 - td) * 0.95);
+    const softLife  = Math.max(12, Math.round(laps * (1 - td) * 0.42));
+    const medLife   = Math.max(softLife + 15, Math.round(laps * (1 - td) * 0.72));
+    const hardLife  = Math.max(medLife + 10, Math.round(laps * (1 - td) * 0.95));
 
     // 1-stop score: avg pace minus 1 pit cost
     // 2-stop score: higher avg pace (fresher tires) minus 2 pit costs
@@ -1952,19 +1952,39 @@ const Sim = {
         const diff = Math.abs(df - ideal);
         return diff<10 ? 1.5 : diff<20 ? 0.5 : diff<35 ? -0.5 : -2.0;
       })() : 0;
-      // Strategy bonus/penalty for player team
+      // Strategy effect for player team — physics-based tyre degradation penalty
+      // Bad strategy = wrong number of stops for this circuit's tyre wear = pace loss from cliffed tyres
       const isPlayerTeamRace = team.id === g.playerTeamId;
       let stratBonus = 0;
       if(isPlayerTeamRace && race) {
-        // Check per-driver strategy first, fall back to team strategy
         const driverStratId = race._driverStrategies && race._driverStrategies[driver.id];
         const chosenId = driverStratId || race._chosenStrategy;
         if(!chosenId || chosenId === 'auto') {
-          stratBonus = -1.5;
+          stratBonus = -1.5; // auto penalty: engineers are more conservative than human
         } else {
           const stratData = DATA.getStrategyOptions(race, race._weatherRisk||0);
           const opt = stratData.options.find(o=>o.id===chosenId);
-          stratBonus = opt ? opt.scoreBonus : 0;
+          if(opt) {
+            // Tyre physics penalty: how badly do the chosen stints overstress the tyres?
+            // Each stint that runs past the tyre's natural life (softLife/medLife/hardLife)
+            // incurs a cliff penalty proportional to how far over it runs and track degradation.
+            const td = race.tireDeg || 0.6;
+            const laps = race.laps || 58;
+            const sl = Math.max(12, Math.round(laps * (1 - td) * 0.42)); // soft life
+            const ml = Math.max(sl + 15, Math.round(laps * (1 - td) * 0.72)); // med life
+            const hl = Math.max(ml + 10, Math.round(laps * (1 - td) * 0.95)); // hard life
+            const tireLife = { soft: sl, medium: ml, hard: hl, inter: 999, wet: 999 };
+            let cliffPenalty = 0;
+            opt.stints.forEach(stint => {
+              const life = tireLife[stint.compound] || ml;
+              if(stint.laps > life) {
+                // Over the cliff: penalty scales with how far over and track degradation
+                const overLaps = stint.laps - life;
+                cliffPenalty += (overLaps / laps) * td * 8.0;
+              }
+            });
+            stratBonus = -cliffPenalty; // zero if strategy respects tyre life, negative if not
+          }
         }
       }
       // On circuits where overtaking is near-impossible, amplify the grid advantage:
@@ -2458,11 +2478,19 @@ const Sim = {
     // Strategy outcome note near end of race
     if(chosenOpt) {
       const outcomeLap = Math.floor(laps * 0.88);
-      const good = chosenOpt.scoreBonus > 0.3;
-      const bad  = chosenOpt.scoreBonus < -0.3;
-      const stratNote = good ? `📋 ${chosenOpt.label} — strategy working well. Good call before the race.`
-                      : bad  ? `📋 ${chosenOpt.label} — strategy not ideal for these conditions.`
-                      :        `📋 ${chosenOpt.label} — solid execution from the pit wall.`;
+      const recommended = chosenStrat.options.find(o=>o.recommended);
+      const wasRecommended = recommended && chosenOpt.id === recommended.id;
+      const td2 = race.tireDeg || 0.6;
+      const laps2 = race.laps || 58;
+      const sl2 = Math.max(12, Math.round(laps2*(1-td2)*0.42));
+      const ml2 = Math.max(sl2+15, Math.round(laps2*(1-td2)*0.72));
+      const tireLife2 = {soft:sl2,medium:ml2,hard:999,inter:999,wet:999};
+      const overStressed = chosenOpt.stints.some(s=>(tireLife2[s.compound]||ml2)<s.laps);
+      const stratNote = wasRecommended
+        ? `📋 ${chosenOpt.label} — strategy working well. Good call before the race.`
+        : overStressed
+        ? `📋 ${chosenOpt.label} — tyres are struggling in the final stint.`
+        : `📋 ${chosenOpt.label} — solid execution from the pit wall.`;
       events.push({lap: outcomeLap, type:'pit', text: stratNote});
     } else if(!chosenStratId || chosenStratId === 'auto') {
       events.push({lap: Math.floor(laps*0.85), type:'pit', text:`📋 Auto strategy in play. Engineers managing the race from the pit wall.`});
@@ -5398,8 +5426,7 @@ const UI = {
       const isChosen = currentStratId === opt.id;
       const border = isChosen ? '2px solid var(--red)' : '1px solid var(--bd)';
       const badge = opt.recommended ? `<span style="font-size:9px;background:#dcfce7;color:#166534;border:1px solid #bbf7d0;border-radius:10px;padding:1px 7px;font-weight:700;margin-left:6px">✓ RECOMMENDED</span>` : '';
-      const bonusLabel = opt.scoreBonus > 0.5 ? `<span style="color:#16a34a;font-size:10px;font-weight:700">+${opt.scoreBonus.toFixed(1)} pace bonus</span>` :
-                         opt.scoreBonus < -0.3 ? `<span style="color:#dc2626;font-size:10px;font-weight:700">${opt.scoreBonus.toFixed(1)} pace penalty</span>` : '';
+      const bonusLabel = ''; // strategy quality shown via RECOMMENDED badge and tyre physics
       return `<div class="strat-card" data-strat-id="${opt.id}" onclick="UI._selectStrategy('${opt.id}')" style="border:${border};border-radius:10px;padding:12px;margin-bottom:8px;cursor:pointer;background:${isChosen?'rgba(220,38,38,.04)':'var(--bg2)'};transition:border .15s">
         <div style="display:flex;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:4px">
           <span style="font-size:13px;font-weight:800">${opt.label}</span>${badge}
@@ -5417,7 +5444,7 @@ const UI = {
     const autoCard = `<div class="strat-card" data-strat-id="auto" onclick="UI._selectStrategy('auto')" style="border:${currentStratId==='auto'?'2px solid var(--red)':'1px dashed var(--bd)'};border-radius:10px;padding:12px;margin-bottom:8px;cursor:pointer;background:${currentStratId==='auto'?'rgba(220,38,38,.04)':'var(--bg3)'}">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
         <span style="font-size:13px;font-weight:800">🤖 Auto Strategy</span>
-        <span style="font-size:9px;background:#fef3c7;color:#92400e;border:1px solid #fcd34d;border-radius:10px;padding:1px 7px;font-weight:700">−1.5 PACE PENALTY</span>
+
       </div>
       <div style="font-size:11px;color:var(--tx3);line-height:1.5">The game picks and executes the optimal strategy automatically. A small penalty reflects imperfect pit timing and execution vs a human making the call.</div>
     </div>`;
@@ -7561,7 +7588,7 @@ const UI = {
       <h4>Weather calls</h4>
       <p>If rain arrives mid-race, you decide when to switch. Read your driver's wet weather skill. A strong wet-weather driver can hold on longer and gain places over rivals who panic-pit. A driver who struggles in the wet and stays out will lose ground fast. The post-race debrief shows exactly how many places your calls gained or cost you.</p>
       ${tip('Speed settings', 'Use Very Fast for routine races and Normal/Slow when you\'re in a tight championship battle and want to savour the moment. Speed is set per-session and remembered.')}
-      ${tip('Auto settings', 'If you prefer to sim without decisions, turn on Auto Strategy and Auto Aero in Settings. Note: Auto Strategy applies a small pace penalty as the engineers are more conservative than you.')}
+      ${tip('Auto settings', 'If you prefer to sim without decisions, turn on Auto Strategy and Auto Aero in Settings. Auto Strategy applies a small pace penalty — engineers are more conservative than a human calling the shots, and their pit timing is never perfectly optimised.')}
     `)}
 
     ${sec('📊','Standings — Sorting & Driver Profiles',`
@@ -7574,14 +7601,15 @@ const UI = {
 
     ${sec('📊','Understanding the Sim — How Races Are Decided',`
       <p>Race outcomes aren't random dice rolls — they're calculated from real inputs:</p>
-      <p><strong>Base score</strong> = Car Performance × 0.55 + Race Pace × 0.35 + Qualifying × 0.10</p>
+      <p><strong>Base score</strong> = Car Performance × 0.52 + Race Pace × 0.32 + Consistency × 0.10, modified by grid position, weather, and circuit downforce.</p>
       <p>On top of that, several modifiers apply each race:</p>
       <p><strong>Circuit downforce</strong> — each circuit has a downforce preference (low/medium/high). If your aero setup matches, you gain a small bonus. Mismatches hurt slightly.</p>
       <p><strong>Weather</strong> — in rain, Wet Weather replaces Race Pace in the calculation and the whole field shuffles. This is where good wet-weather drivers earn their money.</p>
       <p><strong>Safety car</strong> — bunches up the field, creates overtaking opportunities, benefits drivers who were falling back.</p>
       <p><strong>Elite driver bonus</strong> — drivers with 90+ Race Pace get a non-linear bonus (roughly +1.5 at 90, +5 at 95, +9 at 99). This is the Senna/Alonso effect — a genuinely elite driver can carry a midfield car to results it shouldn't achieve.</p>
       <p><strong>Variance</strong> — a small random component ensures real F1-style unpredictability. You can never be fully certain of the result.</p>
-      ${tip('Tyre strategy matters', 'Drivers in position 11–15 start on hard tyres and have better pit flexibility. If you\'re starting mid-grid, consider a longer first stint to undercut rivals who start on softs.')}
+      <p><strong>Tyre strategy</strong> — each circuit has a tyre degradation rating that determines how long each compound lasts. On high-degradation tracks, softs cliff early and mediums won't last the race on a one-stop. Pushing a tyre well past its life costs you real pace — the strategy picker shows a RECOMMENDED badge based on the circuit's degradation. Going against it isn't penalised artificially, but your tyres will show it in the final stint. The post-race recap shows a strategy verdict so you can learn what worked.</p>
+      ${tip('P11-15 tyre advantage', 'Drivers starting 11th or lower begin on hard tyres. This gives you genuine pit flexibility — a longer first stint lets you undercut rivals who started on softs and will need to pit earlier.')}
     `)}
 
     ${sec('📋','Race Recap — Reading Your Result',`
@@ -7873,11 +7901,8 @@ const UI = {
     const perfBar=this._ownerMoodBar(mood.performance,'Performance');
     const finBar=this._ownerMoodBar(mood.finances,'Finances');
     const total=(mood.performance+mood.finances).toFixed(1);
-
-    // Find two bottom-ranked teams (excluding the player's old team) to offer as new jobs
     const standings=State.getConstructorStandings();
     const offerTeams=standings.filter(s=>s.team.id!==team.id).slice(-3).reverse().slice(0,2).map(s=>s.team);
-
     const teamOfferCards=offerTeams.map(t=>{
       const tPos=standings.findIndex(s=>s.team.id===t.id)+1;
       const tDrivers=State.getTeamDrivers(t.id);
@@ -7895,7 +7920,6 @@ const UI = {
         <div style="margin-top:10px;text-align:center;font-size:12px;font-weight:700;color:var(--acc)">Accept Offer →</div>
       </div>`;
     }).join('');
-
     document.getElementById('offseason-summary').innerHTML=`
       <div style="text-align:center;padding:20px 0 14px">
         <div style="font-size:48px">🪑</div>
@@ -7934,19 +7958,15 @@ const UI = {
 
   acceptNewTeamOffer(newTeamId){
     const g=State.game;
-    const oldTeamId=g.playerTeamId;
     g.playerTeamId=newTeamId;
     g.playerFired=false;
-    g.ownerMood={performance:0, finances:0};
+    g.ownerMood={performance:0,finances:0};
     g.ownerMoodHistory=[];
-    // Reset board objectives for the new team
     g.boardObjectives=[];
     g.objectivesMetCount=0;
-    // Flash a confirmation then go to offseason planning
     Storage.autosave();
     this.showPage('offseason');
     this.renderOffseasonPlanning();
-    // Show a brief welcome toast
     const toast=document.createElement('div');
     toast.style.cssText='position:fixed;top:70px;left:50%;transform:translateX(-50%);background:var(--grn);color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;font-weight:700;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,.3)';
     const newTeam=State.getTeam(newTeamId);
@@ -8550,11 +8570,20 @@ const UI = {
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-        <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v1.9.4 · Release Notes</div>
+        <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v1.9.5 · Release Notes</div>
         ${[
+          ['v1.9.5','Mar 2026',[
+            '⚙️ Strategy now works through tyre physics. Running a soft tyre past its natural life on a high-degradation circuit will cost you pace — no hidden modifiers, just real consequences.',
+            '⚙️ Strategy picker no longer shows pace bonus/penalty labels. The RECOMMENDED badge reflects what the circuit conditions suggest; everything else is your call.',
+            '⚙️ Watch Race commentary and the post-race strategy verdict now reflect actual tyre stress — you will see a warning if your tyres were struggling in the final stint.',
+            '⚙️ Auto Strategy still applies a small penalty — pit timing and strategy calls from the engineers are less sharp than a human making the decisions.',
+            '🐛 Stint lengths on high-degradation tracks now show realistic lap counts. Previously softs could show as few as 6-9 laps on brutal circuits.',
+          ]],
           ['v1.9.4','Mar 2026',[
             '⚙️ Getting fired now offers you two struggling teams to take over rather than forcing you back to the main menu. Pick a new challenge or start fresh.',
-            '🐛 Driver list filter now retains your selected tab (My Team, Free Agents, etc.) when you navigate away and return.',
+            '⚙️ Strategy picker now shows star ratings (★★★) instead of pace bonus/penalty numbers — clearer signal, less gamey.',
+            '🐛 Stint lengths on high-degradation tracks no longer show absurd numbers like 9 laps on softs. Minimum stint lengths enforced.',
+            '🐛 Driver list filter now retains your selected tab when you navigate away and return.',
           ]],
           ['v1.9.3','Mar 2026',[
             '🐛 Reliability fixed — at 88 reliability expect roughly 3% DNF chance per driver per race, not 7%.',
@@ -9674,17 +9703,23 @@ window._wrTick = function() {
       const recommended = stratData.options.find(o=>o.recommended);
       if(opt) {
         const wasRecommended = opt.id === recommended?.id;
-        const good = opt.scoreBonus > 0.3;
-        const bad  = opt.scoreBonus < -0.3;
+        const td3 = race.tireDeg || 0.6;
+        const laps3 = race.laps || 58;
+        const sl3 = Math.max(12, Math.round(laps3*(1-td3)*0.42));
+        const ml3 = Math.max(sl3+15, Math.round(laps3*(1-td3)*0.72));
+        const tireLife3 = {soft:sl3,medium:ml3,hard:999,inter:999,wet:999};
+        const overStressed3 = opt.stints.some(s=>(tireLife3[s.compound]||ml3)<s.laps);
+        const good = wasRecommended;
+        const bad  = overStressed3 && !wasRecommended;
         const icon = good ? '✅' : bad ? '⚠️' : '📋';
         const bg   = good ? '#f0fdf4' : bad ? '#fef2f2' : 'var(--bg3)';
         const bd   = good ? '#bbf7d0' : bad ? '#fecaca' : 'var(--bd)';
         const col  = good ? '#166534' : bad ? '#991b1b' : 'var(--tx2)';
         const verdict = good
-          ? `Great call — ${opt.label} was well-suited to ${race.name}.`
+          ? `Good call — ${opt.label} suited ${race.name}.`
           : bad
-          ? `Costly strategy — ${opt.label} wasn't ideal here. ${recommended?'Recommended: '+recommended.label+'.':''}`
-          : `${opt.label} — solid, textbook execution.`;
+          ? `Tyre wear was a factor — ${opt.label} may have cost you. ${recommended?'Recommended: '+recommended.label+'.':''}`
+          : `${opt.label} — solid execution.`;
         stratFeedbackHtml = `<div style="background:${bg};border:1px solid ${bd};border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:11px;color:${col}">
           ${icon} <strong>Strategy:</strong> ${verdict}
         </div>`;
