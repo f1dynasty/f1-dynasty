@@ -2041,7 +2041,7 @@ const Sim = {
     race._strategyUsed = race._chosenStrategy || null;
     race._weatherRiskUsed = race._weatherRisk || 0;
     // Clear ephemeral pre-race fields
-    delete race._chosenStrategy; delete race._pendingStrategy; delete race._weatherRisk;
+    delete race._chosenStrategy; delete race._pendingStrategy; delete race._weatherRisk; delete race._driverStrategies;
     State.game.lastRaceResult={race:{...race},results}; State.game.totalRaces++;
     Sim._processInjuries(results, race);
     return {race,results,weather,hadSafetyCar,lapEvents};
@@ -5434,6 +5434,7 @@ const UI = {
       </div>
 
       <div style="font-size:12px;font-weight:700;color:var(--tx2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em">Choose Your Strategy</div>
+      <div style="font-size:11px;color:var(--tx3);margin-bottom:10px">Select a team strategy below, or use the split panel above to set per-driver strategies individually — no team pick needed if both drivers have one.</div>
       ${(()=>{
         const myDrivers = State.getPlayerDrivers();
         if(myDrivers.length < 2) return '';
@@ -5494,15 +5495,27 @@ const UI = {
   _confirmStrategy(){
     const race = State.getCurrentRace();
     if(!race) return;
-    const chosen = race._pendingStrategy;
+    const myDrivers = State.getPlayerDrivers();
+    const allHaveDriverStrat = myDrivers.length > 0 && myDrivers.every(d=>
+      race._driverStrategies && race._driverStrategies[d.id]
+    );
+    // Allow confirm if either a team strategy is chosen OR all drivers have individual strategies
+    const chosen = race._pendingStrategy || (allHaveDriverStrat ? (race._chosenStrategy || 'auto') : null);
     if(!chosen){ document.getElementById('strategy-confirm-msg').textContent='Please select a strategy first.'; return; }
     race._chosenStrategy = chosen;
     State.game.autoStrategy = (chosen === 'auto');
     Storage.autosave();
     UI.closeModal();
-    const stratData = DATA.getStrategyOptions(race, race._weatherRisk||0);
-    const opt = stratData.options.find(o=>o.id===chosen);
-    const label = chosen==='auto' ? 'Auto Strategy' : opt?.label || chosen;
+    // Build toast label
+    const hasDriverSplits = race._driverStrategies && Object.keys(race._driverStrategies).length > 0;
+    let label;
+    if(hasDriverSplits && allHaveDriverStrat) {
+      label = 'Split strategy locked';
+    } else {
+      const stratData = DATA.getStrategyOptions(race, race._weatherRisk||0);
+      const opt = stratData.options.find(o=>o.id===chosen);
+      label = chosen==='auto' ? 'Auto Strategy' : opt?.label || chosen;
+    }
     UI.toast(`🧠 Strategy locked: ${label}`,'success');
     UI.renderDashboard();
   },
