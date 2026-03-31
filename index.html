@@ -746,7 +746,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </div>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game" class="land-start">Start Career →</button>
-      <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v1.9.2</a> · <a href="javascript:void(0)" onclick="UI.showContact()" style="color:#aaa;text-decoration:none;cursor:pointer">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+      <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v1.9.3</a> · <a href="javascript:void(0)" onclick="UI.showContact()" style="color:#aaa;text-decoration:none;cursor:pointer">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -987,6 +987,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </div>
 
       <div id="dash-wonderkid" style="margin-bottom:12px"></div>
+      <div id="dash-contract-warn" class="hidden" style="margin-bottom:12px"></div>
       <div id="dash-upgrades" class="hidden" style="margin-bottom:12px"></div>
     </div><!-- /dashboard -->
 
@@ -1689,6 +1690,17 @@ const State = {
   getTeamReserves(teamId){return this.game.drivers.filter(d=>d.teamId===teamId&&!d.retired&&d.isReserve);},
   getPlayerTeam(){return this.getTeam(this.game.playerTeamId);},
   getPlayerDrivers(){return this.getTeamDrivers(this.game.playerTeamId);},
+  // Returns IDs of all drivers racing for the player this weekend — includes injury subs
+  getPlayerRacingDriverIds(){
+    const baseIds = this.getPlayerDrivers().map(d=>d.id);
+    const activeInj = (this.game.injuries||[]).filter(inj=>!inj.cleared&&this.game.raceIndex<=inj.returnsAfterRace&&inj.teamId===this.game.playerTeamId);
+    if(!activeInj.length) return baseIds;
+    const injuredIds = new Set(activeInj.map(i=>i.driverId));
+    // Remove injured drivers, add their reserves
+    const withoutInjured = baseIds.filter(id=>!injuredIds.has(id));
+    const reserves = (this.game.drivers||[]).filter(d=>d.isReserve&&d.teamId===this.game.playerTeamId&&!d.retired).map(d=>d.id);
+    return [...withoutInjured, ...reserves];
+  },
   getPlayerReserves(){return this.getTeamReserves(this.game.playerTeamId);},
   getCurrentRace(){return this.game.calendar[this.game.raceIndex];},
   getFreeAgents(){return this.game.drivers.filter(d=>!d.teamId&&!d.retired&&!d.isProspect&&!d.isReserve);},
@@ -1810,7 +1822,17 @@ const Sim = {
   },
   simSprintQualifying(race) {
     // Sprint quali — independent of GP quali, never touches qualiDone
-    const drivers=State.game.drivers.filter(d=>d.teamId&&!d.retired&&!d.isReserve&&!d.isProspect);
+    const activeInjuries = Sim._getActiveInjuries ? Sim._getActiveInjuries() : [];
+    const injuredIds = new Set(activeInjuries.map(i=>i.driverId));
+    const drivers = State.game.drivers.filter(d=>d.teamId&&!d.retired&&!d.isProspect)
+      .filter(d=>{
+        if(d.isReserve){
+          // Only include reserve if they're subbing for an injured teammate
+          return activeInjuries.some(inj=>inj.teamId===d.teamId&&injuredIds.has(inj.driverId));
+        }
+        // Exclude injured race drivers
+        return !injuredIds.has(d.id);
+      });
     const entries=[];
     drivers.forEach(d=>{
       const team=State.getTeam(d.teamId); if(!team) return;
@@ -1901,7 +1923,7 @@ const Sim = {
       if(!driver||!team)return;
       const trait0 = driver.trait || 'consistent';
       const aggressiveDnfExtra = trait0==='aggressive' ? 0.04 : 0;
-      const dnfChance=(1-team.reliability/100)*0.28+0.04+aggressiveDnfExtra;
+      const dnfChance=(1-team.reliability/100)*0.15+0.01+aggressiveDnfExtra;
       const dnf=Math.random()<dnfChance;
       const dnfLap=dnf?randInt(Math.floor(race.laps*0.2),race.laps-1):null;
       const wetFactor = weather==='wet' ? driver.wet/100 : weather==='mixed' ? (driver.wet/100 * 0.5 + 0.5) : 1;
@@ -2257,7 +2279,11 @@ const Sim = {
           }
         } else {
           // Losing — one event per place dropped
+          // Suppress drops if the driver ends up finishing at or better than this position
+          // (avoids "drops to P4" followed immediately by "wins the race")
+          const finalPosForDriver = driverFinal[id];
           for(let p = prevPos + 1; p <= curPos; p++) {
+            if(finalPosForDriver !== undefined && p > finalPosForDriver) continue; // driver recovers past here
             const fraction = (p - prevPos) / (curPos - prevPos);
             const placeLap = Math.max(2, Math.min(laps-1,
               Math.round(evLap - stepSize + stepSize * fraction)));
@@ -2319,7 +2345,8 @@ const Sim = {
             text: `⭐ ${r.driverName} moves up to P${p}!${placeExclaim}`, driverPositions: finalSnapForReconcile });
         }
       } else if(gained < 0) {
-        // Losing positions — number got larger
+        // Losing positions — only emit if the driver genuinely finishes lower
+        // (skip entirely if this is an interpolation artifact where driver recovers)
         for(let p = lastPos + 1; p <= finalPos; p++) {
           const evLapFinal = Math.max(laps - 5, Math.min(laps - 1, laps - (finalPos - p + 1)));
           events.push({ lap: evLapFinal, type: 'overtake',
@@ -2380,6 +2407,10 @@ const Sim = {
         const stopNum = si + 1;
         const totalStops = chosenOpt.stints.length - 1;
         playerDrivers.forEach((r, driverIdx) => {
+          // Don't generate a pit card if the driver DNFs before or shortly after the pit window
+          // — showing a pit card for a driver who retires would spoil the DNF
+          const driverDnfLapForPit = driverDnfLap[r.driverId];
+          if(driverDnfLapForPit && driverDnfLapForPit <= windowClose + 5) return;
           // Spread drivers across the window: driver 0 at 40%, driver 1 at 65%
           const fractions = [0.4, 0.65, 0.8];
           const frac = fractions[driverIdx] || (0.4 + driverIdx * 0.2);
@@ -2935,44 +2966,53 @@ const Sim = {
       if(age < 22) {
         // Early rookie: raw talent, facilities + luck define how fast they develop
         const grow = devMult * (potGap * 0.18 + randFloat(0.3, 1.5));
-        d.rating    = clamp(d.rating    + grow,               40, 99);
-        d.racePace  = clamp(d.racePace  + devMult * randFloat(0, 1.8), 40, 99);
-        d.qualifying= clamp(d.qualifying+ devMult * randFloat(0, 1.4), 40, 99);
-        d.consistency=clamp(d.consistency+randFloat(-0.3,0.8),40, 99); // consistency lags — experience, not facilities
+        d.rating    = clamp(d.rating    + grow,                    40, 99);
+        d.racePace  = clamp(d.racePace  + grow * randFloat(0.7, 1.1), 40, 99);
+        d.qualifying= clamp(d.qualifying+ grow * randFloat(0.6, 1.0), 40, 99);
+        d.consistency=clamp(d.consistency+grow * randFloat(0.2, 0.6), 40, 99);
       } else if(age < 25) {
         // Prime growth: facilities + morale matter most here
         const grow = devMult * (potGap * 0.14 + randFloat(0.2, 1.2));
-        d.rating    = clamp(d.rating    + grow,               40, 99);
-        d.racePace  = clamp(d.racePace  + devMult * randFloat(0, 1.3), 40, 99);
-        d.qualifying= clamp(d.qualifying+ devMult * randFloat(0, 1.0), 40, 99);
-        d.consistency=clamp(d.consistency+randFloat(0.1,1.0), 40, 99);
+        d.rating    = clamp(d.rating    + grow,                    40, 99);
+        d.racePace  = clamp(d.racePace  + grow * randFloat(0.8, 1.1), 40, 99);
+        d.qualifying= clamp(d.qualifying+ grow * randFloat(0.7, 1.0), 40, 99);
+        d.consistency=clamp(d.consistency+grow * randFloat(0.4, 0.9), 40, 99);
       } else if(age < 29) {
         // Late growth: smaller gains, still benefits from good environment
         const grow = devMult * (potGap * 0.07 + randFloat(-0.2, 0.7));
-        d.rating    = clamp(d.rating    + grow,               40, 99);
-        d.racePace  = clamp(d.racePace  + devMult * randFloat(-0.2, 0.7), 40, 99);
-        d.qualifying= clamp(d.qualifying+ devMult * randFloat(-0.2, 0.5), 40, 99);
-        d.consistency=clamp(d.consistency+randFloat(0, 0.7),  40, 99);
+        d.rating    = clamp(d.rating    + grow,                    40, 99);
+        d.racePace  = clamp(d.racePace  + grow * randFloat(0.8, 1.1), 40, 99);
+        d.qualifying= clamp(d.qualifying+ grow * randFloat(0.7, 1.0), 40, 99);
+        d.consistency=clamp(d.consistency+grow * randFloat(0.5, 1.0), 40, 99);
+      } else if(age <= 30) {
+        // Peak plateau: very small drift, consistency still growing
+        const drift = randFloat(-0.3, 0.3);
+        d.rating    = clamp(d.rating    + drift,                       40, 99);
+        d.racePace  = clamp(d.racePace  + drift * randFloat(0.8, 1.2), 40, 99);
+        d.qualifying= clamp(d.qualifying+ drift * randFloat(0.7, 1.1), 40, 99);
+        d.consistency=clamp(d.consistency+randFloat(0, 0.4),           40, 99);
       } else if(age <= 33) {
-        // Elite plateau: tiny drift either way, consistency still strong
-        d.rating    = clamp(d.rating    + randFloat(-0.4, 0.4),40, 99);
-        d.racePace  = clamp(d.racePace  + randFloat(-0.5, 0.3),40, 99);
-        d.qualifying= clamp(d.qualifying+ randFloat(-0.4, 0.3),40, 99);
-        d.consistency=clamp(d.consistency+randFloat(-0.2,0.4), 40, 99); // consistency still growing
+        // Early post-peak: subtle decline begins — consistency compensates slightly
+        // Wonderkids who dominated at 25-28 now face real competition
+        const softDec = (age - 30) * 0.15;
+        d.rating    = clamp(d.rating    + randFloat(-softDec - 0.3, 0.1),        40, 99);
+        d.racePace  = clamp(d.racePace  + randFloat(-softDec - 0.4, 0.1),        40, 99);
+        d.qualifying= clamp(d.qualifying+ randFloat(-softDec - 0.3, 0.1),        40, 99);
+        d.consistency=clamp(d.consistency+randFloat(-0.1, 0.3),                  40, 99);
       } else if(age <= 36) {
         // Early decline: pace starts slipping noticeably, consistency holds
         const dec = 0.3 + (age - 33) * 0.25;
-        d.rating    = clamp(d.rating    - randFloat(0, dec),      40, 99);
-        d.racePace  = clamp(d.racePace  - randFloat(0, dec * 1.2),40, 99); // pace drops faster
-        d.qualifying= clamp(d.qualifying- randFloat(0, dec * 0.9),40, 99);
-        d.consistency=clamp(d.consistency-randFloat(0, dec * 0.3),40, 99); // consistency barely affected
+        d.rating    = clamp(d.rating    - randFloat(0, dec),           40, 99);
+        d.racePace  = clamp(d.racePace  - randFloat(0, dec * 1.2),     40, 99);
+        d.qualifying= clamp(d.qualifying- randFloat(0, dec * 0.9),     40, 99);
+        d.consistency=clamp(d.consistency-randFloat(0, dec * 0.3),     40, 99);
       } else {
         // Late decline (37+): clear drop each year, pace collapses fastest
         const dec = 0.8 + (age - 36) * 0.5;
-        d.rating    = clamp(d.rating    - randFloat(dec * 0.5, dec),      40, 99);
-        d.racePace  = clamp(d.racePace  - randFloat(dec * 0.6, dec * 1.3),40, 99);
-        d.qualifying= clamp(d.qualifying- randFloat(dec * 0.4, dec * 1.1),40, 99);
-        d.consistency=clamp(d.consistency-randFloat(0, dec * 0.5),        40, 99);
+        d.rating    = clamp(d.rating    - randFloat(dec * 0.5, dec),       40, 99);
+        d.racePace  = clamp(d.racePace  - randFloat(dec * 0.6, dec * 1.3), 40, 99);
+        d.qualifying= clamp(d.qualifying- randFloat(dec * 0.4, dec * 1.1), 40, 99);
+        d.consistency=clamp(d.consistency-randFloat(0, dec * 0.5),         40, 99);
       }
       // ── END CAREER CURVE ─────────────────────────────────────────────────────
 
@@ -3013,7 +3053,7 @@ const Sim = {
         consistency: consDelta, age: d.age, season: g.season - 1 };
       // Career phase label
       d._careerPhase = d.age < 22 ? 'rookie' : d.age < 25 ? 'rising' :
-                       d.age < 29 ? 'approaching peak' : d.age <= 33 ? 'peak' :
+                       d.age < 29 ? 'approaching peak' : d.age <= 30 ? 'peak' : d.age <= 33 ? 'post-peak' :
                        d.age <= 36 ? 'early decline' : 'late career';
     });
 
@@ -3087,7 +3127,8 @@ const Sim = {
         // Same luck/variance system as signed drivers — potential is not guaranteed even before signing
         const luckRoll = Math.random();
         const luckMod = luckRoll<0.05?0.0:luckRoll<0.15?0.4:luckRoll<0.70?1.0:luckRoll<0.90?1.4:2.0;
-        const growth = luckMod * (gap*0.14 + Math.random()*0.8);
+        // Faster prospect development — wonderkids in the pool grow quicker to create competition
+        const growth = luckMod * (gap*0.18 + Math.random()*1.2);
         d.rating = clamp(d.rating + Math.max(0, growth), 40, 99);
         // Poor luck while unscouted erodes potential slightly
         if(luckMod < 0.4 && gap > 5) d.potential = clamp(d.potential - (Math.random()*1.0), d.rating+2, 99);
@@ -3242,7 +3283,14 @@ const Sim = {
       // Natural regression toward facilities ceiling (prevents runaway growth or decline)
       const ceilingPull = (facilitiesCeiling - team.carPerformance) * 0.04;
       const floorPull = (prestigeFloor - team.carPerformance) * 0.02;
-      team.carPerformance = clamp(team.carPerformance + devGain + ceilingPull + floorPull + randFloat(-0.8, 0.8), 40, 99);
+      // Competitive pressure — if one driver has dominated 3+ titles, rivals get a small boost
+      const champHistory = g.history?.champions || [];
+      const lastChamp = champHistory[champHistory.length-1];
+      const dominanceStreak = lastChamp
+        ? champHistory.slice(-4).filter(c=>c.driverId===lastChamp.driverId).length
+        : 0;
+      const pressureBoost = dominanceStreak >= 3 && team.id !== g.playerTeamId ? 0.4 * (dominanceStreak - 2) : 0;
+      team.carPerformance = clamp(team.carPerformance + devGain + ceilingPull + floorPull + pressureBoost + randFloat(-0.8, 0.8), 40, 99);
       team.reliability = clamp(team.reliability + randFloat(-0.5, 1.5), 40, 99);
     });
     if(g.pendingDev){
@@ -3431,14 +3479,19 @@ const Sim = {
     g.boardObjectives = chosen.filter(o=>o&&!seen.has(o.id)&&seen.add(o.id)).slice(0,3);
     // ── END BOARD OBJECTIVES ────────────────────────────────────────────────────
     // Generate new sponsor offers based on championship position
+    // Every team gets at least 1 offer — position determines quality and quantity
     const cpos=State.getConstructorSeasonPos(State.game.playerTeamId)||10;
-    const numOffers=cpos<=3?2:cpos<=6?1:Math.random()<0.4?1:0;
+    const numOffers=cpos<=3?3:cpos<=6?2:cpos<=8?1:Math.random()<0.7?1:0;
     const sTypes=['Title','Primary','Secondary','Technical','Associate'];
-    const sBrands=['TechCorp','GlobalBank','AeroFuel','SwiftAir','NeoTech','MaxDrive','PulseEnergy','CoreLogic','VaultFin','SpeedLine'];
+    // Title/Primary only available to top-6 finishers; backmarkers get Technical/Associate
+    const availableTypes = cpos<=3 ? sTypes : cpos<=6 ? sTypes.slice(1) : sTypes.slice(2);
+    const sBrands=['TechCorp','GlobalBank','AeroFuel','SwiftAir','NeoTech','MaxDrive','PulseEnergy','CoreLogic','VaultFin','SpeedLine','RaceFast','GridIron','ApexTech','PitLane','TurboFin'];
     g.pendingSponsors=g.pendingSponsors||[];
+    // Clear old pending sponsors so they don't accumulate forever
+    if(g.pendingSponsors.length > 4) g.pendingSponsors = g.pendingSponsors.slice(-2);
     for(let i=0;i<numOffers;i++){
-      const t=sTypes[randInt(0,sTypes.length-1)], b=sBrands[randInt(0,sBrands.length-1)];
-      const val=t==='Title'?randInt(25,40):t==='Primary'?randInt(12,20):t==='Secondary'?randInt(6,11):randInt(2,5);
+      const t=availableTypes[randInt(0,availableTypes.length-1)], b=sBrands[randInt(0,sBrands.length-1)];
+      const val=t==='Title'?randInt(25,40):t==='Primary'?randInt(12,20):t==='Secondary'?randInt(6,11):t==='Technical'?randInt(3,7):randInt(1,4);
       g.pendingSponsors.push({name:b,type:t,value:val});
     }
     return transfers;
@@ -3458,6 +3511,7 @@ const Sim = {
       results.push(r);
       Sim.generateRivalNews(race, race.raceResult||[]);
       g.raceIndex++;
+      GameActions.applyPendingUpgrades(g.raceIndex-1);
     }
     return results;
   }
@@ -4437,6 +4491,31 @@ const UI = {
         : '<div style="font-size:12px;color:var(--tx3)">Form data will appear after your first race.</div>';
     }
 
+    // Contract expiry warning — show in final 3 races if a driver has 1 year left
+    const contractWarnPanel = document.getElementById('dash-contract-warn');
+    if(contractWarnPanel){
+      const racesLeft = g.calendar.filter(r=>!r.raceDone).length;
+      const myDrivers = State.getPlayerDrivers();
+      const expiringDrivers = myDrivers.filter(d=>d.contract<=1);
+      if(racesLeft<=3 && racesLeft>0 && expiringDrivers.length>0){
+        contractWarnPanel.classList.remove('hidden');
+        contractWarnPanel.innerHTML = `<div class="panel" style="border:1px solid var(--amber);background:rgba(245,158,11,.05)">
+          <div class="panel-title" style="color:var(--amber);margin-bottom:8px">⚠️ Contract${expiringDrivers.length>1?'s':''} Expiring</div>
+          ${expiringDrivers.map(d=>`
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bd)">
+              <div>
+                <div style="font-size:13px;font-weight:700">${d.name}</div>
+                <div style="font-size:11px;color:var(--tx3);margin-top:1px">${d.contract===0?'Contract expired':'Final year of contract'} · ${racesLeft} race${racesLeft!==1?'s':''} left</div>
+              </div>
+              <button class="btn btn-outline btn-sm" onclick="GameActions.renewDriver(${d.id})">📝 Renew</button>
+            </div>`).join('')}
+          <div style="font-size:11px;color:var(--tx3);margin-top:8px">Renew now to avoid losing them to a rival in the offseason.</div>
+        </div>`;
+      } else {
+        contractWarnPanel.classList.add('hidden');
+      }
+    }
+
     // Pending upgrades panel
     const upPanel = document.getElementById('dash-upgrades');
     if(upPanel){
@@ -4849,7 +4928,7 @@ const UI = {
   },
 
   _miniResult(lr){
-    const {race,results}=lr, top5=results.slice(0,5), pids=State.getPlayerDrivers().map(d=>d.id);
+    const {race,results}=lr, top5=results.slice(0,5), pids=State.getPlayerRacingDriverIds();
     const winner=results.find(r=>r.position===1);
     return `
       ${winner?`<div class="winner-block"><div><div class="winner-label">Race Winner</div><div class="winner-name">${winner.driverName}</div><div class="winner-team">${winner.teamName}</div></div><div class="winner-laps">${race.laps} laps</div></div>`:''}
@@ -4982,13 +5061,7 @@ const UI = {
         ${winner?`<div class="winner-block"><div><div class="winner-label">Race Winner</div><div class="winner-name">${winner.driverName}</div><div class="winner-team">${winner.teamName}</div></div><div class="winner-laps">${race.laps} laps</div></div>`:''}
         <div style="font-size:11px;color:var(--tx3);margin:6px 0">${race.weather==='wet'?'🌧 Wet Race':'☀️ Dry Race'}${race.hadSafetyCar?' · Safety car deployed':''}</div>
         <div class="tbl-scroll"><table><thead><tr><th>Pos</th><th>Driver</th><th>Team</th><th>Grid</th><th>Pts</th></tr></thead><tbody>
-        ${race.raceResult.map(r=>`<tr class="${pids.includes(r.driverId)?'my-row':''}">
-          <td>${r.dnf?`<span class="dnf-tag">DNF</span>`:`<span class="pos-cell p${r.position}">${r.position}</span>`}</td>
-          <td class="name-cell">${r.driverName}${r.fastestLap?'<span class="fl-tag">FL</span>':''}</td>
-          <td class="muted-cell">${r.teamName}</td>
-          <td class="muted-cell">${r.startPos?'P'+r.startPos:'—'}</td>
-          <td class="pts-cell">${r.points||0}</td>
-        </tr>`).join('')}
+        ${(()=>{const racePids=State.getPlayerRacingDriverIds();return race.raceResult.map(r=>{const isMine=racePids.includes(r.driverId);const dObj=State.getDriver(r.driverId);const subBadge=isMine&&dObj&&dObj.isReserve?' <span style="font-size:9px;background:rgba(245,158,11,.15);color:#b45309;padding:1px 5px;border-radius:4px;font-weight:700">SUB</span>':'';return`<tr class="${isMine?'my-row':''}"><td>${r.dnf?`<span class="dnf-tag">DNF</span>`:`<span class="pos-cell p${r.position}">${r.position}</span>`}</td><td class="name-cell">${r.driverName}${subBadge}${r.fastestLap?'<span class="fl-tag">FL</span>':''}</td><td class="muted-cell">${r.teamName}</td><td class="muted-cell">${r.startPos?'P'+r.startPos:'—'}</td><td class="pts-cell">${r.points||0}</td></tr>`;}).join('');})()}
         </tbody></table></div>
         ${this._standingsMini()}
       </div>`;
@@ -6388,7 +6461,7 @@ const UI = {
     const g = State.game;
     const race = rd.race;
     const results = rd.results || [];
-    const myIds = State.getPlayerDrivers().map(d=>d.id);
+    const myIds = State.getPlayerRacingDriverIds();
     const ptid = g.playerTeamId;
     const myTeam = State.getPlayerTeam();
 
@@ -7407,11 +7480,13 @@ const UI = {
         <tr><td>❌ Stagnation</td><td>×0.0</td><td>5%</td></tr>
       </table>
       ${tip('Development window', 'Drivers develop fastest between ages 18–24. After 27, gains slow dramatically. If you sign a 26-year-old with high potential, you\'ll likely only see modest improvement regardless of facilities.')}
+      ${tip('OVR vs individual stats', 'A driver\'s overall rating and their individual stats (Race Pace, Qualifying, Consistency) grow together. If a driver\'s OVR is climbing but their race pace feels off, check their profile — the stats should be moving in step.')}
     `)}
 
     ${sec('🌟','Wonderkids — Generational Talents',`
       <p>Approximately every 3 seasons, a <strong>Wonderkid</strong> enters the prospect pool. They're age 16–19, initially rated 58–76, but with a potential ceiling of 95–99.</p>
       <p>The key thing to understand: <strong>potential is not a promise</strong>. A 99-potential wonderkid who spends their formative years at a team with poor facilities and mismanaged morale might peak at 80. The same driver at a top team with great facilities and happy morale might reach 94.</p>
+      <p>Wonderkids peak around age 25–30, then begin a soft decline from 31. A driver who dominates for 3+ seasons will also trigger rival teams to develop faster — no dynasty lasts forever unchallenged.</p>
       <h4>Identifying wonderkids</h4>
       <p>You'll see a 🌟 TRANSFER BUZZ card in Scouting before your scout even files a report — your contacts know something special has emerged. Send your scout immediately; it's worth using a scouting slot.</p>
       <h4>Signing and developing</h4>
@@ -7441,7 +7516,7 @@ const UI = {
       <h4>Costs to manage</h4>
       <p>Driver salaries are your biggest controllable expense. Elite drivers (85+ rated) command high wages but deliver more results. The calculus is whether their salary increase is offset by improved results revenue.</p>
       ${warn('Overspending on driver salaries at the expense of car development is the most common mistake. A $25M driver in a 68-rated car will underperform vs a $12M driver in a 78-rated car.')}
-      ${tip('Sponsorship timing', 'Sponsors are attracted at the end of each season. Finishing strong — especially in the final few races — can tip you into a better finishing position and unlock better sponsor tiers the following year.')}
+      ${tip('Sponsorship timing', 'You receive sponsor offers every offseason regardless of position. Where you finish determines the quality — top-6 teams attract Title and Primary sponsors worth serious money, while backmarkers receive Technical and Associate deals. Finishing strong in the final few races can tip you into a better position and unlock bigger offers.')}
     `)}
 
     ${sec('📋','Board Objectives — Don\'t Ignore These',`
@@ -7457,6 +7532,8 @@ const UI = {
       <p>During Watch Race, your decisions genuinely affect the result. Good calls gain places. Bad ones cost them.</p>
       <h4>Pit stop decisions</h4>
       <p>When a pit window opens you will see a box-or-stay call with a countdown timer (adjustable in Settings). The suggested strategy is shown but you can override it. Pitting early undercuts rivals; staying out defends track position but risks being caught on worn rubber. Your call is reflected in the final result.</p>
+      <h4>Split strategy</h4>
+      <p>You can set different tyre strategies for each of your drivers. In the strategy picker before each race, a <strong>Split strategy</strong> panel appears when you have 2 drivers — use the dropdowns to give one driver a different compound or stop sequence. This lets you cover both an early and late pit window without committing both cars to the same plan.</p>
       <h4>Weather calls</h4>
       <p>If rain arrives mid-race, you decide when to switch. Read your driver's wet weather skill. A strong wet-weather driver can hold on longer and gain places over rivals who panic-pit. A driver who struggles in the wet and stays out will lose ground fast. The post-race debrief shows exactly how many places your calls gained or cost you.</p>
       ${tip('Speed settings', 'Use Very Fast for routine races and Normal/Slow when you\'re in a tight championship battle and want to savour the moment. Speed is set per-session and remembered.')}
@@ -7525,8 +7602,9 @@ const UI = {
       <p>A <strong>1-year deal</strong> is cheaper but risky — the driver becomes available again next offseason and rival teams will approach them if they perform well. A <strong>3-year deal</strong> includes a small loyalty premium but protects you from losing a key driver at a bad time.</p>
       <h4>Signing as Reserve</h4>
       <p>Every free agent card in the Transfer Market has both a <strong>Sign</strong> (race driver) and <strong>Reserve</strong> button. Reserve contracts are cheaper and use a separate slot — useful for developing young talent or covering injury risk.</p>
-      <h4>Promoting a Reserve</h4>
+      <h4>Promoting and Demoting</h4>
       <p>When a race seat opens, use the <strong>⬆️ Promote to Race Driver</strong> button in offseason planning or the driver's profile modal. The driver moves from the reserve slot to the race seat, gets a morale boost, and their contract is retained.</p>
+      <p>You can also move a race driver down to reserve using the <strong>⬇️ Reserve</strong> button — useful when a better option becomes available without having to release the driver entirely.</p>
       <h4>Extending Contracts</h4>
       <p>You don't have to wait for a contract to expire to extend it. The <strong>📝 Extend</strong> button appears on every signed driver in offseason planning and in their profile modal. Use it proactively if a driver is in their final year and you want to keep them before rival teams start circling.</p>
       ${tip('Extend before poach season', "If a driver has 1 year left on their contract, rivals will approach them at season end. Extend them during the offseason to reset their contract length and cut off that risk — the driver's morale goes up too.")}
@@ -7546,9 +7624,11 @@ const UI = {
       <p>Each season follows this structure:</p>
       <p><strong>Offseason</strong> → Sign/release drivers · Set winter development budget · Review board objectives · Sign prospects from free agency</p>
       <p><strong>Race weekend</strong> → Qualifying sim → Race (watch or sim) → Results + news → Dashboard updates</p>
+      <p><strong>Injuries</strong> → An injured driver misses the full race weekend — Sprint qualifying, Sprint race, and GP qualifying and race. Their reserve driver fills in across all sessions automatically.</p>
       <p><strong>Mid-season</strong> → Queue quarterly upgrade packages (arrive 2–4 races later) → Monitor standings and board objectives → In-season development if budget allows</p>
       <p><strong>Season end</strong> → Season recap modal with championship results, objective outcomes, revenue summary → Driver aging and development runs → Transfer market opens</p>
       ${tip('Next button', 'The red Next button (bottom centre on mobile, visible on dashboard) is your main progression button. It advances to the next pending action — next race, or next offseason — so you never have to hunt for what to do.')}
+      ${tip('Contract warning', 'In the final 3 races of the season, an amber warning panel appears on the dashboard if any of your drivers are in their last year of contract. Use the Renew button directly from that panel — don\'t wait for the offseason if a rival could poach them.')}
       ${tip('Sprint weekends', 'Sprint weekends have two separate results. The dashboard Last Race panel shows both a Last Race and a Sprint tab. A Race Recap pops after both the sprint and the GP so you always get the full picture for each session.')}
     `)}
 
@@ -8395,8 +8475,22 @@ const UI = {
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-        <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v1.9.2 · Release Notes</div>
+        <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v1.9.3 · Release Notes</div>
         ${[
+          ['v1.9.3','Mar 2026',[
+            '🐛 Reliability fixed — at 88 reliability expect roughly 3% DNF chance per driver per race, not 7%.',
+            '🐛 Upgrade packages now arrive correctly when using Watch Race or Sim Remaining Season. Previously upgrades were only applied when using the Simulate button.',
+            '🐛 Watch Race commentary no longer shows a driver dropping through positions only to then win the race.',
+            '🐛 Reserve drivers now appear in race standings and the race recap with a SUB badge when filling in for an injured driver.',
+            '🐛 Injuries now cover the full race weekend including Sprint qualifying and the Sprint race.',
+            '🐛 Pit stop decision cards no longer appear for drivers who will retire shortly after the pit window — no more DNF spoilers.',
+            '⚙️ Driver stats now grow in sync with overall rating. No more 90 OVR drivers with 72 race pace.',
+            '⚙️ Wonderkid dominance reduced. Soft decline now starts at 31, rival teams develop their own talent faster, and rivals get a boost when one driver wins 3+ titles in a row.',
+            '⚙️ Sponsor offers now guaranteed every offseason. Position determines quality — top teams get Title and Primary offers, backmarkers get Technical and Associate.',
+            '⚙️ Drivers can now be demoted to reserve without releasing them.',
+            '⚙️ New player guide banner now stays on screen until dismissed.',
+            '⚙️ Contract renewal warning now appears on the dashboard in the final 3 races of the season when a driver is in their last year.',
+          ]],
           ['v1.9.2','Mar 2026',[
             '🐛 Critical crash fix — race error "d is not defined" resolved for all saves.',
             '🐛 Upgrade packages no longer stack up permanently. Any stuck upgrades apply automatically on load.',
@@ -8978,6 +9072,7 @@ const GameActions = {
     if(!race.qualiDone) Sim.simQualifying(race);
     Sim.simRace(race);
     if(raceIdx===g.raceIndex) g.raceIndex++;
+    GameActions.applyPendingUpgrades(g.raceIndex-1);
     GameActions.processScoutingQueue();
     Storage.autosave();
     UI.openWatchRace(raceIdx);
@@ -8993,6 +9088,7 @@ const GameActions = {
     }
     Sim.simRace(race);
     g.raceIndex++;
+    GameActions.applyPendingUpgrades(g.raceIndex-1);
     GameActions.processScoutingQueue();
     Storage.autosave();
     UI.openWatchRace(raceIdx);
@@ -9947,7 +10043,6 @@ document.addEventListener('DOMContentLoaded', () => {
         banner.style.cssText = 'position:fixed;bottom:72px;left:50%;transform:translateX(-50%);background:#111;color:#fff;border-radius:10px;padding:12px 16px;font-size:13px;font-weight:600;z-index:9000;display:flex;align-items:center;gap:12px;box-shadow:0 4px 20px rgba(0,0,0,.4);max-width:320px;width:calc(100vw - 32px)';
         banner.innerHTML = '<span style="font-size:20px">📖</span><span style="flex:1;line-height:1.4">New to F1 Dynasty? The guide explains everything.</span><button onclick="this.closest(\'div\').remove();UI.showView(\'guide\')" style="background:var(--red);color:#fff;border:none;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">Open Guide</button><button onclick="this.closest(\'div\').remove()" style="background:none;border:none;color:rgba(255,255,255,.4);font-size:18px;cursor:pointer;padding:0 4px;line-height:1">×</button>';
         document.body.appendChild(banner);
-        setTimeout(()=>{ if(banner.parentNode) banner.remove(); }, 12000);
       }, 1200);
     }
   });
