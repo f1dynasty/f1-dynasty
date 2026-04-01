@@ -617,7 +617,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
 
 /* ── DRIVER LIST ── */
 .driver-list{display:flex;flex-direction:column;border:1px solid var(--bd);border-radius:8px;overflow:hidden;margin-top:4px}
-.driver-list-row{display:grid;grid-template-columns:28px 1fr 54px 38px 38px 38px 38px 50px;align-items:center;gap:6px;padding:8px 11px;background:var(--bg2);border-bottom:1px solid var(--bd);cursor:pointer;transition:background .1s;font-size:12px}
+.driver-list-row{display:grid;grid-template-columns:24px 1fr 50px 36px 36px 36px 36px 44px;align-items:center;gap:4px;padding:8px 10px;background:var(--bg2);border-bottom:1px solid var(--bd);cursor:pointer;transition:background .1s;font-size:12px}
 .driver-list-row:last-child{border-bottom:none}
 .driver-list-row:hover{background:var(--bg3)}
 .driver-list-row.my-drv{background:rgba(192,57,43,.04)}
@@ -631,6 +631,13 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
 .dl-ovr{text-align:center}
 .dl-attr{font-family:var(--fm);font-size:11px;text-align:center;color:var(--tx2);font-weight:600}
 .dl-pts{font-family:var(--fm);font-size:11px;text-align:right;font-weight:700;color:var(--tx2)}
+.dl-attr-hide{font-family:var(--fm);font-size:11px;text-align:center;color:var(--tx2);font-weight:600}
+@media(max-width:479px){
+  .driver-list-row{grid-template-columns:22px 1fr 46px 32px 32px 44px;gap:3px;padding:7px 8px}
+  .dl-attr-hide{display:none}
+  .dl-name{font-size:12px}
+  .driver-list-header .dl-attr-hide{display:none}
+}
 .prospect-badge{display:inline-block;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;margin-left:4px;vertical-align:middle}
 .badge-f2{background:#fef3cd;color:#7d6008;border:1px solid #f5c518}
 .badge-f3{background:#d4edda;color:#155724;border:1px solid #a8d5b5}
@@ -748,7 +755,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </div>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game" class="land-start">Start Career →</button>
-      <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v1.9.4</a> · <a href="javascript:void(0)" onclick="UI.showContact()" style="color:#aaa;text-decoration:none;cursor:pointer">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+      <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v1.9.5</a> · <a href="javascript:void(0)" onclick="UI.showContact()" style="color:#aaa;text-decoration:none;cursor:pointer">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -3145,6 +3152,11 @@ const Sim = {
         // Remember prev team for UI
         if(d.teamId){ const t=State.getTeam(d.teamId); d._prevTeamName=t?t.name:''; }
         d.teamId=null;
+        // Clear reserve/prospect flags so driver correctly enters free agency
+        // Without this, a reserve with an expired contract has teamId=null AND isReserve=true
+        // which makes them invisible to every filter in the game
+        if(d.isReserve){ d.isReserve=false; d.isFreeAgent=true; }
+        if(d.isProspect){ d.isProspect=false; d.isFreeAgent=true; }
       }
     });
 
@@ -3772,6 +3784,8 @@ const Storage = {
       if(d.isReserve===undefined) d.isReserve=false;
       if(d.isProspect===undefined) d.isProspect=false;
       if(d.isFreeAgent===undefined) d.isFreeAgent=(!d.teamId&&!d.retired&&!d.isProspect);
+      // Rescue drivers stuck in isReserve=true with no team — they should be free agents
+      if(d.isReserve&&!d.teamId&&!d.retired){ d.isReserve=false; d.isFreeAgent=true; }
       if(d.morale===undefined) d.morale=75;
       if(d.aggression===undefined) d.aggression=65;
       if(d.marketability===undefined) d.marketability=65;
@@ -5173,7 +5187,7 @@ const UI = {
       const myIds = myDrivers.map(d=>d.id);
 
       const makeList=(drvs,allMine)=>{
-        const hdr=`<div class="driver-list-row driver-list-header"><span class="dlh-label">#</span><span class="dlh-label">Driver</span><span class="dlh-label">OVR</span><span class="dlh-label">PACE</span><span class="dlh-label">QUALI</span><span class="dlh-label">CON</span><span class="dlh-label">WET</span><span class="dlh-label">PTS</span></div>`;
+        const hdr=`<div class="driver-list-row driver-list-header"><span class="dlh-label">#</span><span class="dlh-label">Driver</span><span class="dlh-label">OVR</span><span class="dlh-label">PACE</span><span class="dlh-label">QUALI</span><span class="dlh-label dl-attr-hide">CON</span><span class="dlh-label dl-attr-hide">WET</span><span class="dlh-label">PTS</span></div>`;
         const rows=drvs.map((d,i)=>{
           const team=d.teamId?State.getTeam(d.teamId):null;
           return `<div class="driver-list-row my-drv" onclick="UI.showDriverModal(${d.id})">
@@ -5181,7 +5195,7 @@ const UI = {
             <div class="dl-name-block"><div class="dl-name">${d.name}</div><div class="dl-team">Age ${d.age} · ${d.nationality} · Contract: ${d.contract}yr</div></div>
             <span class="dl-ovr"><span class="ovr-pill ${ratingClass(Math.round(d.rating))}">${Math.round(d.rating)}</span></span>
             <span class="dl-attr">${Math.round(d.racePace)}</span><span class="dl-attr">${Math.round(d.qualifying)}</span>
-            <span class="dl-attr">${Math.round(d.consistency)}</span><span class="dl-attr">${Math.round(d.wet)}</span>
+            <span class="dl-attr dl-attr-hide">${Math.round(d.consistency)}</span><span class="dl-attr dl-attr-hide">${Math.round(d.wet)}</span>
             <span class="dl-pts">${d.seasonPoints}</span>
           </div>`;
         }).join('');
@@ -5242,7 +5256,7 @@ const UI = {
           <span class="dl-attr">${potDisplay}</span>
           <span class="dl-attr">${Math.round(d.racePace)}</span>
           <span class="dl-attr">${Math.round(d.qualifying)}</span>
-          <span class="dl-attr">${Math.round(d.consistency)}</span>
+          <span class="dl-attr dl-attr-hide">${Math.round(d.consistency)}</span>
           <span class="dl-pts">${d.seasonPoints}</span>
         </div>`;
       }).join('');
@@ -5250,7 +5264,7 @@ const UI = {
         <span class="dlh-label">#</span><span class="dlh-label">Driver</span>
         <span class="dlh-label">OVR</span><span class="dlh-label">POT</span>
         <span class="dlh-label">PACE</span><span class="dlh-label">QUALI</span>
-        <span class="dlh-label">CON</span><span class="dlh-label">PTS</span>
+        <span class="dlh-label dl-attr-hide">CON</span><span class="dlh-label">PTS</span>
       </div>`;
       const scoutNote = (()=>{
         const tier = DATA.scoutingTiers.find(t=>t.id===(g.scoutingTier||'none'));
@@ -5274,8 +5288,8 @@ const UI = {
       <span class="dlh-label">OVR</span>
       <span class="dlh-label">PACE</span>
       <span class="dlh-label">QUALI</span>
-      <span class="dlh-label">CON</span>
-      <span class="dlh-label">WET</span>
+      <span class="dlh-label dl-attr-hide">CON</span>
+      <span class="dlh-label dl-attr-hide">WET</span>
       <span class="dlh-label">PTS</span>
     </div>`;
 
@@ -5293,8 +5307,8 @@ const UI = {
         <span class="dl-ovr"><span class="ovr-pill ${ratingClass(Math.round(d.rating))}">${Math.round(d.rating)}</span></span>
         <span class="dl-attr">${Math.round(d.racePace)}</span>
         <span class="dl-attr">${Math.round(d.qualifying)}</span>
-        <span class="dl-attr">${Math.round(d.consistency)}</span>
-        <span class="dl-attr">${Math.round(d.wet)}</span>
+        <span class="dl-attr dl-attr-hide">${Math.round(d.consistency)}</span>
+        <span class="dl-attr dl-attr-hide">${Math.round(d.wet)}</span>
         <span class="dl-pts">${d.seasonPoints}</span>
       </div>`;
     }).join('');
@@ -8590,8 +8604,13 @@ const UI = {
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-        <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v1.9.4 · Release Notes</div>
+        <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v1.9.5 · Release Notes</div>
         ${[
+          ['v1.9.5','Apr 2026',[
+            '🐛 Reserve drivers whose contracts expired were disappearing from the game entirely. They now correctly enter free agency. Existing saves are patched on load to recover affected drivers.',
+            '🐛 Watch Race event feed now displays correctly in dark mode. Event backgrounds were hardcoded light colours that became near-invisible on dark backgrounds.',
+            '🐛 Driver list stat columns now reflow correctly on small screens. CON and WET are hidden on mobile to give the name and key stats room to breathe.',
+          ]],
           ['v1.9.4','Mar 2026',[
             '⚙️ Getting fired now offers you two struggling teams to take over rather than forcing you back to the main menu. Pick a new challenge or start fresh.',
             '⚙️ Strategy now works through tyre physics. Running a soft tyre past its natural life on a high-degradation circuit will cost you pace — no hidden modifiers, just real consequences.',
@@ -9544,7 +9563,7 @@ const GameActions = {
     const d=State.getDriver(driverId); if(!d) return;
     const team=State.getPlayerTeam(), current=State.getPlayerDrivers();
     if(current.length>=2){UI.toast('Already have 2 race drivers. Release one first.','warning');return;}
-    if(team.revenue<d.salary*3){UI.toast(`Need ${formatMoney(d.salary*3)} to sign.`,'error');return;}
+
     // Open negotiation modal
     UI.showSigningNegotiation(driverId, false);
   },
@@ -9930,10 +9949,19 @@ window._wrTick = function() {
   const isMyEvent = ev.text.includes('⭐') ||
     State.getPlayerDrivers().some(function(d){ return ev.text.includes(d.name); });
 
-  const S = {start:{bg:'#eef4ff',bd:'#bfdbfe'},finish:{bg:'#fefbe7',bd:'#f0d060'},dnf:{bg:'#fef2f2',bd:'#fecaca'},
-    safety:{bg:'#fff7ed',bd:'#fed7aa'},overtake:{bg:'#f0fdf4',bd:'#bbf7d0'},pit:{bg:'#f4f4f2',bd:'#e0e0dd'},
-    fastlap:{bg:'#fefbe7',bd:'#fde68a'},weather:{bg:'#f0f9ff',bd:'#bae6fd'},timing:{bg:'#f4f4f2',bd:'#e0e0dd'},
-    weather_decision:{bg:'#eff6ff',bd:'#bfdbfe'}};
+  // Use rgba tints so colours adapt to both light and dark themes
+  const S = {
+    start:            {bg:'rgba(59,130,246,.10)', bd:'rgba(59,130,246,.30)', tx:'var(--tx)'},
+    finish:           {bg:'rgba(234,179,8,.12)',  bd:'rgba(234,179,8,.40)',  tx:'var(--tx)'},
+    dnf:              {bg:'rgba(192,57,43,.10)',  bd:'rgba(192,57,43,.35)',  tx:'var(--tx)'},
+    safety:           {bg:'rgba(234,88,12,.10)',  bd:'rgba(234,88,12,.35)',  tx:'var(--tx)'},
+    overtake:         {bg:'rgba(39,174,96,.10)',  bd:'rgba(39,174,96,.30)',  tx:'var(--tx)'},
+    pit:              {bg:'var(--bg3)',            bd:'var(--bd)',            tx:'var(--tx2)'},
+    fastlap:          {bg:'rgba(234,179,8,.12)',  bd:'rgba(234,179,8,.40)',  tx:'var(--tx)'},
+    weather:          {bg:'rgba(14,165,233,.10)', bd:'rgba(14,165,233,.30)', tx:'var(--tx)'},
+    timing:           {bg:'var(--bg3)',            bd:'var(--bd)',            tx:'var(--tx3)'},
+    weather_decision: {bg:'rgba(59,130,246,.10)', bd:'rgba(59,130,246,.30)', tx:'var(--tx)'},
+  };
   const s = S[ev.type]||S.pit;
 
   const feed = document.getElementById('wr-feed');
@@ -9942,9 +9970,9 @@ window._wrTick = function() {
     // My driver event — strong red highlight
     el.style.cssText = 'background:var(--bg3);border:1px solid var(--bd);border-left:3px solid #c0392b;border-radius:7px;padding:8px 12px;font-size:13px;flex-shrink:0;margin-bottom:4px;line-height:1.4;font-weight:600;color:var(--tx)';
   } else {
-    el.style.cssText = 'background:'+s.bg+';border:1px solid '+s.bd+';border-radius:7px;padding:8px 12px;font-size:13px;flex-shrink:0;margin-bottom:4px;line-height:1.4';
+    el.style.cssText = 'background:'+s.bg+';border:1px solid '+s.bd+';border-radius:7px;padding:8px 12px;font-size:13px;flex-shrink:0;margin-bottom:4px;line-height:1.4;color:'+s.tx;
   }
-  el.innerHTML = '<span style="font-size:10px;font-weight:700;color:'+(isMyEvent?'#c0392b':'#aaa')+';margin-right:8px;display:inline-block;min-width:28px">L'+ev.lap+'</span>'+ev.text;
+  el.innerHTML = '<span style="font-size:10px;font-weight:700;color:'+(isMyEvent?'#c0392b':'var(--tx3)')+';margin-right:8px;display:inline-block;min-width:28px">L'+ev.lap+'</span>'+ev.text;
   feed.appendChild(el);
   feed.scrollTop = feed.scrollHeight;
   const mb = feed.closest('.modal-box'); if(mb) mb.scrollTop = mb.scrollHeight;
