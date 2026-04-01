@@ -3838,8 +3838,14 @@ const Storage = {
     if(!g.sponsors) g.sponsors=[];
     if(!g.pendingSponsors) g.pendingSponsors=[];
     if(g.playerFired===undefined) g.playerFired=false;
-    // Patch teams for new fields
+    // Patch teams for new fields — also sync driverIds with actual driver teamId assignments
     if(g.teams) g.teams.forEach(t=>{
+      // Rebuild driverIds from driver records to fix any desync
+      const actualDrivers = (g.drivers||[]).filter(d=>d.teamId===t.id&&!d.retired&&!d.isReserve&&!d.isProspect&&!d.isFreeAgent);
+      // Only enforce if we have drivers — prevents wiping legitimate empty teams
+      if(actualDrivers.length>0){
+        t.driverIds = actualDrivers.map(d=>d.id);
+      }
       if(t.downforce===undefined) t.downforce=50;
       if(t.developmentRate===undefined) t.developmentRate=70;
       if(t.facilities===undefined) t.facilities=65;
@@ -9600,6 +9606,8 @@ const GameActions = {
       d.teamId=team.id; d.contract=years; d.salary=salary;
       d.morale=clamp(d.morale+15,50,95);
       d.isProspect=false; d.isFreeAgent=false; d.isReserve=false;
+      if(!team.driverIds) team.driverIds=[];
+      if(!team.driverIds.includes(d.id)) team.driverIds.push(d.id);
       UI.closeModal(); UI.toast(`${d.name} signed · ${years}yr at ${formatMoney(salary)}/yr`,'success');
     }
     Storage.autosave(); UI.renderOffseasonPlanning();
