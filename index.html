@@ -1821,6 +1821,10 @@ const Sim = {
     // Final — lock to real positions
     results.forEach(r=>{ livePos[r.driverId]=r.position||null; });
     const finalSnap=snapPos();
+    // Remove any mid-final-lap position events that contradict the actual finish order
+    for(let i=events.length-1;i>=0;i--){
+      if(events[i].lap===laps && (events[i].type==='position'||events[i].type==='overtake')) events.splice(i,1);
+    }
     events.push({lap:laps,type:'finish',text:`🏁 Sprint winner: ${finishers[0]?.driverName||'?'}!`, driverPositions:finalSnap});
     if(finishers[1]) events.push({lap:laps,type:'finish',text:`P2: ${finishers[1].driverName}`, driverPositions:finalSnap});
     if(finishers[2]) events.push({lap:laps,type:'finish',text:`P3: ${finishers[2].driverName}`, driverPositions:finalSnap});
