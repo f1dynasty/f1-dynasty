@@ -9750,6 +9750,12 @@ window._wrTick = function() {
             const swapEntry = resultArr.find(function(r){
               return r.position === newPos && !r.dnf && playerDriverIds.indexOf(r.driverId) < 0;
             });
+            // If the swap target is another player driver (or doesn't exist), skip the adjustment
+            // to prevent two player drivers ending up at the same position
+            const blockedByTeammate = !swapEntry && resultArr.find(function(r){
+              return r.position === newPos && !r.dnf && playerDriverIds.indexOf(r.driverId) >= 0;
+            });
+            if(blockedByTeammate) { /* skip — would collide with teammate */ } else {
             if(swapEntry) swapEntry.position = oldPos;
             myEntry.position = newPos;
 
@@ -9777,6 +9783,7 @@ window._wrTick = function() {
 
             if(!WR.positionDeltas) WR.positionDeltas = {};
             WR.positionDeltas[myEntry.driverId] = { old: oldPos, new: newPos, delta: oldPos - newPos };
+            } // end blockedByTeammate check
 
             // Update finish commentary events for both the player driver AND the swapped driver
             // so commentary matches the adjusted result
