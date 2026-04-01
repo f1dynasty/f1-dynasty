@@ -2989,7 +2989,7 @@ const Sim = {
     if(moodTotal < -1) g.playerFired = true;
     if(driverChamp){
       driverChamp.driver.championships++;
-      g.history.champions.push({season:g.season,driverId:driverChamp.driver.id,driverName:driverChamp.driver.name,teamId:driverChamp.driver.teamId,teamName:State.getTeam(driverChamp.driver.teamId)?.name||'?',points:driverChamp.points});
+      g.history.champions.push({season:g.season,driverId:driverChamp.driver.id,driverName:driverChamp.driver.name,teamId:driverChamp.driver.teamId,teamName:State.getTeam(driverChamp.driver.teamId)?.name||'?',points:driverChamp.points,ageAtChamp:driverChamp.driver.age});
     }
     if(constructorChamp){
       constructorChamp.team.championships++;
@@ -3693,12 +3693,17 @@ const Storage = {
       if(!State.game._saveId) State.game._saveId = 'sg_' + Date.now();
       let slot = this._currentSlot();
       if(slot === -1) slot = this._newSlot();
-      const data = { game: State.game, savedAt: Date.now(), version: this.SAVE_VERSION };
+      const strippedCal = (State.game.calendar||[]).map(r=>{
+        const {lapEvents, sprintLapEvents, ...rest} = r;
+        return rest;
+      });
+      const saveGame = Object.assign({}, State.game, {calendar: strippedCal});
+      const data = { game: saveGame, savedAt: Date.now(), version: this.SAVE_VERSION };
       State.game.lastSaved = Date.now();
       localStorage.setItem(this.SAVE_KEY_PREFIX + slot, JSON.stringify(data));
       UI.toast('Game saved', 'success');
       return true;
-    } catch(e) { UI.toast('Save failed!', 'error'); return false; }
+    } catch(e) { UI.toast('Save failed — storage may be full.', 'error'); return false; }
   },
 
   autosave() {
@@ -3706,10 +3711,24 @@ const Storage = {
       if(!State.game._saveId) State.game._saveId = 'sg_' + Date.now();
       let slot = this._currentSlot();
       if(slot === -1) slot = this._newSlot();
-      const data = { game: State.game, savedAt: Date.now(), version: this.SAVE_VERSION, autosave: true };
+      // Strip transient bulky data before serialising — lapEvents can be regenerated,
+      // qualiResult is rebuilt each race. Omitting these keeps saves compact and prevents
+      // localStorage quota errors on long dynasty saves.
+      const strippedCalendar = (State.game.calendar||[]).map(r=>{
+        const {lapEvents, sprintLapEvents, ...rest} = r;
+        return rest;
+      });
+      const saveGame = Object.assign({}, State.game, {calendar: strippedCalendar});
+      const data = { game: saveGame, savedAt: Date.now(), version: this.SAVE_VERSION, autosave: true };
       State.game.lastSaved = Date.now();
-      localStorage.setItem(this.SAVE_KEY_PREFIX + slot, JSON.stringify(data));
-    } catch(e) {}
+      try {
+        localStorage.setItem(this.SAVE_KEY_PREFIX + slot, JSON.stringify(data));
+      } catch(quotaErr) {
+        // localStorage quota exceeded — warn the user clearly
+        UI.toast('Save failed — storage full. Try clearing old saves.', 'error');
+        console.warn('Autosave quota error:', quotaErr);
+      }
+    } catch(e) { console.warn('Autosave error:', e); }
   },
 
   loadGame(slot) {
@@ -7452,12 +7471,17 @@ const UI = {
     // Youngest / oldest champion
     let youngestChamp=null,youngestAge=99,oldestChamp=null,oldestAge=0;
     recH.champions.forEach(ch=>{
-      const d=drvs.find(x=>x.id===ch.driverId);
-      if(!d) return;
-      const yearsAgo = State.game.season - ch.season;
-      const ageAtChamp = d.age - yearsAgo;
-      if(ageAtChamp<youngestAge){youngestAge=ageAtChamp;youngestChamp={name:d.name,age:ageAtChamp,season:ch.season};}
-      if(ageAtChamp>oldestAge){oldestAge=ageAtChamp;oldestChamp={name:d.name,age:ageAtChamp,season:ch.season};}
+      // Use stored ageAtChamp if available (set from v1.9.5+).
+      // Fall back to live calculation for older saves — less accurate for long dynasties.
+      let ageAtChamp = ch.ageAtChamp;
+      if(!ageAtChamp){
+        const d=drvs.find(x=>x.id===ch.driverId);
+        if(!d) return;
+        const yearsAgo = State.game.season - ch.season;
+        ageAtChamp = d.age - yearsAgo;
+      }
+      if(ageAtChamp>0&&ageAtChamp<youngestAge){youngestAge=ageAtChamp;youngestChamp={name:ch.driverName,age:ageAtChamp,season:ch.season};}
+      if(ageAtChamp>0&&ageAtChamp>oldestAge){oldestAge=ageAtChamp;oldestChamp={name:ch.driverName,age:ageAtChamp,season:ch.season};}
     });
 
     const rc=(lbl,val,holder,sub)=>`<div class="rec-card"><div class="rec-accent"></div><div class="rec-label">${lbl}</div><div class="rec-val">${val}</div><div class="rec-holder">${holder||'—'}</div>${sub?`<div style="font-size:9px;color:var(--tx3);margin-top:2px">${sub}</div>`:''}</div>`;
