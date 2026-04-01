@@ -1821,9 +1821,23 @@ const Sim = {
     // Final — lock to real positions
     results.forEach(r=>{ livePos[r.driverId]=r.position||null; });
     const finalSnap=snapPos();
-    // Remove any mid-final-lap position events that contradict the actual finish order
+    // Remove contradictory position events in the final 5 laps
+    const spFinalWindow = laps - 5;
+    const spPlayerNames = new Set(results.filter(r=>r.teamId===ptid&&!r.dnf).map(r=>r.driverName));
+    const spFinalPos = {}; finishers.forEach(r=>{ spFinalPos[r.driverId]=r.position; });
     for(let i=events.length-1;i>=0;i--){
-      if(events[i].lap===laps && (events[i].type==='position'||events[i].type==='overtake')) events.splice(i,1);
+      const ev=events[i];
+      if(ev.lap<spFinalWindow||ev.lap>=laps) continue;
+      if(ev.type!=='overtake'&&ev.type!=='position') continue;
+      let isP=false,mPos=null,dId=null;
+      spPlayerNames.forEach(name=>{ if(ev.text&&ev.text.includes(name)){isP=true;const m=ev.text.match(/P(\d+)/);if(m)mPos=parseInt(m[1]);} });
+      if(!isP) continue;
+      results.forEach(r=>{ if(ev.text&&ev.text.includes(r.driverName)) dId=r.driverId; });
+      const af=dId?spFinalPos[dId]:null;
+      if(af!==null&&mPos!==null&&mPos!==af) events.splice(i,1);
+    }
+    for(let i=events.length-1;i>=0;i--){
+      if(events[i].lap===laps&&(events[i].type==='position'||events[i].type==='overtake')) events.splice(i,1);
     }
     events.push({lap:laps,type:'finish',text:`🏁 Sprint winner: ${finishers[0]?.driverName||'?'}!`, driverPositions:finalSnap});
     if(finishers[1]) events.push({lap:laps,type:'finish',text:`P2: ${finishers[1].driverName}`, driverPositions:finalSnap});
@@ -2521,13 +2535,52 @@ const Sim = {
     events.push({lap:laps, type:'finish', text:`🏁 Chequered flag! ${leader?.driverName||'?'} wins the ${race.name}!`, driverPositions: finalSnap});
     if(finishers[1]) events.push({lap:laps, type:'finish', text:`P2: ${finishers[1].driverName} (${finishers[1].teamName})`, driverPositions: finalSnap});
     if(finishers[2]) events.push({lap:laps, type:'finish', text:`P3: ${finishers[2].driverName} (${finishers[2].teamName})`, driverPositions: finalSnap});
-    // Remove any mid-final-lap position events that contradict the actual finish order
-    const finishEventStart = events.findIndex(e=>e.type==='finish');
-    if(finishEventStart>0) {
-      // Filter out position-change events on the last lap that conflict with real finish
-      for(let i=finishEventStart-1;i>=0;i--){
-        if(events[i].lap===laps && (events[i].type==='position'||events[i].type==='overtake')) events.splice(i,1);
+    // ── Clean up contradictory late-race position events ────────────────────────
+    // Reconciliation and step events can fire in the last 5 laps with intermediate
+    // positions that never materialise or contradict the actual finish.
+    // Strategy: for each player driver, remove any overtake/position events in the
+    // final 5 laps that mention a position they didn't actually finish at — keeping
+    // only events that lead cleanly to the real finish position, plus the finish itself.
+    const finalWindow = laps - 5;
+    const playerFinalPos = {}; // driverId -> final position
+    finishers.forEach(r=>{ playerFinalPos[r.driverId] = r.position; });
+
+    // Build set of player driver names for quick lookup
+    const playerDriverNames = new Set(
+      results.filter(r=>isPlayer(r)&&!r.dnf).map(r=>r.driverName)
+    );
+
+    // Remove late-race overtake events that mention a player driver at a position
+    // other than their final position — they create contradictory narrative
+    for(let i=events.length-1;i>=0;i--){
+      const ev = events[i];
+      if(ev.lap < finalWindow) continue; // only police final 5 laps
+      if(ev.lap >= laps) continue; // finish line events handled separately
+      if(ev.type !== 'overtake' && ev.type !== 'position') continue;
+      // Check if this event mentions a player driver
+      let isPlayerEv = false;
+      let mentionedPos = null;
+      playerDriverNames.forEach(name=>{
+        if(ev.text && ev.text.includes(name)){
+          isPlayerEv = true;
+          const m = ev.text.match(/P(\d+)/);
+          if(m) mentionedPos = parseInt(m[1]);
+        }
+      });
+      if(!isPlayerEv) continue;
+      // Find the driver this event is about
+      let driverId = null;
+      results.forEach(r=>{ if(ev.text && ev.text.includes(r.driverName)) driverId = r.driverId; });
+      const actualFinal = driverId ? playerFinalPos[driverId] : null;
+      // Remove if: mentions a non-final position, OR is a drop event when driver finishes better
+      if(actualFinal !== null && mentionedPos !== null && mentionedPos !== actualFinal){
+        events.splice(i, 1);
       }
+    }
+
+    // Also remove any finish-line overtake events (lap === laps)
+    for(let i=events.length-1;i>=0;i--){
+      if(events[i].lap===laps && (events[i].type==='position'||events[i].type==='overtake')) events.splice(i,1);
     }
     // Always report where player's drivers finished
     finishers.forEach(r=>{
@@ -9701,14 +9754,45 @@ window._wrTick = function() {
             if(!WR.positionDeltas) WR.positionDeltas = {};
             WR.positionDeltas[myEntry.driverId] = { old: oldPos, new: newPos, delta: oldPos - newPos };
 
-            // Update any finish commentary events that referenced the old position
-            // so the commentary matches the adjusted result
+            // Update finish commentary events for both the player driver AND the swapped driver
+            // so commentary matches the adjusted result
             const driverName = myEntry.driverName;
             WR.events.forEach(function(ev){
-              if(ev.type === 'finish' && ev.text && ev.text.includes(driverName)){
+              if(ev.type !== 'finish' || !ev.text) return;
+              if(ev.text.includes(driverName)){
                 ev.text = ev.text
                   .replace(/finishes P\d+/, 'finishes P' + newPos)
                   .replace(/— \d+ pts/, '— ' + (myEntry.points||0) + ' pts');
+              }
+              // Also patch the swapped driver's finish events so P1/P2/P3 announcements are correct
+              if(swapEntry && ev.text.includes(swapEntry.driverName)){
+                ev.text = ev.text
+                  .replace(/finishes P\d+/, 'finishes P' + oldPos)
+                  .replace(/— \d+ pts/, '— ' + (swapEntry.points||0) + ' pts');
+              }
+            });
+            // Rebuild the top-3 finish announcement lines from the updated result order
+            const updatedFinishers = resultArr.filter(function(r){return !r.dnf;}).sort(function(a,b){return a.position-b.position;});
+            WR.events.forEach(function(ev){
+              if(ev.type !== 'finish') return;
+              if(ev.text && ev.text.includes('Chequered flag') || ev.text && ev.text.includes('wins the ') || ev.text && ev.text.includes('Sprint winner')){
+                const winner = updatedFinishers[0];
+                if(winner && !ev.text.includes(winner.driverName)){
+                  // Winner announcement is wrong — rebuild it
+                  if(ev.text.includes('Chequered flag') || ev.text.includes('wins the ')){
+                    ev.text = '🏁 Chequered flag! ' + winner.driverName + ' wins the ' + race.name + '!';
+                  } else if(ev.text.includes('Sprint winner')){
+                    ev.text = '🏁 Sprint winner: ' + winner.driverName + '!';
+                  }
+                }
+              }
+              if(ev.text && ev.text.match(/^P2:/)){
+                const p2 = updatedFinishers[1];
+                if(p2) ev.text = 'P2: ' + p2.driverName + (ev.text.includes('(') ? ' (' + p2.teamName + ')' : '');
+              }
+              if(ev.text && ev.text.match(/^P3:/)){
+                const p3 = updatedFinishers[2];
+                if(p3) ev.text = 'P3: ' + p3.driverName + (ev.text.includes('(') ? ' (' + p3.teamName + ')' : '');
               }
             });
           }
