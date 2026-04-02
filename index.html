@@ -7967,25 +7967,34 @@ const UI = {
         return;
       }
       const numSeasons = cs.seasons.length;
-      const totalPts = cs.seasons.reduce((acc,r)=>acc+r.points,0);
       const bestPos = cs.seasons.reduce((b,r)=>r.position<b?r.position:b, 99);
-
+      const seasonRows = cs.seasons.map(r=>`
+        <div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--bd);font-size:12px">
+          <span style="font-family:var(--fm);font-weight:700;color:var(--tx3);width:32px">${r.season}</span>
+          <span style="font-family:var(--fm);font-weight:800;color:${r.position<=3?'var(--amber)':r.position<=6?'var(--grn)':'var(--tx)'}">P${r.position}</span>
+          <span style="flex:1;color:var(--tx3)">${r.points}pts</span>
+          ${r.constructorChamp?'<span style="font-size:10px;background:rgba(245,158,11,.15);color:#b45309;padding:1px 6px;border-radius:10px;font-weight:700">🏆 CONSTR</span>':''}
+          ${r.driverChamp?'<span style="font-size:10px;background:rgba(245,158,11,.15);color:#b45309;padding:1px 6px;border-radius:10px;font-weight:700">🥇 WDC</span>':''}
+          <span style="font-size:10px;color:var(--tx3)">${r.wins||0}W ${r.podiums||0}P</span>
+        </div>`).join('');
+      const injs = (State.game.retirements||[]).filter(r=>r.season&&r.type==='injury');
+      const injTotal = (State.game.injuries||[]).length;
+      const injRows = (State.game.injuries||[]).filter(inj=>inj.teamId===State.game.playerTeamId).slice(0,20).map(inj=>`
+        <div style="font-size:12px;color:var(--tx2);padding:4px 0;border-bottom:1px solid var(--bd)">${inj.driverName||'?'} — ${inj.reason||'injury'}</div>`).join('');
+      c.innerHTML = '<div style="background:var(--bg2);border:1px solid var(--bd);border-radius:12px;padding:18px;margin-bottom:14px">'
+        +'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px">'
+          +'<div style="text-align:center;background:var(--bg3);border-radius:8px;padding:10px"><div style="font-size:28px;font-weight:900;color:'+(cs.championships>0?'var(--amber)':'var(--tx)')+'">'+cs.championships+'</div><div style="font-size:9px;color:var(--tx3);margin-top:2px">Driver Titles</div></div>'
+          +'<div style="text-align:center;background:var(--bg3);border-radius:8px;padding:10px"><div style="font-size:28px;font-weight:900;color:'+(cs.constructorChampionships>0?'var(--amber)':'var(--tx)')+'">'+cs.constructorChampionships+'</div><div style="font-size:9px;color:var(--tx3);margin-top:2px">Constructor Titles</div></div>'
+          +'<div style="text-align:center;background:var(--bg3);border-radius:8px;padding:10px"><div style="font-size:28px;font-weight:900;color:var(--tx)">'+numSeasons+'</div><div style="font-size:9px;color:var(--tx3);margin-top:2px">Seasons</div></div>'
         +'</div>'
-        // Stats grid
-        +'<div style="background:var(--bg2);border:1px solid var(--bd);border-radius:12px;padding:18px;margin-bottom:14px">'
-          +'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px">'
-            +'<div style="text-align:center;background:var(--bg3);border-radius:8px;padding:10px"><div style="font-size:28px;font-weight:900;color:'+(cs.championships>0?'#f59e0b':'#fff')+'">'+cs.championships+'</div><div style="font-size:9px;color:var(--tx3);margin-top:2px">Driver Titles</div></div>'
-            +'<div style="text-align:center;background:var(--bg3);border-radius:8px;padding:10px"><div style="font-size:28px;font-weight:900;color:'+(cs.constructorChampionships>0?'#f59e0b':'#fff')+'">'+cs.constructorChampionships+'</div><div style="font-size:9px;color:var(--tx3);margin-top:2px">Constructor Titles</div></div>'
-            +'<div style="text-align:center;background:var(--bg3);border-radius:8px;padding:10px"><div style="font-size:28px;font-weight:900">'+numSeasons+'</div><div style="font-size:9px;color:var(--tx3);margin-top:2px">Seasons</div></div>'
-          +'</div>'
-          +'<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px">'
-            +'<div style="text-align:center"><div style="font-size:18px;font-weight:800">'+cs.totalWins+'</div><div style="font-size:9px;color:var(--tx3)">Wins</div></div>'
-            +'<div style="text-align:center"><div style="font-size:18px;font-weight:800">'+cs.totalPodiums+'</div><div style="font-size:9px;color:var(--tx3)">Podiums</div></div>'
-            +'<div style="text-align:center"><div style="font-size:18px;font-weight:800">'+cs.totalPoles+'</div><div style="font-size:9px;color:var(--tx3)">Poles</div></div>'
-            +'<div style="text-align:center"><div style="font-size:18px;font-weight:800">P'+bestPos+'</div><div style="font-size:9px;color:var(--tx3)">Best Finish</div></div>'
-          +'</div>'
-          +'<div style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);margin-bottom:8px">Season by Season</div>'
-          +'<div>'+seasonRows+'</div>'
+        +'<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px">'
+          +'<div style="text-align:center"><div style="font-size:18px;font-weight:800;color:var(--tx)">'+cs.totalWins+'</div><div style="font-size:9px;color:var(--tx3)">Wins</div></div>'
+          +'<div style="text-align:center"><div style="font-size:18px;font-weight:800;color:var(--tx)">'+cs.totalPodiums+'</div><div style="font-size:9px;color:var(--tx3)">Podiums</div></div>'
+          +'<div style="text-align:center"><div style="font-size:18px;font-weight:800;color:var(--tx)">'+cs.totalPoles+'</div><div style="font-size:9px;color:var(--tx3)">Poles</div></div>'
+          +'<div style="text-align:center"><div style="font-size:18px;font-weight:800;color:var(--tx)">P'+bestPos+'</div><div style="font-size:9px;color:var(--tx3)">Best Finish</div></div>'
+        +'</div>'
+        +'<div style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);margin-bottom:8px">Season by Season</div>'
+        +'<div>'+seasonRows+'</div>'
         +'</div>'
         +(injTotal>0?'<div class="panel"><div class="panel-title" style="margin-bottom:8px">🚑 Injury History</div>'
           +'<div style="font-size:12px;color:var(--tx3);margin-bottom:8px">'+injTotal+' incident'+(injTotal!==1?'s':'')+' across your career</div>'
