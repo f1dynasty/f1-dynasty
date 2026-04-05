@@ -577,7 +577,7 @@ tr.clickable-row:hover td{background:rgba(192,57,43,.07)!important}
 .sm-pts{font-family:var(--fm);font-size:12px;font-weight:700;color:var(--tx2);flex-shrink:0}
 
 /* ── QUALI ── */
-.quali-pole-hero{display:flex;align-items:center;gap:12px;background:#eef4ff;border:1px solid #bfdbfe;border-radius:8px;padding:12px 14px;margin-bottom:12px}
+.quali-pole-hero{display:flex;align-items:center;gap:12px;background:rgba(41,128,185,.10);border:1px solid rgba(41,128,185,.30);border-radius:8px;padding:12px 14px;margin-bottom:12px}
 .quali-pole-label{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--blu);margin-bottom:2px}
 .quali-pole-name{font-size:18px;font-weight:900;color:var(--tx);line-height:1.1}
 .quali-pole-team{font-size:12px;color:var(--tx2);margin-top:1px}
@@ -756,7 +756,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </div>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game" class="land-start">Start Career →</button>
-      <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.0.3</a> · <a href="javascript:void(0)" onclick="UI.showContact()" style="color:#aaa;text-decoration:none;cursor:pointer">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+      <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.0.4</a> · <a href="javascript:void(0)" onclick="UI.showContact()" style="color:#aaa;text-decoration:none;cursor:pointer">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -1083,6 +1083,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
           <button class="tab-pill" onclick="UI.showHistoryTab('records')">Records</button>
           <button class="tab-pill" onclick="UI.showHistoryTab('dynasty')">Dynasty</button>
           <button class="tab-pill" onclick="UI.showHistoryTab('achievements')">Achievements</button>
+          <button class="tab-pill" onclick="UI.showHistoryTab('results')">Results</button>
         </div>
       </div>
       <div id="history-content"></div>
@@ -1675,7 +1676,7 @@ const State = {
   },
   _buildDriver(def, teamId, id) {
     const season = (State.game && State.game.season) || 2026;
-    return {id,name:def.name,age:def.age,nationality:def.nationality||DATA.nationalities[Math.floor(Math.random()*DATA.nationalities.length)],teamId,rating:def.rating,potential:def.potential,qualifying:def.qualifying,racePace:def.racePace,consistency:def.consistency,wet:def.wet,aggression:def.aggression,marketability:def.marketability,morale:def.morale,salary:def.salary||3,contract:def.contract||2,seasonPoints:0,totalPoints:0,wins:0,poles:0,podiums:0,fastestLaps:0,championships:0,retired:false,rookie:false,careerStart:season};
+    return {id,name:def.name,age:def.age,nationality:def.nationality||DATA.nationalities[Math.floor(Math.random()*DATA.nationalities.length)],teamId,rating:def.rating,potential:def.potential,qualifying:def.qualifying,racePace:def.racePace,consistency:def.consistency,wet:def.wet,aggression:def.aggression,marketability:def.marketability,morale:def.morale,salary:def.salary||3,contract:def.contract||2,seasonPoints:0,totalPoints:0,wins:0,poles:0,podiums:0,fastestLaps:0,championships:0,retired:false,rookie:false,isReserve:false,isProspect:false,isFreeAgent:false,careerStart:season};
   },
   _generateDriver(id, season, teamId, type) {
     const isRookie    = type==='rookie';
@@ -1929,11 +1930,23 @@ const Sim = {
     // Sprint quali — independent of GP quali, never touches qualiDone
     const activeInjuries = Sim._getActiveInjuries ? Sim._getActiveInjuries() : [];
     const injuredIds = new Set(activeInjuries.map(i=>i.driverId));
+    // Build set of teams that need a reserve sub — only one reserve per injured driver
+    const injurySubs = State.game._injurySubs || {};
+    const teamsNeedingSub = new Set(activeInjuries.map(i=>i.teamId));
+    const reserveSubIds = new Set();
+    teamsNeedingSub.forEach(teamId=>{
+      const injured = activeInjuries.filter(i=>i.teamId===teamId&&injuredIds.has(i.driverId));
+      injured.forEach(inj=>{
+        const chosenId = injurySubs[inj.driverId];
+        const chosen = chosenId && State.game.drivers.find(r=>r.id===chosenId&&r.isReserve&&r.teamId===teamId&&!r.retired);
+        const reserve = chosen || State.game.drivers.find(r=>r.isReserve&&r.teamId===teamId&&!r.retired&&!injuredIds.has(r.id)&&!reserveSubIds.has(r.id));
+        if(reserve) reserveSubIds.add(reserve.id);
+      });
+    });
     const drivers = State.game.drivers.filter(d=>d.teamId&&!d.retired&&!d.isProspect)
       .filter(d=>{
         if(d.isReserve){
-          // Only include reserve if they're subbing for an injured teammate
-          return activeInjuries.some(inj=>inj.teamId===d.teamId&&injuredIds.has(inj.driverId));
+          return reserveSubIds.has(d.id);
         }
         // Exclude injured race drivers
         return !injuredIds.has(d.id);
@@ -1946,6 +1959,12 @@ const Sim = {
     });
     entries.sort((a,b)=>b.score-a.score);
     entries.forEach((e,i)=>{e.position=i+1;});
+    // Award sprint pole to pole-sitter — counts toward pole objectives
+    if(entries.length>0){
+      const spPole=entries[0];
+      const spPoleDriver=State.getDriver(spPole.driverId);
+      if(spPoleDriver){spPoleDriver.poles++;const spPoleTeam=State.getTeam(spPoleDriver.teamId);if(spPoleTeam)spPoleTeam.poles++;}
+    }
     race.sprintQualiDone=true;
     race.sprintQualiResult=entries;
     // qualiDone is NOT touched — GP qualifying is separate
@@ -1966,7 +1985,9 @@ const Sim = {
       .map(d=>{
         // Substitute injured driver with best available reserve from same team
         if(injuredDriverIds.has(d.id)){
-          const reserve = State.game.drivers.find(r=>r.teamId===d.teamId&&r.isReserve&&!r.retired&&!injuredDriverIds.has(r.id));
+          const chosenId = (State.game._injurySubs||{})[d.id];
+          const chosen = chosenId && State.game.drivers.find(r=>r.id===chosenId&&r.isReserve&&r.teamId===d.teamId&&!r.retired);
+          const reserve = chosen || State.game.drivers.find(r=>r.teamId===d.teamId&&r.isReserve&&!r.retired&&!injuredDriverIds.has(r.id));
           return reserve || d; // fall back to injured driver if no reserve
         }
         return d;
@@ -2781,6 +2802,7 @@ const Sim = {
     });
     // Auto-clear recovered
     g.injuries.forEach(inj => { if(!inj.cleared && g.raceIndex >= inj.returnsAfterRace) inj.cleared = true; });
+    if(g._injurySubs){ Object.keys(g._injurySubs).forEach(dId=>{ if(!g.injuries.some(i=>!i.cleared&&String(i.driverId)===String(dId))) delete g._injurySubs[dId]; }); }
   },
 
   _getActiveInjuries() {
@@ -3651,7 +3673,9 @@ const Sim = {
       if(team.id===g.playerTeamId) return;
       const slotsNeeded=2-remaining.length;
       if(slotsNeeded<=0) return;
-      const freeAgents=State.getFreeAgents().filter(fa=>fa.salary<=(fa.rating>=85?team.revenue/9:fa.rating>=78?team.revenue/11:team.revenue/13)).sort((a,b)=>b.rating-a.rating);
+      // Don't sign ex-reserves back as race drivers at the team they just left as a reserve
+      const teamReserveIds=new Set(team.reserveIds||[]);
+      const freeAgents=State.getFreeAgents().filter(fa=>!teamReserveIds.has(fa.id)&&fa.salary<=(fa.rating>=85?team.revenue/9:fa.rating>=78?team.revenue/11:team.revenue/13)).sort((a,b)=>b.rating-a.rating);
       for(let i=0;i<Math.min(slotsNeeded,freeAgents.length);i++){
         const signed=freeAgents[i];
         const prevTeam=preDriverTeam[signed.id];
@@ -6076,8 +6100,8 @@ const UI = {
           <div style="font-weight:700;color:var(--tx2);margin-bottom:2px">Overtaking</div>
           <div>${otLabel}</div>
         </div>
-        ${weatherRisk > 0.1 ? `<div style="flex:1;background:#fef3c7;border:1px solid #fcd34d;border-radius:8px;padding:8px 10px;font-size:11px">
-          <div style="font-weight:700;color:#92400e;margin-bottom:2px">⛈ Rain Forecast</div>
+        ${weatherRisk > 0.1 ? `<div style="flex:1;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.40);border-radius:8px;padding:8px 10px;font-size:11px">
+          <div style="font-weight:700;color:var(--amber);margin-bottom:2px">⛈ Rain Forecast</div>
           <div>${Math.round(weatherRisk*100)}% chance</div>
         </div>` : `<div style="flex:1;background:var(--bg3);border-radius:8px;padding:8px 10px;font-size:11px">
           <div style="font-weight:700;color:var(--tx2);margin-bottom:2px">Weather</div>
@@ -7983,7 +8007,7 @@ const UI = {
   },
 
   showHistoryTab(tab){
-    document.querySelectorAll('#view-history .tab-pill').forEach((b,i)=>b.classList.toggle('active',['champions','goat','records','dynasty','achievements'][i]===tab));
+    document.querySelectorAll('#view-history .tab-pill').forEach((b,i)=>b.classList.toggle('active',['champions','goat','records','dynasty','achievements','results'][i]===tab));
     this.renderHistory(tab);
   },
   renderHistory(tab){
@@ -8098,6 +8122,69 @@ const UI = {
             <div style="width:${pct}%;height:100%;background:var(--red);border-radius:3px;transition:width .4s"></div>
           </div>
           ${rows}
+        </div>`;
+      return;
+    }
+    if(tab==='results'){
+      const g=State.game;
+      const pids=State.getPlayerDrivers().map(d=>d.id);
+      const pNames=State.getPlayerDrivers().map(d=>d.name.split(' ').pop());
+      // Collect all completed races with player driver results
+      const races=g.calendar.filter(r=>r.raceDone&&r.raceResult);
+      if(!races.length){ c.innerHTML='<div class="empty-state"><div class="empty-icon">🏁</div><div class="empty-text">No races completed yet.</div></div>'; return; }
+      // Build position counts per driver [pos1..pos20+, DNF]
+      const posMax=20;
+      const driverData={};
+      pids.forEach(id=>{ const d=State.getDriver(id); if(d) driverData[id]={name:d.name.split(' ').pop(),counts:new Array(posMax+1).fill(0),dnfs:0}; });
+      races.forEach(race=>{
+        race.raceResult.forEach(r=>{
+          if(!driverData[r.driverId]) return;
+          if(r.dnf) driverData[r.driverId].dnfs++;
+          else { const pos=Math.min(r.position,posMax); driverData[r.driverId].counts[pos-1]++; }
+        });
+      });
+      // Color scale: P1=gold, P2=silver, P3=bronze, P4-P10=green shades, P11+=grey, DNF=red
+      const posColor=(pos)=>{
+        if(pos===1) return '#f59e0b';
+        if(pos===2) return '#9ca3af';
+        if(pos===3) return '#cd7c2f';
+        if(pos<=6)  return '#16a34a';
+        if(pos<=10) return '#4ade80';
+        if(pos<=15) return '#6b7280';
+        return '#374151';
+      };
+      const cols=Array.from({length:posMax},(_,i)=>i+1);
+      const tableRows=Object.values(driverData).map(dd=>{
+        const cells=dd.counts.map((cnt,i)=>{
+          const pos=i+1;
+          const bg=cnt>0?posColor(pos):'transparent';
+          const txt=cnt>0?cnt:'';
+          const fw=cnt>0?'800':'400';
+          return `<td style="text-align:center;padding:4px 2px;width:28px"><div style="background:${bg};color:${cnt>0?'#fff':'var(--tx3)'};font-size:${cnt>1?'11':'10'}px;font-weight:${fw};border-radius:4px;padding:2px 0;min-width:22px">${txt}</div></td>`;
+        }).join('');
+        const dnfCell=dd.dnfs>0?`<td style="text-align:center;padding:4px 2px"><div style="background:#dc2626;color:#fff;font-size:11px;font-weight:800;border-radius:4px;padding:2px 4px">${dd.dnfs}</div></td>`:'<td style="text-align:center;padding:4px 2px"><div style="color:var(--tx3);font-size:10px">—</div></td>';
+        return `<tr><td style="padding:4px 8px 4px 0;font-weight:700;font-size:12px;white-space:nowrap">${dd.name}</td>${cells}${dnfCell}</tr>`;
+      }).join('');
+      const headerCols=cols.map(p=>`<th style="text-align:center;padding:2px;font-size:10px;color:var(--tx3);font-weight:700;width:28px">${p}</th>`).join('');
+      c.innerHTML=`
+        <div style="padding:4px 0 8px">
+          <div style="font-size:12px;color:var(--tx3);margin-bottom:12px">${races.length} races · finishing position frequency</div>
+          <div style="overflow-x:auto">
+            <table style="border-collapse:collapse;min-width:100%">
+              <thead><tr><th style="text-align:left;padding:2px 8px 2px 0;font-size:10px;color:var(--tx3)">Driver</th>${headerCols}<th style="text-align:center;padding:2px 4px;font-size:10px;color:#dc2626">DNF</th></tr></thead>
+              <tbody>${tableRows}</tbody>
+            </table>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:14px;font-size:10px">
+            <div style="display:flex;align-items:center;gap:4px"><div style="width:12px;height:12px;border-radius:2px;background:#f59e0b"></div>P1</div>
+            <div style="display:flex;align-items:center;gap:4px"><div style="width:12px;height:12px;border-radius:2px;background:#9ca3af"></div>P2</div>
+            <div style="display:flex;align-items:center;gap:4px"><div style="width:12px;height:12px;border-radius:2px;background:#cd7c2f"></div>P3</div>
+            <div style="display:flex;align-items:center;gap:4px"><div style="width:12px;height:12px;border-radius:2px;background:#16a34a"></div>P4-6</div>
+            <div style="display:flex;align-items:center;gap:4px"><div style="width:12px;height:12px;border-radius:2px;background:#4ade80"></div>P7-10</div>
+            <div style="display:flex;align-items:center;gap:4px"><div style="width:12px;height:12px;border-radius:2px;background:#6b7280"></div>P11-15</div>
+            <div style="display:flex;align-items:center;gap:4px"><div style="width:12px;height:12px;border-radius:2px;background:#374151"></div>P16-20</div>
+            <div style="display:flex;align-items:center;gap:4px"><div style="width:12px;height:12px;border-radius:2px;background:#dc2626"></div>DNF</div>
+          </div>
         </div>`;
       return;
     }
@@ -9369,8 +9456,19 @@ const UI = {
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-        <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.0.3 · Release Notes</div>
+        <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.0.4 · Release Notes</div>
         ${[
+          ['v2.0.4','Apr 2026',[
+            '🐛 Sprint pole now counts toward pole position objectives and career/season pole totals — was previously not awarded at all.',
+            '✨ History tab: new "Results" tab shows a finishing position frequency heatmap for your drivers across the current season.',
+            '🐛 Sprint qualifying: when a driver is injured, only one reserve now subs in per injured driver — fixes 3-driver Ferrari / missing Hamilton at China sprint.',
+            '🐛 Watch Sprint: "Sprint winner" text in the live feed now correctly patches to match the actual result when pit/weather bonus adjusts finishing positions.',
+            '🐛 Dark mode: sprint/GP qualifying pole card, sprint result podium cards, and race strategy rain forecast badge no longer show invisible text on hardcoded light backgrounds.',
+            '🐛 AI seat fill no longer re-signs a team\'s own reserve drivers as race drivers when their reserve contract expires — they enter free agency normally and can sign elsewhere, but the seat fill logic skips them for their own team.',
+            '🐛 Named drivers built at game init now correctly have isReserve/isProspect/isFreeAgent set to false by default, closing an ambiguity that could cause reserves to slip into race grids.',
+            '🐛 Save migration: drivers in a team\'s reserveIds who lost their isReserve flag are now correctly restored on load.',
+            '✨ Injury cover: when one of your race drivers is injured you are now prompted to choose which reserve covers the weekend. If you have two reserves, pick who subs in. If you have no reserve, you get a warning with the option to sign cover first.',
+          ]],
           ['v2.0.3','Apr 2026',[
             '✨ Reserve drivers can now have their contracts extended in the offseason screen and driver profile modal.',
             '🐛 Dark mode: upgrade window notification no longer shows white text on white background.',
@@ -10221,6 +10319,49 @@ const GameActions = {
   doNextQuali() {
     const race=State.getCurrentRace();
     if(!race) return;
+    const g=State.game;
+    const activeInj=(g.injuries||[]).filter(inj=>!inj.cleared&&inj.teamId===g.playerTeamId&&g.raceIndex<=inj.returnsAfterRace);
+    if(activeInj.length){
+      const reserves=State.getPlayerReserves();
+      if(reserves.length===0){
+        document.getElementById('modal-body').innerHTML=
+          '<div style="text-align:center;padding:8px 0">'+
+          '<div style="font-size:32px;margin-bottom:8px">🚑</div>'+
+          '<div style="font-size:16px;font-weight:900;margin-bottom:6px">'+activeInj[0].driverName+' is injured</div>'+
+          '<div style="font-size:12px;color:var(--tx3);margin-bottom:14px">'+activeInj[0].type+' — out for '+Math.max(0,activeInj[0].returnsAfterRace-g.raceIndex)+' more race(s)</div>'+
+          '<div style="background:#fee2e2;border:1px solid #fca5a5;border-radius:8px;padding:10px 12px;font-size:12px;color:#991b1b;margin-bottom:14px">⚠️ No reserve driver signed — you\'ll start with one driver. Sign a free agent from the Drivers tab to get cover.</div>'+
+          '<div style="display:flex;gap:8px">'+
+          '<button class="btn btn-ghost" style="flex:1" onclick="UI.closeModal()">Sign a Reserve First</button>'+
+          '<button class="btn btn-red" style="flex:1;color:#fff" onclick="UI.closeModal();GameActions._proceedToQuali()">Proceed Anyway</button>'+
+          '</div></div>';
+        document.getElementById('driver-detail-modal').classList.remove('hidden');
+        return;
+      } else if(reserves.length>=2 && activeInj.length===1){
+        const inj=activeInj[0];
+        document.getElementById('modal-body').innerHTML=
+          '<div style="padding:4px 0">'+
+          '<div style="font-size:16px;font-weight:900;margin-bottom:4px">🚑 '+inj.driverName+' is injured</div>'+
+          '<div style="font-size:12px;color:var(--tx3);margin-bottom:14px">'+inj.type+' — who covers this weekend?</div>'+
+          reserves.map(r=>'<button onclick="GameActions._assignInjurySub('+inj.driverId+','+r.id+');UI.closeModal();GameActions._proceedToQuali()" '+
+            'style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid var(--bd);border-radius:8px;background:var(--bg2);cursor:pointer;margin-bottom:8px">'+
+            '<span style="font-weight:700">'+r.name+'</span>'+
+            '<span style="font-size:12px;color:var(--tx3)">'+Math.round(r.rating)+' OVR</span>'+
+          '</button>').join('')+
+          '<button class="btn btn-ghost" style="width:100%;margin-top:4px" onclick="UI.closeModal()">Cancel</button>'+
+          '</div>';
+        document.getElementById('driver-detail-modal').classList.remove('hidden');
+        return;
+      }
+    }
+    this._proceedToQuali();
+  },
+  _assignInjurySub(injuredDriverId, reserveId){
+    if(!State.game._injurySubs) State.game._injurySubs={};
+    State.game._injurySubs[injuredDriverId]=parseInt(reserveId)||reserveId;
+  },
+  _proceedToQuali(){
+    const race=State.getCurrentRace();
+    if(!race) return;
     if(race.sprint && !race.sprintQualiDone) { this.simSprintQualifying(); return; }
     if(race.sprint && race.sprintDone && !race.qualiDone) { this.simQualifying(); return; }
     if(!race.sprint && !race.qualiDone) { this.simQualifying(); return; }
@@ -10965,6 +11106,12 @@ window._wrTick = function() {
             el.innerHTML = el.innerHTML.replace(/🏁 Chequered flag! .+ wins the /, '🏁 Chequered flag! ' + w.driverName + ' wins the ');
           }
         }
+        if(t.includes('Sprint winner:')) {
+          var sw = fin2[0];
+          if(sw && !t.includes(sw.driverName)) {
+            el.innerHTML = el.innerHTML.replace(/🏁 Sprint winner: .+!/, '🏁 Sprint winner: ' + sw.driverName + '!');
+          }
+        }
         if(t.match(/L\d+.*P2:/)) {
           var p2 = fin2[1];
           if(p2) el.innerHTML = el.innerHTML.replace(/P2: [^<(]+/, 'P2: ' + p2.driverName + ' ');
@@ -10983,8 +11130,8 @@ window._wrTick = function() {
     const medals = ['&#x1F947;','&#x1F948;','&#x1F949;'];
 
     const podHtml = fin.slice(0,3).map(function(r,i){
-      const bg = i===0?'#fefbe7':i===1?'#f4f4f2':'#fff7ed';
-      const bd = i===0?'#f0d060':i===1?'#e0e0dd':'#fed7aa';
+      const bg = i===0?'rgba(245,158,11,.10)':i===1?'var(--bg2)':'rgba(249,115,22,.08)';
+      const bd = i===0?'rgba(245,158,11,.35)':i===1?'var(--bd)':'rgba(249,115,22,.25)';
       return '<div style="flex:1;min-width:80px;background:'+bg+';border:1px solid '+bd+';border-radius:8px;padding:8px 6px;text-align:center">'
         +'<div style="font-size:22px">'+medals[i]+'</div>'
         +'<div style="font-size:12px;font-weight:800;color:var(--tx)">'+r.driverName.split(' ').slice(-1)[0]+'</div>'
