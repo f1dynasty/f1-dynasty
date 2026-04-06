@@ -11370,20 +11370,20 @@ window._wrTick = function() {
               r.points = pts;
               const drv = State.getDriver(r.driverId);
               const team = r.teamId ? State.getTeam(r.teamId) : null;
-              if(drv) drv.seasonPoints = Math.max(0, (drv.seasonPoints||0) - ptsWere + pts);
-              if(team) team.seasonPoints = Math.max(0, (team.seasonPoints||0) - ptsWere + pts);
-              if(r.position === 1 && ptsWere < 25) {
-                if(drv) drv.wins = (drv.wins||0) + 1;
-                if(team) team.wins = (team.wins||0) + 1;
-              } else if(r.position !== 1 && ptsWere === 25) {
-                if(drv) drv.wins = Math.max(0, (drv.wins||0) - 1);
-                if(team) team.wins = Math.max(0, (team.wins||0) - 1);
-              }
-              // Update podium stats for position swap
-              const wasPodium = ptsWere >= 15; // was P1/P2/P3 before swap
-              const isPodium = r.position <= 3;
-              if(isPodium && !wasPodium && drv) drv.podiums = (drv.podiums||0) + 1;
-              if(!isPodium && wasPodium && drv) drv.podiums = Math.max(0, (drv.podiums||0) - 1);
+              if(drv) { drv.seasonPoints = Math.max(0, (drv.seasonPoints||0) - ptsWere + pts); drv.totalPoints = Math.max(0, (drv.totalPoints||0) - ptsWere + pts); }
+              if(team) { team.seasonPoints = Math.max(0, (team.seasonPoints||0) - ptsWere + pts); team.totalPoints = Math.max(0, (team.totalPoints||0) - ptsWere + pts); }
+              // Win detection: use position vs P1 points value, not hardcoded 25 — works for both GP and sprint
+              const p1Pts = ptScale[1];
+              const wasP1 = (ptsWere === p1Pts);
+              const isP1  = (r.position === 1);
+              if(isP1  && !wasP1) { if(drv) drv.wins=(drv.wins||0)+1;    if(team) team.wins=(team.wins||0)+1; }
+              if(!isP1 && wasP1)  { if(drv) drv.wins=Math.max(0,(drv.wins||0)-1); if(team) team.wins=Math.max(0,(team.wins||0)-1); }
+              // Podium stats — driver AND team
+              const p3Pts = ptScale[3] || 0;
+              const wasPodium = (ptsWere >= p3Pts && p3Pts > 0);
+              const isPodium  = r.position <= 3;
+              if(isPodium  && !wasPodium) { if(drv) drv.podiums=(drv.podiums||0)+1;    if(team) team.podiums=(team.podiums||0)+1; }
+              if(!isPodium && wasPodium)  { if(drv) drv.podiums=Math.max(0,(drv.podiums||0)-1); if(team) team.podiums=Math.max(0,(team.podiums||0)-1); }
             });
 
             if(!WR.positionDeltas) WR.positionDeltas = {};
@@ -11884,8 +11884,8 @@ window._wrApplyBonusNow = function() {
       undoMyDriver.totalPoints  = (undoMyDriver.totalPoints  || 0) - swapAppliedMyPts  + baseMyPts;
       if(prev.swapOldPos===1 && WR._baselinePos!==1){ undoMyDriver.wins = Math.max(0,(undoMyDriver.wins||0)-1); if(undoMyTeam) undoMyTeam.wins=Math.max(0,(undoMyTeam.wins||0)-1); }
       if(WR._baselinePos===1 && prev.swapOldPos!==1){ undoMyDriver.wins=(undoMyDriver.wins||0)+1; if(undoMyTeam) undoMyTeam.wins=(undoMyTeam.wins||0)+1; }
-      if(prev.swapOldPos<=3 && WR._baselinePos>3)  { undoMyDriver.podiums=Math.max(0,(undoMyDriver.podiums||0)-1); }
-      if(WR._baselinePos<=3 && prev.swapOldPos>3)  { undoMyDriver.podiums=(undoMyDriver.podiums||0)+1; }
+      if(prev.swapOldPos<=3 && WR._baselinePos>3)  { undoMyDriver.podiums=Math.max(0,(undoMyDriver.podiums||0)-1); if(undoMyTeam) undoMyTeam.podiums=Math.max(0,(undoMyTeam.podiums||0)-1); }
+      if(WR._baselinePos<=3 && prev.swapOldPos>3)  { undoMyDriver.podiums=(undoMyDriver.podiums||0)+1; if(undoMyTeam) undoMyTeam.podiums=(undoMyTeam.podiums||0)+1; }
     }
     if(undoMyTeam) {
       undoMyTeam.seasonPoints = (undoMyTeam.seasonPoints||0) - swapAppliedMyPts + baseMyPts;
@@ -11896,8 +11896,8 @@ window._wrApplyBonusNow = function() {
       undoSwapDriver.totalPoints  = (undoSwapDriver.totalPoints ||0) - swapAppliedRivPts + baseRivPts;
       if(WR._baselinePos===1 && prev.swapOldPos!==1){ undoSwapDriver.wins=Math.max(0,(undoSwapDriver.wins||0)-1); if(undoSwapTeam) undoSwapTeam.wins=Math.max(0,(undoSwapTeam.wins||0)-1); }
       if(prev.swapOldPos===1 && WR._baselinePos!==1){ undoSwapDriver.wins=(undoSwapDriver.wins||0)+1; if(undoSwapTeam) undoSwapTeam.wins=(undoSwapTeam.wins||0)+1; }
-      if(WR._baselinePos<=3 && prev.swapOldPos>3)  { undoSwapDriver.podiums=Math.max(0,(undoSwapDriver.podiums||0)-1); }
-      if(prev.swapOldPos<=3 && WR._baselinePos>3)  { undoSwapDriver.podiums=(undoSwapDriver.podiums||0)+1; }
+      if(WR._baselinePos<=3 && prev.swapOldPos>3)  { undoSwapDriver.podiums=Math.max(0,(undoSwapDriver.podiums||0)-1); if(undoSwapTeam) undoSwapTeam.podiums=Math.max(0,(undoSwapTeam.podiums||0)-1); }
+      if(prev.swapOldPos<=3 && WR._baselinePos>3)  { undoSwapDriver.podiums=(undoSwapDriver.podiums||0)+1; if(undoSwapTeam) undoSwapTeam.podiums=(undoSwapTeam.podiums||0)+1; }
     }
     if(undoSwapTeam && undoSwapTeam !== undoMyTeam) {
       undoSwapTeam.seasonPoints = (undoSwapTeam.seasonPoints||0) - swapAppliedRivPts + baseRivPts;
@@ -11960,8 +11960,8 @@ window._wrApplyBonusNow = function() {
     if(hadWin  && !nowWin)  { myDriver.wins = Math.max(0, myDriver.wins-1); if(myTeam) myTeam.wins = Math.max(0, (myTeam.wins||0)-1); }
     var hadPod  = (WR._baselinePos <= 3);
     var nowPod  = (targetPos <= 3);
-    if(nowPod  && !hadPod)  { myDriver.podiums = (myDriver.podiums||0) + 1; }
-    if(hadPod  && !nowPod)  { myDriver.podiums = Math.max(0, (myDriver.podiums||0) - 1); }
+    if(nowPod  && !hadPod)  { myDriver.podiums = (myDriver.podiums||0) + 1; if(myTeam) myTeam.podiums = (myTeam.podiums||0) + 1; }
+    if(hadPod  && !nowPod)  { myDriver.podiums = Math.max(0, (myDriver.podiums||0) - 1); if(myTeam) myTeam.podiums = Math.max(0, (myTeam.podiums||0) - 1); }
   }
   if(myTeam) {
     myTeam.seasonPoints = (myTeam.seasonPoints || 0) - myOldPts + myNewPts;
@@ -11977,8 +11977,8 @@ window._wrApplyBonusNow = function() {
     if(swapHadWin && !swapNowWin) { swapDriver.wins = Math.max(0, swapDriver.wins-1); if(swapTeam) swapTeam.wins = Math.max(0, (swapTeam.wins||0)-1); }
     var swapHadPod = (targetPos <= 3);
     var swapNowPod = (WR._baselinePos <= 3);
-    if(swapNowPod && !swapHadPod) { swapDriver.podiums = (swapDriver.podiums||0) + 1; }
-    if(swapHadPod && !swapNowPod) { swapDriver.podiums = Math.max(0, (swapDriver.podiums||0) - 1); }
+    if(swapNowPod && !swapHadPod) { swapDriver.podiums = (swapDriver.podiums||0) + 1; if(swapTeam) swapTeam.podiums = (swapTeam.podiums||0) + 1; }
+    if(swapHadPod && !swapNowPod) { swapDriver.podiums = Math.max(0, (swapDriver.podiums||0) - 1); if(swapTeam) swapTeam.podiums = Math.max(0, (swapTeam.podiums||0) - 1); }
   }
   if(swapTeam && swapTeam !== myTeam) {
     swapTeam.seasonPoints = (swapTeam.seasonPoints || 0) - swapOldPts + swapNewPts;
