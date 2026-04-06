@@ -9771,6 +9771,7 @@ const UI = {
             '🐛 Watch Race: live pit/weather decision swaps now also update driver and team season points, wins, and podiums immediately — previously the live swap only corrected raceResult positions while championship state remained based on the pre-swap result.',
             '🐛 Split strategy: both drivers were defaulting to the same strategy due to two issues — reserve substitute IDs not matching the split entries, and autoStrategy flag bleeding through from a prior race. Both fixed.',
             '🐛 Strategy picker: weather forecast was re-randomised every time the picker was opened, so rain chance could flip between views. Now generated once per race and preserved on re-open.',
+            '🐛 Watch Race: feed rows showing "Your driver finishes P9 - 2 pts" are now patched to match the final result when a bonus swap adjusts the finishing position and points.',
           ]],
           ['v2.0.4','Apr 2026',[
             '🐛 Sprint pole now counts toward pole position objectives and career/season pole totals — was previously not awarded at all.',
@@ -11494,6 +11495,32 @@ window._wrTick = function() {
             el.innerHTML = el.innerHTML
               .replace(/moves up to P\d+/, 'moves up to P' + actualPos)
               .replace(/drops to P\d+/, 'drops to P' + actualPos);
+          }
+        });
+      });
+      // Third pass: patch player driver "finishes Pn — x pts" rows to match final result
+      var playerRacingIds = State.getPlayerRacingDriverIds ? State.getPlayerRacingDriverIds() : [];
+      var playerFinishMap = {}; // driverName -> {pos, pts}
+      fin2.forEach(function(r){
+        if(playerRacingIds.indexOf(r.driverId) >= 0) {
+          playerFinishMap[r.driverName] = {pos: r.position, pts: r.points || 0};
+        }
+      });
+      items.forEach(function(el){
+        var t = el.innerHTML || '';
+        if(!t.includes('finishes P') && !t.includes('finishes P')) return;
+        Object.keys(playerFinishMap).forEach(function(name){
+          if(!t.includes(name)) return;
+          var pf = playerFinishMap[name];
+          // Only patch if the position or points are wrong
+          var posMatch = t.match(/finishes P(\d+)/);
+          var ptsMatch = t.match(/— (\d+) pts/);
+          var needsPatch = (posMatch && parseInt(posMatch[1]) !== pf.pos) ||
+                           (ptsMatch && parseInt(ptsMatch[1]) !== pf.pts);
+          if(needsPatch) {
+            el.innerHTML = el.innerHTML
+              .replace(/finishes P\d+/, 'finishes P' + pf.pos)
+              .replace(/— \d+ pts/, '— ' + pf.pts + ' pts');
           }
         });
       });
