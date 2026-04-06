@@ -3184,6 +3184,7 @@ const Sim = {
       return { ...obj, achieved };
     });
     g.boardObjectivesResult = objResults;
+    g.lastObjBonus = objBonusRevenue; // stored for Finance page display
     if(objBonusRevenue > 0) {
       playerTeam.revenue = (playerTeam.revenue || 0) + objBonusRevenue;
     }
@@ -3499,6 +3500,7 @@ const Sim = {
     if(!g.nextRegsYear) g.nextRegsYear = g.season + randInt(3,6);
     if(!g.regsHistory) g.regsHistory = [];
     if(!g.quarterDevDiversion) g.quarterDevDiversion = {};
+    if(g.lastObjBonus===undefined) g.lastObjBonus=0;
     if(!g.pendingNegotiations) g.pendingNegotiations=[];
     if(g._lastAIApproachRace===undefined) g._lastAIApproachRace=0;
     const executedMoves=new Set();
@@ -3965,27 +3967,27 @@ const Sim = {
     const objPool = [];
     // Position-based (always 1 easy, scaled to last result)
     if(lastPos <= 3) {
-      objPool.push({id:'win_title',label:'Win the Constructors Championship',type:'position',target:1,reward:300,difficulty:'hard',icon:'🏆'});
-      objPool.push({id:'pos_top2',label:'Finish P2 or better in Constructors',type:'position',target:2,reward:120,difficulty:'medium',icon:'🥈'});
+      objPool.push({id:'win_title',label:'Win the Constructors Championship',type:'position',target:1,reward:80,difficulty:'hard',icon:'🏆'});
+      objPool.push({id:'pos_top2',label:'Finish P2 or better in Constructors',type:'position',target:2,reward:60,difficulty:'medium',icon:'🥈'});
     } else if(lastPos <= 6) {
-      objPool.push({id:'pos_top3',label:'Finish top 3 in Constructors',type:'position',target:3,reward:200,difficulty:'hard',icon:'🏆'});
-      objPool.push({id:'pos_top5',label:'Finish top 5 in Constructors',type:'position',target:5,reward:100,difficulty:'medium',icon:'📈'});
+      objPool.push({id:'pos_top3',label:'Finish top 3 in Constructors',type:'position',target:3,reward:45,difficulty:'hard',icon:'🏆'});
+      objPool.push({id:'pos_top5',label:'Finish top 5 in Constructors',type:'position',target:5,reward:28,difficulty:'medium',icon:'📈'});
     } else {
-      objPool.push({id:'pos_top5',label:'Finish top 5 in Constructors',type:'position',target:5,reward:200,difficulty:'hard',icon:'🏆'});
-      objPool.push({id:'pos_top8',label:'Finish top 8 in Constructors',type:'position',target:8,reward:80,difficulty:'medium',icon:'📈'});
+      objPool.push({id:'pos_top5',label:'Finish top 5 in Constructors',type:'position',target:5,reward:28,difficulty:'hard',icon:'🏆'});
+      objPool.push({id:'pos_top8',label:'Finish top 8 in Constructors',type:'position',target:8,reward:18,difficulty:'medium',icon:'📈'});
     }
     // Win-based
     const winTarget = lastWins >= 5 ? 8 : lastWins >= 2 ? 5 : lastWins >= 1 ? 3 : 1;
-    objPool.push({id:'wins',label:`Achieve ${winTarget} race win${winTarget>1?'s':''}`,type:'wins',target:winTarget,reward:winTarget*20+30,difficulty:winTarget>=5?'hard':'medium',icon:'🏁'});
+    objPool.push({id:'wins',label:`Achieve ${winTarget} race win${winTarget>1?'s':''}`,type:'wins',target:winTarget,reward:winTarget*6+12,difficulty:winTarget>=5?'hard':'medium',icon:'🏁'});
     // Podiums — always achievable
     const podTarget = Math.max(3, lastPos <= 5 ? 10 : 5);
-    objPool.push({id:'podiums',label:`Earn ${podTarget} podiums this season`,type:'podiums',target:podTarget,reward:podTarget*8+20,difficulty:'medium',icon:'🥉'});
+    objPool.push({id:'podiums',label:`Earn ${podTarget} podiums this season`,type:'podiums',target:podTarget,reward:podTarget*3+8,difficulty:'medium',icon:'🥉'});
     // Poles — easy goal
-    objPool.push({id:'poles',label:'Secure at least 3 pole positions',type:'poles',target:3,reward:60,difficulty:'easy',icon:'⚡'});
+    objPool.push({id:'poles',label:'Secure at least 3 pole positions',type:'poles',target:3,reward:15,difficulty:'easy',icon:'⚡'});
     // Legacy milestone
     // Rookie season — special goal
     if(totalSeasons === 0) {
-      objPool.push({id:'first_win',label:'Win your first race',type:'wins',target:1,reward:200,difficulty:'medium',icon:'🎯'});
+      objPool.push({id:'first_win',label:'Win your first race',type:'wins',target:1,reward:40,difficulty:'medium',icon:'🎯'});
     }
     // Pick 3: always include one easy, one medium, one hard if possible
     const easy   = objPool.filter(o=>o.difficulty==='easy');
@@ -6700,7 +6702,8 @@ const UI = {
           <div class="finance-row"><span class="finance-row-label">FOM Prize Money (P${cpos})</span><span class="finance-row-val pos">+${formatMoney(prizeIncome)}</span></div>
           <div class="finance-row"><span class="finance-row-label">Merchandise & Brand</span><span class="finance-row-val pos">+${formatMoney(merchandiseIncome)}</span></div>
           ${worksBonus>0?`<div class="finance-row"><span class="finance-row-label">Manufacturer Funding</span><span class="finance-row-val pos">+${formatMoney(worksBonus)}</span></div>`:''}
-          <div class="finance-total"><span>Total Income</span><span style="color:var(--grn)">+${formatMoney(totalIncome)}</span></div>
+          ${(g.lastObjBonus||0)>0?`<div class="finance-row"><span class="finance-row-label">Board Objectives Bonus <span style="font-size:10px;color:var(--tx3)">(added to next season budget)</span></span><span class="finance-row-val pos">+${formatMoney(g.lastObjBonus)}</span></div>`:''}
+          <div class="finance-total"><span>Total Income</span><span style="color:var(--grn)">+${formatMoney(totalIncome+(g.lastObjBonus||0))}</span></div>
         </div>
         <div class="finance-card">
           <div class="finance-card-title">Expenses</div>
