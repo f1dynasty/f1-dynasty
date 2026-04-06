@@ -6526,6 +6526,8 @@ const UI = {
     WR.pitDecisions=[]; WR.pitDecisionBonus=0;
     WR.weatherDecisions=[]; WR.weatherCallBonus=0; WR.weatherCalls=[]; WR.positionDeltas={};
     WR._bonusApplied=null;
+    WR._baselinePos=null;
+    WR._lastSwap=null;
     // Seed live positions from qualifying grid
     WR.lastPos = {}; WR.prevPos = null;
     // Seed from startPos in raceResult — this reflects actual grid inc. penalties
@@ -8049,7 +8051,7 @@ const UI = {
           <div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:${isMyWin?'#f59e0b':isMyTeamOnPodium?'rgba(255,255,255,.4)':'var(--tx3)'}">Post-Race Debrief · Round ${roundNum}/${totalRounds}</div>
           ${weatherBadge}
         </div>
-        <div style="font-size:20px;font-weight:900;color:${isMyWin||isMyTeamOnPodium?'var(--tx)':'var(--tx)'};line-height:1.2;margin-bottom:6px">${race.name}</div>
+        <div style="font-size:20px;font-weight:900;color:${isMyWin||isMyTeamOnPodium?'#fff':'var(--tx)'};line-height:1.2;margin-bottom:6px">${race.name}</div>
         <div style="font-size:12px;color:${isMyWin||isMyTeamOnPodium?'rgba(255,255,255,.55)':'var(--tx3)'}">
           🏆 ${winner?.driverName||'?'} · ${winner?.teamName?.replace('Scuderia ','').replace(' F1 Team','').replace('-AMG','')||''}
           ${racesLeft > 0 ? ` · <strong style="color:${isMyWin||isMyTeamOnPodium?'rgba(255,255,255,.8)':'var(--tx2)'}">${racesLeft} races remain</strong>` : ' · <strong>Season finale</strong>'}
@@ -9753,6 +9755,9 @@ const UI = {
             '🐛 Reserve driver points: addPoints now uses fallback teamId from race result entry so constructor standings are always credited even if reserve driver teamId is mismatched.',
             '🐛 Watch Race: pit and weather decision bonuses are now applied to the race result immediately when the decision resolves — contradicting future events in the queue are pruned and a corrective commentary event is injected. This fixes the root cause of commentary contradicting the final result (e.g. Piastri announced P1 at L45 then finishing P3).',
             '🐛 Driver salaries now recalculate every offseason based on current rating, age, and championship titles — newgen drivers who develop and win the WDC will now correctly demand market-rate salaries rather than staying on their creation salary of $1-2M.',
+            '🐛 Post-race debrief: race name now shows in white on the dark win/podium banner — was previously near-black on dark background making it unreadable.',
+            '🐛 Watch Race: fixed classification corruption in _wrApplyBonusNow — swap partner was resolved before undoing the previous swap, which could leave two drivers on the same position when a later decision returned the bonus toward zero.',
+            '🐛 Watch Race: live pit/weather decision swaps now also update driver and team season points, wins, and podiums immediately — previously the live swap only corrected raceResult positions while championship state remained based on the pre-swap result.',
           ]],
           ['v2.0.4','Apr 2026',[
             '🐛 Sprint pole now counts toward pole position objectives and career/season pole totals — was previously not awarded at all.',
@@ -11776,8 +11781,7 @@ window._wrTick = function() {
 
 // ── Apply decision bonus immediately to race result + prune contradicting future events ──
 // Called right after each pit/weather decision resolves so commentary stays consistent.
-window._wrApplyBonusNow = function(bonusDelta) {
-  if(!bonusDelta || Math.abs(bonusDelta) < 0.3) return;
+window._wrApplyBonusNow = function() {
   const WR = window._WR;
   const race = WR.race;
   if(!race) return;
@@ -11785,65 +11789,191 @@ window._wrApplyBonusNow = function(bonusDelta) {
   const resultArr = race[resultKey] || [];
   const playerDriverIds = State.getPlayerRacingDriverIds();
 
-  // Compute position delta from accumulated bonus so far
-  const totalBonus = (WR.pitDecisionBonus||0) + (WR.weatherCallBonus||0);
-  let posDelta = 0;
-  if      (totalBonus >=  2.0) posDelta = -3;
-  else if (totalBonus >=  1.2) posDelta = -2;
-  else if (totalBonus >=  0.5) posDelta = -1;
-  else if (totalBonus <= -1.5) posDelta =  3;
-  else if (totalBonus <= -0.8) posDelta =  2;
-  else if (totalBonus <= -0.3) posDelta =  1;
-
-  if(posDelta === 0) return;
-
-  // Apply to best-finishing player driver
+  // Find best-finishing player driver
   const myFinishers = resultArr
     .filter(function(r){ return playerDriverIds.indexOf(r.driverId) >= 0 && !r.dnf; })
     .sort(function(a,b){ return a.position - b.position; });
   const myEntry = myFinishers[0];
   if(!myEntry) return;
 
-  const oldPos = myEntry.position;
-  const newPos = Math.max(1, Math.min(resultArr.length, oldPos + posDelta));
-  if(newPos === oldPos) return;
+  // On first call, snapshot the baseline (pre-bonus) position
+  if(WR._baselinePos === undefined || WR._baselinePos === null) {
+    WR._baselinePos = myEntry.position;
+  }
 
-  const swapEntry = resultArr.find(function(r){
-    return r.position === newPos && !r.dnf && playerDriverIds.indexOf(r.driverId) < 0;
+  // Compute target position from BASELINE — not from current (already-adjusted) position
+  // This prevents cumulative over-adjustment when multiple decisions stack
+  const totalBonus = (WR.pitDecisionBonus||0) + (WR.weatherCallBonus||0);
+  let targetDelta = 0;
+  if      (totalBonus >=  2.0) targetDelta = -3;
+  else if (totalBonus >=  1.2) targetDelta = -2;
+  else if (totalBonus >=  0.5) targetDelta = -1;
+  else if (totalBonus <= -1.5) targetDelta =  3;
+  else if (totalBonus <= -0.8) targetDelta =  2;
+  else if (totalBonus <= -0.3) targetDelta =  1;
+
+  const targetPos = Math.max(1, Math.min(resultArr.length, WR._baselinePos + targetDelta));
+  const currentPos = myEntry.position;
+  if(targetPos === currentPos) return; // already at correct position, nothing to do
+
+  // ── Step 1: Undo any previous swap FIRST before touching anything else ──
+  if(WR._lastSwap) {
+    var prev = WR._lastSwap;
+    var prevSwapEntry = resultArr.find(function(r){ return r.driverId === prev.swapId; });
+    // Restore raceResult entries
+    if(prevSwapEntry) {
+      prevSwapEntry.position = prev.swapOldPos;
+      prevSwapEntry.points   = prev.swapOldPoints !== undefined ? prev.swapOldPoints : prevSwapEntry.points;
+    }
+    myEntry.position = WR._baselinePos;
+    myEntry.points   = prev.myBaselinePoints !== undefined ? prev.myBaselinePoints : myEntry.points;
+    // Reverse the championship state delta that Step 5 applied
+    var undoMyDriver   = State.getDriver(myEntry.driverId);
+    var undoSwapDriver = prevSwapEntry ? State.getDriver(prevSwapEntry.driverId) : null;
+    var undoMyTeam     = undoMyDriver   ? State.getTeam(undoMyDriver.teamId)   : null;
+    var undoSwapTeam   = undoSwapDriver ? State.getTeam(undoSwapDriver.teamId) : null;
+    var prevAppliedMyPts   = prev.myBaselinePoints !== undefined ? (window.DATA&&DATA.points?DATA.points:[25,18,15,12,10,8,6,4,2,1])[prev.swapOldPos - 2] || 0 : 0; // pts my driver had after the swap
+    // Simpler: just re-derive from what was applied — player had pts[targetPos-1], rival had pts[baseline-1]
+    var ptsTable = WR.isSprint ? [8,7,6,5,4,3,2,1] : (window.DATA&&DATA.points?DATA.points:[25,18,15,12,10,8,6,4,2,1]);
+    var swapAppliedMyPts   = ptsTable[prev.swapOldPos-1] || 0;   // what player had after that swap (targetPos was swapOldPos)
+    var swapAppliedRivPts  = ptsTable[WR._baselinePos-1] || 0;    // what rival had after that swap
+    var baseMyPts          = prev.myBaselinePoints  !== undefined ? prev.myBaselinePoints  : (ptsTable[WR._baselinePos-1] || 0);
+    var baseRivPts         = prev.swapOldPoints     !== undefined ? prev.swapOldPoints     : (ptsTable[prev.swapOldPos-1]  || 0);
+    if(undoMyDriver) {
+      undoMyDriver.seasonPoints = (undoMyDriver.seasonPoints || 0) - swapAppliedMyPts  + baseMyPts;
+      undoMyDriver.totalPoints  = (undoMyDriver.totalPoints  || 0) - swapAppliedMyPts  + baseMyPts;
+      if(prev.swapOldPos===1 && WR._baselinePos!==1){ undoMyDriver.wins = Math.max(0,(undoMyDriver.wins||0)-1); if(undoMyTeam) undoMyTeam.wins=Math.max(0,(undoMyTeam.wins||0)-1); }
+      if(WR._baselinePos===1 && prev.swapOldPos!==1){ undoMyDriver.wins=(undoMyDriver.wins||0)+1; if(undoMyTeam) undoMyTeam.wins=(undoMyTeam.wins||0)+1; }
+      if(prev.swapOldPos<=3 && WR._baselinePos>3)  { undoMyDriver.podiums=Math.max(0,(undoMyDriver.podiums||0)-1); }
+      if(WR._baselinePos<=3 && prev.swapOldPos>3)  { undoMyDriver.podiums=(undoMyDriver.podiums||0)+1; }
+    }
+    if(undoMyTeam) {
+      undoMyTeam.seasonPoints = (undoMyTeam.seasonPoints||0) - swapAppliedMyPts + baseMyPts;
+      undoMyTeam.totalPoints  = (undoMyTeam.totalPoints ||0) - swapAppliedMyPts + baseMyPts;
+    }
+    if(undoSwapDriver) {
+      undoSwapDriver.seasonPoints = (undoSwapDriver.seasonPoints||0) - swapAppliedRivPts + baseRivPts;
+      undoSwapDriver.totalPoints  = (undoSwapDriver.totalPoints ||0) - swapAppliedRivPts + baseRivPts;
+      if(WR._baselinePos===1 && prev.swapOldPos!==1){ undoSwapDriver.wins=Math.max(0,(undoSwapDriver.wins||0)-1); if(undoSwapTeam) undoSwapTeam.wins=Math.max(0,(undoSwapTeam.wins||0)-1); }
+      if(prev.swapOldPos===1 && WR._baselinePos!==1){ undoSwapDriver.wins=(undoSwapDriver.wins||0)+1; if(undoSwapTeam) undoSwapTeam.wins=(undoSwapTeam.wins||0)+1; }
+      if(WR._baselinePos<=3 && prev.swapOldPos>3)  { undoSwapDriver.podiums=Math.max(0,(undoSwapDriver.podiums||0)-1); }
+      if(prev.swapOldPos<=3 && WR._baselinePos>3)  { undoSwapDriver.podiums=(undoSwapDriver.podiums||0)+1; }
+    }
+    if(undoSwapTeam && undoSwapTeam !== undoMyTeam) {
+      undoSwapTeam.seasonPoints = (undoSwapTeam.seasonPoints||0) - swapAppliedRivPts + baseRivPts;
+      undoSwapTeam.totalPoints  = (undoSwapTeam.totalPoints ||0) - swapAppliedRivPts + baseRivPts;
+    }
+    WR._lastSwap = null;
+  }
+
+  // ── Step 2: If target is baseline — pure restore, no new swap needed ──
+  if(targetPos === WR._baselinePos) {
+    // Step 1 already restored positions and points for both drivers.
+    // Ensure player points are correct at baseline (guard for first-call edge case).
+    var ptsArr2 = WR.isSprint ? [8,7,6,5,4,3,2,1] : (window.DATA && DATA.points ? DATA.points : [25,18,15,12,10,8,6,4,2,1]);
+    myEntry.position = WR._baselinePos;
+    myEntry.points = ptsArr2[WR._baselinePos-1] || 0;
+    WR._bonusApplied = false; // no net adjustment — fully back to baseline
+    return;
+  }
+
+  // ── Step 3: Find swap target in the freshly-restored state ──
+  var swapEntry = resultArr.find(function(r){
+    return r.position === targetPos && !r.dnf && playerDriverIds.indexOf(r.driverId) < 0;
   });
   if(!swapEntry) return;
 
-  // Swap positions in the stored result
-  myEntry.position = newPos;
-  swapEntry.position = oldPos;
+  // ── Step 4: Apply new swap ──
+  myEntry.position = targetPos;
+  swapEntry.position = WR._baselinePos;
 
-  // Update points on swapped entries
+  // Update points
   const pts = WR.isSprint
     ? [8,7,6,5,4,3,2,1]
     : (window.DATA && DATA.points ? DATA.points : [25,18,15,12,10,8,6,4,2,1]);
-  myEntry.points    = pts[newPos-1] || 0;
-  swapEntry.points  = pts[oldPos-1] || 0;
+  myEntry.points    = pts[targetPos-1] || 0;
+  swapEntry.points  = pts[WR._baselinePos-1] || 0;
 
-  // Prune future events that contradict the new classification
-  // Remove "moves up to P{n}" / "drops to P{n}" events referencing either driver
-  // that are still in the unplayed queue (WR.idx onwards)
+  // Remember this swap for future undo — store rival's original points too
+  WR._lastSwap = { swapId: swapEntry.driverId, swapOldPos: targetPos, swapOldPoints: pts[targetPos-1] || 0, myBaselinePoints: pts[WR._baselinePos-1] || 0 };
+
+  // ── Step 5: Update underlying championship state ──────────────────────────
+  // raceResult entries are now correct — mirror the delta into driver/team season totals.
+  // We compute the point delta vs what was previously in effect (baseline points for both).
+  var myDriver    = State.getDriver(myEntry.driverId);
+  var swapDriver  = State.getDriver(swapEntry.driverId);
+  var myTeam      = myDriver   ? State.getTeam(myDriver.teamId)   : null;
+  var swapTeam    = swapDriver ? State.getTeam(swapDriver.teamId) : null;
+
+  var myOldPts    = WR._lastSwap.myBaselinePoints;   // what player had before any swap
+  var myNewPts    = pts[targetPos-1] || 0;
+  var swapOldPts  = WR._lastSwap.swapOldPoints;      // what rival had at their original slot
+  var swapNewPts  = pts[WR._baselinePos-1] || 0;
+
+  if(myDriver) {
+    myDriver.seasonPoints  = (myDriver.seasonPoints  || 0) - myOldPts  + myNewPts;
+    myDriver.totalPoints   = (myDriver.totalPoints   || 0) - myOldPts  + myNewPts;
+    // Win/podium correction for player driver
+    var hadWin  = (WR._baselinePos === 1);
+    var nowWin  = (targetPos === 1);
+    if(nowWin  && !hadWin)  { myDriver.wins++;    if(myTeam) myTeam.wins++; }
+    if(hadWin  && !nowWin)  { myDriver.wins = Math.max(0, myDriver.wins-1); if(myTeam) myTeam.wins = Math.max(0, (myTeam.wins||0)-1); }
+    var hadPod  = (WR._baselinePos <= 3);
+    var nowPod  = (targetPos <= 3);
+    if(nowPod  && !hadPod)  { myDriver.podiums = (myDriver.podiums||0) + 1; }
+    if(hadPod  && !nowPod)  { myDriver.podiums = Math.max(0, (myDriver.podiums||0) - 1); }
+  }
+  if(myTeam) {
+    myTeam.seasonPoints = (myTeam.seasonPoints || 0) - myOldPts + myNewPts;
+    myTeam.totalPoints  = (myTeam.totalPoints  || 0) - myOldPts + myNewPts;
+  }
+  if(swapDriver) {
+    swapDriver.seasonPoints = (swapDriver.seasonPoints || 0) - swapOldPts + swapNewPts;
+    swapDriver.totalPoints  = (swapDriver.totalPoints  || 0) - swapOldPts + swapNewPts;
+    // Win/podium correction for swap driver
+    var swapHadWin = (targetPos === 1);
+    var swapNowWin = (WR._baselinePos === 1);
+    if(swapNowWin && !swapHadWin) { swapDriver.wins++; if(swapTeam) swapTeam.wins++; }
+    if(swapHadWin && !swapNowWin) { swapDriver.wins = Math.max(0, swapDriver.wins-1); if(swapTeam) swapTeam.wins = Math.max(0, (swapTeam.wins||0)-1); }
+    var swapHadPod = (targetPos <= 3);
+    var swapNowPod = (WR._baselinePos <= 3);
+    if(swapNowPod && !swapHadPod) { swapDriver.podiums = (swapDriver.podiums||0) + 1; }
+    if(swapHadPod && !swapNowPod) { swapDriver.podiums = Math.max(0, (swapDriver.podiums||0) - 1); }
+  }
+  if(swapTeam && swapTeam !== myTeam) {
+    swapTeam.seasonPoints = (swapTeam.seasonPoints || 0) - swapOldPts + swapNewPts;
+    swapTeam.totalPoints  = (swapTeam.totalPoints  || 0) - swapOldPts + swapNewPts;
+  }
+
+  // Prune future unplayed events that contradict the new classification
+  // Broad filter: remove any position-narrative event mentioning either affected driver
   var affectedNames = [myEntry.driverName, swapEntry.driverName];
+  var positionKeywords = ['moves up', 'drops to', 'up to P', 'down to P', 'leads', 'P1 —', 'P2 —', 'timing', 'fastest lap context'];
   WR.events = WR.events.filter(function(ev, idx) {
     if(idx <= WR.idx) return true; // already played — keep
-    if(ev.type !== 'position_change' && ev.type !== 'overtake') return true;
-    // Remove queued position-change events for affected drivers
     var txt = ev.text || '';
-    for(var i=0; i<affectedNames.length; i++){
-      if(txt.indexOf(affectedNames[i]) >= 0) return false;
+    var evType = ev.type || '';
+    // Always remove typed position/overtake events for affected drivers
+    if(evType === 'position_change' || evType === 'overtake' || evType === 'timing') {
+      for(var i=0; i<affectedNames.length; i++){
+        if(txt.indexOf(affectedNames[i]) >= 0) return false;
+      }
+    }
+    // Also remove any unplayed event that makes a specific P1/P2 claim about affected drivers
+    if(txt.indexOf('P1') >= 0 || txt.indexOf('P2') >= 0) {
+      for(var j=0; j<affectedNames.length; j++){
+        if(txt.indexOf(affectedNames[j]) >= 0) return false;
+      }
     }
     return true;
   });
 
-  // Inject a brief corrective narrative event at current lap
+  // Inject single corrective narrative at current playback position
   var currentLap = WR.events[WR.idx] ? WR.events[WR.idx].lap : (race.laps || 58);
-  var narrative = posDelta < 0
-    ? '⭐ ' + myEntry.driverName + ' moves up to P' + newPos + ' — the strategy is working!'
-    : '⭐ ' + myEntry.driverName + ' drops to P' + newPos + ' — ' + swapEntry.driverName + ' gets ahead.';
+  var movDir = targetPos < currentPos ? 'up' : 'down';
+  var narrative = movDir === 'up'
+    ? '⭐ ' + myEntry.driverName + ' moves up to P' + targetPos + ' — the strategy is paying off!'
+    : '⭐ ' + myEntry.driverName + ' drops to P' + targetPos + ' — ' + swapEntry.driverName + ' gets the position.';
   WR.events.splice(WR.idx + 1, 0, {
     lap: currentLap,
     type: 'position_change',
@@ -11851,8 +11981,8 @@ window._wrApplyBonusNow = function(bonusDelta) {
     driverPositions: null
   });
 
-  // Store applied delta so the end-of-race swap block is idempotent
-  if(!WR._bonusApplied) WR._bonusApplied = {myId: myEntry.driverId, oldPos: oldPos, newPos: newPos};
+  // Mark bonus as applied so end-of-race block is idempotent
+  WR._bonusApplied = true;
 };
 
 window._wrPitDecision = function(decisionId, pitNow, auto) {
@@ -11882,6 +12012,7 @@ window._wrPitDecision = function(decisionId, pitNow, auto) {
     }
     if(!WR.pitDecisionBonus) WR.pitDecisionBonus = 0;
     WR.pitDecisionBonus += auto ? 0 : (ev.isSafetyCarPit ? 0.9 : 0.4); // SC pit is bigger reward
+    if(!auto) window._wrApplyBonusNow();
 
   } else {
     // ── STAY OUT ────────────────────────────────────────────────
@@ -11925,7 +12056,7 @@ window._wrPitDecision = function(decisionId, pitNow, auto) {
     }
     if(!WR.pitDecisionBonus) WR.pitDecisionBonus = 0;
     WR.pitDecisionBonus += bonusDelta;
-    window._wrApplyBonusNow(bonusDelta);
+    window._wrApplyBonusNow();
 
     // Inject a forced pit event 2–5 laps later so the player sees the eventual stop
     const lastLap = WR.events[WR.events.length-1]?.lap || 58;
@@ -11986,7 +12117,7 @@ window._wrWeatherDecision = function(wdId, switchNow, auto) {
     }
     if(!WR.weatherCallBonus) WR.weatherCallBonus = 0;
     WR.weatherCallBonus += auto ? 0 : 0.5;
-    window._wrApplyBonusNow(auto ? 0 : 0.5);
+    if(!auto) window._wrApplyBonusNow();
 
   } else {
     // ── STAY ON SLICKS ─────────────────────────────────────
@@ -12007,7 +12138,7 @@ window._wrWeatherDecision = function(wdId, switchNow, auto) {
     }
     if(!WR.weatherCallBonus) WR.weatherCallBonus = 0;
     WR.weatherCallBonus += bold ? 0.2 : -0.5;
-    window._wrApplyBonusNow(bold ? 0.2 : -0.5);
+    window._wrApplyBonusNow();
 
     // Inject forced pit for inters 2–3 laps later
     const forcedLap = Math.min(
