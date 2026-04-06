@@ -6180,8 +6180,11 @@ const UI = {
     const g = State.game;
     const race = State.getCurrentRace();
     if(!race) return;
-    const weatherRisk = Math.random() < 0.3 ? randFloat(0.1, 0.55) : 0; // stochastic forecast
-    race._weatherRisk = weatherRisk; // store so sim can use same value
+    // Only generate weatherRisk once per race — preserve it on re-opens so forecast doesn't change
+    if(race._weatherRisk === undefined) {
+      race._weatherRisk = Math.random() < 0.3 ? randFloat(0.1, 0.55) : 0;
+    }
+    const weatherRisk = race._weatherRisk;
     const strat = DATA.getStrategyOptions(race, weatherRisk);
     const tc = DATA.tires;
     const currentStratId = race._chosenStrategy || (g.autoStrategy ? 'auto' : null);
@@ -6253,7 +6256,9 @@ const UI = {
       <div style="font-size:12px;font-weight:700;color:var(--tx2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em">Choose Your Strategy</div>
       <div style="font-size:11px;color:var(--tx3);margin-bottom:10px">Select a team strategy below, or use the split panel above to set per-driver strategies individually — no team pick needed if both drivers have one.</div>
       ${(()=>{
-        const myDrivers = State.getPlayerDrivers();
+        // Use actual racing drivers — includes reserve subs for injured drivers
+        const _racingIds = State.getPlayerRacingDriverIds ? State.getPlayerRacingDriverIds() : State.getPlayerDrivers().map(d=>d.id);
+        const myDrivers = _racingIds.map(id=>State.getDriver(id)).filter(Boolean);
         if(myDrivers.length < 2) return '';
         return `<div style="background:var(--bg3);border:1px solid var(--bd);border-radius:8px;padding:10px 12px;margin-bottom:12px;font-size:12px">
           <div style="font-weight:700;color:var(--tx2);margin-bottom:6px">Split strategy — set different strategies per driver</div>
@@ -6312,7 +6317,8 @@ const UI = {
   _confirmStrategy(){
     const race = State.getCurrentRace();
     if(!race) return;
-    const myDrivers = State.getPlayerDrivers();
+    const _racingIds2 = State.getPlayerRacingDriverIds ? State.getPlayerRacingDriverIds() : State.getPlayerDrivers().map(d=>d.id);
+    const myDrivers = _racingIds2.map(id=>State.getDriver(id)).filter(Boolean);
     const allHaveDriverStrat = myDrivers.length > 0 && myDrivers.every(d=>
       race._driverStrategies && race._driverStrategies[d.id]
     );
@@ -6326,6 +6332,8 @@ const UI = {
     race._chosenStrategy = chosen === 'split' ? null : chosen;
     // Only set autoStrategy true if the player explicitly chose auto — never when using splits
     State.game.autoStrategy = (chosen === 'auto');
+    // If using splits, ensure autoStrategy global flag is off so simRace doesn't override
+    if(allHaveDriverStrat) State.game.autoStrategy = false;
     Storage.autosave();
     UI.closeModal();
     // Build toast label
@@ -9761,6 +9769,8 @@ const UI = {
             '🐛 Post-race debrief: race name now shows in white on the dark win/podium banner — was previously near-black on dark background making it unreadable.',
             '🐛 Watch Race: fixed classification corruption in _wrApplyBonusNow — swap partner was resolved before undoing the previous swap, which could leave two drivers on the same position when a later decision returned the bonus toward zero.',
             '🐛 Watch Race: live pit/weather decision swaps now also update driver and team season points, wins, and podiums immediately — previously the live swap only corrected raceResult positions while championship state remained based on the pre-swap result.',
+            '🐛 Split strategy: both drivers were defaulting to the same strategy due to two issues — reserve substitute IDs not matching the split entries, and autoStrategy flag bleeding through from a prior race. Both fixed.',
+            '🐛 Strategy picker: weather forecast was re-randomised every time the picker was opened, so rain chance could flip between views. Now generated once per race and preserved on re-open.',
           ]],
           ['v2.0.4','Apr 2026',[
             '🐛 Sprint pole now counts toward pole position objectives and career/season pole totals — was previously not awarded at all.',
