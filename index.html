@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -728,8 +728,8 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:18px;max-width:320px;padding:14px 16px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
           <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">Latest Update</div>
-          <div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.0.6 is live</div>
-          <div style="font-size:12px;line-height:1.45;color:#666">Watch Race fixes, offseason fixes, clearer upgrade timing, and more quality-of-life polish from community feedback.</div>
+          <div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.0.7 is live</div>
+          <div style="font-size:12px;line-height:1.45;color:#666">Watch Race sync improvements, stronger contract and injury visibility, clearer upgrade timing, and more community-driven polish.</div>
         </div>
       </div>
     </div>
@@ -772,7 +772,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </div>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game" class="land-start">Start Career →</button>
-<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.0.6</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.0.7</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -1812,6 +1812,41 @@ const State = {
   getProspects(){return this.game.drivers.filter(d=>d.isProspect&&!d.retired).sort((a,b)=>b.potential-a.potential);},
   getDriverStandings(){return this.game.drivers.filter(d=>!d.retired&&d.teamId&&(!d.isReserve||d.seasonPoints>0)&&!d.isProspect&&!d.isFreeAgent).map(d=>({driver:d,points:d.seasonPoints,wins:d.wins,isSubstitute:!!d.isReserve})).sort((a,b)=>b.points-a.points||b.wins-a.wins);},
   getConstructorStandings(){return this.game.teams.map(t=>({team:t,points:t.seasonPoints,wins:t.wins})).sort((a,b)=>b.points-a.points||b.wins-a.wins);},
+  getActiveInjury(driverId){
+    const g = this.game;
+    return (g.injuries||[]).find(inj => !inj.cleared && String(inj.driverId)===String(driverId) && g.raceIndex <= inj.returnsAfterRace) || null;
+  },
+  getActiveInjurySubIds(teamId){
+    const g = this.game;
+    const active = (g.injuries||[]).filter(inj=>!inj.cleared && g.raceIndex <= inj.returnsAfterRace && (!teamId || inj.teamId===teamId));
+    const subs = new Set();
+    active.forEach(inj=>{
+      const subId = (g._injurySubs||{})[inj.driverId];
+      if(subId!=null) subs.add(String(subId));
+    });
+    return subs;
+  },
+  getDriverMarketSalary(d){
+    if(!d) return 1;
+    const baseSal = d.rating>=95?20:d.rating>=90?15:d.rating>=85?10:d.rating>=80?7:d.rating>=75?5:d.rating>=70?3:2;
+    const champBonus = Math.min((d.championships||0)*3, 9);
+    const youngStarBonus = d.age<25&&d.potential>85 ? (d.potential>=92?3:2) : 0;
+    const marketabilityBonus = d.marketability>=92?2:d.marketability>=85?1:0;
+    const moraleMult = d.morale<50?0.95:1.0;
+    const ageMult = d.age>=38?0.60:d.age>=36?0.70:d.age>=33?0.82:1.0;
+    return Math.max(1, Math.round((baseSal+champBonus+youngStarBonus+marketabilityBonus) * moraleMult * ageMult));
+  },
+  getDriverDemandSalary(d, kind='market'){
+    if(!d) return 1;
+    const market = this.getDriverMarketSalary(d);
+    const premium =
+      kind==='renewal' ? (d.rating>=92?1.10:d.rating>=88?1.06:d.age<25&&d.potential>88?1.08:1.0) :
+      kind==='approach' ? (d.rating>=92?1.20:d.rating>=88?1.12:d.age<25&&d.potential>88?1.12:1.03) :
+      kind==='signing' ? (d.rating>=92?1.12:d.rating>=88?1.08:d.age<25&&d.potential>88?1.08:1.0) :
+      1.0;
+    const moraleMult = d.morale<50?0.92:1.0;
+    return Math.max(1, Math.ceil(market * premium * moraleMult));
+  },
   addPoints(driverId, pts, fallbackTeamId){const d=this.getDriver(driverId);if(!d)return;d.seasonPoints+=pts;d.totalPoints+=pts;const teamId=d.teamId||fallbackTeamId;const team=this.getTeam(teamId);if(team){team.seasonPoints+=pts;team.totalPoints+=pts;}},
   getDriverSeasonPos(driverId){const idx=this.getDriverStandings().findIndex(s=>s.driver.id===driverId);return idx>=0?idx+1:null;},
   getConstructorSeasonPos(teamId){const idx=this.getConstructorStandings().findIndex(s=>s.team.id===teamId);return idx>=0?idx+1:null;},
@@ -2104,6 +2139,13 @@ const Sim = {
     // Filter out any stale entries where driver or team no longer valid
     const activeInjuriesForRace = Sim._getActiveInjuries ? Sim._getActiveInjuries() : [];
     const injuredIdsForRace = new Set(activeInjuriesForRace.map(i=>i.driverId));
+    const reserveSubIds = new Set();
+    activeInjuriesForRace.forEach(inj=>{
+      const chosenId = (g._injurySubs||{})[inj.driverId];
+      const chosen = chosenId && State.game.drivers.find(r=>r.id===chosenId&&r.isReserve&&r.teamId===inj.teamId&&!r.retired);
+      const reserve = chosen || State.game.drivers.find(r=>r.isReserve&&r.teamId===inj.teamId&&!r.retired&&!injuredIdsForRace.has(r.id)&&!reserveSubIds.has(r.id));
+      if(reserve) reserveSubIds.add(reserve.id);
+    });
     const qualiOrder=[...race.qualiResult].filter(e=>{
       if(!e||e.driverId==null) return false;
       const d=State.getDriver(e.driverId);
@@ -2284,6 +2326,7 @@ const Sim = {
     });
     const lapEvents=Sim._generateLapEvents(race,results,weather,hadSafetyCar,rainStartLap);
     race.raceDone=true; race.raceResult=results; race.weather=weather; race.hadSafetyCar=hadSafetyCar; race.rainStartLap=rainStartLap||null; race.lapEvents=lapEvents;
+    race._raceSubIds = Array.from(reserveSubIds);
     // Save strategy context for post-race display before clearing ephemeral fields
     race._strategyUsed = race._chosenStrategy || null;
     race._weatherRiskUsed = race._weatherRisk || 0;
@@ -2408,18 +2451,25 @@ const Sim = {
       : (race._chosenStrategy || race._strategyUsed);
     const stratData = DATA.getStrategyOptions(race, race._weatherRisk || race._weatherRiskUsed || 0);
     const chosenOpt = chosenStratId && chosenStratId !== 'auto' ? stratData.options.find(o=>o.id===chosenStratId) : null;
+    const getPlayerStrategyOpt = function(driverId) {
+      const splitId = race._driverStrategies && race._driverStrategies[driverId];
+      const chosenId = splitId || ((race._chosenStrategy && race._chosenStrategy !== 'split') ? race._chosenStrategy : race._strategyUsed);
+      if(!chosenId || chosenId === 'auto') return null;
+      return stratData.options.find(o=>o.id===chosenId) || null;
+    };
 
     // Safety car
     if(scLap) {
       events.push({lap:scLap, type:'safety', text:`🚗 Safety car deployed on lap ${scLap}. The field bunches up.`});
       // Offer SC pit decision if SC falls before or near the player's first pit window
-      if(chosenOpt && chosenOpt.stints.length > 1) {
-        const firstWindowOpen = chosenOpt.pitWindows[0] || Math.round(laps * 0.28);
-        const playerDriversForSC = finishers.filter(r => isPlayer(r) && !r.dnf);
-        if(scLap < firstWindowOpen + 3 && playerDriversForSC.length > 0) {
-          const nextCompound = chosenOpt.stints[1]?.compound || 'hard';
+      const playerDriversForSC = finishers.filter(r => isPlayer(r) && !r.dnf);
+      playerDriversForSC.forEach(r => {
+        const driverOpt = getPlayerStrategyOpt(r.driverId) || chosenOpt;
+        if(!driverOpt || driverOpt.stints.length <= 1) return;
+        const firstWindowOpen = driverOpt.pitWindows[0] || Math.round(laps * 0.28);
+        if(scLap < firstWindowOpen + 3) {
+          const nextCompound = driverOpt.stints[1]?.compound || 'hard';
           const nextTire = DATA.tires[nextCompound] || DATA.tires.medium;
-          playerDriversForSC.forEach(r => {
             events.push({
               lap: scLap + 1,
               type: 'pit_decision',
@@ -2427,14 +2477,13 @@ const Sim = {
               driverName: r.driverName,
               driverId: r.driverId,
               stopNum: 1,
-              totalStops: chosenOpt.stints.length - 1,
+              totalStops: driverOpt.stints.length - 1,
               nextCompound, nextTireName: nextTire.name,
               windowOpen: scLap + 1, windowClose: scLap + 3,
               text: `🚗 ⭐ ${r.driverName} — safety car pit opportunity!`
             });
-          });
         }
-      }
+      });
     }
 
     // DNF events scattered across race
@@ -2442,6 +2491,14 @@ const Sim = {
       const lap = r.dnfLap || randInt(5, laps-2);
       const reasons = ['mechanical failure','brake failure','hydraulics issue','collision','gearbox failure','power unit failure','puncture'];
       const reason = reasons[randInt(0,reasons.length-1)];
+      const dnfPos = livePos[r.driverId];
+      if(dnfPos != null && (r.teamId === playerTeamId || dnfPos <= 6) && lap > 2) {
+        const preDnfSnap = snapPos();
+        const statusText = r.teamId === playerTeamId
+          ? `⭐ ${r.driverName} is still running P${dnfPos} before trouble strikes.`
+          : `📍 ${r.driverName} was running P${dnfPos} before the retirement.`;
+        events.push({lap:Math.max(2, lap-1), type:'position_change', text:statusText, driverPositions:preDnfSnap});
+      }
       // Mark as retired — snapshot system excludes them (driverFinal has no entry)
       livePos[r.driverId] = null;
       events.push({lap, type:'dnf', text:`🚩 ${r.driverName} (${r.teamName}) retired — ${reason}.`, driverPositions: snapPos()});
@@ -2501,9 +2558,9 @@ const Sim = {
     const lastEmittedPos = {};
     playerIds.forEach(id => { lastEmittedPos[id] = driverStart[id] || 99; });
 
-    // Check every 5 laps — always include the final lap
-    // Larger steps = fewer jarring snaps between commentary events
-    const stepSize = 5;
+    // Check every lap for player drivers so real position changes are narrated promptly.
+    // This keeps the feed aligned with the live order instead of waiting for 5-lap chunks.
+    const stepSize = 1;
     const stepLaps = [];
     for(let lap = stepSize; lap < laps; lap += stepSize) stepLaps.push(lap);
     stepLaps.push(laps); // always include final lap
@@ -2599,6 +2656,59 @@ const Sim = {
     // driver is > driverFinal[id] + 5, it's likely a DNF-distortion artifact and we suppress
     // the reconciliation event rather than emit confusing "moves up to P11" commentary.
     // Instead we just emit a clean final position event.
+    const addBridgeSteps = function(name, driverId, finalPos, lastPos, lastLap, kind, isPlayerLike, baseSnap) {
+      if(lastPos == null || lastPos === finalPos) return false;
+      const delta = lastPos - finalPos;
+      if(Math.abs(delta) === 0) return false;
+      const stepDir = delta > 0 ? -1 : 1;
+      const stepCount = Math.max(1, Math.abs(delta));
+      const bridgeStart = Math.max(finalWindow, Math.min(laps - 2, Math.max(lastLap + 1, laps - stepCount - 1)));
+      const bridgeEnd = Math.max(bridgeStart, laps - 1);
+      const stepSpan = Math.max(1, bridgeEnd - bridgeStart);
+      const startFrom = lastPos;
+      const leadIcon = isPlayerLike ? '⭐ ' : (kind === 'podium' ? '🏁 ' : '⚡ ');
+      const makeSnap = function(pos) {
+        const snap = Object.assign({}, baseSnap || snapPos());
+        snap[driverId] = pos;
+        return snap;
+      };
+      let curPos = startFrom;
+      for(let i = 1; i <= stepCount; i++) {
+        const nextTarget = clamp(startFrom + stepDir * i, 1, 99);
+        if(nextTarget === curPos) continue;
+        const lap = Math.min(bridgeEnd, bridgeStart + Math.round(stepSpan * (i / stepCount)));
+        const stepSnap = makeSnap(nextTarget);
+        const isFinalStep = nextTarget === finalPos;
+        let text;
+        if(kind === 'podium' && isFinalStep) {
+          if(finalPos === 1) {
+            text = stepDir < 0
+              ? leadIcon + name + ' takes the win after the late podium fight.'
+              : leadIcon + name + ' wins after the late race shuffle.';
+          } else if(finalPos === 2) {
+            text = stepDir < 0
+              ? leadIcon + name + ' edges up to P2 after the late podium fight.'
+              : leadIcon + name + ' drops to P2 after the late podium shuffle.';
+          } else if(finalPos === 3) {
+            text = stepDir < 0
+              ? leadIcon + name + ' edges up to P3 after the late podium fight.'
+              : leadIcon + name + ' drops to P3 after the late podium shuffle.';
+          } else {
+            text = stepDir < 0
+              ? leadIcon + name + ' moves up to P' + nextTarget + '.'
+              : leadIcon + name + ' drops to P' + nextTarget + '.';
+          }
+        } else {
+          text = stepDir < 0
+            ? leadIcon + name + ' moves up to P' + nextTarget + '.'
+            : leadIcon + name + ' drops to P' + nextTarget + '.';
+        }
+        events.push({ lap, type: 'position_change', text, driverPositions: stepSnap, bridgeGenerated: true });
+        curPos = nextTarget;
+      }
+      return true;
+    };
+
     playerIds.forEach(id => {
       const finalPos = driverFinal[id];
       const lastPos = lastEmittedPos[id];
@@ -2677,28 +2787,28 @@ const Sim = {
     // Pit stop events — use chosen strategy pit windows if available, else generic
     const tc = DATA.tires;
 
-    if(chosenOpt && chosenOpt.stints.length > 1) {
+    const playerDrivers = finishers.filter(r => isPlayer(r) && !r.dnf);
+    const playerStrategyPlans = playerDrivers
+      .map(r => ({ r, opt: getPlayerStrategyOpt(r.driverId) || chosenOpt }))
+      .filter(x => x.opt && x.opt.stints.length > 1);
+
+    if(playerStrategyPlans.length) {
       // Player has a real strategy — generate pit DECISION moments
-      const playerDrivers = finishers.filter(r => isPlayer(r) && !r.dnf);
       // Track which drivers already have a SC pit event for stop 1 — don't double-prompt
       const scPitDriverIds = new Set(events.filter(e=>e.isSafetyCarPit&&e.stopNum===1).map(e=>e.driverId));
-      for(let si = 0; si < chosenOpt.stints.length - 1; si++) {
-        const windowOpen  = chosenOpt.pitWindows[si*2]   || Math.round(laps * (0.28 + si*0.3));
-        const windowClose = chosenOpt.pitWindows[si*2+1] || windowOpen + 6;
-        const idealLap    = Math.round((windowOpen + windowClose) / 2); // centre of window
-        const nextCompound = chosenOpt.stints[si+1]?.compound || 'hard';
-        const nextTire = tc[nextCompound] || tc.medium;
-        const stopNum = si + 1;
-        const totalStops = chosenOpt.stints.length - 1;
-        const liveOrderForWindow = getOrderAtFrac(Math.min(0.98, idealLap / laps));
-        const livePosForWindow = {};
-        liveOrderForWindow.forEach((entry, idx) => { livePosForWindow[entry.id] = idx + 1; });
-        const playerDriversByTrackPos = playerDrivers.slice().sort((a, b) => {
-          const aPos = livePosForWindow[a.driverId] || 99;
-          const bPos = livePosForWindow[b.driverId] || 99;
-          return aPos - bPos;
-        });
-        playerDriversByTrackPos.forEach((r, driverIdx) => {
+      playerStrategyPlans.forEach(({r, opt}, driverIdx) => {
+        for(let si = 0; si < opt.stints.length - 1; si++) {
+          const windowOpen  = opt.pitWindows[si*2]   || Math.round(laps * (0.28 + si*0.3));
+          const windowClose = opt.pitWindows[si*2+1] || windowOpen + 6;
+          const idealLap    = Math.round((windowOpen + windowClose) / 2); // centre of window
+          const nextCompound = opt.stints[si+1]?.compound || 'hard';
+          const nextTire = tc[nextCompound] || tc.medium;
+          const stopNum = si + 1;
+          const totalStops = opt.stints.length - 1;
+          const liveOrderForWindow = getOrderAtFrac(Math.min(0.98, idealLap / laps));
+          const livePosForWindow = {};
+          liveOrderForWindow.forEach((entry, idx) => { livePosForWindow[entry.id] = idx + 1; });
+          // Use the driver's own plan, but stagger the commentary a bit by their live track position.
           // Don't generate a pit card if the driver DNFs before or shortly after the pit window
           const driverDnfLapForPit = driverDnfLap[r.driverId];
           if(driverDnfLapForPit && driverDnfLapForPit <= windowClose + 5) return;
@@ -2725,8 +2835,8 @@ const Sim = {
             windowOpen, windowClose,
             text: `🔧 ⭐ ${r.driverName} — pit window open! Stop ${stopNum} of ${totalStops}.`
           });
-        });
-      }
+        }
+      });
       // AI pit stops — generic
       const aiPit1 = randInt(Math.floor(laps*0.25), Math.floor(laps*0.38));
       events.push({lap:aiPit1, type:'pit', text:`🔧 Pit stop window active. Rival teams making their moves.`});
@@ -2748,21 +2858,27 @@ const Sim = {
     }
 
     // Strategy outcome note near end of race
-    if(chosenOpt) {
+    if(playerStrategyPlans.length > 0) {
       const outcomeLap = Math.floor(laps * 0.88);
-      const recommended = stratData.options.find(o=>o.recommended);
-      const wasRecommended = recommended && chosenOpt.id === recommended.id;
-      const td2 = race.tireDeg || 0.6;
-      const laps2 = race.laps || 58;
-      const sl2 = Math.max(12, Math.round(laps2*(1-td2)*0.42));
-      const ml2 = Math.max(sl2+15, Math.round(laps2*(1-td2)*0.72));
-      const tireLife2 = {soft:sl2,medium:ml2,hard:999,inter:999,wet:999};
-      const overStressed = chosenOpt.stints.some(s=>(tireLife2[s.compound]||ml2)<s.laps);
-      const stratNote = wasRecommended
-        ? `📋 ${chosenOpt.label} — strategy working well. Good call before the race.`
-        : overStressed
-        ? `📋 ${chosenOpt.label} — tyres are struggling in the final stint.`
-        : `📋 ${chosenOpt.label} — solid execution from the pit wall.`;
+      const splitLabels = playerStrategyPlans.map(({r, opt}) => `${r.driverName.split(' ').pop()}: ${opt?.label || 'Auto'}`).join(' / ');
+      const stratNote = playerStrategyPlans.length > 1
+        ? `📋 Split strategy — ${splitLabels}.`
+        : (() => {
+            const opt = playerStrategyPlans[0].opt;
+            const recommended = stratData.options.find(o=>o.recommended);
+            const wasRecommended = recommended && opt && opt.id === recommended.id;
+            const td2 = race.tireDeg || 0.6;
+            const laps2 = race.laps || 58;
+            const sl2 = Math.max(12, Math.round(laps2*(1-td2)*0.42));
+            const ml2 = Math.max(sl2+15, Math.round(laps2*(1-td2)*0.72));
+            const tireLife2 = {soft:sl2,medium:ml2,hard:999,inter:999,wet:999};
+            const overStressed = opt && opt.stints.some(s=>(tireLife2[s.compound]||ml2)<s.laps);
+            return wasRecommended
+              ? `📋 ${opt.label} — strategy working well. Good call before the race.`
+              : overStressed
+              ? `📋 ${opt.label} — tyres are struggling in the final stint.`
+              : `📋 ${opt.label} — solid execution from the pit wall.`;
+          })();
       events.push({lap: outcomeLap, type:'pit', text: stratNote});
     } else if(!chosenStratId || chosenStratId === 'auto') {
       events.push({lap: Math.floor(laps*0.85), type:'pit', text:`📋 Auto strategy in play. Engineers managing the race from the pit wall.`});
@@ -2791,6 +2907,31 @@ const Sim = {
     const finalWindow = laps - 5;
     const playerFinalPos = {}; // driverId -> final position
     finishers.forEach(r=>{ playerFinalPos[r.driverId] = r.position; });
+    const extractDriverPosFromText = function(text, driverName) {
+      if(!text || !driverName) return null;
+      const shortName = driverName.split(' ').pop();
+      const escFull = driverName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const escShort = shortName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const patterns = [
+        new RegExp('P(\\d+)\\s+' + escFull + '\\b'),
+        new RegExp('P(\\d+)\\s+' + escShort + '\\b'),
+        new RegExp(escFull + '\\b.*?P(\\d+)'),
+        new RegExp(escShort + '\\b.*?P(\\d+)')
+      ];
+      for(const pat of patterns) {
+        const m = text.match(pat);
+        if(m) return parseInt(m[1], 10);
+      }
+      return null;
+    };
+    const getDriverPosFromEvent = function(ev, driverId, driverName) {
+      if(!ev) return null;
+      if(ev.driverPositions && ev.driverPositions[driverId] !== undefined) {
+        const snapPos = parseInt(ev.driverPositions[driverId], 10);
+        if(!isNaN(snapPos)) return snapPos;
+      }
+      return extractDriverPosFromText(ev.text, driverName);
+    };
 
     // Build set of player driver names for quick lookup
     const playerDriverNames = new Set(
@@ -2818,6 +2959,7 @@ const Sim = {
       // Find the driver this event is about
       let driverId = null;
       results.forEach(r=>{ if(ev.text && ev.text.includes(r.driverName)) driverId = r.driverId; });
+      if(driverId && playerIds.indexOf(driverId) >= 0) continue;
       const actualFinal = driverId ? playerFinalPos[driverId] : null;
       // Remove if: mentions a non-final position, OR is a drop event when driver finishes better
       if(actualFinal !== null && mentionedPos !== null && mentionedPos !== actualFinal){
@@ -2845,81 +2987,100 @@ const Sim = {
         }
       });
       if(!driverId || mentionedPos === null) continue;
+      if(playerIds.indexOf(driverId) >= 0) continue;
       if(finalPosByDriver[driverId] !== mentionedPos) events.splice(i, 1);
     }
 
     // Ensure the closing laps always narrate the classified finish for player
     // drivers. Without a final bridge event, large late gains can leave the feed
     // stranded on something like "P14" before the result table jumps to "P7".
+    const bridgedPlayerDrivers = new Set();
     playerIds.forEach(id => {
       const finalPos = driverFinal[id];
       if(finalPos === undefined) return;
       const r = results.find(x => x.driverId === id);
       if(!r || r.dnf) return;
+      const shortName = r.driverName.split(' ').pop();
+      const shortNameRegex = new RegExp('\\b' + shortName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b');
 
       let lastMentionPos = null;
       let lastMentionLap = 0;
       for(let i = events.length - 1; i >= 0; i--) {
         const ev = events[i];
         if(!ev || !ev.text || ev.lap >= laps) continue;
-        if(ev.type !== 'overtake' && ev.type !== 'position' && ev.type !== 'position_change') continue;
-        if(ev.text.indexOf(r.driverName) < 0) continue;
-        const pm = ev.text.match(/P(\d+)/);
-        if(!pm) continue;
-        lastMentionPos = parseInt(pm[1], 10);
+        if(ev.type !== 'overtake' && ev.type !== 'position' && ev.type !== 'position_change' && ev.type !== 'timing') continue;
+        if(ev.text.indexOf(r.driverName) < 0 && !shortNameRegex.test(ev.text)) continue;
+        const pos = getDriverPosFromEvent(ev, id, r.driverName);
+        if(pos == null) continue;
+        lastMentionPos = pos;
         lastMentionLap = ev.lap || 0;
         break;
       }
 
       if(lastMentionPos === null || lastMentionPos === finalPos) return;
 
+      if(addBridgeSteps(r.driverName, id, finalPos, lastMentionPos, lastMentionLap, 'player', true, finalSnap)) {
+        bridgedPlayerDrivers.add(id);
+        return;
+      }
       const bridgeLap = Math.max(finalWindow, Math.min(laps - 1, Math.max(lastMentionLap + 1, laps - 2)));
       const movingUp = finalPos < lastMentionPos;
       const bridgeExclaim = finalPos <= 1 ? ' P1!' : finalPos <= 3 ? ' 🔥' : finalPos <= 6 ? ' 💪' : '';
+      const bridgeSnap = Object.assign({}, finalSnap);
+      bridgeSnap[id] = finalPos;
       events.push({
         lap: bridgeLap,
         type: 'position_change',
         text: movingUp
-          ? `⭐ ${r.driverName} charges up to P${finalPos} in the closing laps!${bridgeExclaim}`
+          ? `⭐ ${r.driverName} capitalizes on late chaos to finish P${finalPos}.${bridgeExclaim}`
           : `⭐ ${r.driverName} falls to P${finalPos} late on.${bridgeExclaim}`,
-        driverPositions: finalSnap
+        driverPositions: bridgeSnap,
+        bridgeGenerated: true
       });
+      bridgedPlayerDrivers.add(id);
     });
 
     // Apply the same late-race bridge idea to the podium finishers so the feed
     // explains who actually wins or grabs the top spots, even when they're AI
     // drivers and the player is just watching the story unfold.
     finishers.slice(0, 3).forEach(r => {
+      if(bridgedPlayerDrivers.has(r.driverId)) return;
       const finalPos = r.position;
+      const shortName = r.driverName.split(' ').pop();
+      const shortNameRegex = new RegExp('\\b' + shortName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b');
       let lastMentionPos = null;
       let lastMentionLap = 0;
       for(let i = events.length - 1; i >= 0; i--) {
         const ev = events[i];
         if(!ev || !ev.text || ev.lap >= laps) continue;
-        if(ev.text.indexOf(r.driverName) < 0) continue;
-        const pm = ev.text.match(/P(\d+)/);
-        if(!pm) continue;
-        lastMentionPos = parseInt(pm[1], 10);
+        if(ev.text.indexOf(r.driverName) < 0 && !shortNameRegex.test(ev.text)) continue;
+        const pos = getDriverPosFromEvent(ev, r.driverId, r.driverName);
+        if(pos == null) continue;
+        lastMentionPos = pos;
         lastMentionLap = ev.lap || 0;
         break;
       }
 
       if(lastMentionPos === null || lastMentionPos === finalPos) return;
 
+      if(addBridgeSteps(r.driverName, r.driverId, finalPos, lastMentionPos, lastMentionLap, 'podium', playerIds.indexOf(r.driverId) >= 0, finalSnap)) return;
       const bridgeLap = Math.max(finalWindow, Math.min(laps - 1, Math.max(lastMentionLap + 1, laps - 2)));
       const movingUp = finalPos < lastMentionPos;
+      const bridgeSnap = Object.assign({}, finalSnap);
+      bridgeSnap[r.driverId] = finalPos;
       const text = finalPos === 1
         ? (movingUp
-            ? `⚡ ${r.driverName} storms into the lead in the closing laps!`
-            : `⚡ ${r.driverName} hangs on at the front under huge pressure.`)
+            ? `🏁 ${r.driverName} takes the win after the late podium fight.`
+            : `🏁 ${r.driverName} wins after the late race shuffle.`)
         : movingUp
-          ? `⚡ ${r.driverName} rises to P${finalPos} late on.`
-          : `⚡ ${r.driverName} slips to P${finalPos} in the closing laps.`;
+          ? `🏁 ${r.driverName} edges up to P${finalPos} after the late podium fight.`
+          : `🏁 ${r.driverName} drops to P${finalPos} after the late podium shuffle.`;
       events.push({
         lap: bridgeLap,
         type: 'position_change',
         text,
-        driverPositions: finalSnap
+        driverPositions: bridgeSnap,
+        bridgeGenerated: true
       });
     });
 
@@ -3194,7 +3355,7 @@ const Sim = {
           const suitorPos = conStandingsNow.findIndex(s=>s.team.id===suitor.id)+1;
           const carDiff = suitor.carPerformance - (currentTeam?.carPerformance||60);
           const posDiff = currentPos - suitorPos; // positive = suitor is ahead in standings
-          const salaryOffer = Math.ceil(d.salary * (d.rating>=88?1.3:d.rating>=78?1.15:1.0));
+          const salaryOffer = State.getDriverDemandSalary(d,'approach');
           // Driver score: car improvement + position improvement + salary uplift - age penalty
           const ageMultiplier = d.age >= 35 ? 0.5 : d.age >= 32 ? 0.75 : 1.0;
           const score = (carDiff * 0.4 + posDiff * 3 + (salaryOffer - d.salary) * 0.5) * ageMultiplier;
@@ -3249,6 +3410,26 @@ const Sim = {
     }
 
     } catch(e) { console.warn('Transfer market error:', e); }
+
+    // ── 6b. Player-team contract watch ──
+    // Surface your own drivers when they are in the final year so contract risk
+    // becomes visible before the offseason rather than surprising the player later.
+    if(raceN >= 5 && raceN <= totalRaces - 1 && Math.random() < 0.35) {
+      const myRumourDrivers = g.drivers.filter(d=>
+        d.teamId === ptid && !d.retired && !d.isReserve && !d.isProspect && !d.isFreeAgent &&
+        d.contract <= 1 && d.rating >= 76
+      );
+      if(myRumourDrivers.length > 0) {
+        const d = pick(myRumourDrivers);
+        const t = State.getTeam(d.teamId);
+        const racesLeft = g.calendar.filter(r=>!r.raceDone).length;
+        push(pick([
+          `Transfer watch: <strong>${d.name}</strong> is in the final year of his deal at ${t?.name||'your team'}. Rivals are expected to monitor the situation closely.`,
+          `Paddock chatter: <strong>${d.name}</strong>'s contract is running down at ${t?.name||'your team'}. With ${racesLeft} races left, renewal talks may be getting urgent.`,
+          `Sources say ${t?.name||'your team'} may need to move quickly on <strong>${d.name}</strong>. His deal expires after this season and other teams are paying attention.`,
+        ]), 'transfers', '🔀');
+      }
+    }
 
     // ── 7. Player transfer market notification (race 6 only) ──
     try { if(raceN === 6) {
@@ -3692,7 +3873,7 @@ const Sim = {
       const champBonus = Math.min((d.championships||0)*3, 9);
       // Age discount for older declining drivers
       const ageMult = d.age>=36?0.65:d.age>=33?0.80:1.0;
-      const marketSal = Math.max(1, Math.round((baseSal+champBonus)*ageMult));
+      const marketSal = State.getDriverMarketSalary(d);
       // Only update if market rate is meaningfully higher — don't cut salaries mid-contract
       // Free agents and drivers with contract=0 get full recalc; active contracts soft-floor
       if(!d.teamId || d.contract<=0){
@@ -3905,7 +4086,7 @@ const Sim = {
       // Reduced from 60% to 35% — and only if driver has poor morale or explicit interest
       const poachChance = d.morale < 55 ? 0.5 : d.morale < 70 ? 0.35 : 0.2;
       if(suitor&&Math.random()<poachChance){
-        g.poachAttempts.push({driverId:d.id,driverName:d.name,teamId:suitor.id,teamName:suitor.name,offerSalary:Math.ceil(d.salary*1.3),offerYears:2});
+        g.poachAttempts.push({driverId:d.id,driverName:d.name,teamId:suitor.id,teamName:suitor.name,offerSalary:State.getDriverDemandSalary(d,'approach'),offerYears:2});
       }
     });
 
@@ -5113,7 +5294,7 @@ const UI = {
           <span style="font-size:11px;background:var(--bg3);padding:3px 8px;border-radius:10px;font-weight:600;color:${predColor}">🎯 P${predMin}–P${predMax}</span>
         </div>
         <div style="font-size:10px;color:var(--tx3);margin-top:5px;font-style:italic">${circuitType.tip}</div>
-        ${titleWatchBits.length?`<div style="margin-top:8px;padding:8px 10px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.35);border-radius:8px;font-size:11px;color:#b45309;font-weight:700">${titleWatchBits.join('<br>')}</div>`:''}
+        ${titleWatchBits.length?`<div style="margin-top:8px;margin-bottom:10px;padding:8px 10px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.35);border-radius:8px;font-size:11px;color:#b45309;font-weight:700;line-height:1.35">${titleWatchBits.join('<br>')}</div>`:''}
         ${race.qualiDone ? '<div style="margin-top:6px"><span class="quali-tag">✓ Qualifying done</span></div>' : ''}
         ${race.qualiDone && !race.raceDone ? (()=>{
     const stratState = GameActions._getRaceStrategyState(race);
@@ -5348,8 +5529,15 @@ const UI = {
       const pd = State.getPlayerDrivers();
       const drvStandings = State.getDriverStandings();
       driverCardsEl.innerHTML = pd.map(d=>{
+        const activeInjury = State.getActiveInjury ? State.getActiveInjury(d.id) : null;
+        const racesOut = activeInjury ? Math.max(0, activeInjury.returnsAfterRace - g.raceIndex) : 0;
         const moraleCol = d.morale>=75?'var(--grn)':d.morale>=50?'var(--amber)':'var(--red)';
         const contractCol = d.contract<=1?'var(--amber)':'var(--tx3)';
+        const contractRiskBadge = d.contract<=0
+          ? `<span style="font-size:9px;background:rgba(220,38,38,.12);color:#b91c1c;padding:1px 5px;border-radius:4px;font-weight:700">EXPIRED</span>`
+          : d.contract===1
+            ? `<span style="font-size:9px;background:rgba(245,158,11,.15);color:#b45309;padding:1px 5px;border-radius:4px;font-weight:700">AT RISK</span>`
+            : '';
         const dStPos = drvStandings.findIndex(s=>s.driver.id===d.id)+1;
         const lastRace = [...g.calendar].reverse().find(r=>r.raceDone&&r.raceResult?.find(x=>x.driverId===d.id));
         const lastRes = lastRace?.raceResult?.find(x=>x.driverId===d.id);
@@ -5360,7 +5548,9 @@ const UI = {
           <div style="flex:1;min-width:0">
             <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
               <span style="font-size:13px;font-weight:800">${d.name}</span>
+              ${contractRiskBadge}
               <span style="font-size:9px;background:${td.color||'#888'}18;color:${td.color||'#888'};padding:1px 5px;border-radius:4px;font-weight:700">${td.icon||''} ${td.label||d.trait||''}</span>
+              ${activeInjury ? `<span style="font-size:9px;background:rgba(220,38,38,.12);color:#b91c1b;padding:1px 5px;border-radius:4px;font-weight:700">INJURED · ${racesOut}r out</span>` : ''}
             </div>
             <div style="display:flex;align-items:center;gap:8px">
               <span style="font-size:11px;font-weight:700;color:var(--tx2)">${Math.round(d.rating)} OVR</span>
@@ -5469,10 +5659,13 @@ const UI = {
       const racesLeft = g.calendar.filter(r=>!r.raceDone).length;
       const myDrivers = State.getPlayerDrivers();
       const expiringDrivers = myDrivers.filter(d=>d.contract<=1);
-      if(racesLeft<=3 && racesLeft>0 && expiringDrivers.length>0){
+      if(expiringDrivers.length>0){
         contractWarnPanel.classList.remove('hidden');
+        const urgency = racesLeft<=3 && racesLeft>0
+          ? `Final ${racesLeft} race${racesLeft!==1?'s':''} of the season.`
+          : `Rival teams may start circling before the offseason.`;
         contractWarnPanel.innerHTML = `<div class="panel" style="border:1px solid var(--amber);background:rgba(245,158,11,.05)">
-          <div class="panel-title" style="color:var(--amber);margin-bottom:8px">⚠️ Contract${expiringDrivers.length>1?'s':''} Expiring</div>
+          <div class="panel-title" style="color:var(--amber);margin-bottom:8px">⚠️ Contract${expiringDrivers.length>1?'s':''} at Risk</div>
           ${expiringDrivers.map(d=>`
             <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bd)">
               <div>
@@ -5481,7 +5674,7 @@ const UI = {
               </div>
               <button class="btn btn-outline btn-sm" onclick="GameActions.renewDriver(${d.id})">📝 Renew</button>
             </div>`).join('')}
-          <div style="font-size:11px;color:var(--tx3);margin-top:8px">Renew now to avoid losing them to a rival in the offseason.</div>
+          <div style="font-size:11px;color:var(--tx3);margin-top:8px">${urgency} Renew now to avoid losing them to a rival in the offseason.</div>
         </div>`;
       } else {
         contractWarnPanel.classList.add('hidden');
@@ -5572,11 +5765,17 @@ const UI = {
       const ls = g.lastSprintResult || (g.lastRaceResult && g.lastRaceResult.race?.isSprint ? g.lastRaceResult : null);
       if((lr && lr.results && lr.results.length) || (ls && ls.results && ls.results.length)){
         lrPanel.classList.remove('hidden');
-        const myDriverIds = State.getPlayerDrivers().map(d=>d.id);
+        const baseIds = new Set(State.getPlayerDrivers().map(d=>String(d.id)));
+        const myDriverIds = State.getPlayerRacingDriverIds ? State.getPlayerRacingDriverIds() : State.getPlayerDrivers().map(d=>d.id);
+        const myDriverSet = new Set(myDriverIds.map(id=>String(id)));
+        const subIds = new Set([
+          ...((g.lastRaceResult && g.lastRaceResult.race && g.lastRaceResult.race._raceSubIds) || []),
+          ...((g.lastSprintResult && g.lastSprintResult.race && g.lastSprintResult.race._raceSubIds) || [])
+        ].map(String));
 
         const buildResultRows = (resultObj) => {
           if(!resultObj) return '';
-          const myRes = resultObj.results.filter(r=>myDriverIds.includes(r.driverId)).sort((a,b)=>(a.dnf?99:a.position)-(b.dnf?99:b.position));
+          const myRes = resultObj.results.filter(r=>String(r.teamId)===String(g.playerTeamId)).sort((a,b)=>(a.dnf?99:a.position)-(b.dnf?99:b.position));
           const allRes = resultObj.results.slice().sort((a,b)=>{
             if(a.dnf && b.dnf) return (a.dnfLap||0)-(b.dnfLap||0);
             if(a.dnf) return 1; if(b.dnf) return -1;
@@ -5595,10 +5794,12 @@ const UI = {
             </div>` : ''}
             <div style="display:flex;flex-direction:column;gap:0">
               ${allRes.map(r=>{
-                const mine = myDriverIds.includes(r.driverId);
+                const mine = String(r.teamId)===String(g.playerTeamId);
+                const d = State.getDriver(r.driverId);
+                const sub = subIds.has(String(r.driverId)) || (!!d && d.isReserve && String(d.teamId)===String(g.playerTeamId)) || (!baseIds.has(String(r.driverId)) && mine);
                 return `<div style="display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid var(--bd);font-size:12px;background:${mine?'rgba(192,57,43,.04)':''}">
                   <span style="font-family:var(--fm);font-weight:700;width:30px;color:${!r.dnf&&r.position===1?'var(--amber)':r.dnf?'var(--red)':'var(--tx3)'}">${r.dnf?'DNF':r.position}</span>
-                  <span style="flex:1;font-weight:${mine?'800':'400'}">${r.driverName}${mine?' ◀':''}</span>
+                  <span style="flex:1;font-weight:${mine?'800':'400'}">${r.driverName}${sub?' <span style="font-size:9px;background:rgba(245,158,11,.15);color:#b45309;padding:1px 5px;border-radius:4px;font-weight:700">SUB</span>':''}${mine?' ◀':''}</span>
                   <span style="color:var(--tx3);font-size:11px;text-align:right;flex-shrink:0;min-width:70px">${r.teamName}</span>
                   <span style="font-family:var(--fm);font-weight:700;width:28px;text-align:right;color:${r.dnf?'var(--tx3)':'var(--tx)'}">${r.dnf?'—':r.points}</span>
                 </div>`;
@@ -5707,7 +5908,9 @@ const UI = {
         const ptEl = document.querySelector('#dash-quali-panel .panel-title');
         if(ptEl) ptEl.textContent = gridTitle;
         qPanel.classList.remove('hidden');
-        const pids = State.getPlayerDrivers().map(d=>d.id);
+        const baseIds = new Set(State.getPlayerDrivers().map(d=>String(d.id)));
+        const raceIds = new Set(State.getPlayerRacingDriverIds ? State.getPlayerRacingDriverIds() : State.getPlayerDrivers().map(d=>d.id));
+        const subIds = State.getActiveInjurySubIds ? State.getActiveInjurySubIds(g.playerTeamId) : new Set();
         const pole = gridResult[0];
         const top10 = gridResult.slice(0,10);
         const bot10 = gridResult.slice(10);
@@ -5716,10 +5919,15 @@ const UI = {
           .replace('-AMG F1','').replace(' F1 Team','')
           .replace('Racing Bulls','R.Bulls').replace('Aston Martin F1','Aston M.')
           .replace('Red Bull Racing','Red Bull').replace(' Racing','');
-        const mkRows = rows => rows.map(r=>`<tr class="${pids.includes(r.driverId)?'my-row':''}">
+        const mkRows = rows => rows.map(r=>{
+          const isMine = raceIds.has(r.driverId);
+          const isReserveSub = isMine && (subIds.has(String(r.driverId)) || !baseIds.has(String(r.driverId)));
+          const subBadge = isReserveSub ? ' <span style="font-size:9px;background:rgba(245,158,11,.15);color:#b45309;padding:1px 5px;border-radius:4px;font-weight:700">SUB</span>' : '';
+          return `<tr class="${isMine?'my-row':''}">
           <td><span class="pos-cell p${r.position}">${r.position}</span></td>
-          <td class="name-cell">${r.driverName.split(' ').pop()}</td><td class="muted-cell" style="max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${shortTeam(r.teamName)}</td>
-        </tr>`).join('');
+          <td class="name-cell">${r.driverName.split(' ').pop()}${subBadge}</td><td class="muted-cell" style="max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${shortTeam(r.teamName)}</td>
+        </tr>`;
+        }).join('');
         document.getElementById('dash-quali-content').innerHTML = `
           <div class="quali-pole-hero" style="margin-bottom:10px">
             <div><div class="quali-pole-label">${showingSprintQuali?'Sprint Pole':'Pole Position'}</div>
@@ -5988,7 +6196,9 @@ const UI = {
   },
 
   renderQualiGrid(results){
-    const pids = State.getPlayerDrivers().map(d=>d.id);
+    const baseIds = new Set(State.getPlayerDrivers().map(d=>String(d.id)));
+    const racingIds = new Set(State.getPlayerRacingDriverIds ? State.getPlayerRacingDriverIds() : State.getPlayerDrivers().map(d=>d.id));
+    const subIds = State.getActiveInjurySubIds ? State.getActiveInjurySubIds(State.game.playerTeamId) : new Set();
     const pole = results[0];
     const panel = document.getElementById('quali-grid-panel');
     document.getElementById('quali-grid-content').innerHTML = `
@@ -6000,11 +6210,17 @@ const UI = {
         </div>
       </div>
       <div class="tbl-scroll"><table><thead><tr><th>#</th><th>Driver</th><th>Team</th></tr></thead><tbody>
-      ${results.map(r=>`<tr class="${pids.includes(r.driverId)?'my-row':''}">
+      ${results.map(r=>{
+        const isMine = racingIds.has(r.driverId);
+        const dObj = State.getDriver(r.driverId);
+        const isReserveSub = isMine && (subIds.has(String(r.driverId)) || !baseIds.has(String(r.driverId)));
+        const subBadge = isReserveSub ? ' <span style="font-size:9px;background:rgba(245,158,11,.15);color:#b45309;padding:1px 5px;border-radius:4px;font-weight:700">SUB</span>' : '';
+        return `<tr class="${isMine?'my-row':''}">
         <td><span class="pos-cell p${r.position}">${r.position}</span></td>
-        <td class="name-cell">${r.driverName}</td>
+        <td class="name-cell">${r.driverName}${subBadge}</td>
         <td class="muted-cell">${r.teamName}</td>
-      </tr>`).join('')}
+      </tr>`;
+      }).join('')}
       </tbody></table></div>`;
     panel.classList.remove('hidden');
   },
@@ -6063,7 +6279,9 @@ const UI = {
     const isCur = raceIdx===g.raceIndex && !race.raceDone;
     const isDone = race.raceDone;
     const isQuali = race.qualiDone && !race.raceDone;
-    const pids = State.getPlayerDrivers().map(d=>d.id);
+    const baseIds = new Set(State.getPlayerDrivers().map(d=>String(d.id)));
+    const raceIds = new Set(State.getPlayerRacingDriverIds ? State.getPlayerRacingDriverIds() : State.getPlayerDrivers().map(d=>d.id));
+    const subIds = State.getActiveInjurySubIds ? State.getActiveInjurySubIds(g.playerTeamId) : new Set();
 
     let statusBadge = isDone
       ? `<span class="race-status-done">✓ Race Complete</span>`
@@ -6074,6 +6292,7 @@ const UI = {
     // Pre-race: show qualifying grid only. Post-race: race result only.
     let qualiSection = '';
     if(!isDone && race.qualiResult && race.qualiResult.length){
+      const racingIds = new Set(State.getPlayerRacingDriverIds ? State.getPlayerRacingDriverIds() : State.getPlayerDrivers().map(d=>d.id));
       qualiSection = `<div class="race-detail-section">
         <div class="race-detail-sec-title">Starting Grid</div>
         <div class="quali-pole-hero" style="margin-bottom:10px">
@@ -6083,9 +6302,9 @@ const UI = {
         </div>
         <div class="tbl-scroll"><table><thead><tr><th>#</th><th>Driver</th><th>Team</th></tr></thead><tbody>
         ${race.qualiResult.map(r=>{
-          const isMyDriver = pids.includes(r.driverId);
+          const isMyDriver = raceIds.has(r.driverId);
           const drvObj = State.getDriver(r.driverId);
-          const isReserveSub = drvObj && drvObj.isReserve && isMyDriver;
+          const isReserveSub = isMyDriver && (subIds.has(String(r.driverId)) || !baseIds.has(String(r.driverId)));
           const subBadge = isReserveSub ? ' <span style="font-size:9px;background:rgba(245,158,11,.15);color:#b45309;padding:1px 5px;border-radius:4px;font-weight:700">SUB</span>' : '';
           return `<tr class="${isMyDriver?'my-row':''}">
             <td><span class="pos-cell p${r.position}">${r.position}</span></td>
@@ -6104,7 +6323,7 @@ const UI = {
         ${winner?`<div class="winner-block"><div><div class="winner-label">Race Winner</div><div class="winner-name">${winner.driverName}</div><div class="winner-team">${winner.teamName}</div></div><div class="winner-laps">${race.laps} laps</div></div>`:''}
         <div style="font-size:11px;color:var(--tx3);margin:6px 0">${race.weather==='wet'?'🌧 Wet Race':'☀️ Dry Race'}${race.hadSafetyCar?' · Safety car deployed':''}</div>
         <div class="tbl-scroll"><table><thead><tr><th>Pos</th><th>Driver</th><th>Team</th><th>Grid</th><th>Pts</th></tr></thead><tbody>
-        ${(()=>{const racePids=State.getPlayerRacingDriverIds();return race.raceResult.map(r=>{const isMine=racePids.includes(r.driverId);const dObj=State.getDriver(r.driverId);const subBadge=isMine&&dObj&&dObj.isReserve?' <span style="font-size:9px;background:rgba(245,158,11,.15);color:#b45309;padding:1px 5px;border-radius:4px;font-weight:700">SUB</span>':'';return`<tr class="${isMine?'my-row':''}"><td>${r.dnf?`<span class="dnf-tag">DNF</span>`:`<span class="pos-cell p${r.position}">${r.position}</span>`}</td><td class="name-cell">${r.driverName}${subBadge}${r.fastestLap?'<span class="fl-tag">FL</span>':''}</td><td class="muted-cell">${r.teamName}</td><td class="muted-cell">${r.startPos?'P'+r.startPos:'—'}</td><td class="pts-cell">${r.points||0}</td></tr>`;}).join('');})()}
+          ${(()=>{const racePids=new Set(State.getPlayerRacingDriverIds ? State.getPlayerRacingDriverIds() : State.getPlayerDrivers().map(d=>d.id));const raceSubIds=new Set((race._raceSubIds||[]).map(String));return race.raceResult.map(r=>{const isMine=racePids.has(r.driverId);const d=State.getDriver(r.driverId);const reserveFallback=!!(d&&d.isReserve&&String(d.teamId)===String(g.playerTeamId));const subBadge=isMine&&(raceSubIds.has(String(r.driverId))||reserveFallback||!baseIds.has(String(r.driverId)))?' <span style="font-size:9px;background:rgba(245,158,11,.15);color:#b45309;padding:1px 5px;border-radius:4px;font-weight:700">SUB</span>':'';return`<tr class="${isMine?'my-row':''}"><td>${r.dnf?`<span class="dnf-tag">DNF</span>`:`<span class="pos-cell p${r.position}">${r.position}</span>`}</td><td class="name-cell">${r.driverName}${subBadge}${r.fastestLap?'<span class="fl-tag">FL</span>':''}</td><td class="muted-cell">${r.teamName}</td><td class="muted-cell">${r.startPos?'P'+r.startPos:'—'}</td><td class="pts-cell">${r.points||0}</td></tr>`;}).join('');})()}
         </tbody></table></div>
         ${this._standingsMini()}
       </div>`;
@@ -6156,14 +6375,24 @@ const UI = {
       const myDrivers = State.getPlayerDrivers();
       const myReserves = State.getPlayerReserves();
       const myIds = myDrivers.map(d=>d.id);
+      const subIds = State.getActiveInjurySubIds ? State.getActiveInjurySubIds(State.game.playerTeamId) : new Set();
 
       const makeList=(drvs,allMine)=>{
         const hdr=`<div class="driver-list-row driver-list-header"><span class="dlh-label">#</span><span class="dlh-label">Driver</span><span class="dlh-label">OVR</span><span class="dlh-label">PACE</span><span class="dlh-label">QUALI</span><span class="dlh-label dl-attr-hide">CON</span><span class="dlh-label dl-attr-hide">WET</span><span class="dlh-label">PTS</span></div>`;
         const rows=drvs.map((d,i)=>{
           const team=d.teamId?State.getTeam(d.teamId):null;
+          const activeInjury = State.getActiveInjury ? State.getActiveInjury(d.id) : null;
+          const racesOut = activeInjury ? Math.max(0, activeInjury.returnsAfterRace - State.game.raceIndex) : 0;
+          const injBadge = activeInjury ? `<span style="font-size:9px;background:rgba(220,38,38,.12);color:#b91c1c;padding:1px 5px;border-radius:4px;font-weight:700;margin-left:6px">INJURED · ${racesOut}r out</span>` : '';
+          const contractBadge = d.contract<=0
+            ? `<span style="font-size:9px;background:rgba(220,38,38,.12);color:#b91c1c;padding:1px 5px;border-radius:4px;font-weight:700;margin-left:6px">EXPIRED</span>`
+            : d.contract===1
+              ? `<span style="font-size:9px;background:rgba(245,158,11,.15);color:#b45309;padding:1px 5px;border-radius:4px;font-weight:700;margin-left:6px">AT RISK</span>`
+              : '';
+          const reserveBadge = (d.isReserve || subIds.has(String(d.id))) ? '<span style="font-size:9px;background:rgba(245,158,11,.15);color:#b45309;padding:1px 5px;border-radius:4px;font-weight:700;margin-left:6px">SUB</span>' : '';
           return `<div class="driver-list-row my-drv" onclick="UI.showDriverModal(${d.id})">
             <span class="dl-pos">${i+1}</span>
-            <div class="dl-name-block"><div class="dl-name">${d.name}</div><div class="dl-team">Age ${d.age} · ${d.nationality} · Contract: ${d.contract}yr</div></div>
+            <div class="dl-name-block"><div class="dl-name">${d.name}${reserveBadge}${contractBadge}${injBadge}</div><div class="dl-team">Age ${d.age} · ${d.nationality} · Contract: ${d.contract}yr</div></div>
             <span class="dl-ovr"><span class="ovr-pill ${ratingClass(Math.round(d.rating))}">${Math.round(d.rating)}</span></span>
             <span class="dl-attr">${Math.round(d.racePace)}</span><span class="dl-attr">${Math.round(d.qualifying)}</span>
             <span class="dl-attr dl-attr-hide">${Math.round(d.consistency)}</span><span class="dl-attr dl-attr-hide">${Math.round(d.wet)}</span>
@@ -6316,6 +6545,14 @@ const UI = {
     const d=State.getDriver(driverId); if(!d) return;
     const team=d.teamId?State.getTeam(d.teamId):null;
     const mine=d.teamId===State.game.playerTeamId, fa=!d.teamId;
+    const activeInjury = State.getActiveInjury ? State.getActiveInjury(d.id) : null;
+    const racesOut = activeInjury ? Math.max(0, activeInjury.returnsAfterRace - State.game.raceIndex) : 0;
+    const reserveCover = activeInjury && State.game._injurySubs ? State.getDriver(State.game._injurySubs[d.id]) : null;
+    const contractRiskBadge = d.contract<=0
+      ? '<span style="font-size:10px;background:rgba(220,38,38,.12);color:#b91c1c;padding:2px 6px;border-radius:5px;font-weight:800">EXPIRED</span>'
+      : d.contract===1
+        ? '<span style="font-size:10px;background:rgba(245,158,11,.15);color:#b45309;padding:2px 6px;border-radius:5px;font-weight:800">AT RISK</span>'
+        : '';
     const arow=(label,val)=>{const c=attrColor(val);return`<div class="modal-attr-row"><span class="modal-attr-name">${label}</span><div class="modal-attr-track"><div class="modal-attr-fill" style="width:${val}%;background:${c}"></div></div><span class="modal-attr-val" style="color:${c}">${Math.round(val)}</span></div>`;};
     const mstat=(lbl,val)=>`<div style="text-align:center;padding:6px 4px"><div style="font-size:9px;font-weight:700;color:var(--tx3);letter-spacing:.4px;text-transform:uppercase;margin-bottom:1px">${lbl}</div><div style="font-size:16px;font-weight:900;color:var(--tx)">${val}</div></div>`;
     const g = State.game;
@@ -6351,9 +6588,13 @@ const UI = {
           <div style="font-size:11px;color:rgba(255,255,255,.6);margin-top:2px">One of the rarest prospects in a generation. Ceiling: elite. Give them time.</div>
         </div>
       </div>` : ''}
-      <div class="modal-name">${d.name}</div>
+      <div class="modal-name" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">${d.name}${contractRiskBadge}</div>
       <div class="modal-meta">Age ${d.age} · ${d.nationality} · ${team?team.name:'Free Agent'}${potDisplay}</div>
-      ${(()=>{
+      ${activeInjury ? `<div style="margin:10px 0 12px;padding:10px 12px;background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;color:#991b1b;font-size:12px">
+        <div style="font-weight:900;margin-bottom:2px">🚑 Injured</div>
+        <div>${activeInjury.type} · out for ${racesOut} more race${racesOut===1?'':'s'}${reserveCover?` · reserve stepping in: ${reserveCover.name}`:''}</div>
+      </div>` : ''}
+      ${(()=>{ 
         const dd = d._lastDevDelta;
         if(!dd) return '';
         const delta = dd.rating||0;
@@ -6614,7 +6855,7 @@ const UI = {
     const g=State.game;
     const team=State.getPlayerTeam();
     const theirTeam=State.getTeam(d.teamId);
-    const baseSal=Math.ceil(d.salary*(d.rating>=88?1.35:d.rating>=80?1.2:1.1));
+    const baseSal=State.getDriverDemandSalary(d,'approach');
     const salMid=Math.ceil(baseSal*1.1), salHigh=Math.ceil(baseSal*1.25);
     const racesNeeded=d.rating>=88?4:d.rating>=80?3:2;
     const carDiff=(team?.carPerformance||0)-(theirTeam?.carPerformance||60);
@@ -7799,11 +8040,7 @@ const UI = {
     const _sponsorInc=(State.game.sponsors||[]).reduce((s,sp)=>s+sp.value,0);
     const _effectiveIncome=Math.max(team.revenue, _sponsorInc+40); // 40 = prize floor estimate
     // Base demand — influenced by rating, age, potential, morale
-    const base = d.salary || Math.max(1, Math.floor(d.rating/15));
-    const hotMult = d.rating>=88?1.35 : d.age<25&&d.potential>=85?1.25 : d.morale<50?0.88 : 1.0;
-    // Reduce demand for drivers in clear decline (35+ or rating dropped well below potential)
-    const declineMult = d.age>=38?0.70 : d.age>=36?0.82 : d.age>=34&&d.rating<d.potential-10?0.90 : 1.0;
-    const demand = Math.ceil(base * hotMult * declineMult);
+    const demand = State.getDriverDemandSalary(d, asReserve ? 'market' : 'signing');
     const isWK = d.isWonderkid && d.age<=23;
     const arow=(label,val)=>{const c=attrColor(val);return`<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><span style="font-size:11px;color:var(--tx3);width:80px">${label}</span><div style="flex:1;height:4px;background:var(--bg3);border-radius:2px"><div style="height:4px;border-radius:2px;background:${c};width:${val}%"></div></div><span style="font-size:11px;font-family:var(--fm);font-weight:700;color:${c};width:22px;text-align:right">${Math.round(val)}</span></div>`;};
 
@@ -10008,37 +10245,23 @@ const UI = {
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-<div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.0.6 · Release Notes</div>
+<div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.0.7 · Release Notes</div>
         ${[
+          ['v2.0.7','Apr 2026',[
+            '🆕 Watch Race: commentary, live positions, and finish results are now far more tightly aligned. Late-race bridges, duplicate winner lines, missing player-driver move calls, and timing drift between the feed and the leaderboard were all cleaned up so the replay tells a much more coherent story.',
+            '🆕 Strategy & race flow: split strategy now works properly per driver, pit-call order follows the live running order, and sprint/GP retirements and podium changes are explained more clearly during Watch Race.',
+            '🆕 Contracts & driver market: contract years are easier to see, final-year drivers now get AT RISK badges and transfer-watch reminders, negotiations resolve within the promised window, renewals use the same market logic as the rest of the grid, and AI teams no longer move drivers who still have real contract time left.',
+            '🆕 Injuries & reserve cover: injured drivers now clearly show their injury status and races out, reserve substitutes are highlighted consistently across grids, last-race panels, live leaderboards, and driver views, and reserve cover is much easier to understand at a glance.',
+            '🆕 Car development & preseason: mid-season upgrades now show the exact arriving race, the COMPLETE card keeps that arrival info, the full upgrade budget is spendable, and preseason checklist enforcement is much stricter so it is harder to start a season with missing setup.',
+            '🆕 Championship & finance: title-watch and clinch messaging now appears on the dashboard and in recap/news, championship gap text is more accurate, constructor finish is sourced consistently for prize money and objectives, and normal profitable seasons now help finance confidence a bit more.',
+            '🆕 Polish: the homepage now highlights the latest update and the Reddit community more clearly, contract and injury states are easier to spot, and a range of smaller UI consistency issues were tidied up across the game.',
+          ]],
           ['v2.0.6','Apr 2026',[
-            '🐛 Mid-season upgrades: package slider caps no longer strand budget when all three sliders are maxed. You can now spend the full upgrade window budget however you want.',
-            '🐛 Watch Sprint: player and front-running DNFs now get a final running-position line just before retirement, so P3-to-DNF exits are no longer shown without context.',
-            '🐛 Watch Race: podium bridge detection now reads both full names and timing-line surnames, so late P2 to P3 drops like Leclerc in Miami are no longer missed.',
-            '🐛 Watch Race: final podium bridge commentary now reads the specific driver position from late timing snapshots, so P2 to P3 drops are no longer missed when the feed only mentioned the earlier running order.',
-            '🐛 Mid-season upgrades: the car screen now shows the exact arriving race once an upgrade is ordered, matching the dashboard instead of only giving a vague delay.',
-            '🐛 Mid-season upgrades: the COMPLETE card now keeps showing the exact arrival race after you order a package, instead of dropping back to a vague applied summary.',
-            '✨ Drivers tab: contract years left now show directly in the driver rows so you can see at a glance who is actually approachable.',
-            'ðŸ› Mid-season upgrades: the upgrade window copy now says upgrades are queued and usually arrive in 2-4 races, instead of implying they apply instantly.',
-            '🐛 Watch Race: commentary now syncs directly from the classified result after live pit/weather swaps and at race end, so finish rows, winner lines, and podium lines stay aligned with the final table.',
-            '🐛 Watch Race: tightened late-race event cleanup to remove contradictory closing-lap position calls for any classified driver, reducing cases where commentary says one finish while the results screen shows another.',
-            '🐛 Watch Race: player drivers now get a final closing-laps position update when the last narrated running position still differs from the classified finish, preventing big unexplained jumps like P14 with 8 laps to go turning into a P7 finish.',
-            '🐛 Race simulation: added stronger race-day form, launch, traffic, and safety-car variance so midfield drivers no longer get stuck in the same finishing slot across a whole season regardless of what the race feed shows.',
-            '🐛 Watch Race: late-race timing and podium/winner narration now get a final bridge update from the classified result, reducing cases where the feed implied one winner before the result screen showed another.',
-            '✨ Watch Race: added a live positions tower on the right side of the replay modal, driven by the replay’s tracked classified order so pit/weather decisions are easier to follow while watching.',
-            '🐛 Season rollover: offseason no longer silently force-releases contracted player drivers for low morale/decline, and the season recap now falls back to captured final standings for headline stats if the snapshot is ever missing or stale.',
-            '🐛 Offseason enforcement: season progression is now blocked unless you have 2 race drivers, valid race-driver contracts, winter budget allocated, scouting configured, and at least 1 sponsor signed — closing paths that could start a season with an incomplete checklist or a one-driver lineup.',
-            '🐛 Offseason navigation: the Finance “Full breakdown” detour now returns cleanly to Offseason, and preseason checklist state is restored automatically if required tasks are still incomplete at season start.',
-            '🐛 Split strategy: per-driver strategy plans now remain active as a first-class race state, and the dashboard/commentary both recognize split setups instead of falling back to “no strategy set.”',
-            'ðŸ› Driver negotiations: talks now hard-resolve within 4 races at the latest, even after offer improvements, so signings cannot drift past the promised response window.',
-            'ðŸ› Watch Race: podium changes now get a final bridge commentary line when the closing-laps order differs from the final top-3 result, so P2-to-P3 swaps are narrated instead of only appearing at the results screen.',
-            '🐛 Offseason transfers: AI teams no longer force-release or upgrade out drivers who still have contract years left, so drivers blocked as unapproachable during the season stay locked in unless their deals genuinely expire.',
-            '🐛 Watch Race pit calls: player pit-stop decision order now follows live track position at the pit window instead of the final classified result, so priority matches what you are actually seeing on screen.',
-            '✨ Owner confidence: small profits now improve the finance score slightly instead of only very large surpluses moving the needle, making the board assessment line up better with normal profitable seasons.',
-            '✨ Regulation-year clarity: dashboard car development now shows car rank and explains that 100 OVR is a cap, so heavy new-reg investment no longer looks like a guaranteed best-car rating after a field reset.',
-            '🐛 Season-end finances/objectives: constructor finish position now comes from the same final constructor standings snapshot everywhere, so prize money, recap position, and board objective results cannot disagree after winning the championship.',
-            '🐛 Race recap championship text now compares the title gap before and after the race, so it no longer says the leader "widened the gap" on weekends where P2 actually closed in.',
-            '✨ Championship drama: the dashboard now shows when a driver or team can clinch this weekend, and both the recap and Paddock News call out title-clinching results when they happen.',
-            '✨ Landing page: added a Latest Update card and a clearer r/f1dynasty community panel so new and returning players can immediately see the current build and where to find patch notes or report bugs.',
+            '✨ Watch Race got a major sync pass, with stronger commentary/result alignment, clearer late-race finish context, and a new live positions tower in the replay modal.',
+            '✨ Offseason flow was hardened with better checklist enforcement, cleaner navigation back from finance breakdown, and stronger protection against incomplete rosters or missing preseason setup.',
+            '✨ Mid-season upgrades became clearer, with better timing copy, visible arrival-race info, and more understandable budget and package behavior.',
+            '✨ Driver management improved with injury cover flow, reserve promotion support, and more visible contract information across the drivers experience.',
+            '✨ The homepage now surfaces the latest update and points players more clearly toward r/f1dynasty for feedback and community discussion.',
           ]],
           ['v2.0.5','Apr 2026',[
             '✨ Regulation changes: every 4-7 seasons a major technical regulation change reshuffles the field. Car performance is compressed toward midfield with random deltas per team — some teams gain big, some lose big. Four types: aerodynamic overhaul, power unit rules, full technical reset, or cost cap tightening.',
@@ -10056,6 +10279,15 @@ const UI = {
             '🐛 Records tab: Team Wins now correctly counts career total wins across all seasons, not just the current season.',
             '🐛 Reserve driver points: addPoints now uses fallback teamId from race result entry so constructor standings are always credited even if reserve driver teamId is mismatched.',
             '🐛 Watch Race: pit and weather decision bonuses are now applied to the race result immediately when the decision resolves — contradicting future events in the queue are pruned and a corrective commentary event is injected. This fixes the root cause of commentary contradicting the final result (e.g. Piastri announced P1 at L45 then finishing P3).',
+            '🐛 Watch Race: live bonus swaps no longer delete genuine future overtake/timing events for affected drivers — only synthetic bridge lines are pruned, so real later position changes still get narrated.',
+            '🐛 Watch Race: player bridge detection now recognises surname-only timing snapshots (e.g. "P3 Pourchaire"), so reserve subs and player drivers still get narrated when the timing feed uses short names.',
+            '🐛 Watch Race: late bridge narration now steps through every place change instead of collapsing a multi-place move into one line, so P1→P4 or P3→P5 runs are explained properly.',
+            '🐛 Watch Race: player drivers no longer get the same late podium change narrated twice by both the player bridge and podium bridge passes.',
+            '🐛 Watch Race: synthetic bridge lines are now exempt from late-position text rewriting, so stepped commentary keeps its real per-place narration instead of collapsing back to the final position.',
+            '🐛 Watch Race: player driver position checks now run every lap instead of every 5 laps, so real gains/losses are narrated much more promptly.',
+            '🐛 Watch Race: live podium bridge insertion now skips any bridge already created by the replay generator, preventing duplicate late podium lines for the same driver.',
+            '🐛 Watch Race: podium detectors now recognise bridge-generated narration as real last-position context, so a prior P3 bridge no longer triggers a second P3 bridge later in the same finish sequence.',
+            '🐛 Watch Race: removed a redundant second podium-bridge pass from the replay generator. Winner/P2/P3 bridge lines now come from one path only, preventing repeated or contradictory podium narration.',
             '🐛 Driver salaries now recalculate every offseason based on current rating, age, and championship titles — newgen drivers who develop and win the WDC will now correctly demand market-rate salaries rather than staying on their creation salary of $1-2M.',
             '🐛 Post-race debrief: race name now shows in white on the dark win/podium banner — was previously near-black on dark background making it unreadable.',
             '🐛 Watch Race: fixed classification corruption in _wrApplyBonusNow — swap partner was resolved before undoing the previous swap, which could leave two drivers on the same position when a later decision returned the bonus toward zero.',
@@ -10741,9 +10973,7 @@ const GameActions = {
     const team=State.getPlayerTeam();
     const _rSponsorInc=(State.game.sponsors||[]).reduce((s,sp)=>s+sp.value,0);
     const _rEffectiveIncome=Math.max(team.revenue, _rSponsorInc+40);
-    const baseSalary=d.salary||Math.floor(d.rating/15);
-    const _declineMult = d.age>=38?0.70 : d.age>=36?0.82 : d.age>=34&&d.rating<(d.potential||80)-10?0.90 : 1.0;
-    const demand=Math.ceil((d.age<25&&d.potential>85?Math.ceil(baseSalary*1.4):d.rating>88?Math.ceil(baseSalary*1.3):d.morale<50?Math.ceil(baseSalary*0.9):baseSalary)*_declineMult);
+    const demand = State.getDriverDemandSalary(d,'renewal');
     const html=`<div>
       <div style="font-size:16px;font-weight:900;margin-bottom:2px">${d.name}</div>
       <div style="font-size:11px;color:var(--tx3);margin-bottom:16px">${Math.round(d.rating)} OVR · Age ${d.age} · Morale ${d.morale}</div>
@@ -10756,7 +10986,7 @@ const GameActions = {
       <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
         ${[1,2,3].map(yr=>{
           const sal=yr===1?Math.ceil(demand*0.95):yr===2?demand:Math.ceil(demand*1.1);
-          const ok=sal<=_rEffectiveIncome/8;
+          const ok=_rEffectiveIncome>=sal*3;
           return `<button ${ok?`onclick="GameActions.confirmRenew(${driverId},${yr},${sal})"`:''} ${!ok?'disabled':''} 
             style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border:2px solid var(--bd);border-radius:8px;background:${ok?'var(--bg2)':'var(--bg3)'};cursor:${ok?'pointer':'not-allowed'};opacity:${ok?1:0.5}">
             <span style="font-weight:700">${yr} Year${yr>1?'s':''}</span>
@@ -10780,7 +11010,7 @@ const GameActions = {
   blockPoach(idx){
     const g=State.game, pa=(g.poachAttempts||[])[idx]; if(!pa)return;
     const d=State.getDriver(pa.driverId); if(!d)return;
-    d.contract=2; d.salary=Math.ceil(d.salary*1.15); d.morale=clamp(d.morale+10,50,95);
+    d.contract=2; d.salary=State.getDriverDemandSalary(d,'renewal'); d.morale=clamp(d.morale+10,50,95);
     g.poachAttempts.splice(idx,1);
     UI.toast(`${d.name} stays — extended at ${formatMoney(d.salary)}/yr`,'success');
     Storage.autosave(); UI.renderOffseasonPlanning();
@@ -11439,7 +11669,7 @@ const GameActions = {
       UI.toast(`${d.name}'s agent says he's fully committed to his current project. We'd need a clearly better car to get a meeting.`,'warning');
       return;
     }
-    const finalSalary=salaryOffer||Math.ceil(d.salary*(d.rating>=88?1.35:d.rating>=80?1.2:1.1));
+    const finalSalary=salaryOffer||State.getDriverDemandSalary(d,'approach');
     const finalYears=contractYears||(d.rating>=86?2:1);
     const racesNeeded=d.rating>=88?4:d.rating>=80?3:2;
     g.pendingNegotiations.push({
@@ -11688,9 +11918,11 @@ window._wrSyncCommentary = function(race, isSprint) {
     } else if(text.includes('Sprint winner:')) {
       text = '🏁 Sprint winner: ' + finishers[0].driverName + '!';
     } else if(text.match(/^P2:/) && finishers[1]) {
-      text = 'P2: ' + finishers[1].driverName + (finishers[1].teamName ? ' (' + finishers[1].teamName + ')' : '');
+      const p2 = finishers[1];
+      text = 'P2: ' + p2.driverName + (p2.teamName ? ' (' + p2.teamName + ')' : '');
     } else if(text.match(/^P3:/) && finishers[2]) {
-      text = 'P3: ' + finishers[2].driverName + (finishers[2].teamName ? ' (' + finishers[2].teamName + ')' : '');
+      const p3 = finishers[2];
+      text = 'P3: ' + p3.driverName + (p3.teamName ? ' (' + p3.teamName + ')' : '');
     }
     Object.keys(finalByName).forEach(function(name){
       if(text.indexOf(name) < 0 || text.indexOf('finishes P') < 0) return;
@@ -11737,7 +11969,14 @@ window._wrSyncCommentary = function(race, isSprint) {
       var hasShortName = new RegExp('\\b' + shortName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b').test(ev.text);
       if(!hasFullName && !hasShortName) continue;
       var txt = ev.text.trim();
-      if(txt.indexOf('Chequered flag') === 0 || txt.indexOf('Sprint winner:') === 0 || txt.indexOf('P2:') === 0 || txt.indexOf('P3:') === 0 || txt.indexOf('finishes P') >= 0) {
+      if(txt.indexOf('Chequered flag') === 0 || txt.indexOf('Sprint winner:') === 0) {
+        return 1;
+      }
+      var resultPodium = txt.match(/^P([123]):\s+/);
+      if(resultPodium) {
+        return parseInt(resultPodium[1], 10);
+      }
+      if(txt.indexOf('finishes P') >= 0) {
         continue;
       }
       var timingMatch = txt.match(new RegExp('P(\\d+)\\s+' + shortName.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\$&') + '\\b'));
@@ -11749,19 +11988,47 @@ window._wrSyncCommentary = function(race, isSprint) {
     return null;
   };
 
-  const appendPodiumBridge = function(driver, finalPos, lastPos) {
+    const appendPodiumBridge = function(driver, finalPos, lastPos) {
     if(!feed || !driver || finalPos < 2 || finalPos > 3) return;
-    if(lastPos != null && lastPos === finalPos) return;
+    if(lastPos == null || lastPos === finalPos) return;
+    const existingBridge = WR && Array.isArray(WR.events) && WR.events.some(function(ev) {
+      return ev && ev.bridgeGenerated && ev.text &&
+        ev.text.indexOf(driver.driverName) >= 0 &&
+        ev.text.indexOf('P' + finalPos) >= 0;
+    });
+    if(existingBridge) return;
     if(!WR._podiumBridgeAdded) WR._podiumBridgeAdded = {};
     const bridgeKey = driver.driverName + ':' + finalPos;
     if(WR._podiumBridgeAdded[bridgeKey]) return;
+    const battleLike = lastPos <= 3;
+    const isDrop = lastPos > finalPos;
     const bridgeText = finalPos === 2
-      ? '⭐ ' + driver.driverName + ' moves up to P2. Podium battle resolved.'
-      : '⭐ ' + driver.driverName + ' drops to P3. Podium shuffle complete.';
+      ? (battleLike
+            ? (isDrop
+                ? '⭐ ' + driver.driverName + ' drops to P2 after the late podium shuffle.'
+                : '⭐ ' + driver.driverName + ' edges up to P2 after the late podium fight.')
+            : (isDrop
+                ? '⭐ ' + driver.driverName + ' drops to P2 after the late race shuffle.'
+                : '⭐ ' + driver.driverName + ' is confirmed in P2 after the late race shuffle.'))
+      : (battleLike
+            ? (isDrop
+                ? '⭐ ' + driver.driverName + ' drops to P3 after the late podium shuffle.'
+                : '⭐ ' + driver.driverName + ' edges up to P3 after the late podium fight.')
+            : (isDrop
+                ? '⭐ ' + driver.driverName + ' drops to P3 after the late race shuffle.'
+                : '⭐ ' + driver.driverName + ' is confirmed in P3 after the late race shuffle.'));
     const bridgeEl = document.createElement('div');
     bridgeEl.style.cssText = 'background:rgba(192,57,43,.08);border:1px solid rgba(192,57,43,.25);border-radius:7px;padding:8px 12px;font-size:13px;flex-shrink:0;margin-bottom:4px;line-height:1.4;color:var(--tx)';
     bridgeEl.innerHTML = '<span style="font-size:10px;font-weight:700;color:#c0392b;margin-right:8px;display:inline-block;min-width:28px">L' + totalLaps + '</span>' + bridgeText;
-    feed.appendChild(bridgeEl);
+    const finishBlock = Array.from(feed.children || []).find(function(el){
+      const t = (el.textContent || '').trim();
+      return t.indexOf('Chequered flag') === 0 || t.indexOf('Sprint winner:') === 0;
+    });
+    if(finishBlock && finishBlock.parentNode === feed) {
+      feed.insertBefore(bridgeEl, finishBlock);
+    } else {
+      feed.appendChild(bridgeEl);
+    }
     feed.scrollTop = feed.scrollHeight;
     const mb = feed.closest('.modal-box'); if(mb) mb.scrollTop = mb.scrollHeight;
     WR._podiumBridgeAdded[bridgeKey] = true;
@@ -11771,7 +12038,7 @@ window._wrSyncCommentary = function(race, isSprint) {
     WR.events.forEach(function(ev){
       if(!ev || !ev.text) return;
       if(ev.type === 'finish') ev.text = patchFinishText(ev.text);
-      if(ev.type === 'overtake' || ev.type === 'position_change') {
+      if((ev.type === 'overtake' || ev.type === 'position_change') && !ev.bridgeGenerated) {
         ev.text = patchLatePositionText(ev.text, ev.lap || 0);
       }
       if(ev.type === 'timing') ev.text = patchLateTimingText(ev.text, ev.lap || 0);
@@ -11782,6 +12049,7 @@ window._wrSyncCommentary = function(race, isSprint) {
   if(!feed) return;
   feed.querySelectorAll('div').forEach(function(el){
     let html = el.innerHTML || '';
+    if(el.dataset && el.dataset.bridgeGenerated === '1') return;
     const lapMatch = html.match(/L(\d+)/);
     const lapNum = lapMatch ? parseInt(lapMatch[1], 10) : 0;
     html = patchFinishText(html);
@@ -11806,7 +12074,9 @@ window._wrRenderPositions = function() {
   const resultKey = WR.isSprint ? 'sprintResult' : 'raceResult';
   const resultArr = race[resultKey] || [];
   const lastPos = WR.lastPos || {};
+  const baseIds = new Set(State.getPlayerDrivers().map(function(d){ return String(d.id); }));
   const playerIds = new Set((State.getPlayerRacingDriverIds ? State.getPlayerRacingDriverIds() : []).map(String));
+  const subIds = State.getActiveInjurySubIds ? State.getActiveInjurySubIds(race.teamId || State.game.playerTeamId) : new Set();
 
   const rows = resultArr
     .filter(function(r){ return !r.dnf && lastPos[r.driverId] != null; })
@@ -11816,7 +12086,8 @@ window._wrRenderPositions = function() {
         driverId: r.driverId,
         driverName: r.driverName,
         teamName: r.teamName,
-        mine: playerIds.has(String(r.driverId))
+        mine: playerIds.has(String(r.driverId)),
+        sub: playerIds.has(String(r.driverId)) && (subIds.has(String(r.driverId)) || !baseIds.has(String(r.driverId)))
       };
     })
     .sort(function(a,b){ return a.pos - b.pos; });
@@ -11827,7 +12098,7 @@ window._wrRenderPositions = function() {
     return '<div style="display:flex;align-items:center;gap:8px;padding:4px 6px;border-radius:6px;background:'+bg+';border:1px solid '+bd+'">'
       + '<div style="width:22px;flex-shrink:0;font-size:11px;font-weight:800;color:var(--tx3);font-family:var(--fm)">P'+r.pos+'</div>'
       + '<div style="min-width:0;flex:1">'
-      + '<div style="font-size:11px;font-weight:'+(r.mine?'800':'600')+';color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+r.driverName+'</div>'
+      + '<div style="font-size:11px;font-weight:'+(r.mine?'800':'600')+';color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+r.driverName+(r.sub?' <span style="font-size:9px;background:rgba(245,158,11,.15);color:#b45309;padding:1px 5px;border-radius:4px;font-weight:700">SUB</span>':'')+'</div>'
       + '<div style="font-size:9px;color:var(--tx3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+r.teamName+'</div>'
       + '</div>'
       + '</div>';
@@ -12067,6 +12338,7 @@ window._wrTick = function() {
         });
       });
     })();
+    window._wrRenderPositions();
 
     const pids = State.getPlayerDrivers().map(function(d){return d.id;});
     const resultData = isSprint ? (race.sprintResult||[]) : (race.raceResult||[]);
@@ -12189,10 +12461,9 @@ window._wrTick = function() {
 
   // Show next event card
   const ev = WR.events[WR.idx++];
-  if(ev && ev.driverPositions) {
-    WR.lastPos = Object.assign({}, ev.driverPositions);
-    window._wrRenderPositions();
-  }
+  const eventPositions = (ev && ev.driverPositions)
+    ? Object.assign({}, ev.driverPositions)
+    : null;
   document.getElementById('wr-lap-counter').textContent = 'Lap '+ev.lap+' / '+race.laps;
 
   // ── PIT DECISION — pause and ask player ──────────────────────
@@ -12332,6 +12603,7 @@ window._wrTick = function() {
 
   const feed = document.getElementById('wr-feed');
   const el = document.createElement('div');
+  if(ev.bridgeGenerated && el.dataset) el.dataset.bridgeGenerated = '1';
   if(isMyEvent) {
     // My driver event — strong red highlight
     el.style.cssText = 'background:var(--bg3);border:1px solid var(--bd);border-left:3px solid #c0392b;border-radius:7px;padding:8px 12px;font-size:13px;flex-shrink:0;margin-bottom:4px;line-height:1.4;font-weight:600;color:var(--tx)';
@@ -12342,7 +12614,10 @@ window._wrTick = function() {
   feed.appendChild(el);
   feed.scrollTop = feed.scrollHeight;
   const mb = feed.closest('.modal-box'); if(mb) mb.scrollTop = mb.scrollHeight;
-  if(!ev.driverPositions) window._wrRenderPositions();
+  if(eventPositions) {
+    WR.lastPos = eventPositions;
+  }
+  window._wrRenderPositions();
 
   // Update my drivers status bar in header
   const myBar = document.getElementById('wr-my-drivers');
@@ -12535,24 +12810,15 @@ window._wrApplyBonusNow = function() {
     swapTeam.totalPoints  = (swapTeam.totalPoints  || 0) - swapOldPts + swapNewPts;
   }
 
-  // Prune future unplayed events that contradict the new classification
-  // Broad filter: remove any position-narrative event mentioning either affected driver
+  // Prune only synthetic bridge events that contradict the new classification.
+  // Keep real future race events intact so genuine later position changes are still narrated.
   var affectedNames = [myEntry.driverName, swapEntry.driverName];
-  var positionKeywords = ['moves up', 'drops to', 'up to P', 'down to P', 'leads', 'P1 —', 'P2 —', 'timing', 'fastest lap context'];
   WR.events = WR.events.filter(function(ev, idx) {
     if(idx <= WR.idx) return true; // already played — keep
     var txt = ev.text || '';
-    var evType = ev.type || '';
-    // Always remove typed position/overtake events for affected drivers
-    if(evType === 'position_change' || evType === 'overtake' || evType === 'timing') {
+    if(ev.bridgeGenerated) {
       for(var i=0; i<affectedNames.length; i++){
         if(txt.indexOf(affectedNames[i]) >= 0) return false;
-      }
-    }
-    // Also remove any unplayed event that makes a specific P1/P2 claim about affected drivers
-    if(txt.indexOf('P1') >= 0 || txt.indexOf('P2') >= 0) {
-      for(var j=0; j<affectedNames.length; j++){
-        if(txt.indexOf(affectedNames[j]) >= 0) return false;
       }
     }
     return true;
@@ -12854,3 +13120,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
