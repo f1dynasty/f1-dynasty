@@ -726,6 +726,11 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
           
         </div>
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
+        <div style="margin-top:18px;max-width:320px;padding:14px 16px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
+          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">Latest Update</div>
+          <div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.0.6 is live</div>
+          <div style="font-size:12px;line-height:1.45;color:#666">Watch Race fixes, offseason fixes, clearer upgrade timing, and more quality-of-life polish from community feedback.</div>
+        </div>
       </div>
     </div>
 
@@ -736,6 +741,17 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       <div id="land-saves-section" style="display:none;margin-bottom:18px">
         <div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);margin-bottom:8px">Continue a Career</div>
         <div id="land-save-slots"></div>
+      </div>
+
+      <div style="margin-bottom:18px;padding:12px 14px;background:#fff;border:1px solid #ece9e4;border-radius:10px">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+          <div>
+            <div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);margin-bottom:3px">Community</div>
+            <div style="font-size:13px;font-weight:700;color:#111">Join <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:var(--red);text-decoration:none">r/f1dynasty</a></div>
+            <div style="font-size:11px;color:#777;margin-top:2px">Patch notes, bug reports, and suggestions all live there now.</div>
+          </div>
+          <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="flex-shrink:0;padding:9px 12px;background:#111;color:#fff;border-radius:8px;font-size:12px;font-weight:700;text-decoration:none">Open Reddit →</a>
+        </div>
       </div>
 
       <div class="land-form-title">Manager Details</div>
@@ -756,7 +772,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </div>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game" class="land-start">Start Career →</button>
-      <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.0.5</a> · <a href="javascript:void(0)" onclick="UI.showContact()" style="color:#aaa;text-decoration:none;cursor:pointer">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.0.6</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -832,7 +848,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       <a href="javascript:void(0)" class="nav-link" data-view="standings-drivers">Standings</a>
       <a href="javascript:void(0)" class="nav-link" data-view="history">History</a>
       <a href="javascript:void(0)" class="nav-link" onclick="UI.showSettings()">Settings</a>
-      <a href="javascript:void(0)" class="nav-link" onclick="UI.showContact()" style="opacity:.7">Feedback</a>
+      <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" class="nav-link" style="opacity:.7">Feedback</a>
     </div>
   </nav>
 
@@ -906,11 +922,11 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
         Release Notes
       </button>
-      <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" class="drawer-item" onclick="UI.toggleMoreDrawer()" style="text-decoration:none;color:inherit">
+      <a href="https://www.reddit.com/r/f1dynasty/" onclick="UI.toggleMoreDrawer();window.location.href=this.href;return false;" class="drawer-item" style="text-decoration:none;color:inherit">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
         Community — r/f1dynasty
       </a>
-      <a href="javascript:void(0)" class="drawer-item" onclick="UI.toggleMoreDrawer();UI.showContact()" style="text-decoration:none;color:inherit">
+      <a href="https://www.reddit.com/r/f1dynasty/" onclick="UI.toggleMoreDrawer();window.location.href=this.href;return false;" class="drawer-item" style="text-decoration:none;color:inherit">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
         Feedback / Bug Report
       </a>
@@ -1799,6 +1815,58 @@ const State = {
   addPoints(driverId, pts, fallbackTeamId){const d=this.getDriver(driverId);if(!d)return;d.seasonPoints+=pts;d.totalPoints+=pts;const teamId=d.teamId||fallbackTeamId;const team=this.getTeam(teamId);if(team){team.seasonPoints+=pts;team.totalPoints+=pts;}},
   getDriverSeasonPos(driverId){const idx=this.getDriverStandings().findIndex(s=>s.driver.id===driverId);return idx>=0?idx+1:null;},
   getConstructorSeasonPos(teamId){const idx=this.getConstructorStandings().findIndex(s=>s.team.id===teamId);return idx>=0?idx+1:null;},
+  getWeekendDriverMaxPoints(race){return race&&race.sprint?33:25;},
+  getWeekendConstructorMaxPoints(race){return race&&race.sprint?58:43;},
+  getRemainingDriverPoints(fromRaceIndex){
+    const start = fromRaceIndex===undefined ? this.game.raceIndex : fromRaceIndex;
+    return (this.game.calendar||[]).slice(start).reduce((sum,r)=>sum+this.getWeekendDriverMaxPoints(r),0);
+  },
+  getRemainingConstructorPoints(fromRaceIndex){
+    const start = fromRaceIndex===undefined ? this.game.raceIndex : fromRaceIndex;
+    return (this.game.calendar||[]).slice(start).reduce((sum,r)=>sum+this.getWeekendConstructorMaxPoints(r),0);
+  },
+  getDriverTitleStatus(fromRaceIndex){
+    const start = fromRaceIndex===undefined ? this.game.raceIndex : fromRaceIndex;
+    const standings = this.getDriverStandings();
+    const leader = standings[0], runnerUp = standings[1];
+    if(!leader||!runnerUp) return null;
+    const upcomingRace = this.game.calendar[start];
+    const remaining = this.getRemainingDriverPoints(start);
+    const remainingAfterWeekend = this.getRemainingDriverPoints(start+1);
+    const weekendMax = upcomingRace ? this.getWeekendDriverMaxPoints(upcomingRace) : 0;
+    const gap = (leader.driver.seasonPoints||0) - (runnerUp.driver.seasonPoints||0);
+    return {
+      leader: leader.driver,
+      runnerUp: runnerUp.driver,
+      gap,
+      remaining,
+      remainingAfterWeekend,
+      weekendMax,
+      clinched: gap > remaining,
+      canClinchNext: !!upcomingRace && (leader.driver.seasonPoints + weekendMax > runnerUp.driver.seasonPoints + remainingAfterWeekend)
+    };
+  },
+  getConstructorTitleStatus(fromRaceIndex){
+    const start = fromRaceIndex===undefined ? this.game.raceIndex : fromRaceIndex;
+    const standings = this.getConstructorStandings();
+    const leader = standings[0], runnerUp = standings[1];
+    if(!leader||!runnerUp) return null;
+    const upcomingRace = this.game.calendar[start];
+    const remaining = this.getRemainingConstructorPoints(start);
+    const remainingAfterWeekend = this.getRemainingConstructorPoints(start+1);
+    const weekendMax = upcomingRace ? this.getWeekendConstructorMaxPoints(upcomingRace) : 0;
+    const gap = (leader.team.seasonPoints||0) - (runnerUp.team.seasonPoints||0);
+    return {
+      leader: leader.team,
+      runnerUp: runnerUp.team,
+      gap,
+      remaining,
+      remainingAfterWeekend,
+      weekendMax,
+      clinched: gap > remaining,
+      canClinchNext: !!upcomingRace && (leader.team.seasonPoints + weekendMax > runnerUp.team.seasonPoints + remainingAfterWeekend)
+    };
+  },
   getTeamName(teamId,teams){if(!teamId||!teams)return'';const t=teams.find(t=>t.id===teamId);return t?t.name:teamId;}
 };
 
@@ -1847,9 +1915,17 @@ const Sim = {
     const events=[{lap:1,type:'start',text:`🚦 Sprint start — ${laps} laps!`, driverPositions:snapPos()}];
 
     results.filter(r=>r.dnf).forEach(r=>{
+      const dnfLap = r.dnfLap||randInt(3,14);
       const dnfPos=livePos[r.driverId];
+      if(dnfPos!=null && (r.teamId===ptid || dnfPos<=6) && dnfLap > 2){
+        const preDnfSnap = snapPos();
+        const statusText = r.teamId===ptid
+          ? `⭐ ${r.driverName} is still running P${dnfPos} before disaster strikes.`
+          : `📍 ${r.driverName} was running P${dnfPos} before trouble.`;
+        events.push({lap:Math.max(2, dnfLap-1), type:'position_change', text:statusText, driverPositions:preDnfSnap});
+      }
       if(dnfPos!=null){ Object.keys(livePos).forEach(id=>{if(livePos[id]>dnfPos)livePos[id]--;}); livePos[r.driverId]=null; }
-      events.push({lap:r.dnfLap||randInt(3,14),type:'dnf',text:`🚩 ${r.driverName} retires from the sprint.`, driverPositions:snapPos()});
+      events.push({lap:dnfLap,type:'dnf',text:`🚩 ${r.driverName} retires from the sprint.`, driverPositions:snapPos()});
     });
 
     // Player driver position changes — step by step
@@ -2117,6 +2193,21 @@ const Sim = {
           }
         }
       }
+      // Race-day variability so midfield drivers do not get trapped in the same
+      // finishing slot every weekend. Lower-consistency drivers swing more, but
+      // even stable drivers can have stronger/weaker race days.
+      const consistencyVariance = Math.max(0.9, (92 - driver.consistency) / 12);
+      const weekendForm = randNorm(0, 1.4 + consistencyVariance);
+      const moraleForm = ((driver.morale || 75) - 70) / 9;
+      const launchSwing = randNorm(0, 0.9) + (driver.aggression - 65) / 55;
+      const trafficBand = startPos >= 5 && startPos <= 16;
+      const trafficSwing = trafficBand
+        ? randNorm(0, trait === 'overtaker' ? 2.2 : 1.6)
+        : randNorm(0, 0.6);
+      const safetyCarSwing = hadSafetyCar
+        ? randNorm(0, trait === 'consistent' ? 0.8 : 1.4)
+        : 0;
+      const midfieldChaos = trafficBand ? randNorm(0, 1.2) : 0;
       // On circuits where overtaking is near-impossible, amplify the grid advantage:
       // drivers starting ahead are much harder to pass regardless of raw pace.
       // od=0.98 (Monaco): gridBonus multiplied ~6.4x — starting position dominates
@@ -2141,7 +2232,11 @@ const Sim = {
         : 0;
       // ────────────────────────────────────────────────────────────────────────────
 
-      const baseScore=(team.carPerformance/100*52+driver.racePace/100*32+driver.consistency/100*10+(wetFactor-1)*6)+gridBonus*aggrFactor*scFactor*gridMultiplier+traitBonus+chemBonus+circuitMod2+stratBonus+eliteBonus+wonderkidBonus+randNorm(0,odNoise);
+      const baseScore=(team.carPerformance/100*52+driver.racePace/100*32+driver.consistency/100*10+(wetFactor-1)*6)
+        + gridBonus*aggrFactor*scFactor*gridMultiplier
+        + traitBonus + chemBonus + circuitMod2 + stratBonus + eliteBonus + wonderkidBonus
+        + moraleForm + weekendForm + launchSwing + trafficSwing + safetyCarSwing + midfieldChaos
+        + randNorm(0,odNoise);
       const finalScore = dnf ? -999 + dnfLap : baseScore;
       results.push({driverId:driver.id,driverName:driver.name,teamId:team.id,teamName:team.name,startPos:startPos+1,score:finalScore,dnf,dnfLap});
     });
@@ -2306,7 +2401,11 @@ const Sim = {
     const isPlayer = r => r && r.teamId === playerTeamId;
 
     // Pit strategy context — declared here so SC block can reference it
-    const chosenStratId = race._chosenStrategy || race._strategyUsed;
+    const splitStrategyIds = State.getPlayerRacingDriverIds ? State.getPlayerRacingDriverIds().map(id=>race._driverStrategies && race._driverStrategies[id]).filter(Boolean) : [];
+    const primarySplitStratId = splitStrategyIds[0] || null;
+    const chosenStratId = race._chosenStrategy === 'split'
+      ? primarySplitStratId
+      : (race._chosenStrategy || race._strategyUsed);
     const stratData = DATA.getStrategyOptions(race, race._weatherRisk || race._weatherRiskUsed || 0);
     const chosenOpt = chosenStratId && chosenStratId !== 'auto' ? stratData.options.find(o=>o.id===chosenStratId) : null;
 
@@ -2455,11 +2554,12 @@ const Sim = {
             const howText = od >= 0.85
               ? `${r.driverName} up to P${p}, likely through pit strategy or a retirement.${placeExclaim}`
               : `${r.driverName} moves up to P${p}!${placeExclaim}`;
+            const eventSnap = Object.assign({}, snap, {[id]: p});
             events.push({
               lap: placeLap,
               type: 'overtake',
               text: `⭐ ${howText}`,
-              driverPositions: snap
+              driverPositions: eventSnap
             });
           }
         } else {
@@ -2472,11 +2572,12 @@ const Sim = {
             const fraction = (p - prevPos) / (curPos - prevPos);
             const placeLap = Math.max(2, Math.min(laps-1,
               Math.round(evLap - stepSize + stepSize * fraction)));
+            const eventSnap = Object.assign({}, snap, {[id]: p});
             events.push({
               lap: placeLap,
               type: 'overtake',
               text: `⭐ ${r.driverName} drops to P${p}. Under pressure.`,
-              driverPositions: snap
+              driverPositions: eventSnap
             });
           }
         }
@@ -2528,8 +2629,9 @@ const Sim = {
         for(let p = lastPos - 1; p >= reconcileFrom; p--) {
           const placeExclaim = p <= 1 ? ' 🔥 P1!' : p <= 3 ? ' 🔥' : p <= 6 ? ' 💪' : '';
           const evLapFinal = Math.max(laps - 5, Math.min(laps - 1, laps - (lastPos - p)));
+          const eventSnap = Object.assign({}, finalSnapForReconcile, {[id]: p});
           events.push({ lap: evLapFinal, type: 'overtake',
-            text: `⭐ ${r.driverName} moves up to P${p}!${placeExclaim}`, driverPositions: finalSnapForReconcile });
+            text: `⭐ ${r.driverName} moves up to P${p}!${placeExclaim}`, driverPositions: eventSnap });
         }
       } else if(gained < 0) {
         // Reconciliation drops are suppressed — they are almost always DNF-distortion
@@ -2588,7 +2690,15 @@ const Sim = {
         const nextTire = tc[nextCompound] || tc.medium;
         const stopNum = si + 1;
         const totalStops = chosenOpt.stints.length - 1;
-        playerDrivers.forEach((r, driverIdx) => {
+        const liveOrderForWindow = getOrderAtFrac(Math.min(0.98, idealLap / laps));
+        const livePosForWindow = {};
+        liveOrderForWindow.forEach((entry, idx) => { livePosForWindow[entry.id] = idx + 1; });
+        const playerDriversByTrackPos = playerDrivers.slice().sort((a, b) => {
+          const aPos = livePosForWindow[a.driverId] || 99;
+          const bPos = livePosForWindow[b.driverId] || 99;
+          return aPos - bPos;
+        });
+        playerDriversByTrackPos.forEach((r, driverIdx) => {
           // Don't generate a pit card if the driver DNFs before or shortly after the pit window
           const driverDnfLapForPit = driverDnfLap[r.driverId];
           if(driverDnfLapForPit && driverDnfLapForPit <= windowClose + 5) return;
@@ -2714,6 +2824,104 @@ const Sim = {
         events.splice(i, 1);
       }
     }
+
+    // Broader late-race cleanup for all classified drivers, not just the player.
+    // This strips synthetic closing-lap position calls that disagree with the
+    // classified finish and are a common source of commentary/result mismatch.
+    const finalPosByDriver = {};
+    finishers.forEach(r=>{ finalPosByDriver[r.driverId] = r.position; });
+    for(let i=events.length-1;i>=0;i--){
+      const ev = events[i];
+      if(ev.lap < finalWindow) continue;
+      if(ev.lap >= laps) continue;
+      if(ev.type !== 'overtake' && ev.type !== 'position' && ev.type !== 'position_change') continue;
+      let driverId = null;
+      let mentionedPos = null;
+      finishers.forEach(r=>{
+        if(ev.text && ev.text.includes(r.driverName)){
+          driverId = r.driverId;
+          const m = ev.text.match(/P(\d+)/);
+          if(m) mentionedPos = parseInt(m[1]);
+        }
+      });
+      if(!driverId || mentionedPos === null) continue;
+      if(finalPosByDriver[driverId] !== mentionedPos) events.splice(i, 1);
+    }
+
+    // Ensure the closing laps always narrate the classified finish for player
+    // drivers. Without a final bridge event, large late gains can leave the feed
+    // stranded on something like "P14" before the result table jumps to "P7".
+    playerIds.forEach(id => {
+      const finalPos = driverFinal[id];
+      if(finalPos === undefined) return;
+      const r = results.find(x => x.driverId === id);
+      if(!r || r.dnf) return;
+
+      let lastMentionPos = null;
+      let lastMentionLap = 0;
+      for(let i = events.length - 1; i >= 0; i--) {
+        const ev = events[i];
+        if(!ev || !ev.text || ev.lap >= laps) continue;
+        if(ev.type !== 'overtake' && ev.type !== 'position' && ev.type !== 'position_change') continue;
+        if(ev.text.indexOf(r.driverName) < 0) continue;
+        const pm = ev.text.match(/P(\d+)/);
+        if(!pm) continue;
+        lastMentionPos = parseInt(pm[1], 10);
+        lastMentionLap = ev.lap || 0;
+        break;
+      }
+
+      if(lastMentionPos === null || lastMentionPos === finalPos) return;
+
+      const bridgeLap = Math.max(finalWindow, Math.min(laps - 1, Math.max(lastMentionLap + 1, laps - 2)));
+      const movingUp = finalPos < lastMentionPos;
+      const bridgeExclaim = finalPos <= 1 ? ' P1!' : finalPos <= 3 ? ' 🔥' : finalPos <= 6 ? ' 💪' : '';
+      events.push({
+        lap: bridgeLap,
+        type: 'position_change',
+        text: movingUp
+          ? `⭐ ${r.driverName} charges up to P${finalPos} in the closing laps!${bridgeExclaim}`
+          : `⭐ ${r.driverName} falls to P${finalPos} late on.${bridgeExclaim}`,
+        driverPositions: finalSnap
+      });
+    });
+
+    // Apply the same late-race bridge idea to the podium finishers so the feed
+    // explains who actually wins or grabs the top spots, even when they're AI
+    // drivers and the player is just watching the story unfold.
+    finishers.slice(0, 3).forEach(r => {
+      const finalPos = r.position;
+      let lastMentionPos = null;
+      let lastMentionLap = 0;
+      for(let i = events.length - 1; i >= 0; i--) {
+        const ev = events[i];
+        if(!ev || !ev.text || ev.lap >= laps) continue;
+        if(ev.text.indexOf(r.driverName) < 0) continue;
+        const pm = ev.text.match(/P(\d+)/);
+        if(!pm) continue;
+        lastMentionPos = parseInt(pm[1], 10);
+        lastMentionLap = ev.lap || 0;
+        break;
+      }
+
+      if(lastMentionPos === null || lastMentionPos === finalPos) return;
+
+      const bridgeLap = Math.max(finalWindow, Math.min(laps - 1, Math.max(lastMentionLap + 1, laps - 2)));
+      const movingUp = finalPos < lastMentionPos;
+      const text = finalPos === 1
+        ? (movingUp
+            ? `⚡ ${r.driverName} storms into the lead in the closing laps!`
+            : `⚡ ${r.driverName} hangs on at the front under huge pressure.`)
+        : movingUp
+          ? `⚡ ${r.driverName} rises to P${finalPos} late on.`
+          : `⚡ ${r.driverName} slips to P${finalPos} in the closing laps.`;
+      events.push({
+        lap: bridgeLap,
+        type: 'position_change',
+        text,
+        driverPositions: finalSnap
+      });
+    });
 
     // Also remove any finish-line overtake events (lap === laps)
     for(let i=events.length-1;i>=0;i--){
@@ -2888,6 +3096,15 @@ const Sim = {
     }
 
     // ── 3. Notable DNFs ──
+    const driverTitleStatus = State.getDriverTitleStatus(g.raceIndex+1);
+    if(driverTitleStatus && driverTitleStatus.clinched) {
+      push(`🏆 <strong>${driverTitleStatus.leader.name}</strong> has clinched the Drivers Championship.`, 'success', '🏆');
+    }
+    const constructorTitleStatus = State.getConstructorTitleStatus(g.raceIndex+1);
+    if(constructorTitleStatus && constructorTitleStatus.clinched) {
+      push(`🏗️ <strong>${constructorTitleStatus.leader.name}</strong> have clinched the Constructors Championship.`, 'success', '🏗️');
+    }
+
     dnfs.forEach(r => {
       if(r.teamId === ptid) return;
       const d = State.getDriver(r.driverId);
@@ -3112,7 +3329,7 @@ const Sim = {
     const seasonWins = playerDrivers.reduce((s,d)=>s+d.wins,0);
     const seasonPodiums = playerDrivers.reduce((s,d)=>s+d.podiums,0);
     const seasonPoles = playerDrivers.reduce((s,d)=>s+(d.poles||0),0);
-    const constrPos = State.getConstructorSeasonPos(playerTeam.id);
+    const constrPos = constructorStandings.findIndex(s=>s.team.id===playerTeam.id)+1 || 99;
     const isConstrChampSeason = constructorChamp && constructorChamp.team.id === playerTeam.id;
     const isDriverChampSeason = driverChamp && playerDrivers.some(d=>d.id===driverChamp.driver.id);
 
@@ -3227,7 +3444,7 @@ const Sim = {
     // Championship bonus/malus
     const champBonus = isConstrChampSeason ? 0.3 : isDriverChampSeason ? 0.15 : 0;
     g.ownerMood.performance = clamp(g.ownerMood.performance + perfDelta + champBonus, -3, 1);
-    // Finance score: healthy surplus = +0.2, slim = 0, loss = -0.2, big loss = -0.4
+    // Finance score: normal profit should still help, even if big surpluses improve confidence faster.
     const scTier2=DATA.scoutingTiers.find(t=>t.id===(g.scoutingTier||'none'));
     const dSals=playerDrivers.reduce((s,d)=>s+d.salary,0);
     const rSals=State.getPlayerReserves().reduce((s,d)=>s+d.salary,0);
@@ -3242,7 +3459,7 @@ const Sim = {
     const qSpend2=(g.quarterDev||[]).filter(q=>q.applied).reduce((s,q)=>s+(q.aero*6+q.reliability*4+q.engine*10),0);
     const offSpend2=(()=>{ const rd=g._lastOffseasonDevResult; if(!rd) return 0; const b=rd.spent||{}; return (b.aero||0)*6+(b.engine||0)*8+(b.reliability||0)*4+(b.facilities||0)*3; })();
     const netFinance=totalInc2-(dSals+rSals+scC+opsB2+engC2+staffC2+qSpend2+offSpend2);
-    const finDelta = netFinance>20?0.2:netFinance>0?0:netFinance>-20?-0.2:-0.4;
+    const finDelta = netFinance>20?0.2:netFinance>0?0.1:netFinance>-20?-0.2:-0.4;
     g.ownerMood.finances = clamp(g.ownerMood.finances + finDelta, -3, 1);
     // Save for display
     g.lastOwnerMoodDelta = {perfDelta:perfDelta+champBonus, finDelta, constrPos, goal};
@@ -3595,6 +3812,8 @@ const Sim = {
     // ── Force-release low morale / too old drivers ──
     g.teams.forEach(team=>{
       State.getTeamDrivers(team.id).forEach(d=>{
+        const protectedContractedDriver = (d.contract||0)>0;
+        if(protectedContractedDriver) return;
         if(d.morale<40){d.teamId=null;d.contract=0;d._departReason='low morale';}
         else if(d.age>38&&d.rating<72){d.teamId=null;d.contract=0;d._departReason='released (declining performance)';}
       });
@@ -3635,6 +3854,7 @@ const Sim = {
       const current=State.getTeamDrivers(team.id);
       const worstCurrent=current.length>0?current.reduce((w,d)=>d.rating<w.rating?d:w,current[0]):null;
       if(!worstCurrent) return;
+      if((worstCurrent.contract||0)>0) return;
       // Top teams (prestige>80) actively poach — look for drivers 3+ points better
       const threshold=team.prestige>80?3:6;
       const candidates=State.getFreeAgents()
@@ -4670,6 +4890,9 @@ const UI = {
 
   renderDashboard(){
     const g=State.game, team=State.getPlayerTeam(), drivers=State.getPlayerDrivers(), race=State.getCurrentRace();
+    if(g.raceIndex===0 && typeof GameActions!=='undefined' && GameActions._syncOffseasonPending){
+      GameActions._syncOffseasonPending();
+    }
     const cpos = State.getConstructorSeasonPos(team.id);
     document.getElementById('dash-title').textContent = `${g.managerName} — ${g.season}`;
     document.getElementById('nav-season').textContent = g.season;
@@ -4722,6 +4945,9 @@ const UI = {
       // Open window — threshold passed AND not yet submitted
       const openQ = qDevArr.findIndex((q,i)=>!q.applied && racesDone>=qThresholds[i]);
       const carPerf = team.carPerformance;
+      const carRank = [...g.teams].sort((a,b)=>b.carPerformance-a.carPerformance).findIndex(t=>t.id===team.id)+1;
+      const regsThisSeason = g.nextRegsYear === g.season;
+      const regsFocus = regsThisSeason ? Math.round((g.regsInvestment||0)*100) : 0;
       const enRoutePkgs = (g.pendingUpgrades||[]).filter(u=>!u.applied);
       const pendingEnRoute = enRoutePkgs.length;
       // Earliest arrival — min races until any package arrives
@@ -4737,6 +4963,7 @@ const UI = {
       ].filter(Boolean).join(' · ') : null;
       devCardEl.innerHTML = `
         <div style="font-size:20px;font-weight:900;font-family:var(--fm);color:var(--tx);margin-bottom:2px">${carPerf.toFixed(1)} <span style="font-size:11px;font-weight:600;color:var(--tx3)">OVR</span></div>
+        <div style="font-size:10px;color:var(--tx3);margin-bottom:4px">Car rank: P${carRank} of ${g.teams.length}${carPerf>=99?' · 100 OVR is a cap, not an automatic best-car guarantee':''}</div>
         ${openQ>=0?`<div style="font-size:11px;font-weight:700;color:#f59e0b;margin-bottom:4px">🔧 ${qLabels[openQ]} upgrade window open! <a href="javascript:void(0)" onclick="UI.showView('car')" style="color:var(--red)">Configure →</a></div>`
           :pendingEnRoute>0?`<div style="font-size:11px;color:var(--blu);margin-bottom:4px">🚚 ${pendingEnRoute} package${pendingEnRoute>1?'s':''} en route · ${racesUntilArrival===0?'<strong>arriving this race!</strong>':`arrives in <strong>${racesUntilArrival} race${racesUntilArrival!==1?'s':''}</strong>${(()=>{const arrRace=enRoutePkgs.reduce((e,u)=>u.arrivesAfterRace<(e?.arrivesAfterRace||999)?u:e,null);const nm=arrRace?g.calendar[arrRace.arrivesAfterRace]?.name:'';return nm?' ('+nm+')':'';})()}`}</div>`
           :racesToNext!==null?`<div style="font-size:11px;color:var(--tx3);margin-bottom:4px">${qLabels[nextQ]} window opens in <strong>${racesToNext} race${racesToNext!==1?'s':''}</strong></div>`
@@ -4746,7 +4973,8 @@ const UI = {
           :gainStr
           ?`<div style="font-size:10px;color:var(--tx3);font-style:italic">Season gains: <span style="color:var(--grn)">${gainStr}</span></div>`
           :'<div style="font-size:10px;color:var(--tx3)">No upgrades applied yet</div>'
-        }`;
+        }
+        ${regsThisSeason&&regsFocus>0?`<div style="font-size:10px;color:var(--amber);margin-top:6px">📋 Regulation year: ${regsFocus}% of winter resources went to the new-reg concept. Compare your car rank and results, not just the headline OVR.</div>`:''}`;
     } else if(devCardEl && g.offseasonPending){
       const bw=g.offseasonBudget||{};
       const spent=(bw.aero||0)+(bw.engine||0)+(bw.reliability||0)+(bw.facilities||0);
@@ -4857,6 +5085,16 @@ const UI = {
       // Weather hint (random but seeded by race index for consistency)
       const weatherHints = ['☀️ Dry expected','⛅ Changeable','🌧 Rain likely'];
       const weatherHint = weatherHints[race.id%3];
+      const driverTitleStatus = State.getDriverTitleStatus(g.raceIndex);
+      const constructorTitleStatus = State.getConstructorTitleStatus(g.raceIndex);
+      const titleWatchBits = [
+        driverTitleStatus&&driverTitleStatus.canClinchNext&&!driverTitleStatus.clinched
+          ? `🏆 Driver title watch: ${driverTitleStatus.leader.name} can clinch this weekend`
+          : '',
+        constructorTitleStatus&&constructorTitleStatus.canClinchNext&&!constructorTitleStatus.clinched
+          ? `🏗️ Constructors title watch: ${constructorTitleStatus.leader.name} can clinch this weekend`
+          : ''
+      ].filter(Boolean);
             const sprintStep = race.sprint ? (
         !race.sprintQualiDone ? '🏃 Sprint Qualifying up next' :
         !race.sprintDone      ? '🏃 Sprint Race up next' :
@@ -4875,15 +5113,26 @@ const UI = {
           <span style="font-size:11px;background:var(--bg3);padding:3px 8px;border-radius:10px;font-weight:600;color:${predColor}">🎯 P${predMin}–P${predMax}</span>
         </div>
         <div style="font-size:10px;color:var(--tx3);margin-top:5px;font-style:italic">${circuitType.tip}</div>
+        ${titleWatchBits.length?`<div style="margin-top:8px;padding:8px 10px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.35);border-radius:8px;font-size:11px;color:#b45309;font-weight:700">${titleWatchBits.join('<br>')}</div>`:''}
         ${race.qualiDone ? '<div style="margin-top:6px"><span class="quali-tag">✓ Qualifying done</span></div>' : ''}
         ${race.qualiDone && !race.raceDone ? (()=>{
-          const cs = race._chosenStrategy;
-          const autoOn = g.autoStrategy;
-          if(!cs && !autoOn) return `<div style="margin-top:8px;background:#fef9c3;border:1px solid #fde68a;border-radius:7px;padding:7px 10px;font-size:11px;color:#92400e;display:flex;align-items:center;justify-content:space-between;gap:8px"><span>⚠️ <strong>No strategy set</strong> — choose one or use auto (−1.5 pace).</span><div style="display:flex;gap:6px;flex-shrink:0"><button onclick="GameActions.setAutoStrategyDash()" style="background:#92400e;color:#fff;border:none;border-radius:5px;padding:4px 8px;font-size:11px;font-weight:700;cursor:pointer">🤖 Auto</button><button onclick="UI.openStrategyPicker()" style="background:none;border:1px solid #92400e;border-radius:5px;padding:4px 8px;font-size:11px;font-weight:700;cursor:pointer;color:#92400e">Pick</button></div></div>`;
-          if(cs==='auto' || autoOn) return `<div style="margin-top:8px;background:var(--bg3);border-radius:7px;padding:7px 10px;font-size:11px;color:var(--tx3);display:flex;align-items:center;justify-content:space-between">🤖 <strong>Auto strategy</strong> — engineers manage the race. <a href="javascript:void(0)" onclick="UI.openStrategyPicker()" style="color:var(--red)">Change</a></div>`;
-          const sd = DATA.getStrategyOptions(race, race._weatherRisk || 0);
-          const opt = sd.options.find(o=>o.id===cs);
-          return opt ? `<div style="margin-top:8px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:7px;padding:7px 10px;font-size:11px;color:#166534">🧠 <strong>${opt.label}</strong> locked in. <a href="javascript:void(0)" onclick="UI.openStrategyPicker()" style="color:var(--red);font-weight:700">Change</a></div>` : '';
+    const stratState = GameActions._getRaceStrategyState(race);
+    const cs = stratState.mode;
+    if(!cs) return `<div style="margin-top:8px;background:#fef9c3;border:1px solid #fde68a;border-radius:7px;padding:7px 10px;font-size:11px;color:#92400e;display:flex;align-items:center;justify-content:space-between;gap:8px"><span>⚠️ <strong>No strategy set</strong> — choose one or use auto (−1.5 pace).</span><div style="display:flex;gap:6px;flex-shrink:0"><button onclick="GameActions.setAutoStrategyDash()" style="background:#92400e;color:#fff;border:none;border-radius:5px;padding:4px 8px;font-size:11px;font-weight:700;cursor:pointer">🤖 Auto</button><button onclick="UI.openStrategyPicker()" style="background:none;border:1px solid #92400e;border-radius:5px;padding:4px 8px;font-size:11px;font-weight:700;cursor:pointer;color:#92400e">Pick</button></div></div>`;
+    if(cs==='auto') return `<div style="margin-top:8px;background:var(--bg3);border-radius:7px;padding:7px 10px;font-size:11px;color:var(--tx3);display:flex;align-items:center;justify-content:space-between">🤖 <strong>Auto strategy</strong> — engineers manage the race. <a href="javascript:void(0)" onclick="UI.openStrategyPicker()" style="color:var(--red)">Change</a></div>`;
+    if(cs==='split') {
+      const racingIds = State.getPlayerRacingDriverIds ? State.getPlayerRacingDriverIds() : State.getPlayerDrivers().map(d=>d.id);
+      const splitLabel = racingIds.map(id=>{
+        const d = State.getDriver(id);
+        const sid = race._driverStrategies && race._driverStrategies[id];
+        const opt = DATA.getStrategyOptions(race,race._weatherRisk||0).options.find(o=>o.id===sid);
+        return d ? d.name.split(' ').pop()+': '+(opt?.label||sid||'Same') : null;
+      }).filter(Boolean).join(' / ');
+      return `<div style="margin-top:8px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:7px;padding:7px 10px;font-size:11px;color:#166534;display:flex;align-items:center;justify-content:space-between;gap:8px"><span>🧠 <strong>Split strategy</strong> locked in. ${splitLabel?splitLabel:''}</span><a href="javascript:void(0)" onclick="UI.openStrategyPicker()" style="color:var(--red);font-weight:700">Change</a></div>`;
+    }
+    const sd = DATA.getStrategyOptions(race, race._weatherRisk || 0);
+    const opt = sd.options.find(o=>o.id===cs);
+    return opt ? `<div style="margin-top:8px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:7px;padding:7px 10px;font-size:11px;color:#166534">🧠 <strong>${opt.label}</strong> locked in. <a href="javascript:void(0)" onclick="UI.openStrategyPicker()" style="color:var(--red);font-weight:700">Change</a></div>` : '';
         })() : ''}
       `;
       document.getElementById('dash-next-race').textContent = `Race ${n} of ${g.calendar.length}`;
@@ -5547,6 +5796,7 @@ const UI = {
       if(isPast){
         return `<div class="dev-section" style="opacity:0.55">
           <div class="dev-section-title">${qIcons[qi]} ${qLabels[qi]} <span style="font-size:10px;background:var(--bg3);padding:2px 7px;border-radius:10px;margin-left:6px;font-weight:600">COMPLETE</span></div>
+          <div style="font-size:11px;color:var(--amber);font-weight:600;margin-top:4px">${qd.arrivalRaceName ? `Arriving at ${qd.arrivalRaceName}.` : 'Arrival race pending confirmation.'}</div>
           <div style="font-size:12px;color:var(--tx3)">Applied: Aero ×${qd.aero} · Reliability ×${qd.reliability} · Engine ×${qd.engine}</div>
         </div>`;
       }
@@ -5559,11 +5809,14 @@ const UI = {
       }
       return `<div class="dev-section" style="border:1px solid var(--red)">
         <div class="dev-section-title">${qIcons[qi]} ${qLabels[qi]} <span style="font-size:10px;background:#fee2e2;color:var(--red);padding:2px 7px;border-radius:10px;margin-left:6px;font-weight:700">AVAILABLE NOW</span></div>
-        <div class="dev-section-sub">Budget: <strong>${formatMoney(qBudget)}</strong> available · <strong>${formatMoney(Math.max(0,qBudget-qCost))}</strong> remaining. Upgrades apply immediately to your car for the rest of the season.</div>
+        <div class="dev-section-sub">Budget: <strong>${formatMoney(qBudget)}</strong> available · <strong>${formatMoney(Math.max(0,qBudget-qCost))}</strong> remaining. Upgrades are queued now and usually arrive in 2-4 races for the rest of the season.</div>
+        <div style="font-size:11px;color:var(--amber);font-weight:600;margin-top:4px">${qd.applied && qd.arrivalRaceName ? `Upgrades ordered — arriving at ${qd.arrivalRaceName}.` : 'Apply now and the exact arrival race will be shown once you confirm.'}</div>
         ${(()=>{
-          const _aMax=Math.max(3,Math.floor(qBudget*0.43/6));
-          const _rMax=Math.max(2,Math.floor(qBudget*0.25/4));
-          const _eMax=Math.max(1,Math.floor(qBudget*0.32/10));
+          // Let players spend the full window budget however they want.
+          // The old per-category share caps could strand budget even with every slider maxed.
+          const _aMax=Math.max(3,Math.floor(qBudget/6));
+          const _rMax=Math.max(2,Math.floor(qBudget/4));
+          const _eMax=Math.max(1,Math.floor(qBudget/10));
           return slider('aero','Aerodynamic Package',Math.min(qd.aero,_aMax),_aMax,'q'+qi,6,'Aero updates — front/rear wing, diffuser.','→ +'+(Math.min(qd.aero,_aMax)*0.9).toFixed(1)+' Car Perf')
             +slider('reliability','Reliability Work',Math.min(qd.reliability,_rMax),_rMax,'q'+qi,4,'Fix failure points before they cost you points.','→ +'+(Math.min(qd.reliability,_rMax)*0.6).toFixed(1)+' Reliability')
             +slider('engine','Engine Mode',Math.min(qd.engine,_eMax),_eMax,'q'+qi,10,'Power unit mapping push — expensive but fast.','→ +'+(Math.min(qd.engine,_eMax)*1.4).toFixed(1)+' Car Perf');
@@ -6037,11 +6290,13 @@ const UI = {
       const isMyDriver = myIds.includes(d.id)||myResIds.includes(d.id);
       const seriesBadge = d.prospectSeries ? `<span class="prospect-badge badge-${d.prospectSeries.toLowerCase().replace('indycar','ic').replace('wec','ic')}">${d.prospectSeries}</span>` : '';
       const reserveBadge = d.isReserve&&!isMyDriver ? `<span class="prospect-badge badge-reserve">RSV</span>` : '';
+      const contractYears = d.contract>0 ? `${d.contract}yr` : 'Expired';
+      const contractBadge = `<span class="prospect-badge" style="background:${d.contract>1?'rgba(37,99,235,.12)':d.contract===1?'rgba(245,158,11,.16)':'rgba(220,38,38,.12)'};color:${d.contract>1?'#1d4ed8':d.contract===1?'#b45309':'#dc2626'}">${contractYears}</span>`;
       return `<div class="driver-list-row${isMyDriver?' my-drv':''}" onclick="UI.showDriverModal(${d.id})">
         <span class="dl-pos">${i+1}</span>
         <div class="dl-name-block">
-          <div class="dl-name">${d.name}${seriesBadge}${reserveBadge}</div>
-          <div class="dl-team">${team?team.name:d.isProspect?'Prospect':'Free Agent'} · Age ${d.age}</div>
+          <div class="dl-name">${d.name}${seriesBadge}${reserveBadge} ${contractBadge}</div>
+          <div class="dl-team">${team?team.name:d.isProspect?'Prospect':'Free Agent'} · Age ${d.age} · Contract: ${contractYears}</div>
         </div>
         <span class="dl-ovr"><span class="ovr-pill ${ratingClass(Math.round(d.rating))}">${Math.round(d.rating)}</span></span>
         <span class="dl-attr">${Math.round(d.racePace)}</span>
@@ -6187,7 +6442,7 @@ const UI = {
     const weatherRisk = race._weatherRisk;
     const strat = DATA.getStrategyOptions(race, weatherRisk);
     const tc = DATA.tires;
-    const currentStratId = race._chosenStrategy || (g.autoStrategy ? 'auto' : null);
+    const currentStratId = GameActions._getRaceStrategyState(race).mode || null;
 
     const compoundPill = (c) => {
       const t = tc[c]; if(!t) return '';
@@ -6329,7 +6584,7 @@ const UI = {
       ? (race._pendingStrategy || 'split')
       : (race._pendingStrategy || null);
     if(!chosen){ document.getElementById('strategy-confirm-msg').textContent='Please select a strategy first.'; return; }
-    race._chosenStrategy = chosen === 'split' ? null : chosen;
+    race._chosenStrategy = chosen;
     // Only set autoStrategy true if the player explicitly chose auto — never when using splits
     State.game.autoStrategy = (chosen === 'auto');
     // If using splits, ensure autoStrategy global flag is off so simRace doesn't override
@@ -6517,10 +6772,12 @@ const UI = {
         +'<span style="color:#888">'+d.name.split(' ').slice(-1)[0]+'</span> '
         +'<span style="color:#888">–</span></div>';
     }).join('');
+    const tower1 = document.getElementById('wr-positions'); if(tower1) tower1.innerHTML = '';
     const footer=document.getElementById('wr-footer'); footer.innerHTML=''; footer.style.display='none';
     const tb=document.getElementById('wr-toggle'); if(tb){tb.textContent='⏸ Pause';tb.disabled=false;}
     document.getElementById('wr-speed').value=State.game.watchRaceSpeed||600;
     document.getElementById('watch-race-modal').style.display='flex';
+    window._wrRenderPositions();
     WR.timer=setTimeout(window._wrTick,250);
   },
   openWatchRace(raceIdx){
@@ -6555,6 +6812,7 @@ const UI = {
         +'<span style="color:#888">'+d.name.split(' ').slice(-1)[0]+'</span> '
         +'<span style="color:#888">–</span></div>';
     }).join('');
+    const tower2 = document.getElementById('wr-positions'); if(tower2) tower2.innerHTML = '';
     const footer=document.getElementById('wr-footer'); footer.innerHTML=''; footer.style.display='none';
     const tb=document.getElementById('wr-toggle'); if(tb){tb.textContent='⏸ Pause';tb.disabled=false;tb.style.opacity='1';}
     // Apply saved default speed and highlight matching button
@@ -6569,6 +6827,7 @@ const UI = {
       b.style.fontWeight = active ? '700' : '600';
     });
     const wm=document.getElementById('watch-race-modal'); wm.style.display='flex';
+      window._wrRenderPositions();
       WR.timer = setTimeout(window._wrTick, 250);
   },
   wrToggle(){
@@ -6658,6 +6917,29 @@ const UI = {
     const g=State.game, team=State.getPlayerTeam();
     const drivers=State.getPlayerDrivers();
     const sponsors=g.sponsors||[];
+    const sponsorTypeOrder=['Title','Works','Primary','Partner','Secondary','Technical','Associate'];
+    const sponsorTypeRank=t=>{ const i=sponsorTypeOrder.indexOf(t); return i>=0?i:99; };
+    const sponsorEntries=sponsors.map((sp,idx)=>({sp,idx}));
+    const sortedSponsors=sponsorEntries.slice().sort((a,b)=>sponsorTypeRank(a.sp.type)-sponsorTypeRank(b.sp.type)||((b.sp.value||0)-(a.sp.value||0))||a.sp.name.localeCompare(b.sp.name));
+    const pendingSponsorEntries=(g.pendingSponsors||[]).map((sp,idx)=>({sp,idx}));
+    const sortedPendingSponsors=pendingSponsorEntries.slice().sort((a,b)=>{
+      const asp=a.sp, bsp=b.sp;
+      const kindA=asp.isRenewal?0:asp.isReplacement?1:2;
+      const kindB=bsp.isRenewal?0:bsp.isReplacement?1:2;
+      return sponsorTypeRank(asp.type)-sponsorTypeRank(bsp.type)
+        || kindA-kindB
+        || ((bsp.value||0)-(asp.value||0))
+        || asp.name.localeCompare(bsp.name);
+    });
+    const sponsorSummaryHtml=sponsorTypeOrder.map(type=>{
+      const signed=sortedSponsors.filter(({sp})=>sp.type===type).length;
+      const available=sortedPendingSponsors.filter(({sp})=>sp.type===type).length;
+      if(!signed && !available) return '';
+      return `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 8px;background:var(--bg3);border:1px solid var(--bd);border-radius:7px;font-size:11px">
+        <span style="font-weight:700">${type}</span>
+        <span style="color:var(--tx3)">${signed} signed · ${available} available</span>
+      </div>`;
+    }).filter(Boolean).join('');
     const scoutTier=DATA.scoutingTiers.find(t=>t.id===(g.scoutingTier||'none'));
     const driverSalaries=drivers.reduce((s,d)=>s+d.salary,0);
     const reserveSalaries=State.getPlayerReserves().reduce((s,d)=>s+d.salary,0);
@@ -6702,7 +6984,7 @@ const UI = {
     const netColor=net>15?'var(--grn)':net>0?'var(--amber)':'var(--red)';
 
     document.getElementById('finance-content').innerHTML = `
-      ${this._fromOffseason?`<div style="margin-bottom:12px"><button class="btn btn-outline btn-sm" onclick="UI._fromOffseason=false;UI.showPage('offseason');if(window._recapTransfers)UI.renderOffseason(window._recapTransfers,window._recapChamps&&window._recapChamps.driverChamp,window._recapChamps&&window._recapChamps.constructorChamp,window._recapChamps&&window._recapChamps.retirements||[])">← Back to Season Review</button></div>`:''}
+      ${this._fromOffseason?`<div style="margin-bottom:12px"><button class="btn btn-outline btn-sm" onclick="UI._fromOffseason=false;UI.showPage('offseason');if(window._recapTransfers)UI.renderOffseason(window._recapTransfers,window._recapChamps&&window._recapChamps.driverChamp,window._recapChamps&&window._recapChamps.constructorChamp,window._recapChamps&&window._recapChamps.retirements||[]);else UI.renderOffseasonPlanning()">← Back to Offseason</button></div>`:''}
       <div class="finance-grid">
         <div class="finance-card">
           <div class="finance-card-title">Income</div>
@@ -6743,8 +7025,9 @@ const UI = {
       </div>
       <div class="finance-card">
         <div class="finance-card-title">Sponsorship Deals</div>
+        ${sponsorSummaryHtml?`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:6px;margin-bottom:12px">${sponsorSummaryHtml}</div>`:''}
         ${sponsors.length>0?`<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px">
-          ${sponsors.map((sp,idx)=>{
+          ${sortedSponsors.map(({sp,idx})=>{
             const mood=sp.lastSeasonMood||'neutral';
             const moodIcon=mood==='happy'?'😊':mood==='neutral'?'😐':mood==='unhappy'?'😠':'😡';
             const moodCol=mood==='happy'?'var(--grn)':mood==='neutral'?'var(--tx3)':mood==='unhappy'?'var(--amber)':'var(--red)';
@@ -6767,9 +7050,10 @@ const UI = {
           }).join('')}
         </div>`:'<div style="font-size:12px;color:var(--tx3);margin-bottom:12px">No active sponsors.</div>'}
         ${(g.pendingSponsors||[]).length>0?`<div style="border-top:1px solid var(--bd);padding-top:12px;margin-top:4px">
-          <div style="font-size:12px;font-weight:700;color:var(--tx);margin-bottom:8px">📋 Offers — tap to sign</div>
+          <div style="font-size:12px;font-weight:700;color:var(--tx);margin-bottom:4px">📋 Offers — tap to sign</div>
+          <div style="font-size:10px;color:var(--tx3);margin-bottom:8px">Sorted by sponsor tier first, then highest annual value.</div>
           <div style="display:flex;flex-direction:column;gap:7px">
-            ${(g.pendingSponsors||[]).map((sp,idx)=>{
+            ${sortedPendingSponsors.map(({sp,idx})=>{
               const badge=sp.isRenewal?'<span style="font-size:9px;background:rgba(37,99,235,.1);color:#1d4ed8;padding:1px 5px;border-radius:4px;font-weight:700">RENEWAL</span>':sp.isReplacement?'<span style="font-size:9px;background:rgba(245,158,11,.15);color:#b45309;padding:1px 5px;border-radius:4px;font-weight:700">REPLACEMENT</span>':'<span style="font-size:9px;background:rgba(22,163,74,.1);color:#15803d;padding:1px 5px;border-radius:4px;font-weight:700">NEW</span>';
               const borderCol=sp.isRenewal?'rgba(37,99,235,.4)':sp.isReplacement?'var(--amber)':'var(--grn)';
               return '<div style="background:var(--bg3);border:1px solid '+borderCol+';border-radius:8px;padding:10px 12px;cursor:pointer;display:flex;justify-content:space-between;align-items:center" onclick="GameActions.acceptSponsor('+idx+')">'
@@ -6901,6 +7185,29 @@ const UI = {
 
   renderOffseasonPlanning(){
     const g=State.game, team=State.getPlayerTeam();
+    const sponsorTypeOrder=['Title','Works','Primary','Partner','Secondary','Technical','Associate'];
+    const sponsorTypeRank=t=>{ const i=sponsorTypeOrder.indexOf(t); return i>=0?i:99; };
+    const sponsorEntries=(g.sponsors||[]).map((sp,idx)=>({sp,idx}));
+    const sortedSponsors=sponsorEntries.slice().sort((a,b)=>sponsorTypeRank(a.sp.type)-sponsorTypeRank(b.sp.type)||((b.sp.value||0)-(a.sp.value||0))||a.sp.name.localeCompare(b.sp.name));
+    const pendingSponsorEntries=(g.pendingSponsors||[]).map((sp,idx)=>({sp,idx}));
+    const sortedPendingSponsors=pendingSponsorEntries.slice().sort((a,b)=>{
+      const asp=a.sp, bsp=b.sp;
+      const kindA=asp.isRenewal?0:asp.isReplacement?1:2;
+      const kindB=bsp.isRenewal?0:bsp.isReplacement?1:2;
+      return sponsorTypeRank(asp.type)-sponsorTypeRank(bsp.type)
+        || kindA-kindB
+        || ((bsp.value||0)-(asp.value||0))
+        || asp.name.localeCompare(bsp.name);
+    });
+    const sponsorSummaryHtml=sponsorTypeOrder.map(type=>{
+      const signed=sortedSponsors.filter(({sp})=>sp.type===type).length;
+      const available=sortedPendingSponsors.filter(({sp})=>sp.type===type).length;
+      if(!signed && !available) return '';
+      return `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 8px;background:var(--bg3);border:1px solid var(--bd);border-radius:7px;font-size:11px">
+        <span style="font-weight:700">${type}</span>
+        <span style="color:var(--tx3)">${signed} signed · ${available} available</span>
+      </div>`;
+    }).filter(Boolean).join('');
     // Generate morale + chemistry summary for offseason view
     const _chemSummary = State.getPlayerDrivers().map(d=>{
       const td=DATA.traitDefs[d.trait||'consistent']||{};
@@ -6995,7 +7302,7 @@ const UI = {
           +'<div style="font-size:10px;color:var(--tx3)">max +1.0</div></div>'
           +'<div><div style="font-size:10px;color:var(--tx3);margin-bottom:2px">Finances</div>'
           +'<div style="font-size:16px;font-weight:900;font-family:var(--fm);color:'+finCol+'">'+(finScore>=0?'+':'')+finScore.toFixed(1)+'</div>'
-          +'<div style="font-size:10px;color:var(--tx3)">max +1.0</div></div>'
+          +'<div style="font-size:10px;color:var(--tx3)">cumulative, max +1.0</div></div>'
           +'</div>'
           +(total<=-0.5?'<div style="margin-top:8px;padding:6px 8px;background:#fef2f2;border-radius:5px;font-size:11px;color:var(--red);font-weight:600">⚠️ '+(total<=-1?'You are in danger of being fired. A strong season is essential.':'The board is watching closely. Results need to improve.')+'</div>':'')
           +'</div></div>';
@@ -7209,9 +7516,10 @@ const UI = {
       <div class="offseason-section">
         <div class="offseason-section-title">💰 Sponsorship</div>
         <div class="offseason-section-sub">Active contracts auto-continue. Review mood and sign any new offers before beginning the season.</div>
+        ${sponsorSummaryHtml?`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:6px;margin-bottom:12px">${sponsorSummaryHtml}</div>`:''}
         ${(g.sponsors||[]).length>0?`
         <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:12px">
-          ${(g.sponsors||[]).slice().sort((a,b)=>{const order=['Title','Works','Primary','Partner','Secondary','Technical','Associate'];return (order.indexOf(a.type)||99)-(order.indexOf(b.type)||99);}).map(sp=>{
+          ${sortedSponsors.map(({sp})=>{
             const mood=sp.lastSeasonMood||'neutral';
             const moodIcon=mood==='happy'?'😊':mood==='neutral'?'😐':mood==='unhappy'?'😠':'😡';
             const moodCol=mood==='happy'?'var(--grn)':mood==='neutral'?'var(--tx3)':mood==='unhappy'?'var(--amber)':'var(--red)';
@@ -7224,9 +7532,10 @@ const UI = {
         </div>`:''}
         ${(g.sponsors||[]).length===0?'<div style="background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.2);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--red);font-weight:600;margin-bottom:12px">⚠️ No active sponsors — sign at least one offer below before beginning the season.</div>':''}
         ${(g.pendingSponsors||[]).length>0?`
-        <div style="font-size:12px;font-weight:700;color:var(--tx);margin-bottom:8px">New offers — tap to sign:</div>
+        <div style="font-size:12px;font-weight:700;color:var(--tx);margin-bottom:4px">New offers — tap to sign:</div>
+        <div style="font-size:10px;color:var(--tx3);margin-bottom:8px">Sorted by sponsor tier first, then highest annual value.</div>
         <div style="display:flex;flex-direction:column;gap:7px">
-          ${(g.pendingSponsors||[]).map((sp,idx)=>{
+          ${sortedPendingSponsors.map(({sp,idx})=>{
             const badge=sp.isRenewal?'<span style="font-size:9px;background:rgba(37,99,235,.1);color:#1d4ed8;padding:1px 5px;border-radius:4px;font-weight:700">RENEWAL</span>':sp.isReplacement?'<span style="font-size:9px;background:rgba(245,158,11,.15);color:#b45309;padding:1px 5px;border-radius:4px;font-weight:700">REPLACEMENT</span>':'<span style="font-size:9px;background:rgba(22,163,74,.1);color:#15803d;padding:1px 5px;border-radius:4px;font-weight:700">NEW</span>';
             const borderCol=sp.isRenewal?'rgba(37,99,235,.35)':sp.isReplacement?'var(--amber)':'var(--grn)';
             const terms=(sp.totalSeasons||sp.seasonsLeft||1);
@@ -7575,6 +7884,14 @@ const UI = {
     const preC = rd.preConstrStandings || [];
     const postDStandings = State.getDriverStandings();
     const postCStandings = State.getConstructorStandings();
+    const preChampLeader = preD[0] || null;
+    const preChampRunnerUp = preD[1] || null;
+    const preChampGap = preChampLeader && preChampRunnerUp ? (preChampLeader.pts - preChampRunnerUp.pts) : null;
+    const postChampLeader = postDStandings[0] || null;
+    const postChampRunnerUp = postDStandings[1] || null;
+    const postChampGap = postChampLeader && postChampRunnerUp ? (postChampLeader.driver.seasonPoints - postChampRunnerUp.driver.seasonPoints) : null;
+    const driverTitleStatus = State.getDriverTitleStatus(g.raceIndex);
+    const constructorTitleStatus = State.getConstructorTitleStatus(g.raceIndex);
 
     const driverMovement = myIds.map(id=>{
       const pre = preD.find(s=>s.id===id);
@@ -7689,6 +8006,14 @@ const UI = {
           <span style="font-size:11px;min-width:28px;text-align:right">${mvtArrow(constrMovement.gained)}</span>
           <span style="font-family:var(--fm);color:var(--amber);font-weight:700;min-width:40px;text-align:right">${constrMovement.postPts}pts</span>
         </div>` : '';
+      const titleRows = [
+        driverTitleStatus&&driverTitleStatus.clinched
+          ? `<div style="font-size:11px;color:#b45309;font-weight:800;margin-top:8px;padding-top:8px;border-top:1px solid var(--bd)">🏆 ${driverTitleStatus.leader.name} has clinched the Drivers Championship.</div>`
+          : '',
+        constructorTitleStatus&&constructorTitleStatus.clinched
+          ? `<div style="font-size:11px;color:#b45309;font-weight:800;margin-top:6px">🏗️ ${constructorTitleStatus.leader.name} have clinched the Constructors Championship.</div>`
+          : ''
+      ].filter(Boolean).join('');
       const leaderNote = gapToLeader>0 && bestMyDriver
         ? `<div style="font-size:11px;color:var(--tx3);margin-top:8px;padding-top:8px;border-top:1px solid var(--bd)">Gap to championship leader: <strong>${gapToLeader}pts</strong></div>` : '';
       return rows || constrRow
@@ -7696,6 +8021,7 @@ const UI = {
             <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--tx3);margin-bottom:8px">Championship Standing</div>
             ${rows}
             ${constrRow}
+            ${titleRows}
             ${leaderNote}
           </div>` : '';
     })();
@@ -8111,12 +8437,24 @@ const UI = {
           if(race.weather==='wet') narrativeParts.push('The wet conditions mixed things up throughout the field. Tyre choices and driver skill in the rain made the difference. ');
           else if(race.weather==='mixed') narrativeParts.push('Rain came mid-race and caught a few teams off guard. The calls on when to switch to inters made a real difference to where people finished. ');
           if(race.hadSafetyCar) narrativeParts.push(isStreetOrTight ? 'A safety car came out, as it so often does on these streets. It shuffled the strategy picture. ' : 'A safety car bunched the field up and a lot of teams used it to pit. It reset the race completely. ');
-          const champLeader = postDStandings[0];
-          const secondPlace = postDStandings[1];
-          if(champLeader && secondPlace) {
-            const gap = champLeader.driver.seasonPoints - secondPlace.driver.seasonPoints;
+          const champLeader = postChampLeader;
+          const secondPlace = postChampRunnerUp;
+          if(driverTitleStatus && driverTitleStatus.clinched) {
+            narrativeParts.push(driverTitleStatus.leader.name+' has clinched the Drivers Championship with '+racesLeft+' race'+(racesLeft!==1?'s':'')+' to spare. ');
+          } else if(champLeader && secondPlace && postChampGap!==null) {
+            const gap = postChampGap;
+            if(preChampGap!==null) {
+              const gapDelta = gap - preChampGap;
+              if(gapDelta <= -10) narrativeParts.push(secondPlace.driver.name+' took a big chunk out of the championship lead. The gap is down to '+gap+' points. ');
+              else if(gapDelta < 0) narrativeParts.push(secondPlace.driver.name+' chipped away at the championship lead. Just '+gap+' point'+(gap!==1?'s':'')+' in it now. ');
+              else if(gapDelta >= 10) narrativeParts.push(champLeader.driver.name+' widened the championship gap decisively. '+gap+' points clear now and looking harder to catch. ');
+              else if(gapDelta > 0) narrativeParts.push(champLeader.driver.name+' added a few more points to the championship lead. The gap is now '+gap+'. ');
+            }
             if(gap <= 10 && roundNum > 2) narrativeParts.push('The championship is still wide open. Only '+gap+' point'+(gap!==1?'s':'')+' in it at the top. ');
-            else if(gap >= 30 && roundNum > 3) narrativeParts.push(champLeader.driver.name+' is starting to build a real gap up front. '+gap+' points clear now and looking hard to catch. ');
+            else if(gap >= 30 && roundNum > 3 && (preChampGap===null || gap >= preChampGap)) narrativeParts.push(champLeader.driver.name+' is starting to build a real gap up front. '+gap+' points clear now and looking hard to catch. ');
+          }
+          if(constructorTitleStatus && constructorTitleStatus.clinched) {
+            narrativeParts.push(constructorTitleStatus.leader.name+' have wrapped up the Constructors Championship. ');
           }
           if(myResults.length) {
             const allMyDnf = myResults.every(r=>r.dnf);
@@ -8840,6 +9178,17 @@ const UI = {
     // Use passed-in snapshots if available, otherwise fall back to current standings
     const _conStr = finalConStr || State.getConstructorStandings().map(s=>({id:s.team.id,name:s.team.name,color:s.team.color,points:s.team.seasonPoints,wins:s.team.wins}));
     const _drvStr = finalDrvStr || State.getDriverStandings().slice(0,10).map(s=>({id:s.driver.id,name:s.driver.name,teamId:s.driver.teamId,points:s.driver.seasonPoints,wins:s.driver.wins}));
+    const playerConRow = _conStr.find(s=>s.id===team.id) || null;
+    const recapPosition = snap.position || (_conStr.findIndex(s=>s.id===team.id)+1) || '?';
+    const recapPoints = (snap.points!==undefined && snap.points!==null)
+      ? snap.points
+      : (playerConRow?.points ?? 0);
+    const recapWins = (snap.wins!==undefined && snap.wins!==null)
+      ? snap.wins
+      : (snap.drivers||[]).reduce((sum,d)=>sum+(d.wins||0),0);
+    const recapPodiums = (snap.podiums!==undefined && snap.podiums!==null)
+      ? snap.podiums
+      : (snap.drivers||[]).reduce((sum,d)=>sum+(d.podiums||0),0);
 
     // Championship banners
     const isConstrChamp = champs.constructorChamp && champs.constructorChamp.team.id === team.id;
@@ -8946,19 +9295,19 @@ const UI = {
 
         <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px">
           <div style="background:var(--bg3);border-radius:8px;padding:10px;text-align:center">
-            <div style="font-size:22px;font-weight:900;color:${snap.position<=3?'#f59e0b':'var(--tx)'}">${snap.position?'P'+snap.position:'?'}</div>
+            <div style="font-size:22px;font-weight:900;color:${recapPosition<=3?'#f59e0b':'var(--tx)'}">${recapPosition?'P'+recapPosition:'?'}</div>
             <div style="font-size:9px;color:var(--tx3);margin-top:2px">Position</div>
           </div>
           <div style="background:var(--bg3);border-radius:8px;padding:10px;text-align:center">
-            <div style="font-size:22px;font-weight:900">${snap.points||0}</div>
+            <div style="font-size:22px;font-weight:900">${recapPoints||0}</div>
             <div style="font-size:9px;color:var(--tx3);margin-top:2px">Points</div>
           </div>
           <div style="background:var(--bg3);border-radius:8px;padding:10px;text-align:center">
-            <div style="font-size:22px;font-weight:900;color:${snap.wins>0?'#4ade80':'var(--tx)'}">${snap.wins||0}</div>
+            <div style="font-size:22px;font-weight:900;color:${recapWins>0?'#4ade80':'var(--tx)'}">${recapWins||0}</div>
             <div style="font-size:9px;color:var(--tx3);margin-top:2px">Wins</div>
           </div>
           <div style="background:var(--bg3);border-radius:8px;padding:10px;text-align:center">
-            <div style="font-size:22px;font-weight:900">${snap.podiums||0}</div>
+            <div style="font-size:22px;font-weight:900">${recapPodiums||0}</div>
             <div style="font-size:9px;color:var(--tx3);margin-top:2px">Podiums</div>
           </div>
         </div>
@@ -9652,103 +10001,45 @@ const UI = {
 
 
   showContact(){
-    const existing = document.getElementById('contact-overlay');
-    if(existing) existing.remove();
-    const overlay = document.createElement('div');
-    overlay.id = 'contact-overlay';
-    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px';
-    overlay.innerHTML = `
-      <div style="background:var(--bg2);border-radius:12px;width:100%;max-width:480px;padding:20px;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.4);border:1px solid var(--bd)">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-          <div>
-            <div style="font-size:16px;font-weight:900">Contact / Feedback</div>
-            <div style="font-size:11px;color:var(--tx3);margin-top:2px">Bug reports, suggestions, anything — we read everything</div>
-          </div>
-          <button onclick="document.getElementById('contact-overlay').remove()" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--tx3);line-height:1;padding:0 4px">&times;</button>
-        </div>
-        <div id="contact-form-wrap">
-          <div style="display:flex;flex-direction:column;gap:10px">
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-              <div>
-                <label style="font-size:11px;font-weight:700;color:var(--tx3);display:block;margin-bottom:4px">Your Name</label>
-                <input id="cf-name" type="text" placeholder="e.g. Lewis" maxlength="60"
-                  style="width:100%;padding:9px 10px;border:1.5px solid var(--bd);border-radius:6px;font-size:13px;background:var(--bg);color:var(--tx);box-sizing:border-box">
-              </div>
-              <div>
-                <label style="font-size:11px;font-weight:700;color:var(--tx3);display:block;margin-bottom:4px">Your Email</label>
-                <input id="cf-email" type="email" placeholder="for a reply"
-                  style="width:100%;padding:9px 10px;border:1.5px solid var(--bd);border-radius:6px;font-size:13px;background:var(--bg);color:var(--tx);box-sizing:border-box">
-              </div>
-            </div>
-            <div>
-              <label style="font-size:11px;font-weight:700;color:var(--tx3);display:block;margin-bottom:4px">Type</label>
-              <select id="cf-type" style="width:100%;padding:9px 10px;border:1.5px solid var(--bd);border-radius:6px;font-size:13px;background:var(--bg);color:var(--tx)">
-                <option value="Bug Report">🐛 Bug Report</option>
-                <option value="Suggestion">💡 Suggestion</option>
-                <option value="General Feedback">💬 General Feedback</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-            <div>
-              <label style="font-size:11px;font-weight:700;color:var(--tx3);display:block;margin-bottom:4px">Message</label>
-              <textarea id="cf-message" rows="4" placeholder="Tell us what happened, or what you'd love to see..." maxlength="2000"
-                style="width:100%;padding:9px 10px;border:1.5px solid var(--bd);border-radius:6px;font-size:13px;background:var(--bg);color:var(--tx);resize:vertical;box-sizing:border-box;font-family:inherit"></textarea>
-            </div>
-            <!-- Honeypot — hidden from humans -->
-            <input id="cf-hp" type="text" style="display:none" tabindex="-1" autocomplete="off">
-            <button onclick="UI._submitContact()" style="width:100%;padding:12px;background:var(--red);color:#fff;border:none;border-radius:6px;font-size:14px;font-weight:700;cursor:pointer">Send Message</button>
-            <div style="font-size:11px;color:var(--tx3);text-align:center">Or email: <a href="mailto:bugs@f1dynasty.com" style="color:var(--red)">bugs@f1dynasty.com</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" style="color:var(--red)">r/f1dynasty</a></div>
-          </div>
-        </div>
-      </div>`;
-    document.body.appendChild(overlay);
-    overlay.addEventListener('click', e=>{ if(e.target===overlay) overlay.remove(); });
-  },
-
-  async _submitContact(){
-    const name = document.getElementById('cf-name')?.value.trim();
-    const email = document.getElementById('cf-email')?.value.trim();
-    const type = document.getElementById('cf-type')?.value;
-    const message = document.getElementById('cf-message')?.value.trim();
-    const honeypot = document.getElementById('cf-hp')?.value;
-    const btn = document.querySelector('#contact-overlay button[onclick="UI._submitContact()"]');
-
-    if(!name){ UI.toast('Please enter your name','warning'); return; }
-    if(!email || !email.includes('@')){ UI.toast('Please enter a valid email address','warning'); return; }
-    if(!message){ UI.toast('Please enter a message','warning'); return; }
-
-    if(btn){ btn.disabled=true; btn.textContent='Sending...'; }
-
-    try {
-      const res = await fetch('https://formspree.io/f/xreoqgpn', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, type, message, _gotcha: honeypot })
-      });
-      const data = await res.json();
-      if(data.ok){
-        document.getElementById('contact-form-wrap').innerHTML = `
-          <div style="text-align:center;padding:24px 0">
-            <div style="font-size:40px;margin-bottom:12px">✅</div>
-            <div style="font-size:16px;font-weight:800;margin-bottom:6px">Message sent!</div>
-            <div style="font-size:13px;color:var(--tx3)">Thanks for the feedback — we really appreciate it.</div>
-            <button onclick="document.getElementById('contact-overlay').remove()" style="margin-top:16px;padding:10px 24px;background:var(--red);color:#fff;border:none;border-radius:6px;font-size:14px;font-weight:700;cursor:pointer">Close</button>
-          </div>`;
-      } else {
-        throw new Error(data.error || 'Unknown error');
-      }
-    } catch(err) {
-      if(btn){ btn.disabled=false; btn.textContent='Send Message'; }
-      UI.toast('Failed to send — please email bugs@f1dynasty.com directly','warning');
-    }
+    window.location.href = 'https://www.reddit.com/r/f1dynasty/';
   },
 
   showChangelog(){
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-        <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.0.5 · Release Notes</div>
+<div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.0.6 · Release Notes</div>
         ${[
+          ['v2.0.6','Apr 2026',[
+            '🐛 Mid-season upgrades: package slider caps no longer strand budget when all three sliders are maxed. You can now spend the full upgrade window budget however you want.',
+            '🐛 Watch Sprint: player and front-running DNFs now get a final running-position line just before retirement, so P3-to-DNF exits are no longer shown without context.',
+            '🐛 Watch Race: podium bridge detection now reads both full names and timing-line surnames, so late P2 to P3 drops like Leclerc in Miami are no longer missed.',
+            '🐛 Watch Race: final podium bridge commentary now reads the specific driver position from late timing snapshots, so P2 to P3 drops are no longer missed when the feed only mentioned the earlier running order.',
+            '🐛 Mid-season upgrades: the car screen now shows the exact arriving race once an upgrade is ordered, matching the dashboard instead of only giving a vague delay.',
+            '🐛 Mid-season upgrades: the COMPLETE card now keeps showing the exact arrival race after you order a package, instead of dropping back to a vague applied summary.',
+            '✨ Drivers tab: contract years left now show directly in the driver rows so you can see at a glance who is actually approachable.',
+            'ðŸ› Mid-season upgrades: the upgrade window copy now says upgrades are queued and usually arrive in 2-4 races, instead of implying they apply instantly.',
+            '🐛 Watch Race: commentary now syncs directly from the classified result after live pit/weather swaps and at race end, so finish rows, winner lines, and podium lines stay aligned with the final table.',
+            '🐛 Watch Race: tightened late-race event cleanup to remove contradictory closing-lap position calls for any classified driver, reducing cases where commentary says one finish while the results screen shows another.',
+            '🐛 Watch Race: player drivers now get a final closing-laps position update when the last narrated running position still differs from the classified finish, preventing big unexplained jumps like P14 with 8 laps to go turning into a P7 finish.',
+            '🐛 Race simulation: added stronger race-day form, launch, traffic, and safety-car variance so midfield drivers no longer get stuck in the same finishing slot across a whole season regardless of what the race feed shows.',
+            '🐛 Watch Race: late-race timing and podium/winner narration now get a final bridge update from the classified result, reducing cases where the feed implied one winner before the result screen showed another.',
+            '✨ Watch Race: added a live positions tower on the right side of the replay modal, driven by the replay’s tracked classified order so pit/weather decisions are easier to follow while watching.',
+            '🐛 Season rollover: offseason no longer silently force-releases contracted player drivers for low morale/decline, and the season recap now falls back to captured final standings for headline stats if the snapshot is ever missing or stale.',
+            '🐛 Offseason enforcement: season progression is now blocked unless you have 2 race drivers, valid race-driver contracts, winter budget allocated, scouting configured, and at least 1 sponsor signed — closing paths that could start a season with an incomplete checklist or a one-driver lineup.',
+            '🐛 Offseason navigation: the Finance “Full breakdown” detour now returns cleanly to Offseason, and preseason checklist state is restored automatically if required tasks are still incomplete at season start.',
+            '🐛 Split strategy: per-driver strategy plans now remain active as a first-class race state, and the dashboard/commentary both recognize split setups instead of falling back to “no strategy set.”',
+            'ðŸ› Driver negotiations: talks now hard-resolve within 4 races at the latest, even after offer improvements, so signings cannot drift past the promised response window.',
+            'ðŸ› Watch Race: podium changes now get a final bridge commentary line when the closing-laps order differs from the final top-3 result, so P2-to-P3 swaps are narrated instead of only appearing at the results screen.',
+            '🐛 Offseason transfers: AI teams no longer force-release or upgrade out drivers who still have contract years left, so drivers blocked as unapproachable during the season stay locked in unless their deals genuinely expire.',
+            '🐛 Watch Race pit calls: player pit-stop decision order now follows live track position at the pit window instead of the final classified result, so priority matches what you are actually seeing on screen.',
+            '✨ Owner confidence: small profits now improve the finance score slightly instead of only very large surpluses moving the needle, making the board assessment line up better with normal profitable seasons.',
+            '✨ Regulation-year clarity: dashboard car development now shows car rank and explains that 100 OVR is a cap, so heavy new-reg investment no longer looks like a guaranteed best-car rating after a field reset.',
+            '🐛 Season-end finances/objectives: constructor finish position now comes from the same final constructor standings snapshot everywhere, so prize money, recap position, and board objective results cannot disagree after winning the championship.',
+            '🐛 Race recap championship text now compares the title gap before and after the race, so it no longer says the leader "widened the gap" on weekends where P2 actually closed in.',
+            '✨ Championship drama: the dashboard now shows when a driver or team can clinch this weekend, and both the recap and Paddock News call out title-clinching results when they happen.',
+            '✨ Landing page: added a Latest Update card and a clearer r/f1dynasty community panel so new and returning players can immediately see the current build and where to find patch notes or report bugs.',
+          ]],
           ['v2.0.5','Apr 2026',[
             '✨ Regulation changes: every 4-7 seasons a major technical regulation change reshuffles the field. Car performance is compressed toward midfield with random deltas per team — some teams gain big, some lose big. Four types: aerodynamic overhaul, power unit rules, full technical reset, or cost cap tightening.',
             '✨ Regulation warning: one season before regs fire you get an amber banner in the offseason screen and a Paddock News item. The season regs hit you get a prominent red banner with the regulation type and effect.',
@@ -10330,8 +10621,9 @@ const GameActions = {
 
   beginSeason(){
     const g=State.game;
-    const drivers=State.getPlayerDrivers();
-    const expiring=drivers.filter(d=>d.contract<=0);
+    const status=this._syncOffseasonPending();
+    const drivers=status.drivers;
+    const expiring=status.expiring;
     // Hard blocks
     if(drivers.length<2){
       UI.toast('Sign at least 2 race drivers before starting','warning');
@@ -10342,9 +10634,13 @@ const GameActions = {
       UI.showView('drivers'); return;
     }
     // Check scouting
-    if(!g.scoutingChosen){
+    if(!status.scoutingDone){
       UI.toast('Set up your scouting department before starting','warning');
       UI.showView('scouting'); return;
+    }
+    if(!status.sponsorsDone){
+      UI.toast('Sign at least one sponsor before starting the season','warning');
+      UI.showView('finance'); return;
     }
     // Check reserve drivers (optional — just warn if missing)
     const reserves_check=State.getPlayerReserves();
@@ -10399,6 +10695,7 @@ const GameActions = {
     };
     g.offseasonBudget={aero:0,engine:0,reliability:0,facilities:0};
     g.offseasonPending=false;
+    g._seasonStartConfirmedFor=g.season;
     g._lastOffseasonDevResult = null;
     UI.renderDashboard();
     UI.showView('dashboard');
@@ -10497,9 +10794,55 @@ const GameActions = {
     UI.toast(`${d.name} leaves for ${pa.teamName}`,'warning');
     Storage.autosave(); UI.renderOffseasonPlanning();
   },
+  _getPreseasonStatus(){
+    const g=State.game;
+    const drivers=State.getPlayerDrivers();
+    const expiring=drivers.filter(d=>d.contract<=0);
+    const bw=g.offseasonBudget||{};
+    const winterSpent=(bw.aero||0)+(bw.engine||0)+(bw.reliability||0)+(bw.facilities||0);
+    return {
+      drivers,
+      expiring,
+      hasTwoDrivers: drivers.length>=2,
+      hasValidContracts: expiring.length===0,
+      scoutingDone: !!g.scoutingChosen,
+      winterAllocated: winterSpent>0,
+      sponsorsDone: (g.sponsors||[]).length>0,
+      ready: drivers.length>=2 && expiring.length===0 && !!g.scoutingChosen && winterSpent>0 && (g.sponsors||[]).length>0
+    };
+  },
+  _syncOffseasonPending(){
+    const g=State.game;
+    if(!g || g.raceIndex!==0) return this._getPreseasonStatus();
+    if(g._seasonStartConfirmedFor===g.season) return this._getPreseasonStatus();
+    const seasonStarted=(g.calendar||[]).some(r=>r.qualiDone||r.raceDone||r.sprintQualiDone||r.sprintDone);
+    const status=this._getPreseasonStatus();
+    if(!seasonStarted && !status.ready) g.offseasonPending=true;
+    return status;
+  },
+  _ensureCanEnterWeekend(){
+    const g=State.game;
+    const status=this._syncOffseasonPending();
+    const drivers=status.drivers;
+    if(g.offseasonPending){
+      this.beginSeason();
+      return false;
+    }
+    if(drivers.length<2){
+      UI.toast('You need 2 race drivers before continuing the season','warning');
+      UI.showView('drivers');
+      return false;
+    }
+    if(drivers.some(d=>d.contract<=0)){
+      UI.toast('Renew or replace expired race-driver contracts before continuing','warning');
+      UI.showView('drivers');
+      return false;
+    }
+    return true;
+  },
   navNext(){
     const g=State.game, race=State.getCurrentRace();
-    if(g.offseasonPending){ this.beginSeason(); return; }
+    if(!this._ensureCanEnterWeekend()) return;
     if(!race && g.raceIndex>=g.calendar.length){ this._promptSeasonEnd(); return; }
     if(race){
       if(race.sprint){
@@ -10572,6 +10915,8 @@ const GameActions = {
     const arrivesAfterRace = g.raceIndex + delay;
     const arrivalRaceName = g.calendar[arrivesAfterRace]?.name || `Race ${arrivesAfterRace+1}`;
     const winLabel = qi===0 ? 'Mid-Season Upgrade' : 'Summer Upgrade';
+    qd.arrivalRaceName = arrivalRaceName;
+    qd.arrivalRaceIdx = arrivesAfterRace;
     if(qd.aero>0)        g.pendingUpgrades.push({name:winLabel, stat:'carPerformance', value:qd.aero*0.9*_upgradeScale,       arrivesAfterRace, qi, applied:false});
     if(qd.engine>0)      g.pendingUpgrades.push({name:winLabel, stat:'carPerformance', value:qd.engine*1.4*_upgradeScale,      arrivesAfterRace, qi, applied:false, isEngine:true});
     if(qd.reliability>0) g.pendingUpgrades.push({name:winLabel, stat:'reliability',    value:qd.reliability*0.6*_upgradeScale, arrivesAfterRace, qi, applied:false, isRel:true});
@@ -10602,6 +10947,7 @@ const GameActions = {
   },
 
   watchSprintFromIdx(raceIdx){
+    if(!this._ensureCanEnterWeekend()) return;
     const race=State.game.calendar[raceIdx]; if(!race)return;
     if(!race.sprintDone){
       if(!race.sprintQualiDone) Sim.simSprintQualifying(race);
@@ -10611,6 +10957,7 @@ const GameActions = {
     UI.openWatchSprint(raceIdx);
   },
   watchRaceFromIdx(raceIdx){
+    if(!this._ensureCanEnterWeekend()) return;
     const g=State.game;
     const race=g.calendar[raceIdx];
     if(!race){UI.toast('No race available','warning');return;}
@@ -10624,6 +10971,7 @@ const GameActions = {
     UI.openWatchRace(raceIdx);
   },
   watchRaceFromDash(){
+    if(!this._ensureCanEnterWeekend()) return;
     const g=State.game, raceIdx=g.raceIndex;
     const race=g.calendar[raceIdx];
     if(!race){UI.toast('No race available','warning');return;}
@@ -10661,6 +11009,16 @@ const GameActions = {
     Storage.autosave();
     UI.toast('🤖 Auto strategy — engineers will manage the race','info');
     UI.renderDashboard();
+  },
+  _getRaceStrategyState(race){
+    const g=State.game;
+    const racingIds = State.getPlayerRacingDriverIds ? State.getPlayerRacingDriverIds() : State.getPlayerDrivers().map(d=>d.id);
+    const racingDrivers = racingIds.map(id=>State.getDriver(id)).filter(Boolean);
+    const splitReady = racingDrivers.length >= 2 && racingDrivers.every(d=>race && race._driverStrategies && race._driverStrategies[d.id]);
+    const explicit = race ? (race._chosenStrategy || null) : null;
+    if(explicit === 'split' || splitReady) return {mode:'split', splitReady:true, autoOn:!!g.autoStrategy};
+    if(explicit === 'auto' || g.autoStrategy) return {mode:'auto', splitReady:false, autoOn:true};
+    return {mode:explicit, splitReady:false, autoOn:!!g.autoStrategy};
   },
   doNextQuali() {
     const race=State.getCurrentRace();
@@ -10706,6 +11064,7 @@ const GameActions = {
     State.game._injurySubs[injuredDriverId]=parseInt(reserveId)||reserveId;
   },
   _proceedToQuali(){
+    if(!this._ensureCanEnterWeekend()) return;
     const race=State.getCurrentRace();
     if(!race) return;
     if(race.sprint && !race.sprintQualiDone) { this.simSprintQualifying(); return; }
@@ -10713,6 +11072,7 @@ const GameActions = {
     if(!race.sprint && !race.qualiDone) { this.simQualifying(); return; }
   },
   simSprintQualifying() {
+    if(!this._ensureCanEnterWeekend()) return;
     const g=State.game, race=State.getCurrentRace();
     if(!race||race.sprintQualiDone) return;
     Sim.simSprintQualifying(race);
@@ -10722,6 +11082,7 @@ const GameActions = {
     UI.renderDashboard();
   },
   simQualifying() {
+    if(!this._ensureCanEnterWeekend()) return;
     const race=State.getCurrentRace();
     if(!race){UI.toast('No race available','error');return;}
     if(race.qualiDone){UI.toast('Qualifying already done','warning');return;}
@@ -10732,6 +11093,7 @@ const GameActions = {
     UI.renderDashboard(); UI.renderSchedule();
   },
   watchSprintFromDash(){
+    if(!this._ensureCanEnterWeekend()) return;
     const g=State.game, race=State.getCurrentRace();
     if(!race||!race.sprint) return;
     if(!race.sprintDone){
@@ -10742,6 +11104,7 @@ const GameActions = {
     UI.openWatchSprint(g.raceIndex);
   },
   simSprint(){
+    if(!this._ensureCanEnterWeekend()) return;
     const g=State.game, race=State.getCurrentRace();
     if(!race||race.sprintDone) return;
     if(!race.sprintQualiDone) Sim.simSprintQualifying(race);
@@ -10755,6 +11118,7 @@ const GameActions = {
     if(ls) UI.renderRaceResult(ls);
   },
   simRace() {
+    if(!this._ensureCanEnterWeekend()) return;
     try {
       const g=State.game, race=State.getCurrentRace();
       if(!race){if(g.raceIndex>=g.calendar.length)this._promptSeasonEnd();return;}
@@ -11084,6 +11448,7 @@ const GameActions = {
       toTeamId:g.playerTeamId, toTeamName:team.name,
       salaryOffer:finalSalary, years:finalYears,
       startRace:g.raceIndex, resolvesAfterRace:g.raceIndex+racesNeeded,
+      hardResolveAfterRace:g.raceIndex+4,
       rivalBids:0, status:'negotiating',
     });
     Storage.autosave();
@@ -11110,7 +11475,7 @@ const GameActions = {
     }
     neg.salaryOffer=newSalary;
     neg.years=newYears;
-    neg.resolvesAfterRace=Math.max(neg.resolvesAfterRace, g.raceIndex+1); // at least 1 more race
+    neg.resolvesAfterRace=Math.min(Math.max(neg.resolvesAfterRace, g.raceIndex+1), neg.hardResolveAfterRace|| (neg.startRace+4)); // keep the talk alive, but never past the 4-race cap
     if(!g.newsFeed) g.newsFeed=[];
     g.newsFeed.unshift({msg:`💰 We've improved our offer to <strong>${d.name}</strong>: ${formatMoney(newSalary)}/yr on a ${newYears}-year deal. His agent says they will consider it carefully.`,type:'transfers',icon:'📋',race:g.raceIndex,ts:Date.now()});
     Storage.autosave();
@@ -11155,8 +11520,10 @@ const GameActions = {
       }
 
       // Mid-negotiation flavour (halfway point)
+      const hardDeadline=neg.hardResolveAfterRace|| (neg.startRace+4);
+      const resolveAfterRace=Math.min(neg.resolvesAfterRace||hardDeadline, hardDeadline);
       const racesIn=g.raceIndex-neg.startRace;
-      const halfway=Math.floor((neg.resolvesAfterRace-neg.startRace)/2);
+      const halfway=Math.floor((resolveAfterRace-neg.startRace)/2);
       if(racesIn===halfway){
         const theirTeam=State.getTeam(neg.fromTeamId);
         const diff=team.carPerformance-(theirTeam?.carPerformance||60);
@@ -11169,7 +11536,7 @@ const GameActions = {
       }
 
       // Not time to resolve yet
-      if(g.raceIndex<neg.resolvesAfterRace) return true;
+      if(g.raceIndex<resolveAfterRace) return true;
 
       // Resolution
       const theirTeam=State.getTeam(neg.fromTeamId);
@@ -11192,7 +11559,7 @@ const GameActions = {
           salary:neg.salaryOffer, years:neg.years,
           announcedRace:g.raceIndex, reason:'player approach', playerInitiated:true,
         });
-        const detail=neg.rivalBids>1?`despite interest from ${neg.rivalBids} rival teams`:`after ${racesIn+1} races of talks`;
+        const detail=neg.rivalBids>1?`despite interest from ${neg.rivalBids} rival teams`:`after ${Math.min(racesIn+1, 4)} races of talks`;
         g.newsFeed.unshift({msg:`✅ CONFIRMED: <strong>${d.name}</strong> joins <strong>${team.name}</strong> next season ${detail}. ${formatMoney(neg.salaryOffer)}/yr, ${neg.years}yr deal.`,type:'transfers',icon:'🔀',race:g.raceIndex,ts:Date.now()});
         UI.toast(`✅ ${d.name} signs for next season!`,'success');
       } else {
@@ -11297,6 +11664,176 @@ window.WRSpeed = function(ms, btn) {
   if(State && State.game) { State.game.watchRaceSpeed = ms; Storage.autosave(); }
 };
 
+window._wrSyncCommentary = function(race, isSprint) {
+  const WR = window._WR;
+  if(!race) return;
+  const resultKey = isSprint ? 'sprintResult' : 'raceResult';
+  const finishers = (race[resultKey] || []).filter(function(r){ return !r.dnf; }).sort(function(a,b){ return a.position - b.position; });
+  if(!finishers.length) return;
+
+  const totalLaps = isSprint ? (race.laps ? Math.round(race.laps * 0.30) : 17) : (race.laps || 58);
+  const lateLapThreshold = Math.max(2, totalLaps - 5);
+  const finalByName = {};
+  finishers.forEach(function(r){
+    finalByName[r.driverName] = { pos:r.position, pts:r.points || 0, teamName:r.teamName || '' };
+  });
+  const podiumShort = finishers.slice(0, 3).map(function(r){
+    return r.driverName.split(' ').pop();
+  });
+
+  const patchFinishText = function(text) {
+    if(!text) return text;
+    if(text.includes('Chequered flag') || text.includes('wins the ')) {
+      text = '🏁 Chequered flag! ' + finishers[0].driverName + ' wins the ' + race.name + '!';
+    } else if(text.includes('Sprint winner:')) {
+      text = '🏁 Sprint winner: ' + finishers[0].driverName + '!';
+    } else if(text.match(/^P2:/) && finishers[1]) {
+      text = 'P2: ' + finishers[1].driverName + (finishers[1].teamName ? ' (' + finishers[1].teamName + ')' : '');
+    } else if(text.match(/^P3:/) && finishers[2]) {
+      text = 'P3: ' + finishers[2].driverName + (finishers[2].teamName ? ' (' + finishers[2].teamName + ')' : '');
+    }
+    Object.keys(finalByName).forEach(function(name){
+      if(text.indexOf(name) < 0 || text.indexOf('finishes P') < 0) return;
+      const fin = finalByName[name];
+      text = text
+        .replace(/finishes P\d+/, 'finishes P' + fin.pos)
+        .replace(/— \d+ pts/, '— ' + fin.pts + ' pts');
+    });
+    return text;
+  };
+
+  const patchLatePositionText = function(text, lap) {
+    if(!text || lap < lateLapThreshold) return text;
+    Object.keys(finalByName).forEach(function(name){
+      if(text.indexOf(name) < 0) return;
+      const fin = finalByName[name];
+      const moveMatch = text.match(/moves up to P(\d+)|drops to P(\d+)/);
+      if(!moveMatch) return;
+      const claimedPos = parseInt(moveMatch[1] || moveMatch[2] || '0', 10);
+      if(claimedPos && claimedPos !== fin.pos) {
+        text = text
+          .replace(/moves up to P\d+/, 'moves up to P' + fin.pos)
+          .replace(/drops to P\d+/, 'drops to P' + fin.pos);
+      }
+    });
+    return text;
+  };
+
+  const patchLateTimingText = function(text, lap) {
+    if(!text || lap < lateLapThreshold || text.indexOf('Lap ') < 0) return text;
+    if(podiumShort[0]) text = text.replace(/P1\s+[A-Za-z'.-]+(\s+\d:\d{2}\.\d{3})/, 'P1 ' + podiumShort[0] + '$1');
+    if(podiumShort[1]) text = text.replace(/P2\s+[A-Za-z'.-]+(\s+\d:\d{2}\.\d{3})/, 'P2 ' + podiumShort[1] + '$1');
+    if(podiumShort[2]) text = text.replace(/P3\s+[A-Za-z'.-]+(\s+\d:\d{2}\.\d{3})/, 'P3 ' + podiumShort[2] + '$1');
+    return text;
+  };
+
+  const getLastNarratedPodiumPos = function(driverName) {
+    if(!WR || !Array.isArray(WR.events)) return null;
+    const shortName = driverName.split(' ').pop();
+    for(var i = WR.events.length - 1; i >= 0; i--) {
+      var ev = WR.events[i];
+      if(!ev || !ev.text) continue;
+      var hasFullName = ev.text.indexOf(driverName) >= 0;
+      var hasShortName = new RegExp('\\b' + shortName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b').test(ev.text);
+      if(!hasFullName && !hasShortName) continue;
+      var txt = ev.text.trim();
+      if(txt.indexOf('Chequered flag') === 0 || txt.indexOf('Sprint winner:') === 0 || txt.indexOf('P2:') === 0 || txt.indexOf('P3:') === 0 || txt.indexOf('finishes P') >= 0) {
+        continue;
+      }
+      var timingMatch = txt.match(new RegExp('P(\\d+)\\s+' + shortName.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\$&') + '\\b'));
+      if(timingMatch) return parseInt(timingMatch[1], 10);
+      var m = txt.match(/moves up to P(\d+)|drops to P(\d+)/);
+      var pos = parseInt((m && (m[1] || m[2])) || '0', 10);
+      if(pos) return pos;
+    }
+    return null;
+  };
+
+  const appendPodiumBridge = function(driver, finalPos, lastPos) {
+    if(!feed || !driver || finalPos < 2 || finalPos > 3) return;
+    if(lastPos != null && lastPos === finalPos) return;
+    if(!WR._podiumBridgeAdded) WR._podiumBridgeAdded = {};
+    const bridgeKey = driver.driverName + ':' + finalPos;
+    if(WR._podiumBridgeAdded[bridgeKey]) return;
+    const bridgeText = finalPos === 2
+      ? '⭐ ' + driver.driverName + ' moves up to P2. Podium battle resolved.'
+      : '⭐ ' + driver.driverName + ' drops to P3. Podium shuffle complete.';
+    const bridgeEl = document.createElement('div');
+    bridgeEl.style.cssText = 'background:rgba(192,57,43,.08);border:1px solid rgba(192,57,43,.25);border-radius:7px;padding:8px 12px;font-size:13px;flex-shrink:0;margin-bottom:4px;line-height:1.4;color:var(--tx)';
+    bridgeEl.innerHTML = '<span style="font-size:10px;font-weight:700;color:#c0392b;margin-right:8px;display:inline-block;min-width:28px">L' + totalLaps + '</span>' + bridgeText;
+    feed.appendChild(bridgeEl);
+    feed.scrollTop = feed.scrollHeight;
+    const mb = feed.closest('.modal-box'); if(mb) mb.scrollTop = mb.scrollHeight;
+    WR._podiumBridgeAdded[bridgeKey] = true;
+  };
+
+  if(WR && Array.isArray(WR.events)) {
+    WR.events.forEach(function(ev){
+      if(!ev || !ev.text) return;
+      if(ev.type === 'finish') ev.text = patchFinishText(ev.text);
+      if(ev.type === 'overtake' || ev.type === 'position_change') {
+        ev.text = patchLatePositionText(ev.text, ev.lap || 0);
+      }
+      if(ev.type === 'timing') ev.text = patchLateTimingText(ev.text, ev.lap || 0);
+    });
+  }
+
+  const feed = document.getElementById('wr-feed');
+  if(!feed) return;
+  feed.querySelectorAll('div').forEach(function(el){
+    let html = el.innerHTML || '';
+    const lapMatch = html.match(/L(\d+)/);
+    const lapNum = lapMatch ? parseInt(lapMatch[1], 10) : 0;
+    html = patchFinishText(html);
+    html = patchLatePositionText(html, lapNum);
+    html = patchLateTimingText(html, lapNum);
+    el.innerHTML = html;
+  });
+
+  finishers.slice(0, 3).forEach(function(fin) {
+    const lastPos = getLastNarratedPodiumPos(fin.driverName);
+    appendPodiumBridge(fin, fin.position, lastPos);
+  });
+};
+
+window._wrRenderPositions = function() {
+  const WR = window._WR;
+  if(!WR || WR.raceIdx == null) return;
+  const race = State.game.calendar[WR.raceIdx];
+  const tower = document.getElementById('wr-positions');
+  if(!race || !tower) return;
+
+  const resultKey = WR.isSprint ? 'sprintResult' : 'raceResult';
+  const resultArr = race[resultKey] || [];
+  const lastPos = WR.lastPos || {};
+  const playerIds = new Set((State.getPlayerRacingDriverIds ? State.getPlayerRacingDriverIds() : []).map(String));
+
+  const rows = resultArr
+    .filter(function(r){ return !r.dnf && lastPos[r.driverId] != null; })
+    .map(function(r){
+      return {
+        pos: lastPos[r.driverId],
+        driverId: r.driverId,
+        driverName: r.driverName,
+        teamName: r.teamName,
+        mine: playerIds.has(String(r.driverId))
+      };
+    })
+    .sort(function(a,b){ return a.pos - b.pos; });
+
+  tower.innerHTML = rows.map(function(r){
+    const bg = r.mine ? 'rgba(192,57,43,.08)' : 'transparent';
+    const bd = r.mine ? 'rgba(192,57,43,.25)' : 'transparent';
+    return '<div style="display:flex;align-items:center;gap:8px;padding:4px 6px;border-radius:6px;background:'+bg+';border:1px solid '+bd+'">'
+      + '<div style="width:22px;flex-shrink:0;font-size:11px;font-weight:800;color:var(--tx3);font-family:var(--fm)">P'+r.pos+'</div>'
+      + '<div style="min-width:0;flex:1">'
+      + '<div style="font-size:11px;font-weight:'+(r.mine?'800':'600')+';color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+r.driverName+'</div>'
+      + '<div style="font-size:9px;color:var(--tx3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+r.teamName+'</div>'
+      + '</div>'
+      + '</div>';
+  }).join('');
+};
+
 window._wrTick = function() {
   const WR = window._WR;
   if(!WR || WR.paused) { if(WR) WR.timer=null; return; }
@@ -11312,6 +11849,10 @@ window._wrTick = function() {
     const isSprint=!!WR.isSprint;
     document.getElementById('wr-lap-counter').textContent = 'Finished · ' + (isSprint ? (race.laps ? Math.round(race.laps*0.30) : 17) : race.laps) + ' laps';
     const tb = document.getElementById('wr-toggle'); if(tb) tb.disabled=true;
+    (race[isSprint ? 'sprintResult' : 'raceResult'] || []).forEach(function(r){
+      if(!r.dnf && r.position) WR.lastPos[r.driverId] = r.position;
+    });
+    window._wrRenderPositions();
 
     // ── Apply decision bonuses to actual race result ──────────────────────────
     // Decisions affect the PRIMARY (higher-finishing) player driver only to avoid
@@ -11436,6 +11977,7 @@ window._wrTick = function() {
       }
     }
     // ── End position adjustment ───────────────────────────────────────────────
+    window._wrSyncCommentary(race, isSprint);
     // Patch the already-rendered feed DOM so chequered flag text matches real result
     (function(){
       var resultKey2 = isSprint ? 'sprintResult' : 'raceResult';
@@ -11647,6 +12189,10 @@ window._wrTick = function() {
 
   // Show next event card
   const ev = WR.events[WR.idx++];
+  if(ev && ev.driverPositions) {
+    WR.lastPos = Object.assign({}, ev.driverPositions);
+    window._wrRenderPositions();
+  }
   document.getElementById('wr-lap-counter').textContent = 'Lap '+ev.lap+' / '+race.laps;
 
   // ── PIT DECISION — pause and ask player ──────────────────────
@@ -11796,6 +12342,7 @@ window._wrTick = function() {
   feed.appendChild(el);
   feed.scrollTop = feed.scrollHeight;
   const mb = feed.closest('.modal-box'); if(mb) mb.scrollTop = mb.scrollHeight;
+  if(!ev.driverPositions) window._wrRenderPositions();
 
   // Update my drivers status bar in header
   const myBar = document.getElementById('wr-my-drivers');
@@ -11914,6 +12461,9 @@ window._wrApplyBonusNow = function() {
     myEntry.position = WR._baselinePos;
     myEntry.points = ptsArr2[WR._baselinePos-1] || 0;
     WR._bonusApplied = false; // no net adjustment — fully back to baseline
+    window._wrSyncCommentary(race, WR.isSprint);
+    resultArr.forEach(function(r){ if(!r.dnf && r.position) WR.lastPos[r.driverId] = r.position; });
+    window._wrRenderPositions();
     return;
   }
 
@@ -12023,6 +12573,9 @@ window._wrApplyBonusNow = function() {
 
   // Mark bonus as applied so end-of-race block is idempotent
   WR._bonusApplied = true;
+  window._wrSyncCommentary(race, WR.isSprint);
+  resultArr.forEach(function(r){ if(!r.dnf && r.position) WR.lastPos[r.driverId] = r.position; });
+  window._wrRenderPositions();
 };
 
 window._wrPitDecision = function(decisionId, pitNow, auto) {
@@ -12284,7 +12837,13 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
       <input type="hidden" id="wr-speed" value="600">
     </div>
-    <div id="wr-feed" style="flex:1;min-height:0;overflow-y:auto;padding:10px 14px;background:var(--bg);display:flex;flex-direction:column;gap:4px"></div>
+    <div style="flex:1;min-height:0;display:flex;overflow:hidden;background:var(--bg)">
+      <div id="wr-feed" style="flex:1;min-height:0;overflow-y:auto;padding:10px 14px;background:var(--bg);display:flex;flex-direction:column;gap:4px"></div>
+      <div style="width:152px;flex-shrink:0;border-left:1px solid var(--bd);background:var(--bg2);display:flex;flex-direction:column">
+        <div style="padding:10px 10px 6px;font-size:10px;font-weight:800;letter-spacing:.8px;color:var(--tx3);text-transform:uppercase">Positions</div>
+        <div id="wr-positions" style="flex:1;min-height:0;overflow-y:auto;padding:0 8px 10px;display:flex;flex-direction:column;gap:4px"></div>
+      </div>
+    </div>
     <div id="wr-footer" style="display:none;background:var(--bg2);border-top:1px solid var(--bd);padding:12px 16px;flex-shrink:0;overflow-y:auto;max-height:55vh;color:var(--tx)"></div>
   </div>
 </div><!-- /watch-race-modal -->
