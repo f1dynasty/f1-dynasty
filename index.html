@@ -6240,6 +6240,10 @@ const Storage = {
     if(!g.offseasonBudget || typeof g.offseasonBudget !== 'object') {
       g.offseasonBudget = {aero:0,engine:0,reliability:0,facilities:0};
     }
+    const seasonStarted = (g.calendar||[]).some(r=>r.qualiDone||r.raceDone||r.sprintQualiDone||r.sprintDone);
+    if(g.raceIndex===0 && !seasonStarted && g._seasonStartConfirmedFor!==g.season){
+      g.offseasonPending = true;
+    }
     return g;
   }
 };
@@ -12577,10 +12581,13 @@ const GameActions = {
   _syncOffseasonPending(){
     const g=State.game;
     if(!g || g.raceIndex!==0) return this._getPreseasonStatus();
-    if(g._seasonStartConfirmedFor===g.season) return this._getPreseasonStatus();
+    if(g._seasonStartConfirmedFor===g.season){
+      g.offseasonPending=false;
+      return this._getPreseasonStatus();
+    }
     const seasonStarted=(g.calendar||[]).some(r=>r.qualiDone||r.raceDone||r.sprintQualiDone||r.sprintDone);
     const status=this._getPreseasonStatus();
-    if(!seasonStarted && !status.ready) g.offseasonPending=true;
+    if(!seasonStarted) g.offseasonPending=true;
     return status;
   },
   _ensureCanEnterWeekend(){
