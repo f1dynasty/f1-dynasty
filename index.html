@@ -5184,9 +5184,9 @@ events.push({lap:r.dnfLap||laps-5, type:'dnf', driverId:r.driverId, text:`⭐ ${
     const g=State.game;
     const transfers=[];
     const protectedPlayerTeamId = g.playerTeamId;
-    const protectedPlayerRoster = State.getPlayerDrivers()
-      .filter(d=>!d.retired && (d.contract||0)>0)
-      .map(d=>d.id);
+    const protectedPlayerRoster = (g.drivers||[])
+      .filter(d=>d && d.teamId===protectedPlayerTeamId && !d.retired && (d.contract||0)>0)
+      .map(d=>({id:d.id, wasReserve:!!d.isReserve}));
 
     // ── Recalculate all driver market salaries ──────────────────────────────
     // Salaries must reflect current rating, age, and career achievements.
@@ -5445,14 +5445,21 @@ events.push({lap:r.dnfLap||laps-5, type:'dnf', driverId:r.driverId, text:`⭐ ${
     const playerRosterTeam = State.getPlayerTeam();
     if(playerRosterTeam){
       const protectedDrivers = protectedPlayerRoster
-        .map(id=>State.getDriver(id))
-        .filter(d=>d && !d.retired && (d.contract||0)>0);
+        .map(p=>Object.assign({driver:State.getDriver(p.id)}, p))
+        .filter(x=>x.driver && !x.driver.retired && (x.driver.contract||0)>0)
+        .map(x=>{
+          x.driver._protectedWasReserve = x.wasReserve;
+          return x.driver;
+        })
       protectedDrivers.forEach(d=>{
         d.teamId = protectedPlayerTeamId;
         d.isFreeAgent = false;
       });
       const uniqueById = arr => arr.filter((d, idx)=>arr.findIndex(x=>x.id===d.id)===idx);
-      const raceKeep = uniqueById(protectedDrivers.filter(d=>!d.isReserve).concat(State.getPlayerDrivers()))
+      const raceKeep = uniqueById(
+        protectedDrivers.filter(d=>!d._protectedWasReserve)
+          .concat(State.getPlayerDrivers())
+      )
         .slice(0,2);
       const reserveKeep = uniqueById(
         protectedDrivers.filter(d=>!raceKeep.some(r=>r.id===d.id)).map(d=>{ d.isReserve=true; return d; })
@@ -5645,6 +5652,7 @@ events.push({lap:r.dnfLap||laps-5, type:'dnf', driverId:r.driverId, text:`⭐ ${
     // Results compound into prestige and revenue — this is how you climb
     const playerTeam = State.getPlayerTeam();
     const playerCpos = State.getConstructorSeasonPos(playerTeam.id) || 10;
+    const isConstrChampSeason = playerCpos === 1;
     const playerSeasonWins = State.getPlayerDrivers().reduce((s,d)=>s+d.wins,0);
 
     // Prestige grows with results, shrinks with poor performance
@@ -12653,6 +12661,7 @@ const GameActions = {
   },
   _ensureCanEnterWeekend(){
     const g=State.game;
+    if(g && g.raceIndex>=g.calendar.length) return true;
     const status=this._syncOffseasonPending();
     const drivers=status.drivers;
     if(g.offseasonPending){
@@ -12673,8 +12682,8 @@ const GameActions = {
   },
   navNext(){
     const g=State.game, race=State.getCurrentRace();
+    if(g.raceIndex>=g.calendar.length){ this._promptSeasonEnd(); return; }
     if(!this._ensureCanEnterWeekend()) return;
-    if(!race && g.raceIndex>=g.calendar.length){ this._promptSeasonEnd(); return; }
     if(race){
       if(race.sprint){
         if(!race.sprintQualiDone){ this.simSprintQualifying(); return; }
@@ -13093,17 +13102,18 @@ const GameActions = {
       }
     }
     g._seasonEndProcessing = true;
-    // Snapshot car performance before offseason dev runs (for digest delta display)
-    const _preOffseasonCarSnap = {};
-    State.game.teams.forEach(t=>{ _preOffseasonCarSnap[t.id] = {car:t.carPerformance, rel:t.reliability}; });
-    // Snapshot final standings BEFORE processSeasonEnd resets points to 0
-    const _finalConStr = State.getConstructorStandings().map(s=>({id:s.team.id,name:s.team.name,color:s.team.color,points:s.team.seasonPoints,wins:s.team.wins}));
-    const _finalDrvStr = State.getDriverStandings().slice(0,10).map(s=>({id:s.driver.id,name:s.driver.name,teamId:s.driver.teamId,points:s.driver.seasonPoints,wins:s.driver.wins}));
-    const champs=Sim.processSeasonEnd(), transfers=Sim.processOffseason();
-    g._offseasonProcessedForSeason = completedSeason;
-    // Attach car deltas to transfers data for digest
-    transfers._carSnap = _preOffseasonCarSnap;
-    Storage.autosave();
+    try {
+      // Snapshot car performance before offseason dev runs (for digest delta display)
+      const _preOffseasonCarSnap = {};
+      State.game.teams.forEach(t=>{ _preOffseasonCarSnap[t.id] = {car:t.carPerformance, rel:t.reliability}; });
+      // Snapshot final standings BEFORE processSeasonEnd resets points to 0
+      const _finalConStr = State.getConstructorStandings().map(s=>({id:s.team.id,name:s.team.name,color:s.team.color,points:s.team.seasonPoints,wins:s.team.wins}));
+      const _finalDrvStr = State.getDriverStandings().slice(0,10).map(s=>({id:s.driver.id,name:s.driver.name,teamId:s.driver.teamId,points:s.driver.seasonPoints,wins:s.driver.wins}));
+      const champs=Sim.processSeasonEnd(), transfers=Sim.processOffseason();
+      g._offseasonProcessedForSeason = completedSeason;
+      // Attach car deltas to transfers data for digest
+      transfers._carSnap = _preOffseasonCarSnap;
+      Storage.autosave();
     const team=State.getPlayerTeam();
     const constrPos=State.getConstructorSeasonPos(team.id);
     const isConstrChamp=champs.constructorChamp&&champs.constructorChamp.team.id===team.id;
@@ -13122,6 +13132,12 @@ const GameActions = {
     window._recapFinalConStr = _finalConStr;
     window._recapFinalDrvStr = _finalDrvStr;
     UI.showSeasonRecap(transfers, champs, _finalConStr, _finalDrvStr);
+    } catch(e) {
+      console.error('Season end error:', e);
+      g._seasonEndProcessing = false;
+      g._offseasonProcessedForSeason = null;
+      UI.toast('Season end error: '+e.message,'error');
+    }
   },
   _simNRaces(n, label){
     const g=State.game;
