@@ -2790,6 +2790,7 @@ const Sim = {
     const lapStates = Array.isArray(race.lapStates) ? race.lapStates : [];
     if(!lapStates.length) return [];
     const events = [];
+    const consumedPrompts = race._wrConsumedPromptKeys || {};
     const laps = race.laps || lapStates.length || 0;
     const playerTeamId = State.game.playerTeamId;
     const finishers = results.filter(r=>!r.dnf).sort((a,b)=>(a.position||99)-(b.position||99));
@@ -2813,6 +2814,13 @@ const Sim = {
     };
     const getEntry = function(lapState, driverId) {
       return (lapState?.order || []).find(o => o.driverId === driverId) || null;
+    };
+    const findNextPlannedAfter = function(driverId, startIdx, afterLap) {
+      for(let j = Math.max(0, startIdx + 1); j < lapStates.length; j++) {
+        const future = getEntry(lapStates[j], driverId);
+        if(future && future.nextPlannedPitLap && future.nextPlannedPitLap > afterLap) return future.nextPlannedPitLap;
+      }
+      return null;
     };
     const getBattleContext = function(lapState, driverId) {
       const ordered = (lapState?.order || [])
@@ -3019,7 +3027,7 @@ const Sim = {
         const prevWetness = prev ? (prev.wetness || 0) : 0;
         if(prevEntryForDriver && prevWetness < 0.28 && lapState.wetness >= 0.28 && prevEntryForDriver.compound !== 'inter' && prevEntryForDriver.compound !== 'wet') {
           const weatherKey = `${o.driverId}:${lap}:inter`;
-          if(!weatherDecisionLogged[weatherKey]) {
+          if(!weatherDecisionLogged[weatherKey] && !consumedPrompts[weatherKey]) {
             weatherDecisionLogged[weatherKey] = true;
             events.push({
               lap,
@@ -3029,12 +3037,13 @@ const Sim = {
               recommendSwitch: true,
               wetTire: 'inter',
               wetTireName: 'Inter',
+              promptKey: weatherKey,
               driverPositions: prevSnap
             });
           }
         } else if(prevEntryForDriver && prevWetness < 0.78 && lapState.wetness >= 0.78 && prevEntryForDriver.compound !== 'wet') {
           const weatherKey = `${o.driverId}:${lap}:wet`;
-          if(!weatherDecisionLogged[weatherKey]) {
+          if(!weatherDecisionLogged[weatherKey] && !consumedPrompts[weatherKey]) {
             weatherDecisionLogged[weatherKey] = true;
             events.push({
               lap,
@@ -3045,6 +3054,7 @@ const Sim = {
               wetTire: 'wet',
               wetTireName: 'Wet',
               isFullWet: true,
+              promptKey: weatherKey,
               driverPositions: prevSnap
             });
           }
@@ -3056,7 +3066,7 @@ const Sim = {
             || 'medium';
           const slickTyre = DATA.tires[slickCompound] || DATA.tires.medium || { name: 'Medium' };
           const weatherKey = `${o.driverId}:${lap}:slick`;
-          if(!weatherDecisionLogged[weatherKey]) {
+          if(!weatherDecisionLogged[weatherKey] && !consumedPrompts[weatherKey]) {
             weatherDecisionLogged[weatherKey] = true;
             events.push({
               lap,
@@ -3067,6 +3077,7 @@ const Sim = {
               wetTire: slickCompound,
               wetTireName: slickTyre.name,
               returnToSlick: true,
+              promptKey: weatherKey,
               driverPositions: prevSnap
             });
           }
@@ -3078,7 +3089,8 @@ const Sim = {
           const stopNum = ((prevEntryForDriver?.pitStops ?? o.pitStops ?? 1) || 1);
           const totalStops = Math.max(stopNum, (strategyOpt?.stints?.length || 1) - 1);
           const pitKey = `${o.driverId}:${stopNum}:forced:${lap}`;
-          if(!pitDecisionLogged[pitKey]) {
+          const nextPlannedAfter = findNextPlannedAfter(o.driverId, idx, lap);
+          if(!pitDecisionLogged[pitKey] && !consumedPrompts[pitKey]) {
             pitDecisionLogged[pitKey] = true;
             events.push({
               lap,
@@ -3092,8 +3104,10 @@ const Sim = {
               windowOpen: Math.max(1, lap - 1),
               windowClose: lap,
               plannedPitLap: lap,
+              nextPlannedPitLap: nextPlannedAfter,
               nextStintIndex: stintIndexForPrompt + 1,
               isForcedPit: true,
+              promptKey: pitKey,
               text: `⚠️ ⭐ ${rr.driverName} is at the tyre cliff. Pit now or risk a costly extra lap.`,
               driverPositions: prevSnap
             });
@@ -3106,7 +3120,8 @@ const Sim = {
           const stopNum = ((prevEntryForDriver?.pitStops ?? o.pitStops ?? 0) || 0) + 1;
           const totalStops = Math.max(stopNum, (strategyOpt?.stints?.length || 1) - 1);
           const pitKey = `${o.driverId}:${stopNum}:sc:${lap}`;
-          if(!pitDecisionLogged[pitKey]) {
+          const nextPlannedAfter = findNextPlannedAfter(o.driverId, idx, plannedStopLap);
+          if(!pitDecisionLogged[pitKey] && !consumedPrompts[pitKey]) {
             pitDecisionLogged[pitKey] = true;
             events.push({
               lap,
@@ -3121,7 +3136,9 @@ const Sim = {
               windowClose: Math.min(laps - 1, lap + 2),
               isSafetyCarPit: true,
               plannedPitLap: plannedStopLap,
+              nextPlannedPitLap: nextPlannedAfter,
               nextStintIndex: stintIndexForPrompt + 1,
+              promptKey: pitKey,
               text: `🚗 ⭐ ${rr.driverName} — safety car pit opportunity!`,
               driverPositions: prevSnap
             });
@@ -3137,7 +3154,8 @@ const Sim = {
           const windowOpen = Math.max(2, targetLap - 2);
           const windowClose = Math.min(laps - 1, targetLap + 2);
           const pitKey = `${o.driverId}:${stopNum}:${targetLap}`;
-          if(!pitDecisionLogged[pitKey]) {
+          const nextPlannedAfter = findNextPlannedAfter(o.driverId, idx, targetLap);
+          if(!pitDecisionLogged[pitKey] && !consumedPrompts[pitKey]) {
             pitDecisionLogged[pitKey] = true;
             events.push({
               lap,
@@ -3151,7 +3169,9 @@ const Sim = {
               windowOpen,
               windowClose,
               plannedPitLap: targetLap,
+              nextPlannedPitLap: nextPlannedAfter,
               nextStintIndex: stintIndexForPrompt + 1,
+              promptKey: pitKey,
               text: `🔧 ⭐ ${rr.driverName} — pit window open! Stop ${stopNum} of ${totalStops}.`,
               driverPositions: prevSnap
             });
@@ -5352,8 +5372,12 @@ events.push({lap:r.dnfLap||laps-5, type:'dnf', driverId:r.driverId, text:`⭐ ${
       }
     });
 
-    // ── RIVAL TEAMS POACH PLAYER DRIVERS ──
+    // ── PLAYER POACH ATTEMPTS ───────────────────────────────────────────────
+    // Rival interest is handled during the season via the normal transfer-watch flow.
+    // Do not generate fresh poach attempts inside offseason processing, or player
+    // rosters can feel like they are collapsing while trying to complete preseason.
     if(!g.poachAttempts) g.poachAttempts=[];
+    g.poachAttempts = [];
     // Patch downforce on teams for old saves
     if(g.teams) g.teams.forEach(t=>{ if(t.downforce===undefined) t.downforce=50; });
     // Patch sprint fields on existing calendar entries
@@ -5369,24 +5393,6 @@ events.push({lap:r.dnfLap||laps-5, type:'dnf', driverId:r.driverId, text:`⭐ ${
         }
       }
     });
-    State.getPlayerDrivers().forEach(d=>{
-      if(d.contract>1) return;
-      // Shuffle suitors so it's not always the top prestige team
-      const shuffled=[...teamsInOrder].sort(()=>Math.random()-0.5);
-      const suitor=shuffled.find(t=>{
-        if(t.id===g.playerTeamId) return false;
-        const curr=State.getTeamDrivers(t.id);
-        const worst=curr.length>0?curr.reduce((w,x)=>x.rating<w.rating?x:w,curr[0]):null;
-        // Harder threshold — rival needs clear quality advantage
-        return worst&&d.rating>worst.rating+8&&d.salary<=t.revenue/14;
-      });
-      // Reduced from 60% to 35% — and only if driver has poor morale or explicit interest
-      const poachChance = d.morale < 55 ? 0.5 : d.morale < 70 ? 0.35 : 0.2;
-      if(suitor&&Math.random()<poachChance){
-        g.poachAttempts.push({driverId:d.id,driverName:d.name,teamId:suitor.id,teamName:suitor.name,offerSalary:State.getDriverDemandSalary(d,'approach'),offerYears:2});
-      }
-    });
-
     // ── Fill empty seats — record departures then sign ──
     g.teams.forEach(team=>{
       const remaining=State.getTeamDrivers(team.id);
@@ -8412,6 +8418,7 @@ const UI = {
         ? race.lapEvents
         : Sim._generateLapSimEvents(race, race.raceResult||[], race.weather||'dry', !!race.hadSafetyCar, race.rainStartLap||null);
     WR.idx=0; WR.raceIdx=raceIdx; WR.race=race; WR.paused=false; WR.timer=null; WR.isSprint=false; WR.dnfs={}; WR.retiredIds={}; WR._lastFeedSig=null; WR._podiumBridgeAdded={}; WR.resultState=(race.raceResult||[]).map(function(r){ return Object.assign({}, r); });
+    race._wrConsumedPromptKeys = {};
     WR.pitDecisions=[]; WR.pitDecisionBonus=0;
     WR.weatherDecisions=[]; WR.weatherCallBonus=0; WR.weatherCalls=[]; WR.positionDeltas={}; WR.driverDecisionScores={}; WR._baselinePosByDriver={};
     WR._bonusApplied=null;
@@ -12376,6 +12383,7 @@ const GameActions = {
 
   beginSeason(){
     const g=State.game;
+    g._seasonEndProcessing = false;
     const status=this._syncOffseasonPending();
     const drivers=status.drivers;
     const expiring=status.expiring;
@@ -12943,6 +12951,9 @@ const GameActions = {
     } catch(e) { console.error('simRace error:', e); UI.toast('Race error: '+e.message+' — try starting a new game','error'); }
   },
   _promptSeasonEnd(){
+    const g=State.game;
+    if(g._seasonEndProcessing) return;
+    g._seasonEndProcessing = true;
     // Snapshot car performance before offseason dev runs (for digest delta display)
     const _preOffseasonCarSnap = {};
     State.game.teams.forEach(t=>{ _preOffseasonCarSnap[t.id] = {car:t.carPerformance, rel:t.reliability}; });
@@ -12953,7 +12964,7 @@ const GameActions = {
     // Attach car deltas to transfers data for digest
     transfers._carSnap = _preOffseasonCarSnap;
     Storage.autosave();
-    const g=State.game, team=State.getPlayerTeam();
+    const team=State.getPlayerTeam();
     const constrPos=State.getConstructorSeasonPos(team.id);
     const isConstrChamp=champs.constructorChamp&&champs.constructorChamp.team.id===team.id;
     const isDriverChamp=champs.driverChamp&&State.getPlayerDrivers().some(d=>d.id===champs.driverChamp.driver.id);
@@ -14000,7 +14011,7 @@ window._wrApplyBonusNow = function(driverId, decisionMeta) {
       order: (ls.order || []).map(function(o){ return Object.assign({}, o); })
     });
   });
-  const progressStartLap = decisionMeta?.choice === 'stay' ? Math.min(totalLaps - 2, decisionMeta.forceLap || (decisionLap + 2)) : Math.min(totalLaps - 2, decisionLap + 1);
+  const progressStartLap = decisionMeta?.choice === 'stay' ? Math.min(totalLaps - 2, decisionMeta.forceLap || (decisionLap + 2)) : Math.min(totalLaps - 2, decisionLap);
   const applyPitMeta = function(orderEntry, priorEntry, lap, didPit) {
     if(!orderEntry) return;
     const fromEntry = priorEntry || orderEntry;
@@ -14050,7 +14061,7 @@ window._wrApplyBonusNow = function(driverId, decisionMeta) {
 
   for(let i = 0; i < clonedStates.length; i++) {
     const ls = clonedStates[i];
-    if(!ls || (ls.lap || 0) <= decisionLap) continue;
+    if(!ls || (ls.lap || 0) < decisionLap) continue;
     const prevState = i > 0 ? clonedStates[i - 1] : null;
     const prevEntry = prevState ? (prevState.order || []).find(function(o){ return o.driverId === driverId; }) : null;
     let desiredPos = currentReplayPos;
@@ -14061,7 +14072,7 @@ window._wrApplyBonusNow = function(driverId, decisionMeta) {
     ls.order = window._wrPlaceDriverInOrder(ls.order, driverId, desiredPos);
     ls.order = window._wrNormalizeLapOrder(ls.order, race.lapStates?.[i]?.order || ls.order);
     const liveEntry = (ls.order || []).find(function(o){ return o.driverId === driverId; });
-    const stopLap = decisionMeta?.choice === 'stay' ? (decisionMeta.forceLap || (decisionLap + 3)) : Math.min(totalLaps - 2, decisionLap + 1);
+    const stopLap = decisionMeta?.choice === 'stay' ? (decisionMeta.forceLap || (decisionLap + 3)) : decisionLap;
     applyPitMeta(liveEntry, prevEntry, ls.lap || 0, (ls.lap || 0) === stopLap);
   }
 
@@ -14113,6 +14124,10 @@ window._wrPitDecision = function(decisionId, pitNow, auto) {
 
   const ev = dec.ev;
   const card = document.getElementById('pit-decision-card-' + decisionId);
+  if(ev.promptKey && WR.race) {
+    if(!WR.race._wrConsumedPromptKeys) WR.race._wrConsumedPromptKeys = {};
+    WR.race._wrConsumedPromptKeys[ev.promptKey] = true;
+  }
   if(!WR.driverDecisionScores) WR.driverDecisionScores = {};
   if(WR.driverDecisionScores[ev.driverId] == null) WR.driverDecisionScores[ev.driverId] = 0;
 
@@ -14219,6 +14234,10 @@ window._wrWeatherDecision = function(wdId, switchNow, auto) {
 
   const ev = dec.ev;
   const card = document.getElementById('wd-card-' + wdId);
+  if(ev.promptKey && WR.race) {
+    if(!WR.race._wrConsumedPromptKeys) WR.race._wrConsumedPromptKeys = {};
+    WR.race._wrConsumedPromptKeys[ev.promptKey] = true;
+  }
   const d = State.getDriver(ev.driverId);
   const wetSkill = d ? d.wet : 80;
     const tireLabel = ev.wetTireName || 'Inter';
