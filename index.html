@@ -12954,6 +12954,25 @@ const GameActions = {
   },
   _promptSeasonEnd(){
     const g=State.game;
+    if(g.offseasonPending){
+      if(document.getElementById('season-recap-overlay')) return;
+      if(window._recapTransfers && window._recapChamps){
+        UI.showSeasonRecap(
+          window._recapTransfers,
+          window._recapChamps,
+          window._recapFinalConStr,
+          window._recapFinalDrvStr
+        );
+        return;
+      }
+      UI.renderOffseason(
+        window._recapTransfers||[],
+        window._recapChamps?.driverChamp,
+        window._recapChamps?.constructorChamp,
+        window._recapChamps?.retirements||[]
+      );
+      return;
+    }
     if(g._seasonEndProcessing){
       if(document.getElementById('season-recap-overlay')) return;
       if(window._recapTransfers && window._recapChamps){
