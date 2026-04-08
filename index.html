@@ -12952,7 +12952,28 @@ const GameActions = {
   },
   _promptSeasonEnd(){
     const g=State.game;
-    if(g._seasonEndProcessing) return;
+    if(g._seasonEndProcessing){
+      if(document.getElementById('season-recap-overlay')) return;
+      if(window._recapTransfers && window._recapChamps){
+        UI.showSeasonRecap(
+          window._recapTransfers,
+          window._recapChamps,
+          window._recapFinalConStr,
+          window._recapFinalDrvStr
+        );
+        return;
+      }
+      if(g.offseasonPending){
+        UI.renderOffseason(
+          window._recapTransfers||[],
+          window._recapChamps?.driverChamp,
+          window._recapChamps?.constructorChamp,
+          window._recapChamps?.retirements||[]
+        );
+        return;
+      }
+      return;
+    }
     g._seasonEndProcessing = true;
     // Snapshot car performance before offseason dev runs (for digest delta display)
     const _preOffseasonCarSnap = {};
@@ -12979,6 +13000,8 @@ const GameActions = {
     }
     // Show Season Recap before the offseason screen
     UI.checkNewAchievements();
+    window._recapFinalConStr = _finalConStr;
+    window._recapFinalDrvStr = _finalDrvStr;
     UI.showSeasonRecap(transfers, champs, _finalConStr, _finalDrvStr);
   },
   _simNRaces(n, label){
