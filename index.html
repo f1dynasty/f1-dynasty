@@ -6065,6 +6065,8 @@ const Storage = {
   restoreGame(data) {
     State.game=data.game;
     const g=State.game;
+    // Season-end processing is transient UI state and should never survive a load.
+    g._seasonEndProcessing = false;
     if(!g.history)    g.history={champions:[],constructorChampions:[],raceWins:{},records:{}};
     if(!g.finances)   g.finances={};
     if(!g.newsFeed)   g.newsFeed=[];
@@ -12972,7 +12974,11 @@ const GameActions = {
         );
         return;
       }
-      return;
+      if(g.raceIndex>=g.calendar.length){
+        g._seasonEndProcessing = false;
+      } else {
+        return;
+      }
     }
     g._seasonEndProcessing = true;
     // Snapshot car performance before offseason dev runs (for digest delta display)
