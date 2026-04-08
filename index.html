@@ -728,7 +728,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:18px;max-width:320px;padding:14px 16px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
           <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">Latest Update</div>
-<div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.0.8 is live</div>
+<div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.0.9 is live</div>
           <div style="font-size:12px;line-height:1.45;color:#666">Watch Race now runs on a true lap-by-lap race model, with clearer player-focused commentary, better strategy context, and cleaner post-race explanations.</div>
         </div>
       </div>
@@ -772,7 +772,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </div>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game" class="land-start">Start Career →</button>
-<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.0.8</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.0.9</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -2103,7 +2103,15 @@ const Sim = {
     if(finishers[1]) events.push({lap:laps,type:'finish',text:`P2: ${finishers[1].driverName}`, driverPositions:finalSnap});
     if(finishers[2]) events.push({lap:laps,type:'finish',text:`P3: ${finishers[2].driverName}`, driverPositions:finalSnap});
     finishers.forEach(r=>{if(r.teamId===ptid&&r.position>3) events.push({lap:laps,type:'finish',text:`⭐ ${r.driverName} finishes P${r.position} — ${r.points}pts`, driverPositions:finalSnap});});
-    race.sprintDone=true; race.sprintResult=results; race.sprintLapEvents=events;
+    const sprintWatchEvents = events.filter(ev=>{
+      if(!ev) return false;
+      if(ev.type==='start'||ev.type==='finish'||ev.type==='dnf'||ev.type==='safety'||ev.type==='weather') return true;
+      if((ev.text||'').includes('⭐')) return true;
+      const posMatch = (ev.text||'').match(/P(\d+)/);
+      const pos = posMatch ? parseInt(posMatch[1],10) : 99;
+      return pos <= 3;
+    });
+    race.sprintDone=true; race.sprintResult=results; race.sprintLapEvents=events; race.sprintSimEvents=sprintWatchEvents;
     State.game.lastSprintResult={race:{...race, isSprint:true, name: race.name + ' Sprint'}, results, preDriverStandings:_sprintPreD, preConstrStandings:_sprintPreC};
     return results;
   },
@@ -5175,6 +5183,10 @@ events.push({lap:r.dnfLap||laps-5, type:'dnf', driverId:r.driverId, text:`⭐ ${
   processOffseason() {
     const g=State.game;
     const transfers=[];
+    const protectedPlayerTeamId = g.playerTeamId;
+    const protectedPlayerRoster = State.getPlayerDrivers()
+      .filter(d=>!d.retired && (d.contract||0)>0)
+      .map(d=>d.id);
 
     // ── Recalculate all driver market salaries ──────────────────────────────
     // Salaries must reflect current rating, age, and career achievements.
@@ -5218,6 +5230,10 @@ events.push({lap:r.dnfLap||laps-5, type:'dnf', driverId:r.driverId, text:`⭐ ${
     if(g.lastObjBonus===undefined) g.lastObjBonus=0;
     if(!g.pendingNegotiations) g.pendingNegotiations=[];
     if(g._lastAIApproachRace===undefined) g._lastAIApproachRace=0;
+    g.preSeasonMoves = g.preSeasonMoves.filter(move=>{
+      if(move.playerInitiated) return true;
+      return move.fromTeamId!==protectedPlayerTeamId && move.toTeamId!==protectedPlayerTeamId;
+    });
     const executedMoves=new Set();
     // Deduplicate preSeasonMoves — keep only the most recently committed move per driver
     const seenDrivers=new Set();
@@ -5426,6 +5442,44 @@ events.push({lap:r.dnfLap||laps-5, type:'dnf', driverId:r.driverId, text:`⭐ ${
         transfers.push({driverName:rookie.name,from:'Academy',to:team.name,teamId:team.id,rookie:true});
       }
     });
+    const playerRosterTeam = State.getPlayerTeam();
+    if(playerRosterTeam){
+      const protectedDrivers = protectedPlayerRoster
+        .map(id=>State.getDriver(id))
+        .filter(d=>d && !d.retired && (d.contract||0)>0);
+      protectedDrivers.forEach(d=>{
+        d.teamId = protectedPlayerTeamId;
+        d.isFreeAgent = false;
+      });
+      const uniqueById = arr => arr.filter((d, idx)=>arr.findIndex(x=>x.id===d.id)===idx);
+      const raceKeep = uniqueById(protectedDrivers.filter(d=>!d.isReserve).concat(State.getPlayerDrivers()))
+        .slice(0,2);
+      const reserveKeep = uniqueById(
+        protectedDrivers.filter(d=>!raceKeep.some(r=>r.id===d.id)).map(d=>{ d.isReserve=true; return d; })
+          .concat(State.getPlayerReserves().filter(d=>!raceKeep.some(r=>r.id===d.id)))
+      ).slice(0,2);
+      raceKeep.forEach(d=>{ d.isReserve=false; d.teamId=protectedPlayerTeamId; d.isFreeAgent=false; });
+      reserveKeep.forEach(d=>{ d.isReserve=true; d.teamId=protectedPlayerTeamId; d.isFreeAgent=false; });
+      playerRosterTeam.driverIds = raceKeep.map(d=>d.id);
+      playerRosterTeam.reserveIds = reserveKeep.map(d=>d.id);
+      g.drivers.forEach(d=>{
+        if(d.teamId!==protectedPlayerTeamId || d.retired) return;
+        const inRace = playerRosterTeam.driverIds.includes(d.id);
+        const inReserve = playerRosterTeam.reserveIds.includes(d.id);
+        if(inRace){
+          d.isReserve = false;
+          d.isFreeAgent = false;
+        } else if(inReserve){
+          d.isReserve = true;
+          d.isFreeAgent = false;
+        } else {
+          d.teamId = null;
+          d.isReserve = false;
+          d.isFreeAgent = true;
+          if((d.contract||0) > 0) d.contract = 0;
+        }
+      });
+    }
 
     const playerYoungCore = g.drivers.filter(d=>d.teamId===g.playerTeamId&&!d.retired&&d.age<=24&&(d.potential||0)>=90).length
       + g.drivers.filter(d=>d.teamId===g.playerTeamId&&d.isReserve&&!d.retired&&(d.potential||0)>=88).length;
@@ -6241,8 +6295,15 @@ const Storage = {
       g.offseasonBudget = {aero:0,engine:0,reliability:0,facilities:0};
     }
     const seasonStarted = (g.calendar||[]).some(r=>r.qualiDone||r.raceDone||r.sprintQualiDone||r.sprintDone);
-    if(g.raceIndex===0 && !seasonStarted && g._seasonStartConfirmedFor!==g.season){
+    if(g.raceIndex===0 && !seasonStarted){
+      if(g._seasonStartConfirmedFor===g.season) delete g._seasonStartConfirmedFor;
       g.offseasonPending = true;
+    }
+    if(g._offseasonProcessedForSeason===undefined) g._offseasonProcessedForSeason = null;
+    if(g.raceIndex >= (g.calendar||[]).length && g._offseasonProcessedForSeason === g.season){
+      g._offseasonProcessedForSeason = null;
+      g._seasonEndProcessing = false;
+      g.offseasonPending = false;
     }
     return g;
   }
@@ -8390,7 +8451,7 @@ const UI = {
     const WR=window._WR, race=State.game.calendar[raceIdx];
     if(!race||!race.sprintDone){UI.toast('Sprint not done','error');return;}
     if(WR.timer) clearTimeout(WR.timer);
-    WR.events=race.sprintLapEvents||[]; WR.idx=0; WR.raceIdx=raceIdx; WR.race=race; WR.paused=false; WR.timer=null; WR.isSprint=true; WR.dnfs={}; WR.retiredIds={}; WR._lastFeedSig=null; WR._podiumBridgeAdded={}; WR.resultState=(race.sprintResult||[]).map(function(r){ return Object.assign({}, r); });
+    WR.events=(race.sprintSimEvents&&race.sprintSimEvents.length)?race.sprintSimEvents:(race.sprintLapEvents||[]); WR.idx=0; WR.raceIdx=raceIdx; WR.race=race; WR.paused=false; WR.timer=null; WR.isSprint=true; WR.dnfs={}; WR.retiredIds={}; WR._lastFeedSig=null; WR._podiumBridgeAdded={}; WR.resultState=(race.sprintResult||[]).map(function(r){ return Object.assign({}, r); });
     // Seed live positions from sprint quali grid
     WR.lastPos = {}; WR.prevPos = null;
     const sprintGrid = race.sprintQualiResult || race.qualiResult || [];
@@ -11729,16 +11790,16 @@ const UI = {
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.0.8 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.0.9 · Release Notes</div>
         ${[
-    ['v2.0.8','Apr 2026',[
-            '🆕 Watch Race rebuild: race weekends now run through a real lap-by-lap simulation foundation, so live order, pit timing, tyre wear, weather crossover, safety car swings, retirements, and the final result all come from the same race state.',
-            '🆕 Player-focused commentary: the feed now stays much more centered on your drivers and meaningful incidents. Non-player midfield noise is cut back, duplicate two-sided move lines are removed, and your own moves are easier to distinguish from general battle notes.',
-            '🆕 Race explanations: Watch Race and the post-race recap now explain why a result happened with clearer launch, traffic, tyre, pit-window, undercut, overcut, setup, and weather-crossover context. Pole-to-fade races should feel far less random or unexplained.',
-            '🆕 Strategy flow: split strategies, planned pit windows, tyre-management effects, and weather calls now feed directly into the lap model, with better in-race commentary about whether your plan is on track, paying off, or falling apart.',
-            '🆕 Recap polish: Your Race cards and the Race Story now use cleaner, more player-friendly cause summaries instead of rough internal-style fragments, making the debrief much easier to read after a busy weekend.',
-            '🐛 Watch Race stability: fixed multiple recurring sync issues including delayed move lines, commentary appearing before the relevant position change, contradictory same-lap notes, duplicate pass coverage, and tower/feed mismatches caused by non-move context rows.',
-            '🐛 Season goals: owner expectations now use a more realistic mix of car rank, prestige, difficulty, recent finish, and early-save protection, so teams like Aston Martin or Williams are much less likely to get unreasonable board targets too early.',
+    ['v2.0.9','Apr 2026',[
+            '🆕 Watch Race decisions now rebuild directly into the lap-by-lap race state, so pit calls, weather crossovers, safety-car opportunities, forced tyre-cliff stops, and multi-stop plans carry forward through the rest of the race instead of feeling detached from it.',
+            '🆕 Sprint Watch Race now uses the newer replay style too, bringing sprint commentary closer to the updated race feed instead of falling back to the older noisier path.',
+            '🐛 Watch Race prompt loops fixed: repeated pit/weather cards, safety-car stop followed by a duplicate normal stop, drying-track repeat prompts, and several same-driver decision loops were hardened.',
+            '🐛 Pit and weather calls now have stronger race impact, with future lap-state evolution and result movement tuned so good calls matter more and poor calls cost more.',
+            '🐛 Save size reduced by stripping regenerable Watch Race data from saves and autosaves, fixing storage-full errors that could happen even with only a few save slots.',
+            '🐛 Offseason / season-end stability pass: fixed multiple end-of-year recovery cases where saves could freeze, skip preseason, rerun offseason logic, reshuffle the grid twice, or get trapped between seasons.',
+            '🐛 Player roster protection hardened in offseason processing so contracted player drivers are much less likely to be stripped out by stale move data or broken seat reconciliation.',
           ]],
           ['v2.0.8','Apr 2026',[
             '🆕 Driver management: race drivers can now be moved straight into reserve roles from the main driver profile as well as preseason planning, so you are no longer pushed toward releasing someone just to reshuffle your lineup.',
@@ -12961,6 +13022,31 @@ const GameActions = {
   },
   _promptSeasonEnd(){
     const g=State.game;
+    const completedSeason = g.raceIndex>=g.calendar.length ? g.season : (g.season-1);
+    if(g.raceIndex>=g.calendar.length && g._offseasonProcessedForSeason===g.season){
+      g._offseasonProcessedForSeason = null;
+      g._seasonEndProcessing = false;
+    }
+    if(g._offseasonProcessedForSeason===completedSeason){
+      g.offseasonPending = true;
+      if(document.getElementById('season-recap-overlay')) return;
+      if(window._recapTransfers && window._recapChamps){
+        UI.showSeasonRecap(
+          window._recapTransfers,
+          window._recapChamps,
+          window._recapFinalConStr,
+          window._recapFinalDrvStr
+        );
+        return;
+      }
+      UI.renderOffseason(
+        window._recapTransfers||[],
+        window._recapChamps?.driverChamp,
+        window._recapChamps?.constructorChamp,
+        window._recapChamps?.retirements||[]
+      );
+      return;
+    }
     if(g.offseasonPending){
       if(document.getElementById('season-recap-overlay')) return;
       if(window._recapTransfers && window._recapChamps){
@@ -13014,6 +13100,7 @@ const GameActions = {
     const _finalConStr = State.getConstructorStandings().map(s=>({id:s.team.id,name:s.team.name,color:s.team.color,points:s.team.seasonPoints,wins:s.team.wins}));
     const _finalDrvStr = State.getDriverStandings().slice(0,10).map(s=>({id:s.driver.id,name:s.driver.name,teamId:s.driver.teamId,points:s.driver.seasonPoints,wins:s.driver.wins}));
     const champs=Sim.processSeasonEnd(), transfers=Sim.processOffseason();
+    g._offseasonProcessedForSeason = completedSeason;
     // Attach car deltas to transfers data for digest
     transfers._carSnap = _preOffseasonCarSnap;
     Storage.autosave();
@@ -14014,10 +14101,18 @@ window._wrApplyBonusNow = function(driverId, decisionMeta) {
   if(!entry) return;
   const score = (((WR.driverDecisionScores || {})[driverId]) || 0);
   let targetDelta = 0;
-  if(score >= 1.2) targetDelta = -2;
-  else if(score >= 0.5) targetDelta = -1;
-  else if(score <= -0.8) targetDelta = 2;
-  else if(score <= -0.3) targetDelta = 1;
+  if(score >= 1.0) targetDelta = -2;
+  else if(score >= 0.2) targetDelta = -1;
+  else if(score <= -0.9) targetDelta = 2;
+  else if(score <= -0.15) targetDelta = 1;
+  if(targetDelta === 0 && decisionMeta?.type === 'pit') {
+    if(decisionMeta?.choice === 'pit' && score > 0.05) targetDelta = -1;
+    if(decisionMeta?.choice === 'stay' && score < -0.05) targetDelta = 1;
+  }
+  if(targetDelta === 0 && decisionMeta?.type === 'weather') {
+    if(decisionMeta?.choice === 'switch' && score > 0.05) targetDelta = -1;
+    if(decisionMeta?.choice === 'stay' && score < -0.05) targetDelta = 1;
+  }
   const decisionLap = decisionMeta?.lap || (WR.events[WR.idx - 1]?.lap || 1);
   const totalLaps = race.laps || 58;
   if(decisionLap >= totalLaps - 5) targetDelta = clamp(targetDelta, -1, 1);
@@ -14066,7 +14161,9 @@ window._wrApplyBonusNow = function(driverId, decisionMeta) {
       order: (ls.order || []).map(function(o){ return Object.assign({}, o); })
     });
   });
-  const progressStartLap = decisionMeta?.choice === 'stay' ? Math.min(totalLaps - 2, decisionMeta.forceLap || (decisionLap + 2)) : Math.min(totalLaps - 2, decisionLap);
+  const progressStartLap = decisionMeta?.choice === 'stay'
+    ? Math.min(totalLaps - 2, decisionMeta.forceLap || decisionMeta.deferToLap || (decisionLap + 1))
+    : Math.min(totalLaps - 2, decisionLap);
   const applyPitMeta = function(orderEntry, priorEntry, lap, didPit) {
     if(!orderEntry) return;
     const fromEntry = priorEntry || orderEntry;
@@ -14087,7 +14184,7 @@ window._wrApplyBonusNow = function(driverId, decisionMeta) {
       orderEntry.pitTimingDelta = decisionMeta?.choice === 'pit' || decisionMeta?.choice === 'switch' ? -1 : 2;
       orderEntry.plannedPitLap = lap;
       orderEntry.stintIndex = carryStintIndex;
-      orderEntry.nextPlannedPitLap = originalNextPlanned != null && originalNextPlanned > lap
+      orderEntry.nextPlannedPitLap = originalNextPlanned != null && originalNextPlanned > Math.max(lap, decisionMeta?.plannedPitLap || lap)
         ? originalNextPlanned
         : decisionMeta?.nextPlannedPitLap != null
           ? decisionMeta.nextPlannedPitLap
@@ -14103,7 +14200,9 @@ window._wrApplyBonusNow = function(driverId, decisionMeta) {
       orderEntry.pitStops = fromEntry.pitStops || 0;
       orderEntry.stintIndex = fromEntry.stintIndex || 0;
       orderEntry.plannedPitLap = fromEntry.plannedPitLap || null;
-      orderEntry.nextPlannedPitLap = originalNextPlanned || fromEntry.nextPlannedPitLap || decisionMeta?.plannedPitLap || null;
+      orderEntry.nextPlannedPitLap = decisionMeta?.choice === 'stay' && decisionMeta?.deferToLap != null
+        ? Math.max(lap + 1, decisionMeta.deferToLap)
+        : (originalNextPlanned || fromEntry.nextPlannedPitLap || decisionMeta?.plannedPitLap || null);
       orderEntry.tyreAge = (fromEntry.tyreAge || 0) + 1;
       if(decisionMeta?.choice === 'stay') {
         orderEntry.tyrePenalty = +((orderEntry.tyrePenalty || 0) + (decisionMeta?.type === 'weather' ? 0.35 : 0.25)).toFixed(3);
@@ -14127,7 +14226,9 @@ window._wrApplyBonusNow = function(driverId, decisionMeta) {
     ls.order = window._wrPlaceDriverInOrder(ls.order, driverId, desiredPos);
     ls.order = window._wrNormalizeLapOrder(ls.order, race.lapStates?.[i]?.order || ls.order);
     const liveEntry = (ls.order || []).find(function(o){ return o.driverId === driverId; });
-    const stopLap = decisionMeta?.choice === 'stay' ? (decisionMeta.forceLap || (decisionLap + 3)) : decisionLap;
+    const stopLap = decisionMeta?.choice === 'stay'
+      ? (decisionMeta.forceLap != null ? decisionMeta.forceLap : null)
+      : decisionLap;
     applyPitMeta(liveEntry, prevEntry, ls.lap || 0, (ls.lap || 0) === stopLap);
   }
 
@@ -14202,7 +14303,7 @@ window._wrPitDecision = function(decisionId, pitNow, auto) {
         +(auto ? '<div style="font-size:10px;color:var(--tx3);margin-top:3px">No decision made — engineers called it.</div>' : '');
     }
     if(!WR.pitDecisionBonus) WR.pitDecisionBonus = 0;
-    const delta = auto ? 0 : (ev.isSafetyCarPit ? 0.9 : 0.4);
+    const delta = auto ? 0 : (ev.isSafetyCarPit ? 1.1 : 0.6);
     WR.pitDecisionBonus += delta;
     WR.driverDecisionScores[ev.driverId] += delta;
     window._wrApplyBonusNow(ev.driverId, {
@@ -14225,6 +14326,11 @@ window._wrPitDecision = function(decisionId, pitNow, auto) {
     const lapsLeft = (ev.windowClose || ev.lap+4) - ev.lap;
 
     let outcomeText, bonusDelta;
+    const deferLap = ev.isForcedPit
+      ? null
+      : ev.isSafetyCarPit
+        ? (ev.plannedPitLap || (ev.lap + 1))
+        : Math.max(ev.lap + 1, Math.min(ev.windowClose + 1, ev.lap + 2));
     if(ev.isForcedPit) {
       outcomeText = `⚠️ ⭐ ${ev.driverName} stays out on tyres that are already over the cliff. This is a one-lap gamble.`;
       bonusDelta = -0.8;
@@ -14239,16 +14345,16 @@ window._wrPitDecision = function(decisionId, pitNow, auto) {
       }
     } else if(ev.isSafetyCarPit) {
       outcomeText = `📋 ⭐ ${ev.driverName} stays out — taking track position over rivals who pit.`;
-      bonusDelta = -0.2;
+      bonusDelta = -0.45;
     } else if(isLate) {
       outcomeText = `⚠️ ⭐ ${ev.driverName} stays out past the window — tires going off fast!`;
-      bonusDelta = -0.7;
+      bonusDelta = -0.9;
     } else {
       const overcutWorks = Math.random() < 0.5;
       outcomeText = overcutWorks
         ? `📋 ⭐ ${ev.driverName} extends the stint — overcut attempt! Clear air while rivals pit.`
         : `⚠️ ⭐ ${ev.driverName} stays out — rivals pitting around them. Tires under pressure.`;
-      bonusDelta = overcutWorks ? 0.2 : -0.2;
+      bonusDelta = overcutWorks ? 0.35 : -0.35;
     }
     if(card) {
       const isGood = bonusDelta >= 0;
@@ -14269,7 +14375,8 @@ window._wrPitDecision = function(decisionId, pitNow, auto) {
       plannedPitLap: ev.plannedPitLap || ev.lap,
       nextPlannedPitLap: ev.nextPlannedPitLap || null,
       nextStintIndex: ev.nextStintIndex,
-      forceLap: ev.isForcedPit ? (ev.lap + 1) : (ev.lap + (isLate ? 2 : Math.min(4, Math.floor(lapsLeft * 0.6) + 2)))
+      deferToLap: deferLap,
+      forceLap: ev.isForcedPit ? (ev.lap + 1) : null
     });
   }
 
