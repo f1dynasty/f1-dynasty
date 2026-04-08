@@ -728,8 +728,8 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:18px;max-width:320px;padding:14px 16px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
           <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">Latest Update</div>
-<div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.0.9 is live</div>
-          <div style="font-size:12px;line-height:1.45;color:#666">Watch Race now runs on a true lap-by-lap race model, with clearer player-focused commentary, better strategy context, and cleaner post-race explanations.</div>
+<div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.1.0 is live</div>
+          <div style="font-size:12px;line-height:1.45;color:#666">Bug-fix update focused on season rollover stability, player roster protection, and Watch Race decision reliability.</div>
         </div>
       </div>
     </div>
@@ -772,7 +772,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </div>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game" class="land-start">Start Career →</button>
-<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.0.9</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.1.0</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -11798,16 +11798,16 @@ const UI = {
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.0.9 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.1.0 · Release Notes</div>
         ${[
-    ['v2.0.9','Apr 2026',[
-            '🆕 Watch Race decisions now rebuild directly into the lap-by-lap race state, so pit calls, weather crossovers, safety-car opportunities, forced tyre-cliff stops, and multi-stop plans carry forward through the rest of the race instead of feeling detached from it.',
-            '🆕 Sprint Watch Race now uses the newer replay style too, bringing sprint commentary closer to the updated race feed instead of falling back to the older noisier path.',
+    ['v2.1.0','Apr 2026',[
+            '🐛 Season rollover stability: fixed multiple end-of-year recovery cases where saves could freeze, skip the season summary, skip offseason, rerun offseason logic, reshuffle the grid twice, or get trapped between seasons.',
+            '🐛 Player roster protection hardened in offseason processing so contracted player drivers are much less likely to disappear or be stripped out by stale move data, broken seat reconciliation, or damaged save state.',
+            '🐛 End Season / Next flow now prioritises the season-complete path correctly, preventing preseason validation from hijacking the button before the season summary and offseason can open.',
+            '🐛 Added safer season-end error handling and stale-state recovery so broken saves are more likely to recover into offseason instead of silently dead-ending.',
             '🐛 Watch Race prompt loops fixed: repeated pit/weather cards, safety-car stop followed by a duplicate normal stop, drying-track repeat prompts, and several same-driver decision loops were hardened.',
-            '🐛 Pit and weather calls now have stronger race impact, with future lap-state evolution and result movement tuned so good calls matter more and poor calls cost more.',
+            '🐛 Safety-car / planned-stop overlap improved so boxing under yellow no longer leaves the original stop hanging around as an immediate duplicate call later in the race.',
             '🐛 Save size reduced by stripping regenerable Watch Race data from saves and autosaves, fixing storage-full errors that could happen even with only a few save slots.',
-            '🐛 Offseason / season-end stability pass: fixed multiple end-of-year recovery cases where saves could freeze, skip preseason, rerun offseason logic, reshuffle the grid twice, or get trapped between seasons.',
-            '🐛 Player roster protection hardened in offseason processing so contracted player drivers are much less likely to be stripped out by stale move data or broken seat reconciliation.',
           ]],
           ['v2.0.8','Apr 2026',[
             '🆕 Driver management: race drivers can now be moved straight into reserve roles from the main driver profile as well as preseason planning, so you are no longer pushed toward releasing someone just to reshuffle your lineup.',
