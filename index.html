@@ -728,8 +728,8 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:18px;max-width:320px;padding:14px 16px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
           <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">Latest Update</div>
-<div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.1.0 is live</div>
-          <div style="font-size:12px;line-height:1.45;color:#666">Bug-fix update focused on season rollover stability, player roster protection, and Watch Race decision reliability.</div>
+<div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.1.1 is live</div>
+          <div style="font-size:12px;line-height:1.45;color:#666">Follow-up stability patch for Watch Race, replay persistence, injury-sub handling, and autosim result integrity.</div>
         </div>
       </div>
     </div>
@@ -772,7 +772,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </div>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game" class="land-start">Start Career →</button>
-<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.1.0</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.1.1</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -1795,17 +1795,26 @@ return {id,name:`${fn} ${ln}`,age:baseAge,nationality:nat,teamId:teamId||null,ra
   getTeamReserves(teamId){return this.game.drivers.filter(d=>d.teamId===teamId&&!d.retired&&d.isReserve);},
   getPlayerTeam(){return this.getTeam(this.game.playerTeamId);},
   getPlayerDrivers(){return this.getTeamDrivers(this.game.playerTeamId);},
-  // Returns IDs of all drivers racing for the player this weekend — includes injury subs
-  getPlayerRacingDriverIds(){
-    const baseIds = this.getPlayerDrivers().map(d=>d.id);
+  getPlayerRacingDrivers(){
+    const baseDrivers = this.getPlayerDrivers();
     const activeInj = (this.game.injuries||[]).filter(inj=>!inj.cleared&&this.game.raceIndex<=inj.returnsAfterRace&&inj.teamId===this.game.playerTeamId);
-    if(!activeInj.length) return baseIds;
+    if(!activeInj.length) return baseDrivers;
     const injuredIds = new Set(activeInj.map(i=>i.driverId));
-    // Remove injured drivers, add their reserves
-    const withoutInjured = baseIds.filter(id=>!injuredIds.has(id));
-    const reserves = (this.game.drivers||[]).filter(d=>d.isReserve&&d.teamId===this.game.playerTeamId&&!d.retired).map(d=>d.id);
-    return [...withoutInjured, ...reserves];
+    const usedReserveIds = new Set();
+    const subDrivers = [];
+    activeInj.forEach(inj=>{
+      const chosenId = (this.game._injurySubs||{})[inj.driverId];
+      const chosen = chosenId && this.game.drivers.find(r=>r.id===chosenId&&r.isReserve&&r.teamId===inj.teamId&&!r.retired&&!usedReserveIds.has(r.id));
+      const reserve = chosen || this.game.drivers.find(r=>r.isReserve&&r.teamId===inj.teamId&&!r.retired&&!injuredIds.has(r.id)&&!usedReserveIds.has(r.id));
+      if(reserve){
+        usedReserveIds.add(reserve.id);
+        subDrivers.push(reserve);
+      }
+    });
+    return baseDrivers.filter(d=>!injuredIds.has(d.id)).concat(subDrivers);
   },
+  // Returns IDs of all drivers racing for the player this weekend — includes the selected injury subs
+  getPlayerRacingDriverIds(){return this.getPlayerRacingDrivers().map(d=>d.id);},
   getPlayerReserves(){return this.getTeamReserves(this.game.playerTeamId);},
   getCurrentRace(){return this.game.calendar[this.game.raceIndex];},
   getFreeAgents(){return this.game.drivers.filter(d=>!d.teamId&&!d.retired&&!d.isProspect&&!d.isReserve);},
@@ -2800,6 +2809,7 @@ const Sim = {
     const events = [];
     const consumedPrompts = race._wrConsumedPromptKeys || {};
     const consumedPitStops = race._wrConsumedPitStops || {};
+    const suppressedPitPrompts = race._wrPitPromptSuppression || {};
     const laps = race.laps || lapStates.length || 0;
     const playerTeamId = State.game.playerTeamId;
     const finishers = results.filter(r=>!r.dnf).sort((a,b)=>(a.position||99)-(b.position||99));
@@ -3004,7 +3014,7 @@ const Sim = {
       }).join(' · ');
     };
     const alreadyLogged = {};
-    const playerIds = State.getPlayerDrivers().map(d=>d.id);
+    const playerIds = State.getPlayerRacingDriverIds ? State.getPlayerRacingDriverIds() : State.getPlayerDrivers().map(d=>d.id);
     const strategyIntroLogged = {};
     const strategyWindowLogged = {};
     const battleLogged = {};
@@ -3032,6 +3042,7 @@ const Sim = {
         const currentTyre = DATA.tires[o.compound] || DATA.tires.medium || { name: o.compound || 'Tire' };
         const chosenStrategyId = o.chosenId || prevEntryForDriver?.chosenId || null;
         const canManualPit = chosenStrategyId && chosenStrategyId !== 'auto';
+        const pitPromptSuppressed = (suppressedPitPrompts[o.driverId] || 0) >= lap;
         const plannedStopLap = o.nextPlannedPitLap || prevEntryForDriver?.nextPlannedPitLap || null;
         const prevWetness = prev ? (prev.wetness || 0) : 0;
         if(prevEntryForDriver && prevWetness < 0.28 && lapState.wetness >= 0.28 && prevEntryForDriver.compound !== 'inter' && prevEntryForDriver.compound !== 'wet') {
@@ -3090,7 +3101,7 @@ const Sim = {
               driverPositions: prevSnap
             });
           }
-        } else if(canManualPit && o.pitThisLap && o.pitType === 'forced') {
+        } else if(canManualPit && !pitPromptSuppressed && o.pitThisLap && o.pitType === 'forced') {
           const strategyOpt = DATA.getStrategyOptions(race, race._weatherRiskUsed || race._weatherRisk || 0).options.find(opt => opt.id === chosenStrategyId);
           const stintIndexForPrompt = prevEntryForDriver?.stintIndex ?? o.stintIndex ?? 0;
           const nextCompound = o.compound || strategyOpt?.stints?.[Math.min(stintIndexForPrompt + 1, Math.max(0, (strategyOpt?.stints?.length || 1) - 1))]?.compound || 'hard';
@@ -3122,7 +3133,7 @@ const Sim = {
               driverPositions: prevSnap
             });
           }
-        } else if(canManualPit && lapState.safetyCar && plannedStopLap && !o.pitThisLap && lap <= plannedStopLap && plannedStopLap <= lap + 3) {
+        } else if(canManualPit && !pitPromptSuppressed && lapState.safetyCar && plannedStopLap && !o.pitThisLap && lap <= plannedStopLap && plannedStopLap <= lap + 3) {
           const strategyOpt = DATA.getStrategyOptions(race, race._weatherRiskUsed || race._weatherRisk || 0).options.find(opt => opt.id === chosenStrategyId);
           const stintIndexForPrompt = prevEntryForDriver?.stintIndex ?? o.stintIndex ?? 0;
           const nextCompound = strategyOpt?.stints?.[Math.min(stintIndexForPrompt + 1, Math.max(0, (strategyOpt?.stints?.length || 1) - 1))]?.compound || o.compound || 'medium';
@@ -3154,7 +3165,7 @@ const Sim = {
               driverPositions: prevSnap
             });
           }
-        } else if(canManualPit && plannedStopLap && !o.pitThisLap && lap >= Math.max(2, plannedStopLap - 1) && lap < plannedStopLap) {
+        } else if(canManualPit && !pitPromptSuppressed && plannedStopLap && !o.pitThisLap && lap >= Math.max(2, plannedStopLap - 1) && lap < plannedStopLap) {
           const strategyOpt = DATA.getStrategyOptions(race, race._weatherRiskUsed || race._weatherRisk || 0).options.find(opt => opt.id === chosenStrategyId);
           const stintIndexForPrompt = prevEntryForDriver?.stintIndex ?? o.stintIndex ?? 0;
           const nextCompound = strategyOpt?.stints?.[Math.min(stintIndexForPrompt + 1, Math.max(0, (strategyOpt?.stints?.length || 1) - 1))]?.compound || o.compound || 'medium';
@@ -3455,7 +3466,12 @@ const Sim = {
           if(!isPlayer && counterpartIsPlayer) return;
           const sig = `${lap}:${move.driverId}:${move.to}`;
           if(alreadyLogged[sig]) return;
+          const pairSig = counterpartId && Math.abs(move.delta) === 1
+            ? `${lap}:pair:${[move.driverId, counterpartId].sort((a,b)=>a-b).join(':')}`
+            : null;
+          if(pairSig && alreadyLogged[pairSig]) return;
           alreadyLogged[sig] = true;
+          if(pairSig) alreadyLogged[pairSig] = true;
           const causeText = describeMoveCause(entry, prevEntry, move.delta);
           let text;
           if(Math.abs(move.delta) === 1 && move.delta > 0 && counterpart) {
@@ -6016,7 +6032,7 @@ const Storage = {
       let slot = this._currentSlot();
       if(slot === -1) slot = this._newSlot();
       const strippedCal = (State.game.calendar||[]).map(r=>{
-        const {lapEvents, sprintLapEvents, lapStates, simEvents, ...rest} = r;
+        const {lapEvents, sprintLapEvents, lapStates, ...rest} = r;
         return rest;
       });
       const saveGame = Object.assign({}, State.game, {calendar: strippedCal});
@@ -6033,10 +6049,10 @@ const Storage = {
       if(!State.game._saveId) State.game._saveId = 'sg_' + Date.now();
       let slot = this._currentSlot();
       if(slot === -1) slot = this._newSlot();
-      // Strip transient bulky data before serialising — Watch Race event/state data can be
-      // regenerated from the saved result, and keeping it in long careers blows up localStorage.
+      // Strip the heaviest replay state before serialising. We keep compact simEvents so completed
+      // races can still be replayed after load, but drop lap-by-lap state to protect localStorage.
       const strippedCalendar = (State.game.calendar||[]).map(r=>{
-        const {lapEvents, sprintLapEvents, lapStates, simEvents, ...rest} = r;
+        const {lapEvents, sprintLapEvents, lapStates, ...rest} = r;
         return rest;
       });
       const saveGame = Object.assign({}, State.game, {calendar: strippedCalendar});
@@ -7640,7 +7656,12 @@ const UI = {
   },
 
   _miniResult(lr){
-    const {race,results}=lr, top5=results.slice(0,5), pids=State.getPlayerRacingDriverIds();
+    const {race,results}=lr, top5=results.slice().sort((a,b)=>{
+      if(a.dnf && b.dnf) return (b.dnfLap||0)-(a.dnfLap||0);
+      if(a.dnf) return 1;
+      if(b.dnf) return -1;
+      return (a.position||99)-(b.position||99);
+    }).slice(0,5), pids=State.getPlayerRacingDriverIds();
     const winner=results.find(r=>r.position===1);
     return `
       ${winner?`<div class="winner-block"><div><div class="winner-label">Race Winner</div><div class="winner-name">${winner.driverName}</div><div class="winner-team">${winner.teamName}</div></div><div class="winner-laps">${race.laps} laps</div></div>`:''}
@@ -7779,12 +7800,18 @@ const UI = {
 
     let raceSection = '';
     if(isDone && race.raceResult){
-      const winner = race.raceResult.find(r=>r.position===1);
+      const sortedRaceResult = race.raceResult.slice().sort((a,b)=>{
+        if(a.dnf && b.dnf) return (b.dnfLap||0)-(a.dnfLap||0);
+        if(a.dnf) return 1;
+        if(b.dnf) return -1;
+        return (a.position||99)-(b.position||99);
+      });
+      const winner = sortedRaceResult.find(r=>r.position===1);
       raceSection = `<div class="race-detail-section">
         ${winner?`<div class="winner-block"><div><div class="winner-label">Race Winner</div><div class="winner-name">${winner.driverName}</div><div class="winner-team">${winner.teamName}</div></div><div class="winner-laps">${race.laps} laps</div></div>`:''}
         <div style="font-size:11px;color:var(--tx3);margin:6px 0">${race.weather==='wet'?'🌧 Wet Race':'☀️ Dry Race'}${race.hadSafetyCar?' · Safety car deployed':''}</div>
         <div class="tbl-scroll"><table><thead><tr><th>Pos</th><th>Driver</th><th>Team</th><th>Grid</th><th>Pts</th></tr></thead><tbody>
-          ${(()=>{const racePids=new Set(State.getPlayerRacingDriverIds ? State.getPlayerRacingDriverIds() : State.getPlayerDrivers().map(d=>d.id));const raceSubIds=new Set((race._raceSubIds||[]).map(String));return race.raceResult.map(r=>{const isMine=racePids.has(r.driverId);const d=State.getDriver(r.driverId);const reserveFallback=!!(d&&d.isReserve&&String(d.teamId)===String(g.playerTeamId));const subBadge=isMine&&(raceSubIds.has(String(r.driverId))||reserveFallback||!baseIds.has(String(r.driverId)))?' <span style="font-size:9px;background:rgba(245,158,11,.15);color:#b45309;padding:1px 5px;border-radius:4px;font-weight:700">SUB</span>':'';return`<tr class="${isMine?'my-row':''}"><td>${r.dnf?`<span class="dnf-tag">DNF</span>`:`<span class="pos-cell p${r.position}">${r.position}</span>`}</td><td class="name-cell">${r.driverName}${subBadge}${r.fastestLap?'<span class="fl-tag">FL</span>':''}</td><td class="muted-cell">${r.teamName}</td><td class="muted-cell">${r.startPos?'P'+r.startPos:'—'}</td><td class="pts-cell">${r.points||0}</td></tr>`;}).join('');})()}
+          ${(()=>{const racePids=new Set(State.getPlayerRacingDriverIds ? State.getPlayerRacingDriverIds() : State.getPlayerDrivers().map(d=>d.id));const raceSubIds=new Set((race._raceSubIds||[]).map(String));return sortedRaceResult.map(r=>{const isMine=racePids.has(r.driverId);const d=State.getDriver(r.driverId);const reserveFallback=!!(d&&d.isReserve&&String(d.teamId)===String(g.playerTeamId));const subBadge=isMine&&(raceSubIds.has(String(r.driverId))||reserveFallback||!baseIds.has(String(r.driverId)))?' <span style="font-size:9px;background:rgba(245,158,11,.15);color:#b45309;padding:1px 5px;border-radius:4px;font-weight:700">SUB</span>':'';return`<tr class="${isMine?'my-row':''}"><td>${r.dnf?`<span class="dnf-tag">DNF</span>`:`<span class="pos-cell p${r.position}">${r.position}</span>`}</td><td class="name-cell">${r.driverName}${subBadge}${r.fastestLap?'<span class="fl-tag">FL</span>':''}</td><td class="muted-cell">${r.teamName}</td><td class="muted-cell">${r.startPos?'P'+r.startPos:'—'}</td><td class="pts-cell">${r.points||0}</td></tr>`;}).join('');})()}
         </tbody></table></div>
         ${this._standingsMini()}
       </div>`;
@@ -8136,6 +8163,29 @@ const UI = {
       </div>`;
     document.getElementById('driver-detail-modal').classList.remove('hidden');
   },
+  showReserveSwapPicker(reserveId){
+    const reserve=State.getDriver(reserveId);
+    const races=State.getPlayerDrivers();
+    if(!reserve || !races.length){ UI.toast('No race driver available to swap.','warning'); return; }
+    document.getElementById('modal-body').innerHTML = `
+      <div class="modal-name">Swap ${reserve.name} Into A Race Seat</div>
+      <div class="modal-meta">Choose which current race driver should move to reserve.</div>
+      <div class="modal-section">
+        <div class="modal-sec-title">Current Race Drivers</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          ${races.map(d=>`
+            <button class="btn btn-outline" style="justify-content:space-between;text-align:left;padding:10px 12px" onclick="GameActions.swapReserveWithRace(${reserveId},${d.id})">
+              <span><strong>${d.name}</strong><span style="color:var(--tx3);font-size:11px"> · ${Math.round(d.rating)} OVR · ${d.contract>0?d.contract+'yr left':'Expired'}</span></span>
+              <span>↔ Swap</span>
+            </button>
+          `).join('')}
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost btn-sm" onclick="UI.closeModal()">Close</button>
+      </div>`;
+    document.getElementById('driver-detail-modal').classList.remove('hidden');
+  },
   openStrategyPicker(){
     const g = State.game;
     const race = State.getCurrentRace();
@@ -8463,6 +8513,9 @@ const UI = {
     const WR=window._WR, race=State.game.calendar[raceIdx];
     if(!race||!race.sprintDone){UI.toast('Sprint not done','error');return;}
     if(WR.timer) clearTimeout(WR.timer);
+    race._wrConsumedPromptKeys = {};
+    race._wrConsumedPitStops = {};
+    race._wrPitPromptSuppression = {};
     WR.events=(race.sprintSimEvents&&race.sprintSimEvents.length)?race.sprintSimEvents:(race.sprintLapEvents||[]); WR.idx=0; WR.raceIdx=raceIdx; WR.race=race; WR.paused=false; WR.timer=null; WR.isSprint=true; WR.dnfs={}; WR.retiredIds={}; WR._lastFeedSig=null; WR._podiumBridgeAdded={}; WR.resultState=(race.sprintResult||[]).map(function(r){ return Object.assign({}, r); });
     // Seed live positions from sprint quali grid
     WR.lastPos = {}; WR.prevPos = null;
@@ -8472,7 +8525,7 @@ const UI = {
     document.getElementById('wr-lap-counter').textContent=race.location+' · 17 laps';
     document.getElementById('wr-feed').innerHTML='';
     const initBar = document.getElementById('wr-my-drivers');
-    if(initBar) initBar.innerHTML = State.getPlayerDrivers().map(function(d){
+    if(initBar) initBar.innerHTML = (State.getPlayerRacingDrivers ? State.getPlayerRacingDrivers() : State.getPlayerDrivers()).map(function(d){
       return '<div style="background:rgba(192,57,43,.1);border:1px solid rgba(192,57,43,.3);border-radius:5px;padding:2px 8px;font-size:11px;font-weight:700">'
         +'<span style="color:#888">'+d.name.split(' ').slice(-1)[0]+'</span> '
         +'<span style="color:#888">–</span></div>';
@@ -8493,6 +8546,7 @@ const UI = {
     if(WR.timer) clearTimeout(WR.timer);
     race._wrConsumedPromptKeys = {};
     race._wrConsumedPitStops = {};
+    race._wrPitPromptSuppression = {};
     WR.events = race.simEvents && race.simEvents.length
       ? race.simEvents
       : race.lapEvents && race.lapEvents.length
@@ -8516,7 +8570,7 @@ const UI = {
     document.getElementById('wr-lap-counter').textContent = race.location+', '+race.country+' · '+race.laps+' laps';
     document.getElementById('wr-feed').innerHTML = '';
     const initBar = document.getElementById('wr-my-drivers');
-    if(initBar) initBar.innerHTML = State.getPlayerDrivers().map(function(d){
+    if(initBar) initBar.innerHTML = (State.getPlayerRacingDrivers ? State.getPlayerRacingDrivers() : State.getPlayerDrivers()).map(function(d){
       return '<div style="background:rgba(192,57,43,.1);border:1px solid rgba(192,57,43,.3);border-radius:5px;padding:2px 8px;font-size:11px;font-weight:700">'
         +'<span style="color:#888">'+d.name.split(' ').slice(-1)[0]+'</span> '
         +'<span style="color:#888">–</span></div>';
@@ -10965,6 +11019,8 @@ const UI = {
   },
 
   showSeasonRecap(transfers, champs, finalConStr, finalDrvStr){
+    const existing = document.getElementById('season-recap-overlay');
+    if(existing) existing.remove();
     const g = State.game;
     const team = State.getPlayerTeam();
     const cs = g.careerStats;
@@ -11803,8 +11859,14 @@ const UI = {
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.1.0 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.1.1 · Release Notes</div>
         ${[
+    ['v2.1.1','Apr 2026',[
+            '🐛 Watch Race replay persistence fixed after save/load: compact recorded replay events are now preserved in saves, and older loaded replays without full lap state fall back safely instead of breaking.',
+            '🐛 Injury-sub race weekends now use the actual selected substitute in player-driver detection, Watch Race prompts, and replay highlighting instead of treating every reserve as an active race driver.',
+            '🐛 Auto-sim one-place player penalty now repairs race order, points, wins, podiums, and team stats correctly so standings and post-race screens stay in sync.',
+            '🐛 Added broader automated regression coverage for dual player-driver prompts, deferred-stop safety-car/weather overlap, season-end handoff, and offseason roster protection.'
+          ]],
     ['v2.1.0','Apr 2026',[
             '🐛 Season rollover stability: fixed multiple end-of-year recovery cases where saves could freeze, skip the season summary, skip offseason, rerun offseason logic, reshuffle the grid twice, or get trapped between seasons.',
             '🐛 Player roster protection hardened in offseason processing so contracted player drivers are much less likely to disappear or be stripped out by stale move data, broken seat reconciliation, or damaged save state.',
@@ -12983,7 +13045,7 @@ const GameActions = {
       // 15% chance auto-sim costs a player driver 1 place — engineers aren't perfect
       // This makes watch race + good decisions genuinely better than auto-simming
       if(Math.random() < 0.15) {
-        const playerDriverIds = State.getPlayerDrivers().map(d=>d.id);
+        const playerDriverIds = State.getPlayerRacingDriverIds ? State.getPlayerRacingDriverIds() : State.getPlayerDrivers().map(d=>d.id);
         const driverToHit = playerDriverIds[Math.floor(Math.random()*playerDriverIds.length)];
         const myEntry = rd.results.find(r=>r.driverId===driverToHit && !r.dnf);
         const ptScale = [0,25,18,15,12,10,8,6,4,2,1];
@@ -12993,6 +13055,8 @@ const GameActions = {
           if(swapEntry) {
             const oldPts = myEntry.points || 0;
             const swapOldPts = swapEntry.points || 0;
+            const myOldPos = myEntry.position;
+            const swapOldPos = swapEntry.position;
             swapEntry.position = myEntry.position;
             myEntry.position = newPos;
             myEntry.points = ptScale[newPos] || 0;
@@ -13006,6 +13070,30 @@ const GameActions = {
             if(myTeam) myTeam.seasonPoints = Math.max(0,(myTeam.seasonPoints||0) - oldPts + myEntry.points);
             if(swDrv) swDrv.seasonPoints = Math.max(0,(swDrv.seasonPoints||0) - swapOldPts + swapEntry.points);
             if(swTeam) swTeam.seasonPoints = Math.max(0,(swTeam.seasonPoints||0) - swapOldPts + swapEntry.points);
+            if(myDrv){
+              if(myOldPos===1 && myEntry.position!==1) myDrv.wins = Math.max(0,(myDrv.wins||0)-1);
+              if(myOldPos<=3 && myEntry.position>3) myDrv.podiums = Math.max(0,(myDrv.podiums||0)-1);
+            }
+            if(myTeam){
+              if(myOldPos===1 && myEntry.position!==1) myTeam.wins = Math.max(0,(myTeam.wins||0)-1);
+              if(myOldPos<=3 && myEntry.position>3) myTeam.podiums = Math.max(0,(myTeam.podiums||0)-1);
+            }
+            if(swDrv){
+              if(swapOldPos!==1 && swapEntry.position===1) swDrv.wins = (swDrv.wins||0)+1;
+              if(swapOldPos>3 && swapEntry.position<=3) swDrv.podiums = (swDrv.podiums||0)+1;
+            }
+            if(swTeam){
+              if(swapOldPos!==1 && swapEntry.position===1) swTeam.wins = (swTeam.wins||0)+1;
+              if(swapOldPos>3 && swapEntry.position<=3) swTeam.podiums = (swTeam.podiums||0)+1;
+            }
+            rd.results.sort((a,b)=>{
+              if(a.dnf && b.dnf) return (b.dnfLap||0)-(a.dnfLap||0);
+              if(a.dnf) return 1;
+              if(b.dnf) return -1;
+              return (a.position||99)-(b.position||99);
+            });
+            if(race && Array.isArray(race.raceResult)) race.raceResult = rd.results;
+            State.game.lastRaceResult = {race:{...race},results:rd.results.map(r=>Object.assign({},r))};
           }
         }
       }
@@ -13045,6 +13133,12 @@ const GameActions = {
       g.offseasonPending = true;
       if(document.getElementById('season-recap-overlay')) return;
       if(window._recapTransfers && window._recapChamps){
+        UI.renderOffseason(
+          window._recapTransfers||[],
+          window._recapChamps?.driverChamp,
+          window._recapChamps?.constructorChamp,
+          window._recapChamps?.retirements||[]
+        );
         UI.showSeasonRecap(
           window._recapTransfers,
           window._recapChamps,
@@ -13064,6 +13158,12 @@ const GameActions = {
     if(g.offseasonPending){
       if(document.getElementById('season-recap-overlay')) return;
       if(window._recapTransfers && window._recapChamps){
+        UI.renderOffseason(
+          window._recapTransfers||[],
+          window._recapChamps?.driverChamp,
+          window._recapChamps?.constructorChamp,
+          window._recapChamps?.retirements||[]
+        );
         UI.showSeasonRecap(
           window._recapTransfers,
           window._recapChamps,
@@ -13083,6 +13183,12 @@ const GameActions = {
     if(g._seasonEndProcessing){
       if(document.getElementById('season-recap-overlay')) return;
       if(window._recapTransfers && window._recapChamps){
+        UI.renderOffseason(
+          window._recapTransfers||[],
+          window._recapChamps?.driverChamp,
+          window._recapChamps?.constructorChamp,
+          window._recapChamps?.retirements||[]
+        );
         UI.showSeasonRecap(
           window._recapTransfers,
           window._recapChamps,
@@ -13136,6 +13242,7 @@ const GameActions = {
     UI.checkNewAchievements();
     window._recapFinalConStr = _finalConStr;
     window._recapFinalDrvStr = _finalDrvStr;
+    UI.renderOffseason(transfers, champs?.driverChamp, champs?.constructorChamp, champs?.retirements||[]);
     UI.showSeasonRecap(transfers, champs, _finalConStr, _finalDrvStr);
     } catch(e) {
       console.error('Season end error:', e);
@@ -13301,7 +13408,14 @@ const GameActions = {
     const d=State.getDriver(driverId); if(!d) return;
     const team=State.getPlayerTeam();
     const current=State.getPlayerDrivers();
-    if(current.length>=2){UI.toast('Release a race driver first to free up a seat.','warning');return;}
+    if(current.length>=2){
+      if(State.game.offseasonPending){
+        UI.showReserveSwapPicker(driverId);
+      } else {
+        UI.toast('Release a race driver first to free up a seat.','warning');
+      }
+      return;
+    }
     d.isReserve=false; d.isFreeAgent=false;
     team.reserveIds=(team.reserveIds||[]).filter(id=>id!==driverId);
     if(!team.driverIds) team.driverIds=[];
@@ -13316,6 +13430,32 @@ const GameActions = {
     // If currently on the drivers page, refresh it in place
     const driversView = document.getElementById('view-drivers');
     if(driversView && driversView.classList.contains('active')) UI.showView('drivers');
+  },
+
+  swapReserveWithRace(reserveId, raceDriverId){
+    const reserve=State.getDriver(reserveId), raceDriver=State.getDriver(raceDriverId);
+    if(!reserve || !raceDriver) return;
+    const team=State.getPlayerTeam();
+    if(!State.game.offseasonPending){UI.toast('Race-reserve swaps are only available in the offseason.','warning');return;}
+    if(reserve.teamId!==team.id || !reserve.isReserve){UI.toast('Selected driver is not an active reserve.','warning');return;}
+    if(raceDriver.teamId!==team.id || raceDriver.isReserve){UI.toast('Selected driver is not an active race driver.','warning');return;}
+    team.driverIds=(team.driverIds||[]).filter(id=>id!==raceDriverId);
+    if(!team.driverIds.includes(reserveId)) team.driverIds.push(reserveId);
+    team.reserveIds=(team.reserveIds||[]).filter(id=>id!==reserveId);
+    if(!team.reserveIds.includes(raceDriverId)) team.reserveIds.push(raceDriverId);
+    reserve.isReserve=false; reserve.isFreeAgent=false;
+    raceDriver.isReserve=true; raceDriver.isFreeAgent=false;
+    reserve.morale=clamp((reserve.morale||75)+18,40,99);
+    raceDriver.morale=clamp((raceDriver.morale||75)-8,25,99);
+    UI.closeModal();
+    UI.toast(`${reserve.name} swapped into a race seat. ${raceDriver.name} moved to reserve.`,'success');
+    Storage.autosave();
+    UI.renderDashboard();
+    UI.renderOffseasonPlanning();
+    if(document.getElementById('view-offseason')?.classList.contains('active') && document.getElementById('offseason-transfers')){
+      UI.renderOffseason(window._recapTransfers||[],window._recapChamps?.driverChamp,window._recapChamps?.constructorChamp,window._recapChamps?.retirements||[]);
+    }
+    if(document.getElementById('view-drivers')?.classList.contains('active')) UI.renderDrivers();
   },
 
   demoteToReserve(driverId){
@@ -13737,7 +13877,7 @@ window._wrTick = function() {
       window._wrSyncCommentary(race, isSprint);
       window._wrRenderPositions();
 
-    const pids = State.getPlayerDrivers().map(function(d){return d.id;});
+    const pids = (State.getPlayerRacingDrivers ? State.getPlayerRacingDrivers() : State.getPlayerDrivers()).map(function(d){return d.id;});
     const resultData = finalResultArr;
     const showRows = isSprint ? 8 : 10;
     const fin = resultData.filter(function(r){return !r.dnf;}).sort(function(a,b){return a.position-b.position;});
@@ -13865,6 +14005,18 @@ window._wrTick = function() {
 
   // ── PIT DECISION — pause and ask player ──────────────────────
   if(ev.type === 'pit_decision' && !WR.isSprint) {
+    if(!Array.isArray(race.lapStates) || !race.lapStates.length) {
+      const feed = document.getElementById('wr-feed');
+      const el = document.createElement('div');
+      el.style.cssText = 'background:var(--bg3);border:1px solid var(--bd);border-left:2px solid #c0392b;border-radius:7px;padding:8px 12px;font-size:12px;flex-shrink:0;margin-bottom:4px;line-height:1.4;color:var(--tx)';
+      el.innerHTML = '<span style="font-size:10px;font-weight:700;color:#c0392b;margin-right:8px;display:inline-block;min-width:28px">L'+ev.lap+'</span><span style="font-size:9px;font-weight:700;letter-spacing:.3px;color:#c0392b;margin-right:8px">NOTE</span>🔧 '+ev.driverName+' reaches the pit window. Replay is using the recorded outcome from this save.';
+      feed.appendChild(el);
+      feed.scrollTop = feed.scrollHeight;
+      if(eventPositions) WR.lastPos = eventPositions;
+      window._wrRenderPositions();
+      WR.timer = setTimeout(window._wrTick, speed);
+      return;
+    }
     WR.paused = true;
     if(!WR.pitDecisions) WR.pitDecisions = [];
     const decisionId = WR.pitDecisions.length;
@@ -13929,6 +14081,19 @@ window._wrTick = function() {
 
   // ── WEATHER DECISION ──────────────────────────────────────────
   if(ev.type === 'weather_decision') {
+    if(!Array.isArray(race.lapStates) || !race.lapStates.length) {
+      const feed = document.getElementById('wr-feed');
+      const tireLabel = ev.wetTireName || (ev.returnToSlick ? 'Slicks' : 'Inter');
+      const el = document.createElement('div');
+      el.style.cssText = 'background:var(--bg3);border:1px solid var(--bd);border-left:2px solid #2563eb;border-radius:7px;padding:8px 12px;font-size:12px;flex-shrink:0;margin-bottom:4px;line-height:1.4;color:var(--tx)';
+      el.innerHTML = '<span style="font-size:10px;font-weight:700;color:#2563eb;margin-right:8px;display:inline-block;min-width:28px">L'+ev.lap+'</span><span style="font-size:9px;font-weight:700;letter-spacing:.3px;color:#2563eb;margin-right:8px">NOTE</span>'+(ev.returnToSlick?'☀️ ':'🌧 ')+ev.driverName+' hits the weather crossover for '+tireLabel+'. Replay is using the recorded outcome from this save.';
+      feed.appendChild(el);
+      feed.scrollTop = feed.scrollHeight;
+      if(eventPositions) WR.lastPos = eventPositions;
+      window._wrRenderPositions();
+      WR.timer = setTimeout(window._wrTick, speed);
+      return;
+    }
     WR.paused = true;
     if(!WR.weatherDecisions) WR.weatherDecisions = [];
     const wdId = WR.weatherDecisions.length;
@@ -13988,7 +14153,7 @@ window._wrTick = function() {
   const ptid = State.game.playerTeamId;
   // Is this event about my driver or team?
   const isMyEvent = ev.text.includes('⭐') ||
-    State.getPlayerDrivers().some(function(d){ return ev.text.includes(d.name); });
+    (State.getPlayerRacingDrivers ? State.getPlayerRacingDrivers() : State.getPlayerDrivers()).some(function(d){ return ev.text.includes(d.name); });
   const isMyPositionEvent = isMyEvent && (ev.type === 'position_change' || ev.type === 'overtake');
   const isMyContextEvent = isMyEvent && !isMyPositionEvent;
 
@@ -14052,7 +14217,7 @@ window._wrTick = function() {
   // Update my drivers status bar in header
   const myBar = document.getElementById('wr-my-drivers');
   if(myBar) {
-    const myDrivers = State.getPlayerDrivers();
+    const myDrivers = State.getPlayerRacingDrivers ? State.getPlayerRacingDrivers() : State.getPlayerDrivers();
     // Only show DNF if we know for certain from a dnf event for that driver
     if(ev.type==='dnf') {
       const dnfId = ev.driverId || (myDrivers.find(d=>ev.text&&ev.text.includes(d.name))?.id);
@@ -14223,8 +14388,8 @@ window._wrApplyBonusNow = function(driverId, decisionMeta) {
       orderEntry.pitStops = fromEntry.pitStops || 0;
       orderEntry.stintIndex = fromEntry.stintIndex || 0;
       orderEntry.plannedPitLap = null;
-      orderEntry.nextPlannedPitLap = decisionMeta?.choice === 'stay' && decisionMeta?.deferToLap != null
-        ? Math.max(lap + 1, decisionMeta.deferToLap)
+      orderEntry.nextPlannedPitLap = decisionMeta?.choice === 'stay' && (decisionMeta?.forceLap != null || decisionMeta?.deferToLap != null)
+        ? (decisionMeta.forceLap != null ? decisionMeta.forceLap : decisionMeta.deferToLap)
         : (fromEntry.nextPlannedPitLap || originalNextPlanned || null);
       orderEntry.tyreAge = (fromEntry.tyreAge || 0) + 1;
       if(decisionMeta?.choice === 'stay') {
@@ -14307,9 +14472,13 @@ window._wrPitDecision = function(decisionId, pitNow, auto) {
     if(!WR.race._wrConsumedPromptKeys) WR.race._wrConsumedPromptKeys = {};
     WR.race._wrConsumedPromptKeys[ev.promptKey] = true;
   }
-  if(WR.race && pitNow) {
+  if(WR.race && ev.stopNum != null) {
     if(!WR.race._wrConsumedPitStops) WR.race._wrConsumedPitStops = {};
+    if(!WR.race._wrPitPromptSuppression) WR.race._wrPitPromptSuppression = {};
     WR.race._wrConsumedPitStops[`${ev.driverId}:${ev.stopNum}`] = true;
+    WR.race._wrPitPromptSuppression[ev.driverId] = pitNow
+      ? ev.lap
+      : (ev.isForcedPit ? (ev.lap + 1) : (ev.isSafetyCarPit ? (ev.plannedPitLap || (ev.lap + 1)) : Math.max(ev.lap + 1, Math.min((ev.windowClose || ev.lap) + 1, ev.lap + 2))));
   }
   if(!WR.driverDecisionScores) WR.driverDecisionScores = {};
   if(WR.driverDecisionScores[ev.driverId] == null) WR.driverDecisionScores[ev.driverId] = 0;
@@ -14358,9 +14527,47 @@ window._wrPitDecision = function(decisionId, pitNow, auto) {
       : ev.isSafetyCarPit
         ? (ev.plannedPitLap || (ev.lap + 1))
         : Math.max(ev.lap + 1, Math.min(ev.windowClose + 1, ev.lap + 2));
+    const lapStates = WR.race?.lapStates || [];
+    const nowIdx = Math.max(0, (ev.lap || 1) - 1);
+    const nowState = lapStates[nowIdx] || null;
+    const nowEntry = nowState ? (nowState.order || []).find(function(o){ return o.driverId === ev.driverId; }) : null;
+    let favourableCarryLap = null;
+    let favourableCarryType = '';
+    if(!ev.isForcedPit) {
+      const scanTo = Math.min(lapStates.length - 1, Math.max(nowIdx + 1, (deferLap || ev.lap + 1) - 1));
+      for(let i = nowIdx + 1; i <= scanTo; i++) {
+        const ls = lapStates[i];
+        if(!ls) continue;
+        if(ls.safetyCar) {
+          favourableCarryLap = ls.lap || (i + 1);
+          favourableCarryType = 'safetycar';
+          break;
+        }
+        if(nowState && nowEntry) {
+          const prevWet = nowState.wetness || 0;
+          const wet = ls.wetness || 0;
+          const compound = nowEntry.compound;
+          const weatherFlip =
+            ((compound !== 'inter' && compound !== 'wet') && wet >= 0.28 && prevWet < 0.28) ||
+            (compound !== 'wet' && wet >= 0.78 && prevWet < 0.78) ||
+            ((compound === 'inter' || compound === 'wet') && wet < 0.12 && prevWet >= 0.12);
+          if(weatherFlip) {
+            favourableCarryLap = ls.lap || (i + 1);
+            favourableCarryType = 'weather';
+            break;
+          }
+        }
+      }
+    }
     if(ev.isForcedPit) {
       outcomeText = `⚠️ ⭐ ${ev.driverName} stays out on tyres that are already over the cliff. This is a one-lap gamble.`;
       bonusDelta = -0.8;
+    } else if(favourableCarryType === 'safetycar') {
+      outcomeText = `🚗 ⭐ ${ev.driverName} stays out and catches the safety car window. That stop should cost far less now.`;
+      bonusDelta = 0.9;
+    } else if(favourableCarryType === 'weather') {
+      outcomeText = `🌦 ⭐ ${ev.driverName} stays out and the conditions turn in their favour. They can fold the stop into the crossover.`;
+      bonusDelta = 0.75;
     } else if(isEarly) {
       const undercutRisk = Math.random() < 0.4;
       if(undercutRisk) {
@@ -14402,8 +14609,9 @@ window._wrPitDecision = function(decisionId, pitNow, auto) {
       plannedPitLap: ev.plannedPitLap || ev.lap,
       nextPlannedPitLap: ev.nextPlannedPitLap || null,
       nextStintIndex: ev.nextStintIndex,
-      deferToLap: deferLap,
-      forceLap: ev.isForcedPit ? (ev.lap + 1) : null
+      deferToLap: favourableCarryLap || deferLap,
+      forceLap: ev.isForcedPit ? (ev.lap + 1) : (favourableCarryLap || deferLap),
+      favourableCarryType: favourableCarryType || null
     });
   }
 
