@@ -3106,7 +3106,9 @@ const Sim = {
           const stintIndexForPrompt = prevEntryForDriver?.stintIndex ?? o.stintIndex ?? 0;
           const nextCompound = o.compound || strategyOpt?.stints?.[Math.min(stintIndexForPrompt + 1, Math.max(0, (strategyOpt?.stints?.length || 1) - 1))]?.compound || 'hard';
           const nextTyre = DATA.tires[nextCompound] || currentTyre;
-          const stopNum = ((prevEntryForDriver?.pitStops ?? o.pitStops ?? 1) || 1);
+          const priorStops = prevEntryForDriver?.pitStops ?? 0;
+          const liveStops = o.pitStops ?? 0;
+          const stopNum = Math.max(1, liveStops || (priorStops + 1));
           const stopKey = `${o.driverId}:${stopNum}`;
           const totalStops = Math.max(stopNum, (strategyOpt?.stints?.length || 1) - 1);
           const pitKey = `${o.driverId}:${stopNum}:forced:${lap}`;
@@ -11865,6 +11867,7 @@ const UI = {
             '🐛 Watch Race replay persistence fixed after save/load: compact recorded replay events are now preserved in saves, and older loaded replays without full lap state fall back safely instead of breaking.',
             '🐛 Injury-sub race weekends now use the actual selected substitute in player-driver detection, Watch Race prompts, and replay highlighting instead of treating every reserve as an active race driver.',
             '🐛 Auto-sim one-place player penalty now repairs race order, points, wins, podiums, and team stats correctly so standings and post-race screens stay in sync.',
+            '🐛 Watch Race forced-stop tracking now keeps the correct stop number after a late Stay Out call, preventing bogus fresh pit prompts from resurfacing after the final planned stop is already completed.',
             '🐛 Added broader automated regression coverage for dual player-driver prompts, deferred-stop safety-car/weather overlap, season-end handoff, and offseason roster protection.'
           ]],
     ['v2.1.0','Apr 2026',[
@@ -13221,6 +13224,7 @@ const GameActions = {
       const _finalConStr = State.getConstructorStandings().map(s=>({id:s.team.id,name:s.team.name,color:s.team.color,points:s.team.seasonPoints,wins:s.team.wins}));
       const _finalDrvStr = State.getDriverStandings().slice(0,10).map(s=>({id:s.driver.id,name:s.driver.name,teamId:s.driver.teamId,points:s.driver.seasonPoints,wins:s.driver.wins}));
       const champs=Sim.processSeasonEnd(), transfers=Sim.processOffseason();
+      g.offseasonPending = true;
       g._offseasonProcessedForSeason = completedSeason;
       // Attach car deltas to transfers data for digest
       transfers._carSnap = _preOffseasonCarSnap;
