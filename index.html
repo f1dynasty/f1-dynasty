@@ -728,7 +728,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:18px;max-width:320px;padding:14px 16px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
           <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">Latest Update</div>
-<div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.1.3 is live</div>
+<div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.1.4 is live</div>
           <div style="font-size:12px;line-height:1.45;color:#666">Follow-up stability patch for Watch Race, replay persistence, injury-sub handling, and autosim result integrity.</div>
         </div>
       </div>
@@ -772,7 +772,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </div>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game" class="land-start">Start Career →</button>
-<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.1.3</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.1.4</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -3624,6 +3624,9 @@ const Sim = {
             });
           }
         } else if(canManualPit && !pitPromptSuppressed && lapState.safetyCar && plannedStopLap && !o.pitThisLap && lap <= plannedStopLap && plannedStopLap <= lap + 3) {
+          // Don't offer SC pit if driver pitted on the immediately preceding lap
+          const justPitted = prevEntryForDriver && o.pitStops > (prevEntryForDriver.pitStops || 0);
+          if(justPitted) {/* skip */} else {
           const strategyOpt = DATA.getStrategyOptions(race, race._weatherRiskUsed || race._weatherRisk || 0).options.find(opt => opt.id === chosenStrategyId);
           const stintIndexForPrompt = prevEntryForDriver?.stintIndex ?? o.stintIndex ?? 0;
           const nextCompound = strategyOpt?.stints?.[Math.min(stintIndexForPrompt + 1, Math.max(0, (strategyOpt?.stints?.length || 1) - 1))]?.compound || o.compound || 'medium';
@@ -3655,7 +3658,21 @@ const Sim = {
               driverPositions: prevSnap
             });
           }
+          } // end justPitted check
         } else if(canManualPit && !pitPromptSuppressed && plannedStopLap && !o.pitThisLap && lap >= Math.max(2, plannedStopLap - 1) && lap < plannedStopLap) {
+          // Don't prompt if driver pitted within the last 3 laps -- avoids stop 3 prompt right after stop 2
+          const recentPitLap = (() => {
+            for(let back = 1; back <= 3; back++) {
+              const pastState = lapStates[lapStates.indexOf(lapState) - back];
+              if(!pastState) break;
+              const pastEntry = (pastState.order||[]).find(x=>x.driverId===o.driverId);
+              const prevPastEntry = lapStates[lapStates.indexOf(lapState) - back - 1];
+              const prevPastEntryData = prevPastEntry ? (prevPastEntry.order||[]).find(x=>x.driverId===o.driverId) : null;
+              if(pastEntry && prevPastEntryData && (pastEntry.pitStops||0) > (prevPastEntryData.pitStops||0)) return true;
+            }
+            return false;
+          })();
+          if(!recentPitLap) {
           const strategyOpt = DATA.getStrategyOptions(race, race._weatherRiskUsed || race._weatherRisk || 0).options.find(opt => opt.id === chosenStrategyId);
           const stintIndexForPrompt = prevEntryForDriver?.stintIndex ?? o.stintIndex ?? 0;
           const nextCompound = strategyOpt?.stints?.[Math.min(stintIndexForPrompt + 1, Math.max(0, (strategyOpt?.stints?.length || 1) - 1))]?.compound || o.compound || 'medium';
@@ -3689,6 +3706,7 @@ const Sim = {
               driverPositions: prevSnap
             });
           }
+          } // end recentPitLap check
         }
         const prevPosForPlayer = prevSnap[o.driverId];
         const movedThisLap = prevPosForPlayer != null && o.pos != null && prevPosForPlayer !== o.pos;
@@ -3916,6 +3934,10 @@ const Sim = {
           const isPlayerStop = rr.teamId === playerTeamId || playerIds.includes(o.driverId);
           const notableStop = isPlayerStop || o.pos <= 3 || prevEntry.pos <= 3 || (o.pitType === 'weather' && o.pos <= 8);
           if(!notableStop) return;
+          // Suppress lap-by-lap pit commentary if a pit_decision card already consumed this stop.
+          // The decision card (Box Box / Stay Out) already provides the narrative for player stops.
+          const stopKey = `${o.driverId}:${o.pitStops}`;
+          if(isPlayerStop && consumedPitStops[stopKey]) return;
           events.push({
             lap,
             type: 'pit',
@@ -3923,7 +3945,8 @@ const Sim = {
             text: describePitStop(rr, o, prevEntry),
             driverPositions: snap
           });
-          const pitOutcome = maybeAddPitOutcomeTiming(lap, rr, o, prevEntry, snap, isPlayerStop);
+          // Only add outcome timing note for player stops not handled by a decision card
+          const pitOutcome = maybeAddPitOutcomeTiming(lap, rr, o, prevEntry, snap, isPlayerStop && !consumedPitStops[stopKey]);
           if(pitOutcome) events.push(pitOutcome);
         }
       });
@@ -4617,9 +4640,24 @@ const Sim = {
           const isRaining = weather === 'wet' ||
             (weather === 'mixed' && rainStartLap && pitLapCentre >= rainStartLap && pitLapCentre <= rainStartLap + 20);
           if(isSlick && isRaining) return;
-          // Spread drivers across the window: driver 0 at 40%, driver 1 at 65%
-          const fractions = [0.4, 0.65, 0.8];
-          const frac = fractions[driverIdx] || (0.4 + driverIdx * 0.2);
+          // Spread drivers across the window based on live track position.
+          // The driver running AHEAD gets the LATER pit (overcut/protect position).
+          // The driver running BEHIND gets the EARLIER pit (undercut attempt).
+          // Previously both used fixed fractions[driverIdx] which always gave the
+          // pole driver an early pit, letting the teammate overcut them every race.
+          const fractions = [0.35, 0.68, 0.82];
+          const livePosForDriver = livePosForWindow[r.driverId] || (driverIdx + 1);
+          // Among player drivers, rank by live position -- P1 gets later fraction
+          const playerLiveRanks = playerStrategyPlans.map(x => ({
+            driverId: x.r.driverId,
+            livePos: livePosForWindow[x.r.driverId] || 99
+          })).sort((a,b)=>a.livePos-b.livePos);
+          const rankIdx = playerLiveRanks.findIndex(x=>x.driverId===r.driverId);
+          // Leading driver (rankIdx=0) gets later fraction to protect; trailer gets earlier
+          const staggeredFractions = [0.68, 0.35, 0.82]; // leader pits later
+          const frac = staggeredFractions[rankIdx] !== undefined
+            ? staggeredFractions[rankIdx]
+            : (fractions[driverIdx] || 0.5);
           const driverLap = Math.round(windowOpen + (windowClose - windowOpen) * frac);
           // Skip stop 1 prompt if safety car already covered this driver's first stop
           if(stopNum === 1 && scPitDriverIds.has(r.driverId)) return;
@@ -5601,6 +5639,15 @@ events.push({lap:r.dnfLap||laps-5, type:'dnf', driverId:r.driverId, text:`⭐ ${
 
       const age = d.age;
       const potGap = Math.max(0, (d.potential||80) - d.rating);
+      if(!d._peakEnd && age >= 27) {
+        const roll = Math.random();
+        const potBonus = (d.potential||80) >= 90 ? 0.06 : (d.potential||80) >= 85 ? 0.03 : 0;
+        const adjusted = roll + potBonus;
+        d._peakEnd = adjusted < 0.10 ? 29
+                   : adjusted < 0.65 ? 31
+                   : adjusted < 0.90 ? 33
+                   :                   35;
+      }
 
       // ── DEVELOPMENT MODIFIERS ────────────────────────────────────────────────
       // Work ethic hidden trait (seeded from driver id hash) — baked-in personality
@@ -5684,26 +5731,53 @@ events.push({lap:r.dnfLap||laps-5, type:'dnf', driverId:r.driverId, text:`⭐ ${
         d.consistency= clamp(d.consistency+ grow * randFloat(0.4, 1.2) + randFloat(-0.2, 0.5), 40, 99);
         d.wet        = clamp(d.wet        + grow * randFloat(0.2, 0.8) + randFloat(-0.3, 0.4), 40, 99);
       } else if(age <= 31) {
-        // Absolute peak: 27-31, minimal change — this is Verstappen/Leclerc territory
-        const drift = randFloat(-0.2, 0.2);
-        d.racePace   = clamp(d.racePace   + drift + randFloat(-0.3, 0.3), 40, 99);
-        d.qualifying = clamp(d.qualifying + drift + randFloat(-0.3, 0.3), 40, 99);
-        d.consistency= clamp(d.consistency+ randFloat(-0.1, 0.4),         40, 99);
-        d.wet        = clamp(d.wet        + randFloat(-0.2, 0.2),         40, 99);
+        // Absolute peak: 27-31 baseline, but individual peak length varies.
+        // Draw _peakEnd once when the driver first enters peak years -- baked in for life.
+        // Some drivers are short-peak, most are standard, a few extend like Hamilton/Alonso.
+        if(age <= d._peakEnd) {
+          // Still in peak -- minimal drift
+          const drift = randFloat(-0.2, 0.2);
+          d.racePace   = clamp(d.racePace   + drift + randFloat(-0.3, 0.3), 40, 99);
+          d.qualifying = clamp(d.qualifying + drift + randFloat(-0.3, 0.3), 40, 99);
+          d.consistency= clamp(d.consistency+ randFloat(-0.1, 0.4),         40, 99);
+          d.wet        = clamp(d.wet        + randFloat(-0.2, 0.2),         40, 99);
+        } else {
+          // Past their personal peak even though under 32 -- early fader
+          const yearsOver = age - d._peakEnd;
+          const dec = 0.15 + yearsOver * 0.2;
+          d.racePace   = clamp(d.racePace   + randFloat(-dec - 0.2, 0.05), 40, 99);
+          d.qualifying = clamp(d.qualifying + randFloat(-dec - 0.1, 0.05), 40, 99);
+          d.consistency= clamp(d.consistency+ randFloat(-0.2, 0.2),        40, 99);
+          d.wet        = clamp(d.wet        + randFloat(-0.2, 0.1),        40, 99);
+        }
       } else if(age <= 34) {
-        // Early decline: 32-34, starts subtly — racecraft compensates pace loss
-        const dec = 0.2 + (age - 31) * 0.2;
-        d.racePace   = clamp(d.racePace   + randFloat(-dec - 0.3, 0.05), 40, 99);
-        d.qualifying = clamp(d.qualifying + randFloat(-dec - 0.2, 0.05), 40, 99);
-        d.consistency= clamp(d.consistency+ randFloat(-0.2, 0.3),        40, 99);
-        d.wet        = clamp(d.wet        + randFloat(-0.3, 0.1),        40, 99);
+        // Early decline: 32-34 baseline -- but extended-peak drivers still flat here
+        const peakEnd = d._peakEnd || 31;
+        if(age <= peakEnd) {
+          // Still in extended peak (e.g. Hamilton at 33)
+          const drift = randFloat(-0.15, 0.25);
+          d.racePace   = clamp(d.racePace   + drift + randFloat(-0.3, 0.3), 40, 99);
+          d.qualifying = clamp(d.qualifying + drift + randFloat(-0.3, 0.3), 40, 99);
+          d.consistency= clamp(d.consistency+ randFloat(0.0, 0.4),          40, 99);
+          d.wet        = clamp(d.wet        + randFloat(-0.1, 0.2),         40, 99);
+        } else {
+          const yearsOver = age - peakEnd;
+          const dec = 0.15 + yearsOver * 0.2;
+          d.racePace   = clamp(d.racePace   + randFloat(-dec - 0.3, 0.05), 40, 99);
+          d.qualifying = clamp(d.qualifying + randFloat(-dec - 0.2, 0.05), 40, 99);
+          d.consistency= clamp(d.consistency+ randFloat(-0.2, 0.3),        40, 99);
+          d.wet        = clamp(d.wet        + randFloat(-0.3, 0.1),        40, 99);
+        }
       } else if(age <= 37) {
-        // Clear decline: 35-37, pace and quali slipping every year
-        const dec = 0.5 + (age - 34) * 0.3;
-        d.racePace   = clamp(d.racePace   - randFloat(0.3, dec * 1.2), 40, 99);
-        d.qualifying = clamp(d.qualifying - randFloat(0.2, dec * 1.0), 40, 99);
-        d.consistency= clamp(d.consistency- randFloat(0.0, dec * 0.4), 40, 99);
-        d.wet        = clamp(d.wet        - randFloat(0.1, dec * 0.5), 40, 99);
+        // Clear decline: 35-37 -- extended-peak drivers start their proper decline here
+        const peakEnd = d._peakEnd || 31;
+        const effectiveDeclineStart = Math.max(32, peakEnd + 1);
+        const yearsInDecline = Math.max(1, age - effectiveDeclineStart + 1);
+        const dec = 0.3 + yearsInDecline * 0.25;
+        d.racePace   = clamp(d.racePace   - randFloat(0.2, dec * 1.1), 40, 99);
+        d.qualifying = clamp(d.qualifying - randFloat(0.1, dec * 0.9), 40, 99);
+        d.consistency= clamp(d.consistency- randFloat(0.0, dec * 0.35),40, 99);
+        d.wet        = clamp(d.wet        - randFloat(0.1, dec * 0.4), 40, 99);
       } else {
         // Late decline (38+): pace collapses — only racecraft keeps them going
         const dec = 0.9 + (age - 37) * 0.6;
@@ -5759,8 +5833,11 @@ events.push({lap:r.dnfLap||laps-5, type:'dnf', driverId:r.driverId, text:`⭐ ${
       d._lastDevDelta = { rating: delta, racePace: paceDelta, qualifying: qualiDelta,
         consistency: consDelta, age: d.age, season: g.season - 1 };
       // Career phase label
+      const peakEnd = d._peakEnd || (d.age >= 27 ? 31 : null);
       d._careerPhase = d.age < 22 ? 'rookie' : d.age < 25 ? 'rising' :
-                       d.age < 29 ? 'approaching peak' : d.age <= 30 ? 'peak' : d.age <= 33 ? 'post-peak' :
+                       d.age < 29 ? 'approaching peak' :
+                       (peakEnd && d.age <= peakEnd) ? 'peak' :
+                       d.age <= 33 ? 'post-peak' :
                        d.age <= 36 ? 'early decline' : 'late career';
     });
 
@@ -6436,12 +6513,13 @@ events.push({lap:r.dnfLap||laps-5, type:'dnf', driverId:r.driverId, text:`⭐ ${
     }
     g.drivers.forEach(d=>{
       // Accumulate into career totals before resetting seasonal counters
-      d.totalWins   = (d.totalWins   || 0) + (d.wins   || 0);
-      d.totalPodiums= (d.totalPodiums|| 0) + (d.podiums|| 0);
-      d.totalPoles  = (d.totalPoles  || 0) + (d.poles  || 0);
+      d.totalWins        = (d.totalWins        || 0) + (d.wins        || 0);
+      d.totalPodiums     = (d.totalPodiums     || 0) + (d.podiums     || 0);
+      d.totalPoles       = (d.totalPoles       || 0) + (d.poles       || 0);
+      d.totalFastestLaps = (d.totalFastestLaps || 0) + (d.fastestLaps || 0);
       const seasonRaces = g.calendar.filter(r=>r.raceDone&&r.raceResult&&r.raceResult.some(x=>x.driverId===d.id)).length;
       d.totalRaces  = (d.totalRaces  || 0) + seasonRaces;
-      d.seasonPoints=0; d.wins=0; d.sprintWins=0; d.poles=0; d.podiums=0;
+      d.seasonPoints=0; d.wins=0; d.sprintWins=0; d.poles=0; d.podiums=0; d.fastestLaps=0;
     });
     g.teams.forEach(t=>{t.totalWins=(t.totalWins||0)+(t.wins||0);t.totalPoles=(t.totalPoles||0)+(t.poles||0);t.seasonPoints=0;t.wins=0;t.sprintWins=0;t.poles=0;t.podiums=0;});
 
@@ -6847,6 +6925,7 @@ const Storage = {
       if(d._formDip && d._formDip.racesLeft <= 0) delete d._formDip;
       if(d._formDipSeasonUsed===undefined) d._formDipSeasonUsed=null;
       if(d._injuryCareerScar===undefined) d._injuryCareerScar=0;
+      // _peakEnd is drawn lazily on first peak season -- no patch needed, null is correct
     });
     // Patch teams for new fields — also sync driverIds with actual driver teamId assignments
     if(g.teams) g.teams.forEach(t=>{
@@ -6878,6 +6957,7 @@ const Storage = {
       if(d.podiums===undefined) d.podiums=0;
       if(d.poles===undefined) d.poles=0;
       if(d.fastestLaps===undefined) d.fastestLaps=0;
+      if(d.totalFastestLaps===undefined) d.totalFastestLaps=0;
       if(d.championships===undefined) d.championships=0;
       if(d._teammatePressure===undefined) d._teammatePressure=0;
       if(d._retentionLeverage===undefined) d._retentionLeverage=0;
@@ -8885,6 +8965,7 @@ const UI = {
                         delta <= -0.2?'Minor regression':'Stable';
         const phase = d._careerPhase||'';
         const phaseCol = phase==='late career'||phase==='early decline'?'var(--amber)':phase==='peak'?'var(--grn)':'var(--tx3)';
+        const peakLabel = d._peakEnd===35?'Exceptional longevity':d._peakEnd===33?'Extended peak':d._peakEnd===29?'Early fader':'';
         const keyGain = dd.racePace >= 0.5 ? 'pace +'+dd.racePace.toFixed(1) : dd.consistency >= 0.5 ? 'consistency +'+dd.consistency.toFixed(1) : dd.qualifying >= 0.5 ? 'qualifying +'+dd.qualifying.toFixed(1) : '';
         const keyLoss = dd.racePace <= -0.5 ? 'pace '+dd.racePace.toFixed(1) : dd.qualifying <= -0.5 ? 'qualifying '+dd.qualifying.toFixed(1) : '';
         const detail = keyGain || keyLoss || '';
@@ -8896,6 +8977,7 @@ const UI = {
           +'</div>'
           +'<div style="text-align:right">'
             +'<div style="font-size:10px;color:'+phaseCol+';font-weight:700;text-transform:capitalize">'+phase+'</div>'
+            +(peakLabel?'<div style="font-size:9px;color:var(--amber);font-weight:700;text-transform:uppercase;letter-spacing:.3px">'+peakLabel+'</div>':'')
             +'<div style="font-size:10px;color:var(--tx3)">Season '+(dd.season||'')+'</div>'
           +'</div>'
         +'</div>';
@@ -10341,7 +10423,7 @@ const UI = {
       const spRaces=g.calendar.filter(r=>r.sprintDone&&r.sprintResult);
       const totalGP=gpRaces.length, totalSprint=spRaces.length;
       if(!totalGP&&!totalSprint){ c.innerHTML='<div class="empty-state"><div class="empty-icon">🏁</div><div class="empty-text">No races completed yet.</div></div>'; return; }
-      const posMax=20;
+      const posMax=22;
       const posColor=(pos)=>{
         if(pos===1) return '#f59e0b';
         if(pos===2) return '#9ca3af';
@@ -10397,7 +10479,7 @@ const UI = {
         <div style="display:flex;align-items:center;gap:3px"><div style="width:10px;height:10px;border-radius:2px;background:#16a34a"></div>P4-6</div>
         <div style="display:flex;align-items:center;gap:3px"><div style="width:10px;height:10px;border-radius:2px;background:#4ade80"></div>P7-10</div>
         <div style="display:flex;align-items:center;gap:3px"><div style="width:10px;height:10px;border-radius:2px;background:#6b7280"></div>P11-15</div>
-        <div style="display:flex;align-items:center;gap:3px"><div style="width:10px;height:10px;border-radius:2px;background:#374151"></div>P16+</div>
+        <div style="display:flex;align-items:center;gap:3px"><div style="width:10px;height:10px;border-radius:2px;background:#374151"></div>P16-22</div>
         <div style="display:flex;align-items:center;gap:3px"><div style="width:10px;height:10px;border-radius:2px;background:#dc2626"></div>DNF</div>
       </div>`;
       c.innerHTML=`<div style="padding:4px 0">${renderGrid(gpRows,totalGP,'🏁 Grand Prix')}${totalSprint>0?renderGrid(spRows,totalSprint,'⚡ Sprint'):''}${legend}</div>`;
@@ -11565,7 +11647,7 @@ const UI = {
       const races=g.calendar.filter(r=>r.raceDone&&r.raceResult);
       if(!races.length){ c.innerHTML='<div class="empty-state"><div class="empty-icon">🏁</div><div class="empty-text">No races completed yet.</div></div>'; return; }
       // Build position counts per driver [pos1..pos20+, DNF]
-      const posMax=20;
+      const posMax=22;
       const driverData={};
       pids.forEach(id=>{ const d=State.getDriver(id); if(d) driverData[id]={name:d.name.split(' ').pop(),counts:new Array(posMax+1).fill(0),dnfs:0}; });
       races.forEach(race=>{
@@ -11631,7 +11713,7 @@ const UI = {
     const mpod=drvs.reduce((b,d)=>((d.totalPodiums||0)+(d.podiums||0))>((b?.totalPodiums||0)+(b?.podiums||0))?d:b,null);
     const mpt=drvs.reduce((b,d)=>d.totalPoints>(b?.totalPoints||0)?d:b,null);
     const mc=drvs.reduce((b,d)=>d.championships>(b?.championships||0)?d:b,null);
-    const mfl=drvs.reduce((b,d)=>(d.fastestLaps||0)>(b?.fastestLaps||0)?d:b,null);
+    const mfl=drvs.reduce((b,d)=>(((d.totalFastestLaps||0)+(d.fastestLaps||0)) > ((b?.totalFastestLaps||0)+(b?.fastestLaps||0))) ? d : b,null);
     const mr=drvs.reduce((b,d)=>(d.totalRaces||0)>(b?.totalRaces||0)?d:b,null);
     const mtw=teams.reduce((b,t)=>((t.totalWins||0)+(t.wins||0))>((b?.totalWins||0)+(b?.wins||0))?t:b,null);
     const mtc=teams.reduce((b,t)=>t.championships>(b?.championships||0)?t:b,null);
@@ -11708,7 +11790,7 @@ const UI = {
       ${rc('Most Poles',(mp?(mp.totalPoles||0)+(mp.poles||0):0),mp?.name)}
       ${rc('Most Points',mpt?.totalPoints||0,mpt?.name)}
       ${rc('Championships',mc?.championships||0,mc?.name)}
-      ${rc('Fastest Laps',mfl?.fastestLaps||0,mfl?.name)}
+      ${rc('Fastest Laps',(mfl?(mfl.totalFastestLaps||0)+(mfl.fastestLaps||0):0),mfl?.name)}
       ${rc('Race Starts',mr?.totalRaces||0,mr?.name)}
       ${rc('Team Wins',(mtw?(mtw.totalWins||0)+(mtw.wins||0):0),mtw?.name)}
       ${rc('Team Poles',(mtpoles?(mtpoles.totalPoles||0)+(mtpoles.poles||0):0),mtpoles?.name)}
@@ -11825,19 +11907,21 @@ const UI = {
     `)}
 
     ${sec('📈','Driver Development — Career Curves & Stats',`
-      <p>Every driver has a <strong>potential ceiling</strong> and follows a career curve. Individual stats (Race Pace, Qualifying, Consistency, Wet) now develop <em>independently</em> — a driver's consistency might improve while their raw pace stays flat. OVR is recalculated from sub-stats each season, so if nothing moves, the rating doesn't move.</p>
-      <h4>Career curve (modern F1 reality)</h4>
+      <p>Every driver has a <strong>potential ceiling</strong> and follows a career curve. Individual stats (Race Pace, Qualifying, Consistency, Wet) develop independently — a driver's consistency might improve while their raw pace stays flat. OVR is recalculated from sub-stats each season.</p>
+      <h4>The general shape</h4>
+      <p>Most drivers follow a rough arc: rapid improvement in their early-to-mid 20s, a peak window somewhere in their late 20s to early 30s, then a gradual decline. But the exact timing is different for every driver — some fade earlier than expected, some stay elite well into their 30s. You won't know which until you watch it play out.</p>
       <table class="guide-table">
-        <tr><th>Age</th><th>Phase</th><th>What happens</th></tr>
-        <tr><td>Under 22</td><td>Raw rookie</td><td>Large variance — can stagnate or explode</td></tr>
-        <tr><td>22–23</td><td>Rapid growth</td><td>Fastest improvement window</td></tr>
-        <tr><td>24–26</td><td>Late growth</td><td>Closing in on potential</td></tr>
-        <tr><td>27–31</td><td>Absolute peak</td><td>Minimal drift, slight improvement still possible</td></tr>
-        <tr><td>32–34</td><td>Early decline</td><td>Pace and quali slip subtly</td></tr>
-        <tr><td>35–37</td><td>Clear decline</td><td>Noticeable drop every season</td></tr>
-        <tr><td>38+</td><td>Sharp decline</td><td>Only racecraft keeps them going</td></tr>
+        <tr><th>Age</th><th>Phase</th><th>What to expect</th></tr>
+        <tr><td>Under 22</td><td>Raw rookie</td><td>High variance — can stagnate or explode. Environment matters most.</td></tr>
+        <tr><td>22–24</td><td>Rapid growth</td><td>Fastest improvement window. Get facilities right now.</td></tr>
+        <tr><td>25–26</td><td>Closing in</td><td>Smaller gains each season. Approaching their ceiling.</td></tr>
+        <tr><td>Late 20s–early 30s</td><td>Peak window</td><td>Minimal change year to year. Tiny drift up or down. This is what you signed them for.</td></tr>
+        <tr><td>Mid 30s onward</td><td>Decline</td><td>Pace and qualifying slip. Consistency holds longer — experience compensates. Rate of decline varies.</td></tr>
+        <tr><td>38+</td><td>Sharp decline</td><td>Meaningful drop each year. Only racecraft keeps them going.</td></tr>
       </table>
-      <p>A driver in a poor environment (low facilities, low morale, bad luck) can have their <strong>potential ceiling eroded</strong> permanently. The window closes. This only applies to under-25 drivers — after that, development is set.</p>
+      <h4>Peak length varies by driver</h4>
+      <p>Some drivers have a short peak and start fading earlier than you'd expect. Others stay elite well beyond the typical window — the Hamilton and Alonso types. You can't know in advance which category a driver falls into. Once you've had them through a few seasons you'll start to see the signs, and their driver card will show a label if their profile is unusual.</p>
+      <p>A driver in a poor environment (low facilities, low morale, bad luck) can have their <strong>potential ceiling eroded</strong> permanently. This only applies to under-25 drivers — after that, the ceiling is locked in.</p>
       ${tip('Facilities matter most for young drivers', 'A 22-year-old wonderkid in a team with 60-rated facilities and low morale can watch their potential drop from 96 to 84 in two seasons. Invest in facilities before signing youngsters.')}
     `)}
 
@@ -11947,7 +12031,8 @@ const UI = {
     ${sec('📈','Driver Development — Careers & Trajectories',`
       <p>Every driver follows a career curve that plays out over multiple seasons. Ratings are not static — young drivers improve, veterans decline, and your management decisions directly affect how fast development happens.</p>
       <h4>Career phases</h4>
-      <p>Drivers pass through five phases: <strong>Rookie</strong> (under 22) — raw talent developing fast, heavily influenced by your facilities and luck. <strong>Rising</strong> (22–24) — prime growth years where facilities and morale matter most. <strong>Approaching peak</strong> (25–28) — smaller gains, settling into racecraft. <strong>Peak</strong> (29–33) — tiny fluctuations, consistency at its best. <strong>Early decline</strong> (34–36) — pace starts slipping but experience holds. <strong>Late career</strong> (37+) — clear drop each year.</p>
+      <p>The early part of every driver's career is predictable: rapid improvement through their early 20s, slowing as they approach their potential ceiling. After that it gets less certain. Most drivers hit their peak somewhere in their late 20s and hold it for several seasons before gradually declining. But the exact timing differs for every driver in the game -- some fade earlier than you'd expect, others keep their edge well into their mid-30s. Their driver card will show a note if their aging profile is unusual, but you mostly find out by watching them over time.</p>
+      <p>What you can rely on: under 22 is high variance, 22-24 is the fastest growth window, and 38+ is meaningful decline every year. Everything in between has genuine individual variation.</p>
       <h4>What you control</h4>
       <p>Three things you manage directly affect development speed for your drivers: <strong>Facilities</strong> (invest in the Car page — directly accelerates young driver growth), <strong>Morale</strong> (unhappy drivers don't push themselves; keep it above 70), and <strong>Environment</strong> (wonderkids placed at high-prestige teams with good facilities develop faster).</p>
       <h4>Reading the Development Report Card</h4>
@@ -12890,8 +12975,22 @@ const UI = {
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.1.3 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.1.4 · Release Notes</div>
         ${[
+    ['v2.1.4','Apr 2026',[
+            '▐▐▐ Driver development: driver peak length now varies per driver. Most follow a standard curve, but some fade earlier than expected and a few (10%) sustain elite form well into their mid-30s. Drawn once when the driver hits peak age and visible on their card as Extended peak, Early fader, or Exceptional longevity.',
+            '▐▐▐ Balance: driver development variance widened further. Bust years can now leave a driver meaningfully short of their ceiling; breakthrough years can push slightly above it. Guide updated to reflect that peak timing differs per driver.',
+            '▐▐▐ Qualifying setup: aero mismatch now carries a much sharper penalty in qualifying. A very wrong setup costs up to -8.5 in GP qualifying, -9.5 in sprint qualifying. Sprint qualifying now uses the same setup logic as GP qualifying -- previously it largely ignored downforce.',
+            '▐▐▐ Results heatmap: was hardcoded to 20 positions. Fixed to show all 22 grid positions. Legend updated.',
+            '▐▐▐ Fastest laps: the FL column in standings was showing career totals, not season totals. fastestLaps now resets at season end like all other season stats. Career total archived to totalFastestLaps.',
+            '▐▐▐ Watch Race pit duplication: lap-by-lap pit and timing notes no longer render when a pit decision card already covers that stop. Fixes the double commentary seen in the feed after Box Box.',
+            '▐▐▐ Watch Race SC pit: safety car pit opportunity no longer fires if the driver pitted on the immediately preceding lap. Planned window prompt also suppressed if driver pitted within the last 3 laps.',
+            '▐▐▐ Pole driver loses to teammate: pit decision prompts were staggered by driver array index, which always gave the pole driver an early pit and let the teammate overcut. Prompts now staggered by live race position -- the leading driver gets the later pit to protect track position.',
+            '▐▐▐ Safety car overtaking: position change commentary no longer fires on SC laps.',
+            '▐▐▐ H2H: recent results now sort correctly by race order. DNF displays as DNF not PDNF.',
+            '▐▐▐ Standings tiebreaker: full F1 countback (P2 count, P3 count... to P20) for both driver and constructor championships.',
+            '▐▐▐ Driver market: free agents bypass car comparison gate. Elite free agents will not sign with teams significantly weaker than where they came from. Negotiation countdown display fixed.',
+          ]],
     ['v2.1.3','Apr 2026',[
             '✨ Balance: regulation changes are now genuinely disruptive. Strong compression pulls the whole field toward midfield, each team draws a regs aptitude that determines their trajectory for the entire era, dev rate takes a hit on all teams with good aptitude recovering faster, and reliability resets harder. The news item names which teams adapted best and which are behind the curve.',
             '✨ Balance: the longer the same regulations run, the more backmarker teams benefit from copying proven designs. The catch-up rate scales with era maturity and resets to zero when new regs fire.',
@@ -15329,6 +15428,19 @@ window._wrTick = function() {
       return;
     }
     WR._lastFeedSig = {sig:sig, lap:ev.lap||0};
+  }
+  // Suppress lap-by-lap pit/timing notes that duplicate a pit_decision card.
+  // The decision card (Box Box / Stay Out) is the canonical narrative for that stop.
+  if((ev.type === 'pit' || ev.type === 'timing') && ev.driverId != null && WR.pitDecisions && WR.pitDecisions.length) {
+    const covered = WR.pitDecisions.some(function(dec) {
+      return dec.ev && dec.ev.driverId === ev.driverId && Math.abs((dec.ev.lap||0) - (ev.lap||0)) <= 2;
+    });
+    if(covered) {
+      if(eventPositions) WR.lastPos = eventPositions;
+      window._wrRenderPositions();
+      WR.timer = setTimeout(window._wrTick, 16);
+      return;
+    }
   }
   const el = document.createElement('div');
   if(ev.bridgeGenerated && el.dataset) el.dataset.bridgeGenerated = '1';
