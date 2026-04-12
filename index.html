@@ -728,7 +728,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:18px;max-width:320px;padding:14px 16px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
           <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">Latest Update</div>
-<div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.1.4 is live</div>
+<div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.1.5 is live</div>
           <div style="font-size:12px;line-height:1.45;color:#666">Follow-up stability patch for Watch Race, replay persistence, injury-sub handling, and autosim result integrity.</div>
         </div>
       </div>
@@ -768,17 +768,56 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
         <div class="land-form-title" style="margin:0">Choose Your Constructor</div>
-        <button onclick="UI.showLandingGuide('teams')" style="background:none;border:none;font-size:12px;color:#888;cursor:pointer;font-weight:600;padding:0">Not sure? Pick guide →</button>
+        <div style="display:flex;align-items:center;gap:10px">
+          <button onclick="UI.showLandingGuide('teams')" style="background:none;border:none;font-size:12px;color:#888;cursor:pointer;font-weight:600;padding:0">Not sure? Pick guide →</button>
+        </div>
       </div>
+      <button onclick="UI.openEditor('landing')" style="width:100%;margin-bottom:12px;padding:12px 14px;border:1.5px solid rgba(192,57,43,.28);border-radius:10px;background:linear-gradient(135deg, rgba(192,57,43,.10), rgba(192,57,43,.03));color:var(--red);cursor:pointer;text-align:left;display:flex;align-items:center;justify-content:space-between;gap:12px">
+        <div>
+          <div style="font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase">Custom Grid</div>
+          <div style="font-size:14px;font-weight:800;margin-top:2px">Open Roster Editor</div>
+          <div style="font-size:11px;color:var(--tx3);margin-top:3px">Rename teams, edit lineups, reserves, free agents, and prospects.</div>
+        </div>
+        <div style="font-size:20px;font-weight:900;line-height:1">→</div>
+      </button>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game" class="land-start">Start Career →</button>
-<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.1.4</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.1.5</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
       <button id="btn-new-game" class="hidden" style="display:none"></button>
       <button id="btn-load-game" class="hidden" style="display:none"></button>
       <div id="save-info" class="hidden" style="display:none"></div>
+    </div>
+  </div>
+</div>
+
+<div id="page-editor" class="page">
+  <div class="ng-header">
+    <button class="btn-back" onclick="UI.closeEditor()">‹</button>
+    <div>
+      <div style="font-size:16px;font-weight:900;letter-spacing:1px">Roster Editor</div>
+      <div style="font-size:10px;color:var(--tx3);letter-spacing:2px;text-transform:uppercase;margin-top:1px">Template Data</div>
+    </div>
+  </div>
+  <div class="ng-scroll">
+    <div class="ng-body" style="display:flex;flex-direction:column;gap:14px">
+      <div class="panel">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap">
+          <div>
+            <div class="panel-title" style="margin-bottom:4px">Custom Grid Setup</div>
+            <div style="font-size:12px;color:var(--tx3);max-width:560px">This editor changes new career templates only. Existing saves stay untouched. The live game currently starts in 2026, so lineup edits apply to new 2026 careers.</div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn btn-outline btn-sm" onclick="Editor.copyJson()">Copy JSON</button>
+            <button class="btn btn-outline btn-sm" onclick="Editor.downloadJson()">Download JSON</button>
+            <button class="btn btn-outline btn-sm" onclick="Editor.openImport()">Import JSON</button>
+            <button class="btn btn-ghost btn-sm" onclick="Editor.resetToDefault()">Reset Defaults</button>
+          </div>
+        </div>
+      </div>
+      <div id="editor-content"></div>
     </div>
   </div>
 </div>
@@ -847,6 +886,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       <a href="javascript:void(0)" class="nav-link" data-view="teams">Teams</a>
       <a href="javascript:void(0)" class="nav-link" data-view="standings-drivers">Standings</a>
       <a href="javascript:void(0)" class="nav-link" data-view="history">History</a>
+      <a href="javascript:void(0)" class="nav-link" onclick="UI.openEditor('game')">Editor</a>
       <a href="javascript:void(0)" class="nav-link" onclick="UI.showSettings()">Settings</a>
       <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" class="nav-link" style="opacity:.7">Feedback</a>
     </div>
@@ -917,6 +957,9 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </button>
       <button class="drawer-item" onclick="UI.toggleMoreDrawer();UI.showView('guide')">
         <span class="drawer-item-icon">📖</span><span>Guide</span>
+      </button>
+      <button class="drawer-item" onclick="UI.toggleMoreDrawer();UI.openEditor('game')">
+        <span class="drawer-item-icon">🛠</span><span>Roster Editor</span>
       </button>
       <button class="drawer-item" onclick="UI.toggleMoreDrawer();UI.showChangelog()">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
@@ -1583,6 +1626,24 @@ function clamp(v,min,max){return Math.max(min,Math.min(max,v));}
 function randInt(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
 function randFloat(min,max){return Math.random()*(max-min)+min;}
 function randNorm(mean,sd){const u=1-Math.random(),v=Math.random();return mean+sd*Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+function getWinterDevEfficiency(carPerf){
+  const perf = carPerf || 70;
+  const base = Math.max(0.08, 1.0 - Math.pow(Math.max(0, perf - 60) / 44, 1.55));
+  const eliteTax = perf >= 97 ? 0.55
+    : perf >= 94 ? 0.68
+    : perf >= 90 ? 0.80
+    : perf >= 86 ? 0.90
+    : 1.0;
+  return clamp(base * eliteTax, 0.08, 1.0);
+}
+function getInSeasonDevEfficiency(carPerf){
+  const perf = carPerf || 70;
+  return perf >= 97 ? 0.40
+    : perf >= 94 ? 0.52
+    : perf >= 90 ? 0.66
+    : perf >= 86 ? 0.82
+    : 1.0;
+}
 function formatMoney(m){if(Math.abs(m)>=1000)return`$${(m/1000).toFixed(1)}B`;return`$${m}M`;}
 function ratingColor(r){if(r>=88)return'rating-high';if(r>=76)return'rating-med';return'rating-low';}
 function escapeHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
@@ -2003,17 +2064,344 @@ function escapeHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;
 
 
 // =============================================
+// TEMPLATE EDITOR
+// =============================================
+const Editor = {
+  STORAGE_KEY: 'f1d_editor_template_v1',
+  _base: null,
+  _state: null,
+  _selectedTeamId: 'ferrari',
+  _selectedSeason: 2026,
+  _importOpen: false,
+  init() {
+    if(this._state) return;
+    this._base = this._captureDefaults();
+    this._state = this._load() || JSON.parse(JSON.stringify(this._base));
+    this._normalizeState();
+    const firstTeam = this.getTeams()[0];
+    if(firstTeam && !this.getTeam(this._selectedTeamId)) this._selectedTeamId = firstTeam.id;
+  },
+  _captureDefaults() {
+    return {
+      teams: JSON.parse(JSON.stringify(DATA.teams)),
+      seasonDrivers: JSON.parse(JSON.stringify(DATA.seasonDrivers)),
+      reserveDrivers: JSON.parse(JSON.stringify(DATA.reserveDrivers)),
+      namedFreeAgents: JSON.parse(JSON.stringify(DATA.namedFreeAgents)),
+      namedProspects: JSON.parse(JSON.stringify(DATA.namedProspects))
+    };
+  },
+  _load() {
+    try {
+      const raw = localStorage.getItem(this.STORAGE_KEY);
+      if(!raw) return null;
+      return this._normalizeImported(JSON.parse(raw)).data;
+    } catch(e) {
+      return null;
+    }
+  },
+  persist() {
+    try {
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this._state));
+    } catch(e) {}
+  },
+  resetToDefault() {
+    this.init();
+    this._state = JSON.parse(JSON.stringify(this._base));
+    try { localStorage.removeItem(this.STORAGE_KEY); } catch(e) {}
+    if(typeof UI !== 'undefined') {
+      UI.renderLanding();
+      UI.renderEditor();
+      UI.toast('Editor reset to defaults', 'success');
+    }
+  },
+  _normalizeState() {
+    this._state = this._normalizeImported(this._state).data;
+  },
+  _normalizeImported(data) {
+    const base = JSON.parse(JSON.stringify(this._base || this._captureDefaults()));
+    const out = JSON.parse(JSON.stringify(base));
+    const warnings = [];
+    if(Array.isArray(data?.teams)) {
+      out.teams = base.teams.map(baseTeam => {
+        const incoming = data.teams.find(t => t && t.id === baseTeam.id) || {};
+        return this._normalizeTeam(incoming, baseTeam);
+      });
+    } else if(data && Object.keys(data).length) {
+      warnings.push('teams');
+    }
+    const baseYears = Object.keys(base.seasonDrivers || {});
+    if(data && !data?.seasonDrivers) warnings.push('seasonDrivers');
+    baseYears.forEach(year => {
+      out.seasonDrivers[year] = out.seasonDrivers[year] || {};
+      const incomingYear = data?.seasonDrivers?.[year] || {};
+      out.teams.forEach(team => {
+        const fallback = (base.seasonDrivers?.[year]?.[team.id]) || (base.teams.find(t=>t.id===team.id)?.baseDrivers) || [];
+        const incoming = incomingYear[team.id];
+        out.seasonDrivers[year][team.id] = Array.isArray(incoming)
+          ? incoming.map((d,i)=>this._normalizeDriver(d, fallback[i] || fallback[0] || this._blankDriver()))
+          : JSON.parse(JSON.stringify(fallback));
+      });
+    });
+    out.reserveDrivers = {};
+    if(data && !data?.reserveDrivers) warnings.push('reserveDrivers');
+    out.teams.forEach(team => {
+      const fallback = base.reserveDrivers?.[team.id] || [];
+      const incoming = data?.reserveDrivers?.[team.id];
+      out.reserveDrivers[team.id] = Array.isArray(incoming)
+        ? incoming.map((d,i)=>this._normalizeDriver(d, fallback[i] || fallback[0] || this._blankDriver({ contract:1, salary:1, rating:70 })))
+        : JSON.parse(JSON.stringify(fallback));
+    });
+    out.namedFreeAgents = Array.isArray(data?.namedFreeAgents)
+      ? data.namedFreeAgents.map((d,i)=>this._normalizeDriver(d, base.namedFreeAgents[i] || this._blankDriver({ contract:0, salary:3 })))
+      : JSON.parse(JSON.stringify(base.namedFreeAgents));
+    if(data && !Array.isArray(data?.namedFreeAgents)) warnings.push('namedFreeAgents');
+    out.namedProspects = Array.isArray(data?.namedProspects)
+      ? data.namedProspects.map((d,i)=>this._normalizeDriver(d, base.namedProspects[i] || this._blankDriver({ contract:0, salary:1, age:19, rating:68, potential:84 })))
+      : JSON.parse(JSON.stringify(base.namedProspects));
+    if(data && !Array.isArray(data?.namedProspects)) warnings.push('namedProspects');
+    return { data: out, warnings };
+  },
+  _normalizeTeam(team, fallback) {
+    return {
+      ...fallback,
+      id: fallback.id,
+      name: String(team?.name || fallback.name || '').trim() || fallback.name,
+      nation: String(team?.nation || fallback.nation || '').trim() || fallback.nation,
+      prestige: clamp(parseInt(team?.prestige ?? fallback.prestige) || fallback.prestige, 20, 100),
+      carPerformance: clamp(parseFloat(team?.carPerformance ?? fallback.carPerformance) || fallback.carPerformance, 40, 100),
+      downforce: clamp(parseFloat(team?.downforce ?? fallback.downforce) || fallback.downforce, 0, 100),
+      reliability: clamp(parseFloat(team?.reliability ?? fallback.reliability) || fallback.reliability, 40, 100),
+      developmentRate: clamp(parseFloat(team?.developmentRate ?? fallback.developmentRate) || fallback.developmentRate, 40, 100),
+      facilities: clamp(parseFloat(team?.facilities ?? fallback.facilities) || fallback.facilities, 40, 100),
+      revenue: clamp(parseFloat(team?.revenue ?? fallback.revenue) || fallback.revenue, 20, 500),
+      color: /^#[0-9a-fA-F]{6}$/.test(String(team?.color || '').trim()) ? String(team.color).trim() : fallback.color,
+      difficulty: ['easy','medium','hard'].includes(team?.difficulty) ? team.difficulty : fallback.difficulty,
+      baseDrivers: JSON.parse(JSON.stringify(fallback.baseDrivers || []))
+    };
+  },
+  _blankDriver(overrides={}) {
+    return {
+      name: 'New Driver',
+      nationality: 'British',
+      trait: 'consistent',
+      age: 22,
+      rating: 72,
+      potential: 82,
+      qualifying: 72,
+      racePace: 72,
+      consistency: 70,
+      wet: 70,
+      aggression: 65,
+      marketability: 65,
+      morale: 75,
+      salary: 3,
+      contract: 2,
+      series: 'F2',
+      ...overrides
+    };
+  },
+  _normalizeDriver(driver, fallback) {
+    const src = { ...this._blankDriver(), ...(fallback || {}), ...(driver || {}) };
+    return {
+      name: String(src.name || '').trim() || (fallback?.name || 'New Driver'),
+      nationality: String(src.nationality || '').trim() || 'British',
+      trait: String(src.trait || fallback?.trait || 'consistent'),
+      age: clamp(parseInt(src.age) || fallback?.age || 22, 16, 50),
+      rating: clamp(parseInt(src.rating) || fallback?.rating || 70, 40, 99),
+      potential: clamp(parseInt(src.potential) || fallback?.potential || 80, 40, 99),
+      qualifying: clamp(parseInt(src.qualifying) || fallback?.qualifying || 70, 40, 99),
+      racePace: clamp(parseInt(src.racePace) || fallback?.racePace || 70, 40, 99),
+      consistency: clamp(parseInt(src.consistency) || fallback?.consistency || 70, 40, 99),
+      wet: clamp(parseInt(src.wet) || fallback?.wet || 70, 40, 99),
+      aggression: clamp(parseInt(src.aggression) || fallback?.aggression || 65, 30, 99),
+      marketability: clamp(parseInt(src.marketability) || fallback?.marketability || 65, 30, 99),
+      morale: clamp(parseInt(src.morale) || fallback?.morale || 75, 20, 99),
+      salary: clamp(parseInt(src.salary) || fallback?.salary || 3, 0, 30),
+      contract: clamp(parseInt(src.contract) || fallback?.contract || 2, 0, 5),
+      series: String(src.series || fallback?.series || 'F2')
+    };
+  },
+  getState() {
+    this.init();
+    return this._state;
+  },
+  getTeams() {
+    return this.getState().teams;
+  },
+  getTeam(teamId) {
+    return this.getTeams().find(t => t.id === teamId);
+  },
+  getSeasons() {
+    return [2026];
+  },
+  getSelectedTeamId() {
+    this.init();
+    return this._selectedTeamId;
+  },
+  getSelectedSeason() {
+    this.init();
+    return this._selectedSeason;
+  },
+  setSelectedTeam(teamId) {
+    this.init();
+    if(this.getTeam(teamId)) this._selectedTeamId = teamId;
+    if(typeof UI !== 'undefined') UI.renderEditor();
+  },
+  setSelectedSeason(year) {
+    this.init();
+    this._selectedSeason = parseInt(year) || 2026;
+    if(typeof UI !== 'undefined') UI.renderEditor();
+  },
+  getLineup(year, teamId) {
+    const state = this.getState();
+    const yr = String(year);
+    state.seasonDrivers[yr] = state.seasonDrivers[yr] || {};
+    if(!Array.isArray(state.seasonDrivers[yr][teamId])) {
+      const fallback = (this._base.seasonDrivers?.[yr]?.[teamId]) || (this._base.teams.find(t=>t.id===teamId)?.baseDrivers) || [];
+      state.seasonDrivers[yr][teamId] = JSON.parse(JSON.stringify(fallback));
+    }
+    return state.seasonDrivers[yr][teamId];
+  },
+  getReserves(teamId) {
+    const state = this.getState();
+    if(!Array.isArray(state.reserveDrivers[teamId])) {
+      state.reserveDrivers[teamId] = JSON.parse(JSON.stringify(this._base.reserveDrivers?.[teamId] || []));
+    }
+    return state.reserveDrivers[teamId];
+  },
+  getPool(pool, teamId, year) {
+    if(pool === 'lineup') return this.getLineup(year, teamId);
+    if(pool === 'reserve') return this.getReserves(teamId);
+    if(pool === 'free-agent') return this.getState().namedFreeAgents;
+    if(pool === 'prospect') return this.getState().namedProspects;
+    return [];
+  },
+  updateTeamField(teamId, field, value) {
+    const team = this.getTeam(teamId);
+    if(!team) return;
+    const fallback = (this._base.teams || []).find(t=>t.id===teamId) || team;
+    if(field === 'color') {
+      const nextColor = String(value || '').trim();
+      if(!/^#[0-9a-fA-F]{6}$/.test(nextColor)) {
+        if(typeof UI !== 'undefined') UI.toast('Team color must be a valid hex like #DC0000', 'warning');
+        if(typeof UI !== 'undefined') UI.renderEditor();
+        return;
+      }
+      team.color = nextColor;
+    } else if(['name','nation','difficulty'].includes(field)) {
+      team[field] = String(value || '').trim() || team[field];
+    } else {
+      team[field] = parseFloat(value);
+    }
+    const normalized = this._normalizeTeam(team, fallback);
+    Object.assign(team, normalized);
+    this.persist();
+    if(typeof UI !== 'undefined') {
+      UI.renderLanding();
+      UI.renderEditor();
+    }
+  },
+  updateDriverField(pool, index, field, value, teamId, year) {
+    const list = this.getPool(pool, teamId, year);
+    const driver = list[index];
+    if(!driver) return;
+    if(['name','nationality','trait','series'].includes(field)) driver[field] = value;
+    else driver[field] = value === '' ? value : parseInt(value);
+    let fallback = this._blankDriver();
+    if(pool === 'lineup') {
+      const yr = String(year);
+      fallback = (this._base.seasonDrivers?.[yr]?.[teamId] || [])[index] || (this._base.teams.find(t=>t.id===teamId)?.baseDrivers || [])[index] || fallback;
+    } else if(pool === 'reserve') {
+      fallback = (this._base.reserveDrivers?.[teamId] || [])[index] || this._blankDriver({ contract:1, salary:1, rating:70 });
+    } else if(pool === 'free-agent') {
+      fallback = (this._base.namedFreeAgents || [])[index] || this._blankDriver({ contract:0, salary:3, series:'FE' });
+    } else if(pool === 'prospect') {
+      fallback = (this._base.namedProspects || [])[index] || this._blankDriver({ contract:0, salary:1, age:19, rating:68, potential:84, series:'F3' });
+    }
+    list[index] = this._normalizeDriver(driver, fallback);
+    this.persist();
+    if(typeof UI !== 'undefined') {
+      UI.renderLanding();
+      UI.renderEditor();
+    }
+  },
+  addDriver(pool, teamId, year) {
+    const list = this.getPool(pool, teamId, year);
+    const fallback = list[list.length - 1] || this._blankDriver(pool === 'prospect' ? { age:19, salary:1, contract:0, series:'F3', rating:68, potential:85 } : pool === 'free-agent' ? { contract:0, series:'FE' } : {});
+    list.push(this._normalizeDriver({}, fallback));
+    this.persist();
+    if(typeof UI !== 'undefined') {
+      UI.renderLanding();
+      UI.renderEditor();
+    }
+  },
+  removeDriver(pool, index, teamId, year) {
+    const list = this.getPool(pool, teamId, year);
+    if(!list[index]) return;
+    list.splice(index, 1);
+    this.persist();
+    if(typeof UI !== 'undefined') {
+      UI.renderLanding();
+      UI.renderEditor();
+    }
+  },
+  copyJson() {
+    const text = JSON.stringify(this.getState(), null, 2);
+    if(navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(text).then(()=>UI.toast('Editor JSON copied', 'success')).catch(()=>this.openExport());
+      return;
+    }
+    this.openExport();
+  },
+  downloadJson() {
+    const blob = new Blob([JSON.stringify(this.getState(), null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'f1dynasty-editor-template.json';
+    a.click();
+    setTimeout(()=>URL.revokeObjectURL(url), 2000);
+  },
+  openExport() {
+    this._importOpen = false;
+    UI.renderEditorJsonModal(JSON.stringify(this.getState(), null, 2), false);
+  },
+  openImport() {
+    this._importOpen = true;
+    UI.renderEditorJsonModal('', true);
+  },
+  applyImport() {
+    const ta = document.getElementById('editor-json-textarea');
+    if(!ta) return;
+    try {
+      const parsed = this._normalizeImported(JSON.parse(ta.value));
+      this._state = parsed.data;
+      this.persist();
+      UI.closeModal();
+      UI.renderLanding();
+      UI.renderEditor();
+      if(parsed.warnings.length) UI.toast(`Imported with defaults for: ${parsed.warnings.join(', ')}`, 'warning');
+      else UI.toast('Editor JSON imported', 'success');
+    } catch(e) {
+      UI.toast('Invalid editor JSON', 'error');
+    }
+  }
+};
+
+// =============================================
 // STATE
 // =============================================
 const State = {
   game: null,
   newGame(managerName, teamId, startYear) {
-    const teams = DATA.teams.map(t => this._buildTeam(t));
+    Editor.init();
+    const template = Editor.getState();
+    const teams = template.teams.map(t => this._buildTeam(t));
     const allDrivers = [];
     let nextDriverId = 1;
     teams.forEach(team => {
       // Pick correct season lineup
-      const seasonLineup = (DATA.seasonDrivers[startYear]||{})[team.id];
+      const seasonLineup = (template.seasonDrivers[startYear]||{})[team.id];
       const driversToUse = seasonLineup || team.baseDrivers;
       driversToUse.forEach(dDef => {
         const driver = this._buildDriver(dDef, team.id, nextDriverId++);
@@ -2032,7 +2420,7 @@ const State = {
     // Real named reserve drivers per team
     teams.forEach(team => {
       team.reserveIds = [];
-      const namedRes = (DATA.reserveDrivers||{})[team.id] || [];
+      const namedRes = (template.reserveDrivers||{})[team.id] || [];
       namedRes.forEach(dDef => {
         // Skip if a driver with this name already exists (e.g. they're a race driver)
         if(allDrivers.some(x=>x.name===dDef.name)) return;
@@ -2051,7 +2439,7 @@ const State = {
     });
     // Real named prospects (F2/F3/academy)
     const prospects = [];
-    const namedProspects = [...(DATA.namedProspects||[])];
+    const namedProspects = [...(template.namedProspects||[])];
     namedProspects.forEach(dDef => {
       // Skip if already exists as a race or reserve driver
       if(allDrivers.some(x=>x.name===dDef.name)) return;
@@ -2072,7 +2460,7 @@ const State = {
       prospects.push(d.id);
     }
     // Real named free agents (experienced drivers not in F1)
-    const namedFAs = [...(DATA.namedFreeAgents||[])];
+    const namedFAs = [...(template.namedFreeAgents||[])];
     namedFAs.forEach(dDef => {
       // Skip if already exists as a race driver, reserve, or prospect
       if(allDrivers.some(x=>x.name===dDef.name)) return;
@@ -2788,7 +3176,7 @@ const Sim = {
       const medLife = Math.max(softLife + 10, Math.round(stratData.medLife * clamp(0.94 + tyreMgmt / 420, 0.96, 1.16)));
       const hardLife = Math.max(medLife + 8, Math.round(stratData.hardLife * clamp(0.95 + tyreMgmt / 400, 0.97, 1.16)));
       const tyreLife = { soft:softLife, medium:medLife, hard:hardLife, inter:999, wet:999 };
-      const dnfChancePerLap = clamp(((1 - (team.reliability || 70) / 100) * 0.012) + (trait === 'aggressive' ? 0.0008 : 0.0002), 0.0004, 0.01);
+      const dnfChancePerLap = clamp(((1 - (team.reliability || 70) / 100) * 0.008) + (trait === 'aggressive' ? 0.0010 : 0.0004), 0.0012, 0.012);
       const launchOffset = idx * 0.45 + randNorm(0, 0.22) - ((driver.aggression || 65) - 65) * 0.01;
       const weatherSkill = (driver.wet || 75) / 100;
       return {
@@ -5976,6 +6364,8 @@ events.push({lap:r.dnfLap||laps-5, type:'dnf', driverId:r.driverId, text:`⭐ ${
     g.preSeasonMoves=[];
     g.pendingNegotiations=carryNegotiations; // keep player-target talks alive into offseason so they can be resolved manually
     g._lastAIApproachRace=0; // reset cooldown for new season
+    // Clear demotion flags — after a full offseason, reserve pricing is fair again
+    g.drivers.forEach(d=>{ delete d._wasRaceDriver; });
 
     // ── Release expired contracts ──
     g.drivers.forEach(d=>{
@@ -6371,15 +6761,25 @@ events.push({lap:r.dnfLap||laps-5, type:'dnf', driverId:r.driverId, text:`⭐ ${
         ? champHistory.slice(-4).filter(c=>c.driverId===lastChamp.driverId).length
         : 0;
       const playerConstrPos = State.getConstructorSeasonPos(g.playerTeamId) || 10;
-      const playerPressureBoost = (playerConstrPos <= 2) ? 0.35 : (playerConstrPos <= 3) ? 0.15 : 0;
-      const streakBoost = dominanceStreak >= 3 && team.id !== g.playerTeamId ? 0.4 * (dominanceStreak - 2) : 0;
-      const pressureBoost = Math.max(playerPressureBoost, streakBoost);
+      const playerTeamRef = State.getPlayerTeam();
+      const playerPerf = playerTeamRef?.carPerformance || fieldAvgPerf;
+      const perfGapToPlayer = Math.max(0, playerPerf - (team.carPerformance || 0));
+      const rivalQuality = ((team.prestige || 50) + (team.developmentRate || 70) + (team.facilities || 70)) / 300;
+      const contenderBoost = playerConstrPos <= 2 && perfGapToPlayer > 0 && perfGapToPlayer <= 14
+        ? (0.18 + Math.min(0.55, perfGapToPlayer * 0.035)) * rivalQuality
+        : 0;
+      const playerPressureBoost = (playerConstrPos <= 1) ? 0.55 : (playerConstrPos <= 2) ? 0.35 : (playerConstrPos <= 3) ? 0.15 : 0;
+      const streakBoost = dominanceStreak >= 3 && team.id !== g.playerTeamId ? (0.45 * (dominanceStreak - 2)) * Math.max(0.75, rivalQuality) : 0;
+      const pressureBoost = Math.max(playerPressureBoost, streakBoost, contenderBoost);
       // Era convergence — the longer regulations have been stable, the more backmarkers
       // benefit from copying proven designs. Only applies to teams below field average.
       const eraConvergence = team.carPerformance < fieldAvgPerf
         ? (fieldAvgPerf - team.carPerformance) * eraConvergenceStrength * 0.04
         : 0;
-      team.carPerformance = clamp(team.carPerformance + devGain + ceilingPull + floorPull + pressureBoost + eraConvergence - leaderPenalty + randFloat(-1.0, 1.0), 40, 99);
+      const rivalLift = perfGapToPlayer > 0 && perfGapToPlayer <= 18
+        ? Math.min(0.9, perfGapToPlayer * 0.04) * Math.max(0.65, rivalQuality)
+        : 0;
+      team.carPerformance = clamp(team.carPerformance + devGain + ceilingPull + floorPull + pressureBoost + eraConvergence + rivalLift - leaderPenalty + randFloat(-1.0, 1.0), 40, 99);
       team.reliability = clamp(team.reliability + randFloat(-0.5, 1.5), 40, 99);
     });
     if(g.pendingDev){
@@ -6415,15 +6815,23 @@ events.push({lap:r.dnfLap||laps-5, type:'dnf', driverId:r.driverId, text:`⭐ ${
 
     // Facilities and reliability decay slightly each offseason — infrastructure needs ongoing investment
     // Higher values decay faster (harder to maintain elite facilities)
-    const facilDecay = playerTeam.facilities >= 90 ? randFloat(1.5, 2.5) : playerTeam.facilities >= 75 ? randFloat(0.8, 1.5) : randFloat(0.3, 0.8);
-    const relDecay   = playerTeam.reliability  >= 90 ? randFloat(1.0, 2.0) : playerTeam.reliability  >= 75 ? randFloat(0.5, 1.0) : randFloat(0.2, 0.5);
+    const facilDecay = playerTeam.facilities >= 95 ? randFloat(2.2, 3.6)
+      : playerTeam.facilities >= 90 ? randFloat(1.5, 2.6)
+      : playerTeam.facilities >= 75 ? randFloat(0.8, 1.6)
+      : randFloat(0.3, 0.8);
+    const relDecay   = playerTeam.reliability >= 95 ? randFloat(1.5, 2.8)
+      : playerTeam.reliability >= 90 ? randFloat(1.0, 2.1)
+      : playerTeam.reliability >= 75 ? randFloat(0.5, 1.0)
+      : randFloat(0.2, 0.5);
     playerTeam.facilities  = clamp(playerTeam.facilities  - facilDecay, 40, 99);
     playerTeam.reliability = clamp(playerTeam.reliability - relDecay,   40, 99);
 
-    // Facilities upgrade compounds dev rate over time
-    // Each point of facilities above 70 gives a small permanent dev rate boost
+    // Facilities still help, but elite infrastructure compounds more slowly.
     if(playerTeam.facilities > 70) {
-      const facilBonus = (playerTeam.facilities - 70) * 0.02;
+      const above70 = playerTeam.facilities - 70;
+      let facilBonus = Math.min(15, above70) * 0.015;
+      if(above70 > 15) facilBonus += Math.min(10, above70 - 15) * 0.008;
+      if(above70 > 25) facilBonus += (above70 - 25) * 0.003;
       playerTeam.developmentRate = clamp(playerTeam.developmentRate + facilBonus, 40, 100);
     }
 
@@ -7088,6 +7496,7 @@ const UI = {
     if(nav) nav.style.display=(id==='game')?'':'none';
   },
   showView(id){
+    this._activeView = id;
     document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
     document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
     const v=document.getElementById('view-'+id); if(v) v.classList.add('active');
@@ -7131,9 +7540,10 @@ const UI = {
     // Populate team grid on combined landing
     const tg = document.getElementById('land-team-grid');
     if(tg){
+      Editor.init();
       const selYear = parseInt(document.getElementById('input-start-year')?.value)||2026;
-      tg.innerHTML = [...DATA.teams].sort((a,b)=>b.carPerformance-a.carPerformance).map(t=>{
-        const lineup = (DATA.seasonDrivers[selYear]||{})[t.id] || t.baseDrivers;
+      tg.innerHTML = [...Editor.getTeams()].sort((a,b)=>b.carPerformance-a.carPerformance).map(t=>{
+        const lineup = (Editor.getState().seasonDrivers[selYear]||{})[t.id] || t.baseDrivers;
         const drivers = lineup.map(d=>d.name.split(' ').pop()).join(' & ');
         return `
         <div class="land-tcard" data-team-id="${t.id}" onclick="UI.selectLandTeam('${t.id}')">
@@ -7257,7 +7667,8 @@ const UI = {
   },
 
   renderTeamSelect(){
-    document.getElementById('team-select-grid').innerHTML = DATA.teams.map(t => `
+    Editor.init();
+    document.getElementById('team-select-grid').innerHTML = Editor.getTeams().map(t => `
       <div class="tpcard" data-team-id="${t.id}" onclick="UI.selectTeam('${t.id}')">
         <div class="tpcard-check">✓ Selected</div>
         <div class="tpcard-top">
@@ -7280,6 +7691,167 @@ const UI = {
   getSelectedTeam(){
     const s=document.querySelector('.land-tcard.selected')||document.querySelector('.tpcard.selected');
     return s?s.dataset.teamId:null;
+  },
+  openEditor(from='landing'){
+    Editor.init();
+    this._editorReturnTarget = from === 'game' ? 'game' : 'landing';
+    this.showPage('editor');
+    this.renderEditor();
+  },
+  closeEditor(){
+    if(this._editorReturnTarget === 'game'){
+      this.showPage('game');
+      this.renderView(this._activeView || 'dashboard');
+      return;
+    }
+    this.showPage('landing');
+    this.renderLanding();
+  },
+  renderEditor(){
+    const wrap = document.getElementById('editor-content');
+    if(!wrap) return;
+    Editor.init();
+    const seasons = Editor.getSeasons();
+    const teams = Editor.getTeams();
+    const teamId = Editor.getSelectedTeamId();
+    const season = Editor.getSelectedSeason();
+    const team = Editor.getTeam(teamId) || teams[0];
+    if(!team) {
+      wrap.innerHTML = '<div class="panel"><div style="font-size:13px;color:var(--tx3)">No editor data available.</div></div>';
+      return;
+    }
+    const lineup = Editor.getLineup(season, team.id);
+    const reserves = Editor.getReserves(team.id);
+    const renderDriverCard = (driver, index, pool, opts={}) => {
+      const extraTeamArgs = opts.teamId ? `,'${opts.teamId}'` : ',null';
+      const extraSeasonArg = opts.year ? `,${opts.year}` : ',null';
+      const input = (label, field, value, type='text', min='', max='') => `
+        <label style="display:flex;flex-direction:column;gap:4px">
+          <span style="font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--tx3);text-transform:uppercase">${label}</span>
+          <input type="${type}" value="${escapeHtml(String(value ?? ''))}" ${min!==''?`min="${min}"`:''} ${max!==''?`max="${max}"`:''} onchange="Editor.updateDriverField('${pool}',${index},'${field}',this.value${extraTeamArgs}${extraSeasonArg})" style="font-size:12px;padding:8px 10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg2)">
+        </label>`;
+      const select = (label, field, value, options) => `
+        <label style="display:flex;flex-direction:column;gap:4px">
+          <span style="font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--tx3);text-transform:uppercase">${label}</span>
+          <select onchange="Editor.updateDriverField('${pool}',${index},'${field}',this.value${extraTeamArgs}${extraSeasonArg})" style="font-size:12px;padding:8px 10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg2)">
+            ${options.map(opt=>`<option value="${escapeHtml(opt)}" ${opt===value?'selected':''}>${escapeHtml(opt)}</option>`).join('')}
+          </select>
+        </label>`;
+      return `
+        <div style="border:1px solid var(--bd);border-radius:12px;padding:12px;background:var(--bg2);display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+            <div style="font-size:13px;font-weight:800">${escapeHtml(driver.name || 'Driver')}</div>
+            <button class="btn btn-ghost btn-sm" onclick="Editor.removeDriver('${pool}',${index}${extraTeamArgs}${extraSeasonArg})">Remove</button>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px">
+            ${input('Name','name',driver.name)}
+            ${input('Nationality','nationality',driver.nationality)}
+            ${select('Trait','trait',driver.trait||'consistent',['consistent','technical','aggressive','qualifier','rainy','overtaker'])}
+            ${input('Age','age',driver.age,'number',16,50)}
+            ${input('Rating','rating',driver.rating,'number',40,99)}
+            ${input('Potential','potential',driver.potential,'number',40,99)}
+            ${input('Qualifying','qualifying',driver.qualifying,'number',40,99)}
+            ${input('Race Pace','racePace',driver.racePace,'number',40,99)}
+            ${input('Consistency','consistency',driver.consistency,'number',40,99)}
+            ${input('Wet','wet',driver.wet,'number',40,99)}
+            ${input('Aggression','aggression',driver.aggression,'number',30,99)}
+            ${input('Marketability','marketability',driver.marketability,'number',30,99)}
+            ${input('Morale','morale',driver.morale,'number',20,99)}
+            ${input('Salary','salary',driver.salary,'number',0,30)}
+            ${input('Contract','contract',driver.contract,'number',0,5)}
+            ${pool==='free-agent'||pool==='prospect' ? input('Series','series',driver.series || (pool==='prospect'?'F3':'FE')) : ''}
+          </div>
+        </div>
+      `;
+    };
+    wrap.innerHTML = `
+      <div class="panel" style="margin-bottom:12px">
+        <div class="panel-title">Team Focus</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+          ${teams.map(t=>`<button class="btn ${t.id===team.id?'btn-red':'btn-outline'} btn-sm" onclick="Editor.setSelectedTeam('${t.id}')" style="${t.id===team.id?`background:${t.color};border-color:${t.color}`:''}">${escapeHtml(t.name.replace(' Racing','').replace('Scuderia ','').replace(' F1 Team',''))}</button>`).join('')}
+        </div>
+      </div>
+      <div class="panel" style="margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap">
+          <div>
+            <div class="panel-title">${escapeHtml(team.name)}</div>
+            <div style="font-size:12px;color:var(--tx3)">Edit constructor identity and starting strength.</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span style="font-size:11px;color:var(--tx3);font-weight:700">Lineup season</span>
+            <select onchange="Editor.setSelectedSeason(this.value)" style="font-size:12px;padding:8px 10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg2)">
+              ${seasons.map(y=>`<option value="${y}" ${y===season?'selected':''}>${y}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:12px">
+          <label style="display:flex;flex-direction:column;gap:4px"><span style="font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--tx3);text-transform:uppercase">Name</span><input value="${escapeHtml(team.name)}" onchange="Editor.updateTeamField('${team.id}','name',this.value)" style="font-size:12px;padding:8px 10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg2)"></label>
+          <label style="display:flex;flex-direction:column;gap:4px"><span style="font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--tx3);text-transform:uppercase">Nation</span><input value="${escapeHtml(team.nation)}" onchange="Editor.updateTeamField('${team.id}','nation',this.value)" style="font-size:12px;padding:8px 10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg2)"></label>
+          <label style="display:flex;flex-direction:column;gap:4px"><span style="font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--tx3);text-transform:uppercase">Color</span><input value="${escapeHtml(team.color)}" onchange="Editor.updateTeamField('${team.id}','color',this.value)" style="font-size:12px;padding:8px 10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg2)"></label>
+          <label style="display:flex;flex-direction:column;gap:4px"><span style="font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--tx3);text-transform:uppercase">Difficulty</span><select onchange="Editor.updateTeamField('${team.id}','difficulty',this.value)" style="font-size:12px;padding:8px 10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg2)"><option value="easy" ${team.difficulty==='easy'?'selected':''}>easy</option><option value="medium" ${team.difficulty==='medium'?'selected':''}>medium</option><option value="hard" ${team.difficulty==='hard'?'selected':''}>hard</option></select></label>
+          <label style="display:flex;flex-direction:column;gap:4px"><span style="font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--tx3);text-transform:uppercase">Car Perf</span><input type="number" min="40" max="100" value="${team.carPerformance}" onchange="Editor.updateTeamField('${team.id}','carPerformance',this.value)" style="font-size:12px;padding:8px 10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg2)"></label>
+          <label style="display:flex;flex-direction:column;gap:4px"><span style="font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--tx3);text-transform:uppercase">Reliability</span><input type="number" min="40" max="100" value="${team.reliability}" onchange="Editor.updateTeamField('${team.id}','reliability',this.value)" style="font-size:12px;padding:8px 10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg2)"></label>
+          <label style="display:flex;flex-direction:column;gap:4px"><span style="font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--tx3);text-transform:uppercase">Dev Rate</span><input type="number" min="40" max="100" value="${team.developmentRate}" onchange="Editor.updateTeamField('${team.id}','developmentRate',this.value)" style="font-size:12px;padding:8px 10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg2)"></label>
+          <label style="display:flex;flex-direction:column;gap:4px"><span style="font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--tx3);text-transform:uppercase">Facilities</span><input type="number" min="40" max="100" value="${team.facilities}" onchange="Editor.updateTeamField('${team.id}','facilities',this.value)" style="font-size:12px;padding:8px 10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg2)"></label>
+          <label style="display:flex;flex-direction:column;gap:4px"><span style="font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--tx3);text-transform:uppercase">Revenue</span><input type="number" min="20" max="500" value="${team.revenue}" onchange="Editor.updateTeamField('${team.id}','revenue',this.value)" style="font-size:12px;padding:8px 10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg2)"></label>
+          <label style="display:flex;flex-direction:column;gap:4px"><span style="font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--tx3);text-transform:uppercase">Prestige</span><input type="number" min="20" max="100" value="${team.prestige}" onchange="Editor.updateTeamField('${team.id}','prestige',this.value)" style="font-size:12px;padding:8px 10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg2)"></label>
+          <label style="display:flex;flex-direction:column;gap:4px"><span style="font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--tx3);text-transform:uppercase">Downforce</span><input type="number" min="0" max="100" value="${team.downforce}" onchange="Editor.updateTeamField('${team.id}','downforce',this.value)" style="font-size:12px;padding:8px 10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg2)"></label>
+        </div>
+      </div>
+      <div class="panel" style="margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+          <div>
+            <div class="panel-title">Starting Lineup · ${season}</div>
+            <div style="font-size:12px;color:var(--tx3)">These drivers appear when you start a new save in the selected season.</div>
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="Editor.addDriver('lineup','${team.id}',${season})">Add Driver</button>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-top:12px">
+          ${lineup.map((driver, index)=>renderDriverCard(driver, index, 'lineup', { teamId: team.id, year: season })).join('') || '<div style="font-size:12px;color:var(--tx3)">No lineup drivers set.</div>'}
+        </div>
+      </div>
+      <div class="panel" style="margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+          <div>
+            <div class="panel-title">Reserve Drivers · ${escapeHtml(team.name)}</div>
+            <div style="font-size:12px;color:var(--tx3)">Reserve and simulator pool for new saves.</div>
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="Editor.addDriver('reserve','${team.id}')">Add Reserve</button>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-top:12px">
+          ${reserves.map((driver, index)=>renderDriverCard(driver, index, 'reserve', { teamId: team.id })).join('') || '<div style="font-size:12px;color:var(--tx3)">No reserve drivers set.</div>'}
+        </div>
+      </div>
+      <details class="panel" style="margin-bottom:12px" open>
+        <summary style="cursor:pointer;font-weight:800;color:var(--tx);list-style:none">Free Agents</summary>
+        <div style="display:flex;justify-content:flex-end;margin-top:10px"><button class="btn btn-outline btn-sm" onclick="Editor.addDriver('free-agent')">Add Free Agent</button></div>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-top:12px">
+          ${Editor.getState().namedFreeAgents.map((driver, index)=>renderDriverCard(driver, index, 'free-agent')).join('')}
+        </div>
+      </details>
+      <details class="panel" open>
+        <summary style="cursor:pointer;font-weight:800;color:var(--tx);list-style:none">Prospects</summary>
+        <div style="display:flex;justify-content:flex-end;margin-top:10px"><button class="btn btn-outline btn-sm" onclick="Editor.addDriver('prospect')">Add Prospect</button></div>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-top:12px">
+          ${Editor.getState().namedProspects.map((driver, index)=>renderDriverCard(driver, index, 'prospect')).join('')}
+        </div>
+      </details>
+    `;
+  },
+  renderEditorJsonModal(text, isImport){
+    const body = `
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div style="font-size:18px;font-weight:900">${isImport?'Import Editor JSON':'Editor JSON'}</div>
+        <button class="modal-close" onclick="UI.closeModal()">✕</button>
+      </div>
+      <div style="font-size:12px;color:var(--tx3);margin-bottom:10px">${isImport?'Paste a previously exported editor file to replace the current template.':'Copy this JSON or save it as a backup of your custom grid.'}</div>
+      <textarea id="editor-json-textarea" style="width:100%;min-height:320px;padding:12px;border:1px solid var(--bd);border-radius:10px;background:var(--bg2);font-family:monospace;font-size:12px;line-height:1.45">${escapeHtml(text)}</textarea>
+      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px">
+        ${isImport?'<button class="btn btn-red" onclick="Editor.applyImport()">Import</button>':'<button class="btn btn-outline" onclick="navigator.clipboard&&navigator.clipboard.writeText(document.getElementById(\'editor-json-textarea\').value);UI.toast(\'Editor JSON copied\',\'success\')">Copy</button>'}
+      </div>
+    `;
+    document.getElementById('modal-body').innerHTML = body;
+    document.getElementById('driver-detail-modal').classList.remove('hidden');
   },
 
   renderDashboard(){
@@ -7935,10 +8507,16 @@ const UI = {
             const leanScore = (()=>{
               const carDiff = (State.getPlayerTeam()?.carPerformance||0) - (theirTeam?.carPerformance||60);
               const salaryGain = neg.salaryOffer - (d?.salary||0);
-              return carDiff*0.6 + salaryGain*0.35 - rivalry*5;
+              let conStandings2; try{ conStandings2=State.getConstructorStandings(); }catch(e){ conStandings2=[]; }
+              const myPos2=conStandings2.findIndex(s=>s.team&&s.team.id===g.playerTeamId)+1||10;
+              const posBonus2=myPos2<=2?8:myPos2<=4?4:myPos2<=6?1:0;
+              const moraleBonus2=d&&d.morale<60?10:d&&d.morale<72?4:0;
+              const ageMult2=d&&d.age>=35?0.4:d&&d.age>=32?0.7:1.0;
+              return (carDiff*0.6 + salaryGain*0.35 + posBonus2 + moraleBonus2 - rivalry*5)*ageMult2;
             })();
-            const leanLabel = leanScore > 10 ? '🟢 Leaning yes' : leanScore > 2 ? '🟡 Undecided' : '🔴 Leaning no';
-            const leanColor = leanScore > 10 ? '#10b981' : leanScore > 2 ? 'var(--amber)' : 'var(--red)';
+            const threshold2 = d&&d.rating>=88?10:d&&d.rating>=82?3:0;
+            const leanLabel = racesLeft===0 ? '⏳ Decision imminent' : leanScore > threshold2+5 ? '🟢 Leaning yes' : leanScore > threshold2-3 ? '🟡 Undecided' : '🔴 Leaning no';
+            const leanColor = racesLeft===0 ? 'var(--amber)' : leanScore > threshold2+5 ? '#10b981' : leanScore > threshold2-3 ? 'var(--amber)' : 'var(--red)';
             return `<div style="padding:10px 0;border-bottom:1px solid var(--bd)">
               <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
                 <div>
@@ -9358,12 +9936,12 @@ const UI = {
       ${rows}
       ${(()=>{
         const cp=team.carPerformance;
-        const dr=Math.max(0.10,1.0-Math.pow(Math.max(0,cp-60)/45,1.4));
+        const dr=getWinterDevEfficiency(cp);
         const pct=Math.round(dr*100);
         const col=pct>=80?'var(--grn)':pct>=50?'var(--amber)':'var(--red)';
         const msg=pct>=80?'Good headroom — investment is effective.'
           :pct>=50?'Moderate gains — your car is already strong, returns are reducing.'
-          :'Diminishing returns — large investments yield small gains. Focus on Reliability or Facilities.';
+          :'Diminishing returns — large investments mostly maintain an elite car. Reliability and facilities may offer better value.';
         const regsWarning = g.nextRegsYear===g.season ? '<div style="margin-top:6px;padding:6px 8px;background:rgba(220,38,38,.08);border-radius:5px;border-left:3px solid var(--red);font-size:11px;color:var(--red)"><strong>📋 Regulation year:</strong> Engineering resources are split between this car and next-gen concept — winter dev effectiveness reduced by ~45%.</div>' : (g.nextRegsYear===g.season+1 ? '<div style="margin-top:6px;padding:6px 8px;background:rgba(245,158,11,.08);border-radius:5px;border-left:3px solid var(--amber);font-size:11px;color:var(--amber)"><strong>⚠️ Regs change next season:</strong> Consider investing in Facilities now — they survive regulation changes and compound your development rate.</div>' : '');
         return '<div style="margin-top:8px;padding:8px 10px;background:var(--bg3);border-radius:6px;border-left:3px solid '+col+';font-size:11px"><strong style="color:'+col+'">Development efficiency: '+pct+'%</strong><br><span style="color:var(--tx3)">'+msg+'</span></div>'+regsWarning;
       })()}
@@ -12975,8 +13553,17 @@ const UI = {
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.1.4 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.1.5 · Release Notes</div>
         ${[
+    ['v2.1.5','Apr 2026',[
+            '▐▐▐ Salary exploit: fixed a loophole where demoting a race driver to reserve and immediately renewing their contract would apply the much lower reserve salary track. Demoted race drivers now retain race-seat pricing for renewal until the next offseason clears the flag.',
+            '▐▐▐ Race retirements: fixed a bug where non-sprint races produced zero retirements in long saves. The per-lap DNF chance floor was too low (0.0004/lap), meaning teams with high reliability had near-zero retirement rates across an entire race. The floor is raised to 0.0012/lap and the reliability coefficient adjusted, so even at peak reliability a driver has a realistic ~7% retirement chance per race — matching real-world F1 averages of 1-2 retirements per grand prix.',
+            '▐▐▐ Driver transfers: fixed a bug where negotiation lean indicators (Leaning yes / Undecided / Leaning no) were calculated without position bonus, morale, or age multiplier, causing the displayed lean to diverge from the actual resolution outcome. The lean now uses the same formula as resolution. At 0 races left the label now reads "Decision imminent" instead of a potentially misleading lean.',
+            '▐▐▐ Driver transfers: fixed a bug where a rejected negotiation could write a rival pre-contract for the driver even when the player already had a player-initiated signed move for that driver. This could cause a driver to appear on two teams simultaneously at season rollover.',
+            '▐▐▐ Roster Editor: color field now validates hex on save and shows a warning toast for invalid values instead of silently reverting. All editor UI calls now guarded against early-init edge cases. Driver field edits use targeted normalisation instead of a full state rebuild on every change. Import JSON now shows a warning listing any sections that fell back to defaults.',
+            '⚖️ Balance: elite cars are now much harder to improve and maintain. Winter development efficiency falls off more sharply above ~88 OVR, in-season upgrade gains taper harder on already-fast cars, and top-end facilities/reliability decay more aggressively each offseason so 95+ ratings are difficult to reach and sustain.',
+            '⚖️ Balance: strong AI rivals now close faster when you are dominating. Top-half teams with good prestige, facilities, and dev rate get a larger catch-up push if they sit within striking distance of the player, making long title streaks harder to sustain.',
+          ]],
     ['v2.1.4','Apr 2026',[
             '▐▐▐ Driver development: driver peak length now varies per driver. Most follow a standard curve, but some fade earlier than expected and a few (10%) sustain elite form well into their mid-30s. Drawn once when the driver hits peak age and visible on their card as Extended peak, Early fader, or Exceptional longevity.',
             '▐▐▐ Balance: driver development variance widened further. Bust years can now leave a driver meaningfully short of their ceiling; breakthrough years can push slightly above it. Guide updated to reflect that peak timing differs per driver.',
@@ -13723,11 +14310,16 @@ const GameActions = {
     const _regsThisSeason = g.nextRegsYear === g.season;
     const _regsInvestment = _regsThisSeason ? Math.max(0, Math.min(1, g.regsInvestment||0)) : 0;
     const _regsPenalty = _regsThisSeason ? (1 - _regsInvestment) : 1.0;
-    const dimReturn_bs = Math.max(0.10, 1.0 - Math.pow(Math.max(0, team_bs.carPerformance - 60) / 45, 1.4)) * _regsPenalty;
-    const expectedAero_bs = ((bw2.aero||0)*0.07 + (bw2.engine||0)*0.12) * dimReturn_bs;
-    const expectedRel_bs  = (bw2.reliability||0)*0.06 * Math.max(0.3, dimReturn_bs + 0.2);
-    const expectedDevRate_bs = (bw2.facilities||0)*0.04;
-    const expectedFac_bs    = (bw2.facilities||0)*0.03;
+    const winterEff_bs = getWinterDevEfficiency(team_bs.carPerformance || 70) * _regsPenalty;
+    const relEff_bs = Math.max(0.22, Math.min(1.0, winterEff_bs + 0.18));
+    const facilityEff_bs = team_bs.facilities >= 95 ? 0.45
+      : team_bs.facilities >= 90 ? 0.58
+      : team_bs.facilities >= 82 ? 0.74
+      : 1.0;
+    const expectedAero_bs = ((bw2.aero||0)*0.07 + (bw2.engine||0)*0.12) * winterEff_bs;
+    const expectedRel_bs  = (bw2.reliability||0)*0.06 * relEff_bs;
+    const expectedDevRate_bs = (bw2.facilities||0)*0.04 * facilityEff_bs;
+    const expectedFac_bs    = (bw2.facilities||0)*0.03 * facilityEff_bs;
     const expectedDfRange_bs = (bw2.aero||0)*0.10;
     const rdRoll_bs = Math.random();
     // Wider variance band -- bad winters can genuinely set you back net of regression
@@ -13774,7 +14366,7 @@ const GameActions = {
       const carGain=(devResult.actual?.aero||0).toFixed(1);
       const relGain=(devResult.actual?.rel||0).toFixed(1);
       const labelColor=label==='breakthrough'?'#16a34a':label==='ahead of schedule'?'#4ade80':label==='setback'?'var(--red)':label==='below expectations'?'var(--amber)':'var(--grn)';
-      const dimReturnPct = Math.round(Math.max(0.10, 1.0 - Math.pow(Math.max(0,(g.teams.find(t=>t.id===g.playerTeamId)?.carPerformance||70)-60)/45,1.4))*100);
+      const dimReturnPct = Math.round(getWinterDevEfficiency(g.teams.find(t=>t.id===g.playerTeamId)?.carPerformance||70)*100);
       const regAmt = (()=>{const cp=g.teams.find(t=>t.id===g.playerTeamId)?.carPerformance||70;return cp>=90?'2–3':cp>=80?'1–2':cp>=70?'0.5–1':'0–0.5';})();
       const rows=[
         `<div style="display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid var(--bd)"><span style="color:var(--tx3)">⬇ Season regression (field copies concepts)</span><span style="color:var(--amber);font-weight:700">−${regAmt}</span></div>`,
@@ -13807,7 +14399,7 @@ const GameActions = {
     const team=State.getPlayerTeam();
     const _rSponsorInc=(State.game.sponsors||[]).reduce((s,sp)=>s+sp.value,0);
     const _rEffectiveIncome=Math.max(team.revenue, _rSponsorInc+40);
-    const demand = State.getDriverDemandSalary(d, d.isReserve ? 'reserve' : 'renewal');
+    const demand = State.getDriverDemandSalary(d, (d.isReserve && !d._wasRaceDriver) ? 'reserve' : 'renewal');
     const html=`<div>
       <div style="font-size:16px;font-weight:900;margin-bottom:2px">${d.name}</div>
       <div style="font-size:11px;color:var(--tx3);margin-bottom:16px">${Math.round(d.rating)} OVR · Age ${d.age} · Morale ${d.morale}</div>
@@ -13979,7 +14571,12 @@ const GameActions = {
         msg:`Factory resources redirected — <strong>${Math.round(_diversion*100)}%</strong> of this upgrade window allocated to ${g.nextRegsYear} regulation concept. In-season upgrades will be reduced accordingly.`,
         race:g.raceIndex});
     }
-    const _upgradeScale = 1 - _diversion; // reduce current car upgrades by diversion fraction
+    const upgradeEff = getInSeasonDevEfficiency(team.carPerformance || 70);
+    const relEff = team.reliability >= 95 ? 0.65
+      : team.reliability >= 90 ? 0.78
+      : team.reliability >= 82 ? 0.90
+      : 1.0;
+    const _upgradeScale = (1 - _diversion) * upgradeEff; // reduce current car upgrades by diversion fraction and elite-car drag
     // Queue with countdown — arrive in 2-4 races
     const racesLeft = g.calendar.length - g.raceIndex;
     const delay = Math.min(Math.max(2, randInt(2,4)), Math.max(1,racesLeft));
@@ -13988,9 +14585,9 @@ const GameActions = {
     const winLabel = qi===0 ? 'Mid-Season Upgrade' : 'Summer Upgrade';
     qd.arrivalRaceName = arrivalRaceName;
     qd.arrivalRaceIdx = arrivesAfterRace;
-    if(qd.aero>0)        g.pendingUpgrades.push({name:winLabel, stat:'carPerformance', value:qd.aero*0.9*_upgradeScale,       arrivesAfterRace, qi, applied:false});
-    if(qd.engine>0)      g.pendingUpgrades.push({name:winLabel, stat:'carPerformance', value:qd.engine*1.4*_upgradeScale,      arrivesAfterRace, qi, applied:false, isEngine:true});
-    if(qd.reliability>0) g.pendingUpgrades.push({name:winLabel, stat:'reliability',    value:qd.reliability*0.6*_upgradeScale, arrivesAfterRace, qi, applied:false, isRel:true});
+    if(qd.aero>0)        g.pendingUpgrades.push({name:winLabel, stat:'carPerformance', value:qd.aero*0.9*_upgradeScale, arrivesAfterRace, qi, applied:false});
+    if(qd.engine>0)      g.pendingUpgrades.push({name:winLabel, stat:'carPerformance', value:qd.engine*1.4*_upgradeScale, arrivesAfterRace, qi, applied:false, isEngine:true});
+    if(qd.reliability>0) g.pendingUpgrades.push({name:winLabel, stat:'reliability',    value:qd.reliability*0.6*(1 - _diversion)*relEff, arrivesAfterRace, qi, applied:false, isRel:true});
     qd.applied=true;
     Storage.autosave();
     UI.toast(`🚚 Upgrades ordered — due after ${arrivalRaceName}`,'success');
@@ -14005,8 +14602,13 @@ const GameActions = {
     if(dev.aero===0&&dev.reliability===0&&dev.engine===0){UI.toast('No upgrades selected — adjust the sliders first.','warning');return;}
     const roll=Math.random();
     const mult = roll<0.08?0.4:roll<0.20?0.75:roll<0.72?1.0:roll<0.92?1.2:1.5;
-    const expectedCar = dev.aero*0.8+dev.engine*1.2;
-    const expectedRel = dev.reliability*0.5;
+    const carEff = getInSeasonDevEfficiency(team.carPerformance || 70);
+    const relEff = team.reliability >= 95 ? 0.65
+      : team.reliability >= 90 ? 0.78
+      : team.reliability >= 82 ? 0.90
+      : 1.0;
+    const expectedCar = (dev.aero*0.8+dev.engine*1.2) * carEff;
+    const expectedRel = dev.reliability*0.5 * relEff;
     team.carPerformance=clamp(team.carPerformance+expectedCar*mult,60,100);
     team.reliability=clamp(team.reliability+expectedRel*mult,60,100);
     g.inSeasonDevApplied=true;
@@ -14221,34 +14823,51 @@ const GameActions = {
             const swapOldPts = swapEntry.points || 0;
             const myOldPos = myEntry.position;
             const swapOldPos = swapEntry.position;
+            const applyPointsDelta = (driver, team, oldVal, newVal) => {
+              const delta = (newVal || 0) - (oldVal || 0);
+              if(driver){
+                driver.seasonPoints = Math.max(0, (driver.seasonPoints || 0) + delta);
+                driver.totalPoints = Math.max(0, (driver.totalPoints || 0) + delta);
+              }
+              if(team){
+                team.seasonPoints = Math.max(0, (team.seasonPoints || 0) + delta);
+                team.totalPoints = Math.max(0, (team.totalPoints || 0) + delta);
+              }
+            };
             swapEntry.position = myEntry.position;
             myEntry.position = newPos;
             myEntry.points = ptScale[newPos] || 0;
             swapEntry.points = ptScale[swapEntry.position] || 0;
-            // Update season points
+            // Update season + career points
             const myDrv = State.getDriver(myEntry.driverId);
             const myTeam = State.getTeam(myEntry.teamId);
             const swDrv = State.getDriver(swapEntry.driverId);
             const swTeam = State.getTeam(swapEntry.teamId);
-            if(myDrv) myDrv.seasonPoints = Math.max(0,(myDrv.seasonPoints||0) - oldPts + myEntry.points);
-            if(myTeam) myTeam.seasonPoints = Math.max(0,(myTeam.seasonPoints||0) - oldPts + myEntry.points);
-            if(swDrv) swDrv.seasonPoints = Math.max(0,(swDrv.seasonPoints||0) - swapOldPts + swapEntry.points);
-            if(swTeam) swTeam.seasonPoints = Math.max(0,(swTeam.seasonPoints||0) - swapOldPts + swapEntry.points);
+            applyPointsDelta(myDrv, myTeam, oldPts, myEntry.points);
+            applyPointsDelta(swDrv, swTeam, swapOldPts, swapEntry.points);
             if(myDrv){
               if(myOldPos===1 && myEntry.position!==1) myDrv.wins = Math.max(0,(myDrv.wins||0)-1);
               if(myOldPos<=3 && myEntry.position>3) myDrv.podiums = Math.max(0,(myDrv.podiums||0)-1);
+              if(myOldPos===1 && myEntry.position!==1) myDrv.totalWins = Math.max(0,(myDrv.totalWins||0)-1);
+              if(myOldPos<=3 && myEntry.position>3) myDrv.totalPodiums = Math.max(0,(myDrv.totalPodiums||0)-1);
             }
             if(myTeam){
               if(myOldPos===1 && myEntry.position!==1) myTeam.wins = Math.max(0,(myTeam.wins||0)-1);
               if(myOldPos<=3 && myEntry.position>3) myTeam.podiums = Math.max(0,(myTeam.podiums||0)-1);
+              if(myOldPos===1 && myEntry.position!==1) myTeam.totalWins = Math.max(0,(myTeam.totalWins||0)-1);
+              if(myOldPos<=3 && myEntry.position>3) myTeam.totalPodiums = Math.max(0,(myTeam.totalPodiums||0)-1);
             }
             if(swDrv){
               if(swapOldPos!==1 && swapEntry.position===1) swDrv.wins = (swDrv.wins||0)+1;
               if(swapOldPos>3 && swapEntry.position<=3) swDrv.podiums = (swDrv.podiums||0)+1;
+              if(swapOldPos!==1 && swapEntry.position===1) swDrv.totalWins = (swDrv.totalWins||0)+1;
+              if(swapOldPos>3 && swapEntry.position<=3) swDrv.totalPodiums = (swDrv.totalPodiums||0)+1;
             }
             if(swTeam){
               if(swapOldPos!==1 && swapEntry.position===1) swTeam.wins = (swTeam.wins||0)+1;
               if(swapOldPos>3 && swapEntry.position<=3) swTeam.podiums = (swTeam.podiums||0)+1;
+              if(swapOldPos!==1 && swapEntry.position===1) swTeam.totalWins = (swTeam.totalWins||0)+1;
+              if(swapOldPos>3 && swapEntry.position<=3) swTeam.totalPodiums = (swTeam.totalPodiums||0)+1;
             }
             rd.results.sort((a,b)=>{
               if(a.dnf && b.dnf) return (b.dnfLap||0)-(a.dnfLap||0);
@@ -14610,6 +15229,7 @@ const GameActions = {
     if(!team.reserveIds.includes(raceDriverId)) team.reserveIds.push(raceDriverId);
     reserve.isReserve=false; reserve.isFreeAgent=false;
     raceDriver.isReserve=true; raceDriver.isFreeAgent=false;
+    raceDriver._wasRaceDriver=true; // flag: blocks reserve-rate renewal exploit
     reserve.morale=clamp((reserve.morale||75)+18,40,99);
     raceDriver.morale=clamp((raceDriver.morale||75)-8,25,99);
     UI.closeModal();
@@ -14631,6 +15251,7 @@ const GameActions = {
     if(current.length<=1){UI.toast('You need at least 1 race driver.','warning');return;}
     if(reserves.length>=2){UI.toast('Already have 2 reserve drivers. Promote or release one first.','warning');return;}
     d.isReserve=true; d.isFreeAgent=false;
+    d._wasRaceDriver=true; // flag: this driver held a race seat — blocks reserve-rate renewal exploit
     team.driverIds=(team.driverIds||[]).filter(id=>id!==driverId);
     if(!team.reserveIds) team.reserveIds=[];
     if(!team.reserveIds.includes(driverId)) team.reserveIds.push(driverId);
@@ -14881,7 +15502,8 @@ const GameActions = {
           reason = `signed with ${rivalTeam.name} instead`;
           rejMsg = `❌ <strong>${d.name}</strong> has ended talks with <strong>${team.name}</strong> — he has signed a pre-contract with <strong>${rivalTeam.name}</strong>. The seat remains open.`;
           // Commit him to the rival so he's no longer approachable
-          if(!g.preSeasonMoves.some(m=>m.driverId===d.id)){
+          // But never overwrite a player-initiated move — player agreed deal takes precedence
+          if(!g.preSeasonMoves.some(m=>m.driverId===d.id&&(m.playerInitiated||m.reason==='rival approach'))){
             g.preSeasonMoves.push({
               driverId:d.id, driverName:d.name,
               fromTeamId:neg.fromTeamId, fromTeamName:neg.fromTeamName,
