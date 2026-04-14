@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -6855,6 +6855,7 @@ const spons=sumSponsorIncome(g.sponsors||[]);
       });
 
       g.regsHistory.push({season: g.season+1, type: regsType.name, desc: regsType.desc});
+      if(typeof gtag!=='undefined') gtag('event','regulation_change',{type:regsType.name,season:g.season+1,player_car_perf:Math.round(g.teams.find(t=>t.id===g.playerTeamId)?.carPerformance||0)});
 
       // Winners/losers summary for news item
       const aptSorted = [...g.teams].sort((a,b)=>(b._regsAptitude||0)-(a._regsAptitude||0));
@@ -7564,6 +7565,7 @@ const Storage = {
     if(State.game.darkMode) document.documentElement.setAttribute('data-theme','dark');
     else document.documentElement.removeAttribute('data-theme');
     UI.toast('Save loaded', 'success');
+    if(typeof gtag!=='undefined'){ const _sg=State.game; gtag('event','save_loaded',{season:_sg.season,race_index:_sg.raceIndex,team:_sg.teams?.find(t=>t.id===_sg.playerTeamId)?.name||'?'}); }
   },
 
   restoreGame(data) {
@@ -7819,7 +7821,7 @@ const UI = {
       case'teams':          this.renderTeams(); break;
       case'standings-drivers': this.showStandingsTab(this._activeStandingsTab||'drivers'); break;
       case'history':        this.renderHistory('champions'); break;
-      case'guide':          this.renderGuide(); break;
+      case'guide':          this.renderGuide(); if(typeof gtag!=='undefined') gtag('event','guide_opened',{context:'in_game',season:State.game?.season||0}); break;
     }
   },
 
@@ -7894,6 +7896,7 @@ const UI = {
   },  // end renderLanding
 
   showLandingGuide(section) {
+    if(typeof gtag!=='undefined') gtag('event','guide_opened',{context:'landing',section:section||'general'});
     const existing = document.getElementById('landing-guide-overlay');
     if(existing) existing.remove();
     const overlay = document.createElement('div');
@@ -15021,6 +15024,7 @@ const GameActions = {
   },
 
   beginSeason(){
+    if(typeof gtag!=='undefined'){ const _bg=State.game; gtag('event','offseason_completed',{season:_bg.season,sponsors:((_bg.sponsors||[]).length),drivers:(_bg.drivers||[]).filter(d=>d.teamId===_bg.playerTeamId&&!d.isReserve&&!d.retired).length}); }
     const g=State.game;
     g._seasonEndProcessing = false;
     const status=this._syncOffseasonPending();
@@ -15184,6 +15188,7 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     const d=State.getDriver(driverId); if(!d)return;
     d.contract=years; d.salary=salary; d.morale=clamp(d.morale+15,50,98);
     UI.closeModal();
+    if(typeof gtag!=='undefined') gtag('event','driver_signed',{driver_name:d.name,rating:Math.round(d.rating||0),years:years,salary:salary,role:'renewal',season:State.game.season,race_number:State.game.raceIndex});
     UI.toast(`${d.name} signed ${years}yr at ${formatMoney(salary)}/yr`,'success');
     Storage.autosave();
     UI.renderDashboard();
@@ -15638,7 +15643,7 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       rd.preDriverStandings = _preDriverStandings;
       rd.preConstrStandings = _preConstrStandings;
       g.raceIndex++; Storage.autosave();
-      if(typeof gtag!=='undefined') gtag('event','race_simulated',{race_name:race.name,season:g.season,is_sprint:!!race.sprint});
+      if(typeof gtag!=='undefined') gtag('event','race_simulated',{race_name:race.name,season:g.season,is_sprint:!!race.sprint,race_number:g.raceIndex,team:g.teams.find(t=>t.id===g.playerTeamId)?.name||'?'});
       // Check if an upgrade window just unlocked
       const _qT=[7,14], _rd=g.raceIndex;
       if(_qT.includes(_rd)){
@@ -15889,6 +15894,7 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     // Apply negotiated terms
     sp.totalSeasons=years; sp.seasonsLeft=years; sp.value=value; sp.minPosition=minPos;
     // Now accept
+    if(typeof gtag!=='undefined'){ const _sp=(State.game.pendingSponsors||[])[idx]; if(_sp) gtag('event','sponsor_signed',{sponsor_type:_sp.type,sponsor_name:_sp.name,value:_sp.value,years:years,is_renewal:!!_sp.isRenewal}); }
     this.acceptSponsor(idx);
   },
   acceptSponsor(idx){
@@ -15979,6 +15985,7 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       d.isReserve=true; d.isProspect=false; d.isFreeAgent=false;
       if(!team.reserveIds) team.reserveIds=[];
       if(!team.reserveIds.includes(d.id)) team.reserveIds.push(d.id);
+      if(typeof gtag!=='undefined') gtag('event','driver_signed',{driver_name:d.name,rating:Math.round(d.rating||0),years:years,salary:salary,role:'reserve',season:State.game.season,race_number:State.game.raceIndex});
       UI.closeModal(); UI.toast(`${d.name} signed as reserve · ${years}yr at ${formatMoney(salary)}/yr`,'success');
     } else {
       const current=State.getPlayerDrivers();
@@ -15988,6 +15995,8 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       d.isProspect=false; d.isFreeAgent=false; d.isReserve=false;
       if(!team.driverIds) team.driverIds=[];
       if(!team.driverIds.includes(d.id)) team.driverIds.push(d.id);
+      if(typeof gtag!=='undefined') gtag('event','prospect_signed',{driver_name:d.name,potential:Math.round(d.potential||0),rating:Math.round(d.rating||0),series:d.prospectSeries||'F2',season:State.game.season});
+      if(typeof gtag!=='undefined') gtag('event','driver_signed',{driver_name:d.name,rating:Math.round(d.rating||0),years:years,salary:salary,role:'race',type:d.isProspect?'prospect':d.isFreeAgent?'free_agent':'other',season:State.game.season,race_number:State.game.raceIndex});
       UI.closeModal(); UI.toast(`${d.name} signed · ${years}yr at ${formatMoney(salary)}/yr`,'success');
     }
     Storage.autosave();
@@ -16022,6 +16031,7 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
   },
 
   swapReserveWithRace(reserveId, raceDriverId){
+    if(typeof gtag!=='undefined'){ const _r=State.getDriver(reserveId),_rd=State.getDriver(raceDriverId); gtag('event','reserve_swap',{promoted:_r?.name||'?',demoted:_rd?.name||'?',race_number:State.game.raceIndex,season:State.game.season}); }
     const reserve=State.getDriver(reserveId), raceDriver=State.getDriver(raceDriverId);
     if(!reserve || !raceDriver) return;
     const team=State.getPlayerTeam();
@@ -16112,6 +16122,7 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
 
   approachDriver(driverId, salaryOffer, contractYears){
     const d=State.getDriver(driverId); if(!d) return;
+    if(typeof gtag!=='undefined') gtag('event','driver_approached',{driver_name:d.name,driver_rating:Math.round(d.rating||0),salary:salaryOffer,years:contractYears,season:State.game.season});
     const g=State.game;
     const team=State.getPlayerTeam();
     if(!g.pendingNegotiations) g.pendingNegotiations=[];
