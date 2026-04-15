@@ -10836,7 +10836,7 @@ const personalSlots = getPersonalSponsorSlots(d);
             }).join('');
             const offerRows = offers.map(({sp,idx})=>{
               const badge=sp.isRenewal?'<span style="font-size:9px;background:rgba(37,99,235,.1);color:#1d4ed8;padding:1px 5px;border-radius:4px;font-weight:700">RENEWAL</span>':sp.isReplacement?'<span style="font-size:9px;background:rgba(245,158,11,.15);color:#b45309;padding:1px 5px;border-radius:4px;font-weight:700">REPLACEMENT</span>':'<span style="font-size:9px;background:rgba(22,163,74,.1);color:#15803d;padding:1px 5px;border-radius:4px;font-weight:700">NEW</span>';
-              const canSign = slotsUsed < cap && (!isLocked || sp.isRenewal);
+              const canSign = (slotsUsed < cap || sp.isRenewal) && (!isLocked || sp.isRenewal);
               const ref=sp.pendingSponsorId ?? idx;
               return '<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 10px;background:var(--bg3);border-radius:7px;border:1px dashed var(--bd);'+(canSign?'cursor:pointer;':'')+';opacity:'+(canSign?'1':'0.5')+'" '+(canSign?'onclick="GameActions.negotiateSponsor('+JSON.stringify(ref)+')"':'')+'>'                +'<div style="flex:1">'                  +'<div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap">'                    +'<span style="font-size:12px;font-weight:700">'+sp.name+'</span>'+badge                  +'</div>'                  +'<div style="font-size:10px;color:var(--tx3);margin-top:2px">'+(sp.totalSeasons||1)+'-yr deal · needs P'+(sp.minPosition||10)+(sp.isReplacement?' · below market rate':'')+(sp.linkedDriverName?' · 🔗 tied to '+sp.linkedDriverName:'')+'</div>'                +'</div>'                +'<div style="font-size:13px;font-weight:900;color:var(--amber);flex-shrink:0;margin-left:8px">+'+formatMoney(sp.value)+'/yr</div>'              +'</div>';
             }).join('');
@@ -11365,7 +11365,7 @@ const activeIncome=formatMoney(sumSponsorIncome(g.sponsors||[]));
             const offerRows=offers.map(({sp,idx})=>{
               const badge=sp.isRenewal?'<span style="font-size:9px;background:rgba(37,99,235,.1);color:#1d4ed8;padding:1px 5px;border-radius:4px;font-weight:700">RENEWAL</span>':sp.isReplacement?'<span style="font-size:9px;background:rgba(245,158,11,.15);color:#b45309;padding:1px 5px;border-radius:4px;font-weight:700">REPLACEMENT</span>':'<span style="font-size:9px;background:rgba(22,163,74,.1);color:#15803d;padding:1px 5px;border-radius:4px;font-weight:700">NEW</span>';
               const borderCol=sp.isRenewal?'rgba(37,99,235,.35)':sp.isReplacement?'var(--amber)':'var(--grn)';
-              const canSign=slotsUsed<cap&&(!isLocked||sp.isRenewal);
+              const canSign=(slotsUsed<cap||sp.isRenewal)&&(!isLocked||sp.isRenewal);
               const ref=sp.pendingSponsorId ?? idx;
               return '<div style="background:var(--bg3);border:1px dashed '+borderCol+';border-radius:8px;padding:9px 12px;'+(canSign?'cursor:pointer;':'opacity:0.5;')+';display:flex;justify-content:space-between;align-items:center" '+(canSign?'onclick="GameActions.negotiateSponsor('+JSON.stringify(ref)+')"':'')+'>'                +'<div><div style="display:flex;align-items:center;gap:5px;margin-bottom:2px"><span style="font-size:13px;font-weight:700">'+sp.name+'</span>'+badge+'</div>'                +'<div style="font-size:10px;color:var(--tx3)">'+(sp.totalSeasons||1)+'-yr · needs P'+(sp.minPosition||10)+(sp.linkedDriverName?' · 🔗 '+sp.linkedDriverName:'')+'</div></div>'                +'<div style="font-size:13px;font-weight:800;color:var(--amber)">+'+formatMoney(sp.value)+'/yr</div>'              +'</div>';
             }).join('');
@@ -11493,7 +11493,7 @@ const activeIncome=formatMoney(sumSponsorIncome(g.sponsors||[]));
         wins:(a,b)=>b.team.wins-a.team.wins,
         pods:(a,b)=>b.team.podiums-a.team.podiums,
         poles:(a,b)=>b.team.poles-a.team.poles,
-        dnf:(a,b)=>(b.team.dnfs||0)-(a.team.dnfs||0),
+        dnf:(a,b)=>(b.dnfs||0)-(a.dnfs||0),
         car:(a,b)=>b.team.carPerformance-a.team.carPerformance,
         team:(a,b)=>a.team.name.localeCompare(b.team.name),
       };
@@ -11510,14 +11510,14 @@ const activeIncome=formatMoney(sumSponsorIncome(g.sponsors||[]));
         <th ${thStyle('dnf')}>DNF${ss.col==='dnf'?(ss.dir<0?' ▼':' ▲'):''}</th>
         <th ${thStyle('car')}>Car${ss.col==='car'?(ss.dir<0?' ▼':' ▲'):''}</th>
       </tr></thead><tbody>
-      ${s.map(({team},i)=>`<tr class="${team.id===pid?'my-row':''} clickable-row" onclick="UI.showTeamModal('${team.id}')">
+      ${s.map(({team,dnfs},i)=>`<tr class="${team.id===pid?'my-row':''} clickable-row" onclick="UI.showTeamModal('${team.id}')">
         <td><span class="pos-cell p${i+1}">${i+1}</span></td>
         <td><strong style="color:${team.color}">${team.name}</strong></td>
         <td class="pts-cell">${team.seasonPoints}</td>
         <td style="font-family:var(--fm)">${team.wins}</td>
         <td style="font-family:var(--fm)">${team.podiums}</td>
         <td style="font-family:var(--fm)">${team.poles}</td>
-        <td style="font-family:var(--fm)">${team.dnfs||0}</td>
+        <td style="font-family:var(--fm)">${dnfs}</td>
         <td style="font-family:var(--fm);color:var(--tx3)">${Math.round(team.carPerformance)}</td>
       </tr>`).join('')}</tbody></table></div>
       <div style="font-size:11px;color:var(--tx3);padding:6px 4px">Click any row to view team profile</div>`;
@@ -11528,7 +11528,7 @@ const activeIncome=formatMoney(sumSponsorIncome(g.sponsors||[]));
         wins:(a,b)=>b.driver.wins-a.driver.wins,
         pods:(a,b)=>(b.driver.podiums||0)-(a.driver.podiums||0),
         poles:(a,b)=>b.driver.poles-a.driver.poles,
-        dnf:(a,b)=>(b.driver.dnfs||0)-(a.driver.dnfs||0),
+        dnf:(a,b)=>(b.dnfs||0)-(a.dnfs||0),
         fl:(a,b)=>(b.driver.fastestLaps||0)-(a.driver.fastestLaps||0),
         ovr:(a,b)=>b.driver.rating-a.driver.rating,
         age:(a,b)=>a.driver.age-b.driver.age,
@@ -11550,7 +11550,7 @@ const activeIncome=formatMoney(sumSponsorIncome(g.sponsors||[]));
         <th ${thStyle('ovr')}>OVR${ss.col==='ovr'?(ss.dir<0?' ▼':' ▲'):''}</th>
         <th ${thStyle('age')}>Age${ss.col==='age'?(ss.dir<0?' ▼':' ▲'):''}</th>
       </tr></thead><tbody>
-      ${s.map(({driver,isSubstitute},i)=>{
+      ${s.map(({driver,isSubstitute,dnfs},i)=>{
         const t=driver.teamId?State.getTeam(driver.teamId):null;
         const subBadge=isSubstitute?'<span style="font-size:9px;background:rgba(245,158,11,.15);color:#b45309;padding:1px 5px;border-radius:4px;font-weight:700;margin-left:4px" title="Reserve substitute — points count for constructor only">SUB</span>':'';
         return `<tr class="${pids.includes(driver.id)?'my-row':''} clickable-row" onclick="UI.showDriverModal(${driver.id})">
@@ -11561,7 +11561,7 @@ const activeIncome=formatMoney(sumSponsorIncome(g.sponsors||[]));
           <td style="font-family:var(--fm)">${driver.wins}</td>
           <td style="font-family:var(--fm)">${driver.podiums||0}</td>
           <td style="font-family:var(--fm)">${driver.poles}</td>
-          <td style="font-family:var(--fm)">${driver.dnfs||0}</td>
+          <td style="font-family:var(--fm)">${dnfs}</td>
           <td style="font-family:var(--fm)">${driver.fastestLaps||0}</td>
           <td style="font-family:var(--fm);color:var(--tx3)">${Math.round(driver.rating)}</td>
           <td style="font-family:var(--fm);color:var(--tx3)">${driver.age}</td>
@@ -11777,7 +11777,15 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     const g = State.game;
     const race = rd.race;
     const results = rd.results || [];
-    const myIds = State.getPlayerRacingDriverIds();
+    const raceSubIds = new Set([
+      ...(((race && Array.isArray(race._raceSubIds)) ? race._raceSubIds : [])),
+      ...(((g.lastRaceResult && g.lastRaceResult.race && Array.isArray(g.lastRaceResult.race._raceSubIds)) ? g.lastRaceResult.race._raceSubIds : []))
+    ].map(String));
+    const myIds = Array.from(new Set([
+      ...((State.getPlayerRacingDriverIds ? State.getPlayerRacingDriverIds() : State.getPlayerDrivers().map(d=>d.id)).map(String)),
+      ...raceSubIds
+    ]));
+    const myIdSet = new Set(myIds);
     const ptid = g.playerTeamId;
     const myTeam = State.getPlayerTeam();
 
@@ -11789,11 +11797,11 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     });
 
     const winner = sorted.find(r=>!r.dnf && r.position===1);
-    const myResults = sorted.filter(r=>myIds.includes(r.driverId));
+    const myResults = sorted.filter(r=>myIdSet.has(String(r.driverId)));
     const dnfs = sorted.filter(r=>r.dnf);
     const flDriver = sorted.find(r=>r.fastestLap);
-    const isMyWin = winner && myIds.includes(winner.driverId);
-    const isMyTeamOnPodium = sorted.filter(r=>!r.dnf && r.position<=3).some(r=>myIds.includes(r.driverId));
+    const isMyWin = winner && myIdSet.has(String(winner.driverId));
+    const isMyTeamOnPodium = sorted.filter(r=>!r.dnf && r.position<=3).some(r=>myIdSet.has(String(r.driverId)));
 
     // Championship movement
     const preD = rd.preDriverStandings || [];
@@ -11810,10 +11818,11 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     const constructorTitleStatus = State.getConstructorTitleStatus(g.raceIndex);
 
     const driverMovement = myIds.map(id=>{
-      const pre = preD.find(s=>s.id===id);
-      const postIdx = postDStandings.findIndex(s=>s.driver.id===id);
+      const key = String(id);
+      const pre = preD.find(s=>String(s.id)===key);
+      const postIdx = postDStandings.findIndex(s=>String(s.driver.id)===key);
       const post = postIdx>=0 ? {pos:postIdx+1, pts:postDStandings[postIdx].driver.seasonPoints} : null;
-      const raceResult = results.find(r=>r.driverId===id);
+      const raceResult = results.find(r=>String(r.driverId)===key);
       if(!pre||!post) return null;
       return {name:pre.name, prePos:pre.pos, postPos:post.pos, prePts:pre.pts, postPts:post.pts, gained:pre.pos-post.pos, ptsGained:post.pts-pre.pts, racePts:raceResult?.points||0, racePos:raceResult?.position, dnf:raceResult?.dnf};
     }).filter(Boolean);
@@ -11828,9 +11837,9 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
 
     // Leader gap for championship narrative
     const driverLeader = postDStandings[0];
-    const myDriverInChamp = myIds.map(id=>postDStandings.find(s=>s.driver.id===id)).filter(Boolean);
+    const myDriverInChamp = myIds.map(id=>postDStandings.find(s=>String(s.driver.id)===String(id))).filter(Boolean);
     const bestMyDriver = myDriverInChamp.sort((a,b)=>a.driver.seasonPoints-b.driver.seasonPoints).pop();
-    const gapToLeader = driverLeader && bestMyDriver && driverLeader.driver.id !== bestMyDriver.driver.id
+    const gapToLeader = driverLeader && bestMyDriver && String(driverLeader.driver.id) !== String(bestMyDriver.driver.id)
       ? driverLeader.driver.seasonPoints - bestMyDriver.driver.seasonPoints : 0;
 
     // Race narrative headline
@@ -11968,7 +11977,7 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     // Top 5 result rows
     const top8 = sorted.filter(r=>!r.dnf).slice(0,8);
     const top8Html = top8.map(r=>{
-      const mine = myIds.includes(r.driverId);
+      const mine = myIdSet.has(String(r.driverId));
       const medal = r.position===1?'🥇':r.position===2?'🥈':r.position===3?'🥉':'';
       return `<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--bd);font-size:12px;${mine?'background:rgba(192,57,43,.04);margin:0 -14px;padding:5px 14px':''}">
         <span style="font-family:var(--fm);font-weight:700;width:20px;color:${r.position<=3?'#f59e0b':'var(--tx3)'};text-align:center">${medal||r.position}</span>
@@ -12495,7 +12504,7 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
           // My driver DNFs when both retire
           const myDnfs = myResults.filter(r=>r.dnf);
           // Rival DNFs — only mention if my drivers are fine, otherwise we already covered DNFs above
-          const rivalDnfs = dnfs.filter(r=>!myIds.includes(r.driverId));
+      const rivalDnfs = dnfs.filter(r=>!myIdSet.has(String(r.driverId)));
           if(myDnfs.length === 0) {
             // No my-driver DNFs, call out notable rival retirements
             if(rivalDnfs.length >= 2) narrativeParts.push('A lot of cars did not make the finish today. '+rivalDnfs.slice(0,2).map(r=>r.driverName.split(' ').pop()).join(' and ')+' were among those out early. ');
@@ -12575,7 +12584,7 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
           <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--tx3);margin-bottom:7px">Podium</div>
           <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:7px">
             ${sorted.filter(r=>!r.dnf&&r.position<=3).map(r=>{
-              const mine = myIds.includes(r.driverId);
+              const mine = myIdSet.has(String(r.driverId));
               const medals = ['🥇','🥈','🥉'];
               return `<div style="background:${mine?'rgba(192,57,43,.07)':'var(--bg2)'};border:1px solid ${mine?'rgba(192,57,43,.3)':'var(--bd)'};border-radius:9px;padding:10px 8px;text-align:center">
                 <div style="font-size:20px">${medals[r.position-1]}</div>
@@ -16040,7 +16049,7 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     const tierCaps={'Title':1,'Works':1,'Primary':2,'Partner':1,'Secondary':3,'Technical':3,'Associate':5};
     const cap=tierCaps[sp.type]||3;
     const existing=(g.sponsors||[]).filter(s=>s.type===sp.type).length;
-    if(existing>=cap && !(sp.type==='Title' && sp.isRenewal)){
+    if(existing>=cap && !sp.isRenewal){
       UI.toast(`Already at the limit for ${sp.type} sponsors (max ${cap})`, 'warning');
       return;
     }
