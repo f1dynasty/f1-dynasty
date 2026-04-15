@@ -2658,7 +2658,7 @@ return {id,name:`${fn} ${ln}`,age:baseAge,nationality:nat,teamId:teamId||null,ra
       const counts = Array(20).fill(0); // P1-P20
       (g.calendar||[]).forEach(r => {
         if(r.raceDone && r.raceResult) {
-          const res = r.raceResult.find(x=>x.driverId===driverId&&!x.dnf);
+          const res = r.raceResult.find(x=>String(x.driverId)===String(driverId)&&!x.dnf);
           if(res && res.position >= 1 && res.position <= 20) counts[res.position-1]++;
         }
       });
@@ -2669,7 +2669,7 @@ return {id,name:`${fn} ${ln}`,age:baseAge,nationality:nat,teamId:teamId||null,ra
       if(dnfCache[driverId] !== undefined) return dnfCache[driverId];
       let dnfs = 0;
       (g.calendar||[]).forEach(r => {
-        if(r.raceDone && r.raceResult && r.raceResult.some(x=>x.driverId===driverId&&x.dnf)) dnfs++;
+        if(r.raceDone && r.raceResult && r.raceResult.some(x=>String(x.driverId)===String(driverId)&&x.dnf)) dnfs++;
       });
       dnfCache[driverId] = dnfs;
       return dnfs;
@@ -2695,7 +2695,7 @@ return {id,name:`${fn} ${ln}`,age:baseAge,nationality:nat,teamId:teamId||null,ra
       const counts = Array(20).fill(0);
       (g.calendar||[]).forEach(r => {
         if(r.raceDone && r.raceResult) {
-          r.raceResult.filter(x=>x.teamId===teamId&&!x.dnf).forEach(x=>{
+          r.raceResult.filter(x=>String(x.teamId)===String(teamId)&&!x.dnf).forEach(x=>{
             if(x.position >= 1 && x.position <= 20) counts[x.position-1]++;
           });
         }
@@ -2707,7 +2707,7 @@ return {id,name:`${fn} ${ln}`,age:baseAge,nationality:nat,teamId:teamId||null,ra
       if(dnfCache[teamId] !== undefined) return dnfCache[teamId];
       let dnfs = 0;
       (g.calendar||[]).forEach(r => {
-        if(r.raceDone && r.raceResult) dnfs += r.raceResult.filter(x=>x.teamId===teamId&&x.dnf).length;
+        if(r.raceDone && r.raceResult) dnfs += r.raceResult.filter(x=>String(x.teamId)===String(teamId)&&x.dnf).length;
       });
       dnfCache[teamId] = dnfs;
       return dnfs;
@@ -10154,7 +10154,7 @@ const personalSlots = getPersonalSponsorSlots(d);
       <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--tx3);margin-bottom:8px">Choose deal structure</div>
       <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px">
         ${deals.map(deal=>`
-          <button onclick="GameActions.confirmSponsorDeal(${JSON.stringify(offerId)},${deal.years},${deal.value},${deal.pos})"
+          <button onclick='GameActions.confirmSponsorDeal(${JSON.stringify(offerId)},${deal.years},${deal.value},${deal.pos})'
             style="text-align:left;padding:11px 13px;border:2px solid ${deal.highlight?'var(--red)':deal.risky?'rgba(245,158,11,.5)':'var(--bd)'};border-radius:9px;background:${deal.highlight?'rgba(192,57,43,.04)':'var(--bg2)'};cursor:pointer;width:100%">
             <div style="display:flex;justify-content:space-between;align-items:flex-start">
               <div>
@@ -10838,7 +10838,7 @@ const personalSlots = getPersonalSponsorSlots(d);
               const badge=sp.isRenewal?'<span style="font-size:9px;background:rgba(37,99,235,.1);color:#1d4ed8;padding:1px 5px;border-radius:4px;font-weight:700">RENEWAL</span>':sp.isReplacement?'<span style="font-size:9px;background:rgba(245,158,11,.15);color:#b45309;padding:1px 5px;border-radius:4px;font-weight:700">REPLACEMENT</span>':'<span style="font-size:9px;background:rgba(22,163,74,.1);color:#15803d;padding:1px 5px;border-radius:4px;font-weight:700">NEW</span>';
               const canSign = (slotsUsed < cap || sp.isRenewal) && (!isLocked || sp.isRenewal);
               const ref=sp.pendingSponsorId ?? idx;
-              return '<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 10px;background:var(--bg3);border-radius:7px;border:1px dashed var(--bd);'+(canSign?'cursor:pointer;':'')+';opacity:'+(canSign?'1':'0.5')+'" '+(canSign?'onclick="GameActions.negotiateSponsor('+JSON.stringify(ref)+')"':'')+'>'                +'<div style="flex:1">'                  +'<div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap">'                    +'<span style="font-size:12px;font-weight:700">'+sp.name+'</span>'+badge                  +'</div>'                  +'<div style="font-size:10px;color:var(--tx3);margin-top:2px">'+(sp.totalSeasons||1)+'-yr deal · needs P'+(sp.minPosition||10)+(sp.isReplacement?' · below market rate':'')+(sp.linkedDriverName?' · 🔗 tied to '+sp.linkedDriverName:'')+'</div>'                +'</div>'                +'<div style="font-size:13px;font-weight:900;color:var(--amber);flex-shrink:0;margin-left:8px">+'+formatMoney(sp.value)+'/yr</div>'              +'</div>';
+              return '<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 10px;background:var(--bg3);border-radius:7px;border:1px dashed var(--bd);'+(canSign?'cursor:pointer;':'')+';opacity:'+(canSign?'1':'0.5')+'" '+(canSign?'onclick=\'GameActions.negotiateSponsor('+JSON.stringify(ref)+')\'':'')+'>'                +'<div style="flex:1">'                  +'<div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap">'                    +'<span style="font-size:12px;font-weight:700">'+sp.name+'</span>'+badge                  +'</div>'                  +'<div style="font-size:10px;color:var(--tx3);margin-top:2px">'+(sp.totalSeasons||1)+'-yr deal · needs P'+(sp.minPosition||10)+(sp.isReplacement?' · below market rate':'')+(sp.linkedDriverName?' · 🔗 tied to '+sp.linkedDriverName:'')+'</div>'                +'</div>'                +'<div style="font-size:13px;font-weight:900;color:var(--amber);flex-shrink:0;margin-left:8px">+'+formatMoney(sp.value)+'/yr</div>'              +'</div>';
             }).join('');
             const lockedMsg = isLocked ? '<div style="font-size:10px;color:var(--tx3);padding:6px 8px;background:var(--bg3);border-radius:6px;border:1px solid var(--bd)">🔒 New title sponsor offers unlock after your first Constructor Championship. Renewal offers can still be accepted when available.</div>' : '';
             return '<div style="margin-bottom:14px">'              +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">'                +'<div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--tx2)">'+type+'</div>'                +'<div style="display:flex;align-items:center;gap:6px">'                  +(typeIncome>0?'<span style="font-size:10px;color:var(--grn);font-weight:700">+'+formatMoney(typeIncome)+'/yr</span>':'')                  +'<span style="font-size:10px;font-weight:700;color:'+slotColor+'">'+slotsUsed+'/'+cap+' slots</span>'                +'</div>'              +'</div>'              +'<div style="display:flex;flex-direction:column;gap:6px">'                +(signedRows||'')+(emptySlotHtml||'')+(lockedMsg)+(offerRows||(signed.length===0&&!isLocked?'<div style="font-size:10px;color:var(--tx3);padding:6px 0">No '+type.toLowerCase()+' offers this offseason.</div>':''))              +'</div>'            +'</div>';
@@ -11367,7 +11367,7 @@ const activeIncome=formatMoney(sumSponsorIncome(g.sponsors||[]));
               const borderCol=sp.isRenewal?'rgba(37,99,235,.35)':sp.isReplacement?'var(--amber)':'var(--grn)';
               const canSign=(slotsUsed<cap||sp.isRenewal)&&(!isLocked||sp.isRenewal);
               const ref=sp.pendingSponsorId ?? idx;
-              return '<div style="background:var(--bg3);border:1px dashed '+borderCol+';border-radius:8px;padding:9px 12px;'+(canSign?'cursor:pointer;':'opacity:0.5;')+';display:flex;justify-content:space-between;align-items:center" '+(canSign?'onclick="GameActions.negotiateSponsor('+JSON.stringify(ref)+')"':'')+'>'                +'<div><div style="display:flex;align-items:center;gap:5px;margin-bottom:2px"><span style="font-size:13px;font-weight:700">'+sp.name+'</span>'+badge+'</div>'                +'<div style="font-size:10px;color:var(--tx3)">'+(sp.totalSeasons||1)+'-yr · needs P'+(sp.minPosition||10)+(sp.linkedDriverName?' · 🔗 '+sp.linkedDriverName:'')+'</div></div>'                +'<div style="font-size:13px;font-weight:800;color:var(--amber)">+'+formatMoney(sp.value)+'/yr</div>'              +'</div>';
+              return '<div style="background:var(--bg3);border:1px dashed '+borderCol+';border-radius:8px;padding:9px 12px;'+(canSign?'cursor:pointer;':'opacity:0.5;')+';display:flex;justify-content:space-between;align-items:center" '+(canSign?'onclick=\'GameActions.negotiateSponsor('+JSON.stringify(ref)+')\'':'')+'>'                +'<div><div style="display:flex;align-items:center;gap:5px;margin-bottom:2px"><span style="font-size:13px;font-weight:700">'+sp.name+'</span>'+badge+'</div>'                +'<div style="font-size:10px;color:var(--tx3)">'+(sp.totalSeasons||1)+'-yr · needs P'+(sp.minPosition||10)+(sp.linkedDriverName?' · 🔗 '+sp.linkedDriverName:'')+'</div></div>'                +'<div style="font-size:13px;font-weight:800;color:var(--amber)">+'+formatMoney(sp.value)+'/yr</div>'              +'</div>';
             }).join('');
             const slotCol=slotsUsed>=cap?'var(--red)':slotsUsed>0?'var(--grn)':'var(--tx3)';
             return '<div style="margin-bottom:12px">'              +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">'                +'<span style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--tx2)">'+type+'</span>'                +'<div style="display:flex;gap:8px;align-items:center">'                  +(typeIncome?'<span style="font-size:10px;color:var(--grn);font-weight:700">+'+formatMoney(typeIncome)+'/yr</span>':'')                  +'<span style="font-size:10px;font-weight:700;color:'+slotCol+'">'+slotsUsed+'/'+cap+' slots</span>'                +'</div>'              +'</div>'              +'<div style="display:flex;flex-direction:column;gap:5px">'                +(isLocked?'<div style="font-size:10px;color:var(--tx3);padding:6px 8px;background:var(--bg3);border-radius:6px">🔒 Requires 1 Constructor Championship to unlock</div>':'')                +signedRows+offerRows              +'</div>'            +'</div>';
@@ -11777,15 +11777,6 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     const g = State.game;
     const race = rd.race;
     const results = rd.results || [];
-    const raceSubIds = new Set([
-      ...(((race && Array.isArray(race._raceSubIds)) ? race._raceSubIds : [])),
-      ...(((g.lastRaceResult && g.lastRaceResult.race && Array.isArray(g.lastRaceResult.race._raceSubIds)) ? g.lastRaceResult.race._raceSubIds : []))
-    ].map(String));
-    const myIds = Array.from(new Set([
-      ...((State.getPlayerRacingDriverIds ? State.getPlayerRacingDriverIds() : State.getPlayerDrivers().map(d=>d.id)).map(String)),
-      ...raceSubIds
-    ]));
-    const myIdSet = new Set(myIds);
     const ptid = g.playerTeamId;
     const myTeam = State.getPlayerTeam();
 
@@ -11797,11 +11788,13 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     });
 
     const winner = sorted.find(r=>!r.dnf && r.position===1);
-    const myResults = sorted.filter(r=>myIdSet.has(String(r.driverId)));
+    const myResults = sorted.filter(r=>String(r.teamId)===String(ptid));
     const dnfs = sorted.filter(r=>r.dnf);
     const flDriver = sorted.find(r=>r.fastestLap);
-    const isMyWin = winner && myIdSet.has(String(winner.driverId));
-    const isMyTeamOnPodium = sorted.filter(r=>!r.dnf && r.position<=3).some(r=>myIdSet.has(String(r.driverId)));
+    const myIds = myResults.map(r=>String(r.driverId));
+    const myIdSet = new Set(myIds);
+    const isMyWin = winner && String(winner.teamId)===String(ptid);
+    const isMyTeamOnPodium = sorted.filter(r=>!r.dnf && r.position<=3).some(r=>String(r.teamId)===String(ptid));
 
     // Championship movement
     const preD = rd.preDriverStandings || [];
