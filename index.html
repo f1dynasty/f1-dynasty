@@ -10610,7 +10610,7 @@ const personalSlots = getPersonalSponsorSlots(d);
     race._wrConsumedPromptKeys = {};
     race._wrConsumedPitStops = {};
     race._wrPitPromptSuppression = {};
-    WR.events=(race.sprintSimEvents&&race.sprintSimEvents.length)?race.sprintSimEvents:(race.sprintLapEvents||[]); WR.idx=0; WR.raceIdx=raceIdx; WR.race=race; WR.paused=false; WR.timer=null; WR.isSprint=true; WR.dnfs={}; WR.retiredIds={}; WR._lastFeedSig=null; WR._podiumBridgeAdded={}; WR.resultState=(race.sprintResult||[]).map(function(r){ return Object.assign({}, r); });
+    WR.events=(race.sprintSimEvents&&race.sprintSimEvents.length)?race.sprintSimEvents:(race.sprintLapEvents||[]); WR.idx=0; WR.raceIdx=raceIdx; WR.race=race; WR.paused=false; WR.timer=null; WR.isSprint=true; WR.dnfs={}; WR.retiredIds={}; WR._lastFeedSig=null; WR._podiumBridgeAdded={}; WR.resultState=(race.sprintResult||[]).map(function(r){ return Object.assign({}, r); }); WR.tyreState={};
     // Seed live positions from sprint quali grid
     WR.lastPos = {}; WR.prevPos = null;
     const sprintGrid = race.sprintQualiResult || race.qualiResult || [];
@@ -10647,7 +10647,7 @@ const personalSlots = getPersonalSponsorSlots(d);
         ? race.lapEvents
         : Sim._generateLapSimEvents(race, race.raceResult||[], race.weather||'dry', !!race.hadSafetyCar, race.rainStartLap||null);
     WR.idx=0; WR.raceIdx=raceIdx; WR.race=race; WR.paused=false; WR.timer=null; WR.isSprint=false; WR.dnfs={}; WR.retiredIds={}; WR._lastFeedSig=null; WR._podiumBridgeAdded={}; WR.resultState=(race.raceResult||[]).map(function(r){ return Object.assign({}, r); });
-    WR.pitDecisions=[]; WR.pitDecisionBonus=0;
+    WR.pitDecisions=[]; WR.pitDecisionBonus=0; WR.tyreState={};
     WR.weatherDecisions=[]; WR.weatherCallBonus=0; WR.weatherCalls=[]; WR.positionDeltas={}; WR.driverDecisionScores={}; WR._baselinePosByDriver={};
     WR._bonusApplied=null;
     WR._baselinePos=null;
@@ -10660,6 +10660,12 @@ const personalSlots = getPersonalSponsorSlots(d);
     // Fallback: fill any missing from qualiResult
     const qualiGrid = race.qualiResult || [];
     qualiGrid.forEach(function(r){ if(!WR.lastPos[r.driverId]) WR.lastPos[r.driverId] = r.position; });
+    const initialLapState = Array.isArray(race.lapStates) && race.lapStates.length ? race.lapStates[0] : null;
+    if(initialLapState && Array.isArray(initialLapState.order)) {
+      initialLapState.order.forEach(function(o){
+        if(o && !o.dnf) WR.tyreState[o.driverId] = {compound:o.compound||'medium', age:o.tyreAge||0};
+      });
+    }
     document.getElementById('wr-race-name').textContent = race.name;
     document.getElementById('wr-lap-counter').textContent = race.location+', '+race.country+' · '+race.laps+' laps';
     document.getElementById('wr-feed').innerHTML = '';
@@ -10708,6 +10714,7 @@ const personalSlots = getPersonalSponsorSlots(d);
       // Clear any open pit/weather decision countdowns
       (WR.pitDecisions||[]).forEach(d=>{ if(d.autoTimer) clearInterval(d.autoTimer); d.autoTimer=null; });
       (WR.weatherDecisions||[]).forEach(d=>{ if(d.autoTimer) clearInterval(d.autoTimer); d.autoTimer=null; });
+      WR.tyreState={};
     }
     document.getElementById('watch-race-modal').style.display='none';
     UI.renderDashboard(); UI.renderSchedule();
@@ -17043,6 +17050,15 @@ window._wrTick = function() {
   const eventPositions = (ev && ev.driverPositions)
     ? Object.assign({}, ev.driverPositions)
     : null;
+  if(!WR.isSprint && Array.isArray(race.lapStates) && race.lapStates.length && ev && ev.lap != null) {
+    const lapState = race.lapStates[Math.max(0, Math.min(race.lapStates.length - 1, (ev.lap|0) - 1))];
+    WR.tyreState = {};
+    if(lapState && Array.isArray(lapState.order)) {
+      lapState.order.forEach(function(o){
+        if(o && !o.dnf) WR.tyreState[o.driverId] = {compound:o.compound||'medium', age:o.tyreAge||0};
+      });
+    }
+  }
   document.getElementById('wr-lap-counter').textContent = 'Lap '+ev.lap+' / '+race.laps;
 
   // ── PIT DECISION — pause and ask player ──────────────────────
