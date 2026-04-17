@@ -731,8 +731,8 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:18px;max-width:320px;padding:14px 16px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
           <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">Latest Update</div>
-          <div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.1.9 is live</div>
-          <div style="font-size:12px;line-height:1.45;color:#666">Setup overhaul — engineers give a range hint, not the exact ideal. Setup knowledge resets on new regs and recovers over seasons. Plus tyre data on Watch Race, race-by-race results grid, backmarker catch-up boost, and five bug fixes.</div>
+          <div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.2.0 is live</div>
+          <div style="font-size:12px;line-height:1.45;color:#666">Sprint weekend schedule modal fixed — correct buttons now show at every stage of a sprint weekend.</div>
         </div>
       </div>
     </div>
@@ -785,7 +785,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </button>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.1.9</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.2.0</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -1148,6 +1148,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
           <button class="tab-pill" onclick="UI.showHistoryTab('goat')">GOAT</button>
           <button class="tab-pill" onclick="UI.showHistoryTab('records')">Records</button>
           <button class="tab-pill" onclick="UI.showHistoryTab('dynasty')">Dynasty</button>
+          <button class="tab-pill" onclick="UI.showHistoryTab('grid')">Race Grid</button>
           <button class="tab-pill" onclick="UI.showHistoryTab('achievements')">Achievements</button>
         </div>
       </div>
@@ -2362,7 +2363,7 @@ const Editor = {
     if(!list[index]) return;
     list.splice(index, 1);
     this.persist();
-    if(typeof UI !== 'undefined') UI.renderLanding();
+    if(typeof UI !== 'undefined') UI.renderEditor();
   },
   copyJson() {
     this._commitActiveField();
@@ -5972,6 +5973,13 @@ events.push({lap:r.dnfLap||laps-5, type:'dnf', driverId:r.driverId, text:`⭐ ${
     const seasonH2H = playerSeasonDrivers.length===2 ? UI._buildQualiH2H(playerSeasonDrivers[0], playerSeasonDrivers[1], g.calendar||[]) : null;
     const seasonStandingsSnapshot = {
       season: g.season,
+      raceGrid: (g.calendar||[]).filter(r=>r.raceDone).map(r=>({
+        name: r.name,
+        location: r.location||r.name.split(' ')[0],
+        sprint: !!r.sprint,
+        raceResult: (r.raceResult||[]).map(x=>({driverId:x.driverId,position:x.position,dnf:x.dnf||false,teamId:x.teamId})),
+        sprintResult: r.sprint?(r.sprintResult||[]).map(x=>({driverId:x.driverId,position:x.position,dnf:x.dnf||false,teamId:x.teamId})):undefined
+      })),
       drivers: driverStandings.map((s, idx)=>({
         position: idx+1,
         driverId: s.driver.id,
@@ -8194,6 +8202,7 @@ const UI = {
             </div>
           </summary>
           <div style="padding:12px;border-top:1px solid var(--bd);display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px">
+            <div style="grid-column:1/-1;font-size:10px;color:var(--tx3);margin-bottom:2px">Stats guide: <strong>Rating</strong> = overall OVR (auto-calculated). <strong>Potential</strong> = development ceiling. <strong>Consistency</strong> = floor reliability. <strong>Aggression</strong> affects tyre wear &amp; overtaking. <strong>Marketability</strong> unlocks sponsor slots (80+).</div>
             ${input('Name','name',driver.name)}
             ${input('Nationality','nationality',driver.nationality)}
             ${select('Trait','trait',driver.trait||'consistent',['consistent','technical','aggressive','qualifier','rainy','overtaker'])}
@@ -8523,7 +8532,7 @@ const UI = {
         <div class="race-sub">${race.location}, ${race.country} · Round ${n}${sprintStep?'  ·  <strong style="color:var(--red)">'+sprintStep+'</strong>':''}</div>
         ${race.circuitType?`<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">
           <span style="font-size:11px;background:var(--bg3);border:1px solid var(--bd);border-radius:20px;padding:2px 8px;font-weight:600">${race.circuitType==='power'?'⚡ Power Circuit':race.circuitType==='technical'?'⚙️ Technical Circuit':race.circuitType==='street'?'🏙️ Street Circuit':'⚖️ Balanced Circuit'}</span>
-          ${(()=>{const team=State.getPlayerTeam();if(State.game.autoAero) return '<span style="font-size:11px;background:var(--bg3);border:1px solid var(--bd);border-radius:20px;padding:2px 8px;font-weight:700;color:var(--grn)">🤖 Auto setup</span>';const df=team?.downforce||50;const _h=State.getSetupRangeHint(team.id,race.idealDownforce||50);const withinR=df>=_h.low&&df<=_h.high;const veryCloseR=Math.abs(df-(race.idealDownforce||50))<=4;const col=veryCloseR?'var(--grn)':withinR?'var(--grn)':df<_h.low-10||df>_h.high+10?'var(--red)':'var(--amber)';const lbl=veryCloseR?'✓ Perfect setup':withinR?'✓ Good setup':df<_h.low-10||df>_h.high+10?'✗ Fix setup':'~ Adjust setup';return '<span onclick="UI.showView(\'car\')" style="font-size:11px;background:var(--bg3);border:1px solid '+col+';border-radius:20px;padding:2px 8px;font-weight:700;color:'+col+';cursor:pointer" title="Tap to adjust aero">'+lbl+'</span>'})()}
+          ${(()=>{const team=State.getPlayerTeam();if(State.game.autoAero) return '<span style="font-size:11px;background:var(--bg3);border:1px solid var(--bd);border-radius:20px;padding:2px 8px;font-weight:700;color:var(--grn)">🤖 Auto setup</span>';const df=team?.downforce||50;const _h=State.getSetupRangeHint(team.id,race.idealDownforce||50);const withinR=df>=_h.low&&df<=_h.high;const veryCloseR=Math.abs(df-(race.idealDownforce||50))<=4;const revealed=race.qualiDone||race.raceDone;if(revealed){const col=veryCloseR?'var(--grn)':withinR?'var(--grn)':df<_h.low-10||df>_h.high+10?'var(--red)':'var(--amber)';const lbl=veryCloseR?'✓ Perfect setup':withinR?'✓ Good setup':df<_h.low-10||df>_h.high+10?'✗ Poor setup':'~ Adjusted setup';return '<span onclick="UI.showView(\'car\')" style="font-size:11px;background:var(--bg3);border:1px solid '+col+';border-radius:20px;padding:2px 8px;font-weight:700;color:'+col+';cursor:pointer" title="Tap to adjust aero">'+lbl+'</span>';}const inRange=withinR||veryCloseR;const col=inRange?'var(--grn)':df<_h.low-10||df>_h.high+10?'var(--red)':'var(--amber)';const lbl=inRange?'✓ In range':df<_h.low-10||df>_h.high+10?'✗ Out of range':'~ Near range';return '<span onclick="UI.showView(\'car\')" style="font-size:11px;background:var(--bg3);border:1px solid '+col+';border-radius:20px;padding:2px 8px;font-weight:700;color:'+col+';cursor:pointer" title="Outcome revealed after qualifying">'+lbl+'</span>';})()}
         </div>`:''}
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
           <span style="font-size:11px;background:var(--bg3);padding:3px 8px;border-radius:10px;font-weight:600">${circuitType.icon} ${circuitType.label}</span>
@@ -9493,10 +9502,11 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
             const knowledgeColor = knowledge >= 85 ? 'var(--grn)' : knowledge >= 65 ? 'var(--amber)' : 'var(--red)';
             const withinRange = df >= hint.low && df <= hint.high;
             const veryClose = Math.abs(df - race.idealDownforce) <= 4;
-            const matchBadge = veryClose ? '🟢 Perfect — pace bonus'
-              : withinRange ? '🟢 Within engineers range'
-              : df < hint.low ? '🟠 Engineers suggest higher downforce'
-              : '🟠 Engineers suggest lower downforce';
+            const revealed = race.qualiDone || race.raceDone;
+            const matchBadge = revealed
+              ? (veryClose ? '🟢 Perfect — pace bonus' : withinRange ? '🟢 Good setup' : df < hint.low ? '🔴 Too low — pace lost' : '🔴 Too high — pace lost')
+              : (withinRange||veryClose ? '🟢 In range' : df < hint.low ? '🟠 Engineers suggest higher downforce' : '🟠 Engineers suggest lower downforce');
+            const badgeNote = revealed ? '' : ' <span style="font-size:9px;color:var(--tx3)">(outcome revealed after qualifying)</span>';
             return '<div id="df-match-badge" style="background:var(--bg3);border-radius:8px;padding:10px 12px;font-size:11px;line-height:1.45;margin-bottom:10px">'
               + '<div style="font-weight:700;margin-bottom:4px">Next race: '+race.name+'</div>'
               + '<div style="margin-bottom:6px;color:var(--tx2)">'+circuitTip+'</div>'
@@ -9505,7 +9515,7 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
               + '<strong>'+hint.low+' – '+hint.high+'</strong>'
               + '<span style="font-size:10px;color:'+knowledgeColor+'"> · '+knowledgeLabel+'</span>'
               + '</div>'
-              + '<div>Your setup: <strong>'+df+'</strong> · '+matchBadge+'</div>'
+              + '<div>Your setup: <strong>'+df+'</strong> · '+matchBadge+badgeNote+'</div>'
               + '</div>';
           })()}
           <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:700;color:var(--tx3);margin-bottom:4px">
@@ -9745,11 +9755,12 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
     if(isCur){
       simSection = `<div class="race-detail-section">
         <div class="race-sim-btns">
-          ${race.sprint&&race.qualiDone&&!race.sprintDone?`
+          ${race.sprint&&!race.sprintQualiDone?`<button class="btn btn-red" onclick="GameActions.simSprintQualifying();UI.closeModal();UI.renderSchedule()">Simulate Sprint Qualifying</button>`:''}
+          ${race.sprint&&race.sprintQualiDone&&!race.sprintDone?`
             <button class="btn btn-red" onclick="GameActions.watchSprintFromIdx(${raceIdx});UI.closeModal()">🎬 Watch Sprint</button>
             <button class="btn btn-outline" onclick="UI.closeModal();GameActions.simSprint()">🏃 Simulate Sprint</button>`:''}
           ${race.sprint&&race.sprintDone?`<button class="btn btn-ghost" onclick="UI.openWatchSprint(${raceIdx});UI.closeModal()">▶ Replay Sprint</button>`:''}
-          ${!race.qualiDone?`<button class="btn btn-red" onclick="race.sprint&&!race.sprintQualiDone?GameActions.simSprintQualifying():GameActions.simQualifying();UI.closeModal();UI.renderSchedule()">Simulate Qualifying</button>`:''}
+          ${(!race.sprint&&!race.qualiDone)||(race.sprint&&race.sprintDone&&!race.qualiDone)?`<button class="btn btn-red" onclick="GameActions.simQualifying();UI.closeModal();UI.renderSchedule()">Simulate Qualifying</button>`:''}
           ${race.qualiDone&&!race.raceDone?`<button class="btn btn-red" onclick="UI.closeModal();GameActions.watchRaceFromIdx(${raceIdx})">🎬 Watch Race</button>`:''}
           ${race.qualiDone&&!race.raceDone?`<button class="btn btn-outline" onclick="GameActions.simRace();UI.closeModal()">Simulate Race</button>`:''}
         </div>
@@ -10104,7 +10115,23 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
         +'</div>';
       })()}
       <div class="modal-section">
-        <div class="modal-sec-title">Attributes</div>
+        <div class="modal-sec-title" style="display:flex;align-items:center;justify-content:space-between">
+          <span>Attributes</span>
+          <button onclick="(function(btn){const p=document.getElementById('stat-glossary');if(!p)return;const open=p.style.display!=='none';p.style.display=open?'none':'block';btn.textContent=open?'ℹ️ What do these mean?':'✕ Close guide';})(this)" style="font-size:10px;color:var(--tx3);background:none;border:none;cursor:pointer;padding:2px 6px;border-radius:4px;font-weight:600">ℹ️ What do these mean?</button>
+        </div>
+        <div id="stat-glossary" style="display:none;background:var(--bg3);border:1px solid var(--bd);border-radius:8px;padding:10px 12px;margin-bottom:10px;font-size:11px;line-height:1.6">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 14px">
+            <div><strong>Race Pace</strong> — raw speed over a stint; the biggest factor in race positions.</div>
+            <div><strong>Qualifying</strong> — single-lap speed; determines grid position.</div>
+            <div><strong>Consistency</strong> — how reliably they hit their ceiling every lap; high consistency drivers rarely have bad races.</div>
+            <div><strong>Wet Weather</strong> — performance multiplier in rain; poor wet drivers lose several places when it's wet.</div>
+            <div><strong>Tyre Management</strong> — derived from consistency + aggression; affects how long tyres last before degrading.</div>
+            <div><strong>Aggression</strong> — overtaking and defending ability; high aggression recovers positions but risks incidents. Also affects tyre wear.</div>
+            <div><strong>Marketability</strong> — commercial value; boosts sponsor offer values, unlocks personal sponsor slots (1 per 10 pts above 70), and affects how hard unhappy sponsors hit morale.</div>
+            <div><strong>Morale</strong> — shown below; affects performance slightly and contract demands. Rises with results and falls with poor seasons, sponsor issues or being sidelined.</div>
+          </div>
+          <div style="margin-top:6px;padding-top:6px;border-top:1px solid var(--bd);color:var(--tx3)"><strong>Trait</strong> icons shown on cards affect specific situations — e.g. <em>consistent</em> drivers have high floor performance; <em>aggressive</em> drivers gain more from safety cars.</div>
+        </div>
         <div class="modal-attr-grid">
           ${arow('Race Pace',d.racePace)}${arow('Qualifying',d.qualifying)}
           ${arow('Consistency',d.consistency)}${arow('Wet Weather',d.wet)}
@@ -10211,8 +10238,8 @@ const personalSlots = getPersonalSponsorSlots(d);
         </div>
       </div>
       <div class="modal-actions">
-        ${fa||d.isProspect?`<button class="btn btn-success btn-sm" onclick="GameActions.signDriver(${d.id})">Sign as Race Driver</button>`:''}
-        ${fa||d.isProspect?`<button class="btn btn-outline btn-sm" onclick="GameActions.signReserve(${d.id})">Sign as Reserve</button>`:''}
+        ${fa||d.isProspect?`<button class="btn btn-success btn-sm" onclick="${g.offseasonPending?`GameActions.signDriverOffseason(${d.id})`:`GameActions.signDriver(${d.id})`}">Sign as Race Driver</button>`:''}
+        ${fa||d.isProspect?`<button class="btn btn-outline btn-sm" onclick="${g.offseasonPending?`UI.showSigningNegotiation(${d.id},true)`:`GameActions.signReserve(${d.id})`}">Sign as Reserve</button>`:''}
         ${mine&&d.isReserve?`<button class="btn btn-outline btn-sm" onclick="GameActions.promoteReserve(${d.id})">⬆️ Promote to Race Driver</button>`:''}
         ${mine&&!fa?`<button class="btn btn-outline btn-sm" onclick="GameActions.extendContract(${d.id})">📝 Extend Contract</button>`:''}
         ${mine&&!fa&&!d.isReserve?`<button class="btn btn-outline btn-sm" onclick="GameActions.demoteToReserve(${d.id})">⬇️ Move to Reserve</button>`:''}
@@ -12749,7 +12776,7 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
 
   showHistoryTab(tab){
     this._activeHistoryTab = tab;
-    document.querySelectorAll('#view-history .tab-pill').forEach((b,i)=>b.classList.toggle('active',['champions','goat','records','dynasty','achievements'][i]===tab));
+    document.querySelectorAll('#view-history .tab-pill').forEach((b,i)=>b.classList.toggle('active',['champions','goat','records','dynasty','grid','achievements'][i]===tab));
     this.renderHistory(tab);
   },
   showSeasonStandings(year){
@@ -13114,6 +13141,55 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       return;
     }
     // default: records
+    if(tab==='grid'){
+      const allSnaps = [...(h.seasonStandings||[])].reverse();
+      if(!allSnaps.length){ c.innerHTML='<div class="empty-state"><div class="empty-icon">📊</div><div class="empty-text">No completed seasons yet.</div></div>'; return; }
+      const snapsWithGrid = allSnaps.filter(s=>s.raceGrid&&s.raceGrid.length);
+      if(!snapsWithGrid.length){
+        c.innerHTML='<div class="empty-state"><div class="empty-icon">📊</div><div class="empty-text">Race grid data is recorded from this version onwards — complete a season to see it here.</div></div>'; return;
+      }
+      const g2=State.game;
+      const pids=new Set(State.getPlayerDrivers().map(d=>String(d.id)));
+      // Season selector
+      const selYear=this._gridHistoryYear||snapsWithGrid[0].season;
+      const snap=snapsWithGrid.find(s=>s.season===selYear)||snapsWithGrid[0];
+      const selHtml=snapsWithGrid.map(s=>`<option value="${s.season}" ${s.season===selYear?'selected':''}>${s.season}</option>`).join('');
+      // Build driver list from standings in this snap
+      const drivers=(snap.drivers||[]).slice().sort((a,b)=>a.position-b.position);
+      const teamColorMap={};
+      (snap.constructors||[]).forEach(t=>{ teamColorMap[t.teamId]=t.color; });
+      g2.teams.forEach(t=>{ if(!teamColorMap[t.id]) teamColorMap[t.id]=t.color; });
+      const buildGrid=(races,resultKey,label)=>{
+        if(!races.length) return '';
+        const hdrs=races.map(r=>`<th style="text-align:center;padding:2px 3px;font-size:8px;color:var(--tx3);font-weight:600;white-space:nowrap;min-width:22px;writing-mode:vertical-rl;transform:rotate(180deg);max-height:60px;overflow:hidden">${r.location||r.name.split(' ')[0]}</th>`).join('');
+        const rows=drivers.map(d=>{
+          const sid=String(d.driverId);
+          const isP=pids.has(sid);
+          const tcol=teamColorMap[d.teamId]||'var(--tx3)';
+          const cells=races.map(r=>{
+            const entry=(r[resultKey]||[]).find(x=>String(x.driverId)===sid);
+            if(!entry) return `<td style="text-align:center;padding:1px 2px"><div style="min-width:20px;height:18px"></div></td>`;
+            const pos=entry.dnf?'R':entry.position;
+            const bg=entry.dnf?'#dc2626':pos===1?'#f59e0b':pos===2?'#9ca3af':pos===3?'#cd7c2f':pos<=6?'#16a34a':pos<=10?'#4ade80':pos<=15?'#6b7280':'#374151';
+            return `<td style="text-align:center;padding:1px 2px"><div style="background:${bg};color:#fff;font-size:8px;font-weight:800;border-radius:2px;min-width:20px;height:18px;display:flex;align-items:center;justify-content:center">${pos}</div></td>`;
+          }).join('');
+          return `<tr style="${isP?'background:rgba(192,57,43,.05)':''}"><td style="padding:2px 8px 2px 0;font-size:11px;font-weight:${isP?'800':'500'};white-space:nowrap"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:${tcol};margin-right:4px;vertical-align:middle"></span>${d.driverName.split(' ').pop()}</td>${cells}</tr>`;
+        }).join('');
+        return `<div style="margin-bottom:16px"><div style="font-size:11px;font-weight:700;color:var(--tx2);margin-bottom:6px">${label}</div><div style="overflow-x:auto"><table style="border-collapse:collapse"><thead><tr><th style="text-align:left;padding:2px 8px 2px 0;font-size:9px;color:var(--tx3)">Driver</th>${hdrs}</tr></thead><tbody>${rows}</tbody></table></div></div>`;
+      };
+      const gpRaces=(snap.raceGrid||[]);
+      const spRaces=gpRaces.filter(r=>r.sprint&&r.sprintResult&&r.sprintResult.length);
+      const legend=`<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;font-size:9px">${[['#f59e0b','1st'],['#9ca3af','2nd'],['#cd7c2f','3rd'],['#16a34a','4–6'],['#4ade80','7–10'],['#6b7280','11–15'],['#374151','16+'],['#dc2626','DNF/R']].map(([bg,lbl])=>`<span style="display:flex;align-items:center;gap:3px"><span style="width:14px;height:14px;border-radius:2px;background:${bg};display:inline-block"></span>${lbl}</span>`).join('')}</div>`;
+      c.innerHTML=`<div style="padding:4px 0">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+          <label style="font-size:11px;font-weight:700;color:var(--tx3)">Season</label>
+          <select onchange="UI._gridHistoryYear=parseInt(this.value);UI.showHistoryTab('grid')" style="font-size:12px;padding:4px 8px;border-radius:6px;border:1px solid var(--bd);background:var(--bg2);color:var(--tx)">${selHtml}</select>
+        </div>
+        ${buildGrid(gpRaces,'raceResult','🏁 Grand Prix')}
+        ${spRaces.length?buildGrid(spRaces,'sprintResult','⚡ Sprint'):''}
+        ${legend}
+      </div>`; return;
+    }
     if(tab==='achievements'){
       const defs = UI._getAchievementDefs();
       const unlocked = new Set(UI._getUnlockedAchievements());
@@ -14542,8 +14618,18 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.1.9 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.2.0 · Release Notes</div>
         ${[
+    ['v2.2.0','Apr 2026',[
+            '🐛 Sprint weekends: the Schedule detail modal now shows the correct action buttons at every stage of a sprint weekend — Sprint Qualifying, Watch/Sim Sprint, Replay Sprint, Qualifying, and Watch/Sim Race each appear at the right time.',
+            '🐛 Sprint weekends: Sprint qualifying and sprint race are now correctly simulated when using Skip Quarter, Sim Half Season, and similar bulk-sim buttons — previously only the main GP was running.',
+            '🐛 Roster editor: removing a driver now updates the editor immediately without requiring you to navigate away and back.',
+            '🐛 Free agent signing: the Sign as Race Driver and Sign as Reserve buttons on driver profiles now correctly route through the offseason signing path during the offseason, so contracts are set up for the new season rather than mid-season.',
+            '🆕 Setup realism: the setup quality label (Perfect / Good / Poor) is now hidden until after qualifying completes — before qualifying you see only whether your setup is within the engineers recommended range.',
+            '🆕 Race Grid in History: a new Race Grid tab in History shows a Wikipedia-style race-by-race results grid for each completed season. Results are stored from this version onwards.',
+            '🆕 Stats glossary: a "What do these mean?" button on every driver profile reveals an in-place guide explaining what each attribute does in the simulation.',
+            '🆕 Roster editor: a compact stats guide is now shown inside each expanded driver card.',
+          ]],
     ['v2.1.9','Apr 2026',[
       'Fixed sponsors carrying over to new team after being fired — sponsors and pending offers are now cleared when accepting a new job',
       'Fixed being un-fired when leaving the job choice screen open and returning — game now persists the fired state and re-shows the job choice screen on reload',
@@ -15134,16 +15220,16 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const veryClose = Math.abs(df - race.idealDownforce) <= 4;
     const knowledgeLabel = knowledge >= 85 ? 'High confidence' : knowledge >= 65 ? 'Moderate confidence' : knowledge >= 45 ? 'Limited data' : 'Very limited';
     const knowledgeColor = knowledge >= 85 ? 'var(--grn)' : knowledge >= 65 ? 'var(--amber)' : 'var(--red)';
-    const matchBadge = veryClose ? '🟢 Perfect — pace bonus'
-      : withinRange ? '🟢 Within range'
-      : df < hint.low ? '🟠 Engineers suggest higher'
-      : '🟠 Engineers suggest lower';
+    const matchBadge = race.qualiDone || race.raceDone
+      ? (veryClose ? '🟢 Perfect — pace bonus' : withinRange ? '🟢 Good setup' : df < hint.low ? '🔴 Too low — pace lost' : '🔴 Too high — pace lost')
+      : (withinRange||veryClose ? '🟢 In range' : df < hint.low ? '🟠 Engineers suggest higher' : '🟠 Engineers suggest lower');
+    const badgeNote = (race.qualiDone||race.raceDone) ? '' : ' <span style="font-size:9px;color:var(--tx3)">(outcome after qualifying)</span>';
     el.innerHTML = '<div style="font-weight:700;margin-bottom:2px">Next race: '+race.name+'</div>'
       + '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">'
       + '<span style="color:var(--tx3)">Recommended: <strong>'+hint.low+' – '+hint.high+'</strong></span>'
       + '<span style="font-size:10px;color:'+knowledgeColor+'">'+knowledgeLabel+'</span>'
       + '</div>'
-      + '<div style="margin-top:2px">Your setup: <strong>'+df+'</strong> · '+matchBadge+'</div>';
+      + '<div style="margin-top:2px">Your setup: <strong>'+df+'</strong> · '+matchBadge+badgeNote+'</div>';
   },
   downforceHint(v){
     if(v<=25) return 'Low drag — Monza, Las Vegas, Spa';
@@ -16148,6 +16234,10 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       const race=g.calendar[g.raceIndex];
       if(!race) break;
       GameActions.applyCurrentWeekendUpgrades();
+      if(race.sprint){
+        if(!race.sprintQualiDone) Sim.simSprintQualifying(race);
+        if(!race.sprintDone) Sim.simSprint(race);
+      }
       if(!race.qualiDone) Sim.simQualifying(race);
       Sim.simRace(race);
       g.raceIndex++;
