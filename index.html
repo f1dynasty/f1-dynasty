@@ -731,8 +731,8 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:18px;max-width:320px;padding:14px 16px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
           <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">Latest Update</div>
-          <div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.2.0 is live</div>
-          <div style="font-size:12px;line-height:1.45;color:#666">Sprint weekend schedule modal fixed — correct buttons now show at every stage of a sprint weekend.</div>
+          <div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.2.1 is live</div>
+          <div style="font-size:12px;line-height:1.45;color:#666">Setup locked after qualifying. AI tyre strategy in rain fixed. SC pit window widened. Watch Race pit drop now realistic. Auto-sign drivers &amp; sponsors. Constructor champ on Champions tab.</div>
         </div>
       </div>
     </div>
@@ -785,7 +785,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </button>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.2.0</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.2.1</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -3341,7 +3341,17 @@ const Sim = {
             state.compound = targetCompound || state.compound;
           } else {
             state.stintIndex = Math.min(state.stintIndex + 1, Math.max(0, (state.strategyOpt?.stints?.length || 1) - 1));
-            state.compound = state.strategyOpt?.stints?.[state.stintIndex]?.compound || targetCompound || state.compound;
+            const plannedCompound = state.strategyOpt?.stints?.[state.stintIndex]?.compound || targetCompound || state.compound;
+            // If pitting for any reason during wet conditions, override dry compound with appropriate wet tyre
+            if(wetness >= 0.78 && plannedCompound !== 'wet') {
+              state.compound = 'wet';
+            } else if(wetness >= 0.28 && plannedCompound !== 'inter' && plannedCompound !== 'wet') {
+              state.compound = 'inter';
+            } else if(wetness < 0.12 && (plannedCompound === 'inter' || plannedCompound === 'wet')) {
+              state.compound = 'medium'; // drying out, go back to slicks
+            } else {
+              state.compound = plannedCompound;
+            }
           }
           state.tyreAge = 0;
         }
@@ -4120,7 +4130,7 @@ const Sim = {
               driverPositions: prevSnap
             });
           }
-        } else if(canManualPit && !pitPromptSuppressed && lapState.safetyCar && plannedStopLap && !o.pitThisLap && lap <= plannedStopLap && plannedStopLap <= lap + 3) {
+        } else if(canManualPit && !pitPromptSuppressed && lapState.safetyCar && plannedStopLap && !o.pitThisLap && lap <= plannedStopLap && plannedStopLap <= lap + 8) {
           // Don't offer SC pit if driver pitted on the immediately preceding lap
           const justPitted = prevEntryForDriver && o.pitStops > (prevEntryForDriver.pitStops || 0);
           if(justPitted) {/* skip */} else {
@@ -4695,7 +4705,7 @@ const Sim = {
         const driverOpt = getPlayerStrategyOpt(r.driverId) || chosenOpt;
         if(!driverOpt || driverOpt.stints.length <= 1) return;
         const firstWindowOpen = driverOpt.pitWindows[0] || Math.round(laps * 0.28);
-        if(scLap < firstWindowOpen + 3) {
+        if(scLap < firstWindowOpen + 8) {
           const nextCompound = driverOpt.stints[1]?.compound || 'hard';
           const nextTire = DATA.tires[nextCompound] || DATA.tires.medium;
             events.push({
@@ -8532,7 +8542,7 @@ const UI = {
         <div class="race-sub">${race.location}, ${race.country} · Round ${n}${sprintStep?'  ·  <strong style="color:var(--red)">'+sprintStep+'</strong>':''}</div>
         ${race.circuitType?`<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">
           <span style="font-size:11px;background:var(--bg3);border:1px solid var(--bd);border-radius:20px;padding:2px 8px;font-weight:600">${race.circuitType==='power'?'⚡ Power Circuit':race.circuitType==='technical'?'⚙️ Technical Circuit':race.circuitType==='street'?'🏙️ Street Circuit':'⚖️ Balanced Circuit'}</span>
-          ${(()=>{const team=State.getPlayerTeam();if(State.game.autoAero) return '<span style="font-size:11px;background:var(--bg3);border:1px solid var(--bd);border-radius:20px;padding:2px 8px;font-weight:700;color:var(--grn)">🤖 Auto setup</span>';const df=team?.downforce||50;const _h=State.getSetupRangeHint(team.id,race.idealDownforce||50);const withinR=df>=_h.low&&df<=_h.high;const veryCloseR=Math.abs(df-(race.idealDownforce||50))<=4;const revealed=race.qualiDone||race.raceDone;if(revealed){const col=veryCloseR?'var(--grn)':withinR?'var(--grn)':df<_h.low-10||df>_h.high+10?'var(--red)':'var(--amber)';const lbl=veryCloseR?'✓ Perfect setup':withinR?'✓ Good setup':df<_h.low-10||df>_h.high+10?'✗ Poor setup':'~ Adjusted setup';return '<span onclick="UI.showView(\'car\')" style="font-size:11px;background:var(--bg3);border:1px solid '+col+';border-radius:20px;padding:2px 8px;font-weight:700;color:'+col+';cursor:pointer" title="Tap to adjust aero">'+lbl+'</span>';}const inRange=withinR||veryCloseR;const col=inRange?'var(--grn)':df<_h.low-10||df>_h.high+10?'var(--red)':'var(--amber)';const lbl=inRange?'✓ In range':df<_h.low-10||df>_h.high+10?'✗ Out of range':'~ Near range';return '<span onclick="UI.showView(\'car\')" style="font-size:11px;background:var(--bg3);border:1px solid '+col+';border-radius:20px;padding:2px 8px;font-weight:700;color:'+col+';cursor:pointer" title="Outcome revealed after qualifying">'+lbl+'</span>';})()}
+          ${(()=>{const team=State.getPlayerTeam();if(State.game.autoAero) return '<span style="font-size:11px;background:var(--bg3);border:1px solid var(--bd);border-radius:20px;padding:2px 8px;font-weight:700;color:var(--grn)">🤖 Auto setup</span>';const df=team?.downforce||50;const _h=State.getSetupRangeHint(team.id,race.idealDownforce||50);const withinR=df>=_h.low&&df<=_h.high;const veryCloseR=Math.abs(df-(race.idealDownforce||50))<=4;const revealed=race.qualiDone||race.raceDone||race.sprintQualiDone;if(revealed){const col=veryCloseR?'var(--grn)':withinR?'var(--grn)':df<_h.low-10||df>_h.high+10?'var(--red)':'var(--amber)';const lbl=veryCloseR?'✓ Perfect setup':withinR?'✓ Good setup':df<_h.low-10||df>_h.high+10?'✗ Poor setup':'~ Adjusted setup';return '<span onclick="UI.showView(\'car\')" style="font-size:11px;background:var(--bg3);border:1px solid '+col+';border-radius:20px;padding:2px 8px;font-weight:700;color:'+col+';cursor:pointer" title="Tap to adjust aero">'+lbl+'</span>';}const inRange=withinR||veryCloseR;const col=inRange?'var(--grn)':df<_h.low-10||df>_h.high+10?'var(--red)':'var(--amber)';const lbl=inRange?'✓ In range':df<_h.low-10||df>_h.high+10?'✗ Out of range':'~ Near range';return '<span onclick="UI.showView(\'car\')" style="font-size:11px;background:var(--bg3);border:1px solid '+col+';border-radius:20px;padding:2px 8px;font-weight:700;color:'+col+';cursor:pointer" title="Outcome revealed after qualifying">'+lbl+'</span>';})()}
         </div>`:''}
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
           <span style="font-size:11px;background:var(--bg3);padding:3px 8px;border-radius:10px;font-weight:600">${circuitType.icon} ${circuitType.label}</span>
@@ -9340,6 +9350,8 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
 
     const inSeasonCost = g.inSeasonDev.aero*8 + g.inSeasonDev.reliability*5 + g.inSeasonDev.engine*12;
     const offseasonCost = g.offseasonDev.aero*10 + g.offseasonDev.reliability*6 + g.offseasonDev.engine*15 + g.offseasonDev.facilities*20;
+    const currentRace = State.getCurrentRace();
+    const isSetupLocked = !!(currentRace && (currentRace.qualiDone || currentRace.raceDone || currentRace.sprintQualiDone));
 
     const slider=(key,label,val,max,section,costPer,desc,impact)=>`
       <div class="dev-slider-row">
@@ -9502,7 +9514,7 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
             const knowledgeColor = knowledge >= 85 ? 'var(--grn)' : knowledge >= 65 ? 'var(--amber)' : 'var(--red)';
             const withinRange = df >= hint.low && df <= hint.high;
             const veryClose = Math.abs(df - race.idealDownforce) <= 4;
-            const revealed = race.qualiDone || race.raceDone;
+            const revealed = race.qualiDone || race.raceDone || race.sprintQualiDone;
             const matchBadge = revealed
               ? (veryClose ? '🟢 Perfect — pace bonus' : withinRange ? '🟢 Good setup' : df < hint.low ? '🔴 Too low — pace lost' : '🔴 Too high — pace lost')
               : (withinRange||veryClose ? '🟢 In range' : df < hint.low ? '🟠 Engineers suggest higher downforce' : '🟠 Engineers suggest lower downforce');
@@ -9522,8 +9534,9 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
             <span>◀ Low Drag (Power)</span><span>High Downforce ▶</span>
           </div>
           <input type="range" min="0" max="100" value="${team.downforce||50}"
+            ${isSetupLocked?'disabled':''}
             oninput="GameActions.setDownforce(this.value);document.getElementById('df-val').textContent=this.value;document.getElementById('df-hint').textContent=UI.downforceHint(parseInt(this.value));UI.updateAeroMatchBadge(parseInt(this.value))"
-            style="width:100%;accent-color:var(--red);margin-bottom:6px">
+            style="width:100%;accent-color:var(--red);margin-bottom:6px;${isSetupLocked?'opacity:0.5;cursor:not-allowed;':''}">
           <div style="display:flex;justify-content:space-between;align-items:center">
             <span style="font-size:13px;font-weight:900;font-family:var(--fm);color:var(--red)" id="df-val">${team.downforce||50}</span>
             <span style="font-size:11px;color:var(--tx3)" id="df-hint">${UI.downforceHint(team.downforce||50)}</span>
@@ -10965,7 +10978,7 @@ const personalSlots = getPersonalSponsorSlots(d);
               const badge=sp.isRenewal?'<span style="font-size:9px;background:rgba(37,99,235,.1);color:#1d4ed8;padding:1px 5px;border-radius:4px;font-weight:700">RENEWAL</span>':sp.isReplacement?'<span style="font-size:9px;background:rgba(245,158,11,.15);color:#b45309;padding:1px 5px;border-radius:4px;font-weight:700">REPLACEMENT</span>':'<span style="font-size:9px;background:rgba(22,163,74,.1);color:#15803d;padding:1px 5px;border-radius:4px;font-weight:700">NEW</span>';
               const canSign = (slotsUsed < cap || sp.isRenewal) && (!isLocked || sp.isRenewal);
               const ref=sp.pendingSponsorId ?? idx;
-              return '<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 10px;background:var(--bg3);border-radius:7px;border:1px dashed var(--bd);'+(canSign?'cursor:pointer;':'')+';opacity:'+(canSign?'1':'0.5')+'" '+(canSign?'onclick=\'GameActions.negotiateSponsor('+JSON.stringify(ref)+')\'':'')+'>'                +'<div style="flex:1">'                  +'<div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap">'                    +'<span style="font-size:12px;font-weight:700">'+sp.name+'</span>'+badge                  +'</div>'                  +'<div style="font-size:10px;color:var(--tx3);margin-top:2px">'+(sp.totalSeasons||1)+'-yr deal · needs P'+(sp.minPosition||10)+(sp.isReplacement?' · below market rate':'')+(sp.linkedDriverName?' · 🔗 tied to '+sp.linkedDriverName:'')+'</div>'                +'</div>'                +'<div style="font-size:13px;font-weight:900;color:var(--amber);flex-shrink:0;margin-left:8px">+'+formatMoney(sp.value)+'/yr</div>'              +'</div>';
+              return '<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 10px;background:var(--bg3);border-radius:7px;border:1px dashed var(--bd);'+(canSign?'cursor:pointer;':'')+';opacity:'+(canSign?'1':'0.5')+'" '+(canSign?'onclick=\'GameActions.negotiateSponsor('+JSON.stringify(ref)+')\'':'')+'>'                +'<div style="flex:1">'                  +'<div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap">'                    +'<span style="font-size:12px;font-weight:700">'+sp.name+'</span>'+badge                  +'</div>'                  +'<div style="font-size:10px;color:var(--tx3);margin-top:2px">'+(sp.totalSeasons||1)+'-yr deal · needs P'+(sp.minPosition||10)+(sp.isReplacement?' · below market rate':'')+(sp.linkedDriverName?' · 🔗 tied to '+sp.linkedDriverName:'')+'</div>'                +'</div>'                +'<div style="font-size:13px;font-weight:900;color:var(--amber);flex-shrink:0;margin-left:8px">+'+formatMoney(sp.value)+'/yr</div>'              +(canSign?'<button onclick="event.stopPropagation();GameActions.autoSignSponsor('+JSON.stringify(ref)+')" style="font-size:10px;padding:2px 7px;border:1px solid var(--bd);border-radius:12px;background:var(--bg2);cursor:pointer;white-space:nowrap" title="Auto-sign at -10% value">⚡ Auto</button>':'')              +'</div>';
             }).join('');
             const lockedMsg = isLocked ? '<div style="font-size:10px;color:var(--tx3);padding:6px 8px;background:var(--bg3);border-radius:6px;border:1px solid var(--bd)">🔒 New title sponsor offers unlock after your first Constructor Championship. Renewal offers can still be accepted when available.</div>' : '';
             return '<div style="margin-bottom:14px">'              +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">'                +'<div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--tx2)">'+type+'</div>'                +'<div style="display:flex;align-items:center;gap:6px">'                  +(typeIncome>0?'<span style="font-size:10px;color:var(--grn);font-weight:700">+'+formatMoney(typeIncome)+'/yr</span>':'')                  +'<span style="font-size:10px;font-weight:700;color:'+slotColor+'">'+slotsUsed+'/'+cap+' slots</span>'                +'</div>'              +'</div>'              +'<div style="display:flex;flex-direction:column;gap:6px">'                +(signedRows||'')+(emptySlotHtml||'')+(lockedMsg)+(offerRows||(signed.length===0&&!isLocked?'<div style="font-size:10px;color:var(--tx3);padding:6px 0">No '+type.toLowerCase()+' offers this offseason.</div>':''))              +'</div>'            +'</div>';
@@ -11500,7 +11513,7 @@ const activeIncome=formatMoney(sumSponsorIncome(g.sponsors||[]));
               const borderCol=sp.isRenewal?'rgba(37,99,235,.35)':sp.isReplacement?'var(--amber)':'var(--grn)';
               const canSign=(slotsUsed<cap||sp.isRenewal)&&(!isLocked||sp.isRenewal);
               const ref=sp.pendingSponsorId ?? idx;
-              return '<div style="background:var(--bg3);border:1px dashed '+borderCol+';border-radius:8px;padding:9px 12px;'+(canSign?'cursor:pointer;':'opacity:0.5;')+';display:flex;justify-content:space-between;align-items:center" '+(canSign?'onclick=\'GameActions.negotiateSponsor('+JSON.stringify(ref)+')\'':'')+'>'                +'<div><div style="display:flex;align-items:center;gap:5px;margin-bottom:2px"><span style="font-size:13px;font-weight:700">'+sp.name+'</span>'+badge+'</div>'                +'<div style="font-size:10px;color:var(--tx3)">'+(sp.totalSeasons||1)+'-yr · needs P'+(sp.minPosition||10)+(sp.linkedDriverName?' · 🔗 '+sp.linkedDriverName:'')+'</div></div>'                +'<div style="font-size:13px;font-weight:800;color:var(--amber)">+'+formatMoney(sp.value)+'/yr</div>'              +'</div>';
+              return '<div style="background:var(--bg3);border:1px dashed '+borderCol+';border-radius:8px;padding:9px 12px;'+(canSign?'cursor:pointer;':'opacity:0.5;')+';display:flex;justify-content:space-between;align-items:center" '+(canSign?'onclick=\'GameActions.negotiateSponsor('+JSON.stringify(ref)+')\'':'')+'>'                +'<div><div style="display:flex;align-items:center;gap:5px;margin-bottom:2px"><span style="font-size:13px;font-weight:700">'+sp.name+'</span>'+badge+'</div>'                +'<div style="font-size:10px;color:var(--tx3)">'+(sp.totalSeasons||1)+'-yr · needs P'+(sp.minPosition||10)+(sp.linkedDriverName?' · 🔗 '+sp.linkedDriverName:'')+'</div></div>'                +'<div style="font-size:13px;font-weight:800;color:var(--amber)">+'+formatMoney(sp.value)+'/yr</div>'              +(canSign?'<button onclick="event.stopPropagation();GameActions.autoSignSponsor('+JSON.stringify(ref)+')" style="font-size:10px;padding:2px 7px;border:1px solid var(--bd);border-radius:12px;background:var(--bg2);cursor:pointer;white-space:nowrap" title="Auto-sign at -10% value">⚡ Auto</button>':'')              +'</div>';
             }).join('');
             const slotCol=slotsUsed>=cap?'var(--red)':slotsUsed>0?'var(--grn)':'var(--tx3)';
             return '<div style="margin-bottom:12px">'              +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">'                +'<span style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--tx2)">'+type+'</span>'                +'<div style="display:flex;gap:8px;align-items:center">'                  +(typeIncome?'<span style="font-size:10px;color:var(--grn);font-weight:700">+'+formatMoney(typeIncome)+'/yr</span>':'')                  +'<span style="font-size:10px;font-weight:700;color:'+slotCol+'">'+slotsUsed+'/'+cap+' slots</span>'                +'</div>'              +'</div>'              +'<div style="display:flex;flex-direction:column;gap:5px">'                +(isLocked?'<div style="font-size:10px;color:var(--tx3);padding:6px 8px;background:var(--bg3);border-radius:6px">🔒 Requires 1 Constructor Championship to unlock</div>':'')                +signedRows+offerRows              +'</div>'            +'</div>';
@@ -12998,12 +13011,34 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     }
     if(tab==='champions'){
       if(!h.champions.length){ c.innerHTML='<div class="empty-state"><div class="empty-icon">🏆</div><div class="empty-text">No champions yet — finish a season.</div></div>'; return; }
-      c.innerHTML=`<div class="champ-list">${[...h.champions].reverse().map(ch=>`
-        <div class="champ-row" ${standingSeasons.has(ch.season)?`onclick="UI.showSeasonStandings(${ch.season})" style="cursor:pointer"`:''}>
-          <div class="champ-year" ${standingSeasons.has(ch.season)?'style="text-decoration:underline;text-decoration-style:dotted;text-underline-offset:2px" title="View final standings"':''}>${ch.season}</div>
-          <div><div class="champ-driver">${ch.driverName}</div><div class="champ-team">${ch.teamName}</div></div>
-          <div class="champ-pts">${ch.points}pts</div>
-        </div>`).join('')}</div>`; return;
+      const constrChampBySeason={};
+      (h.constructorChampions||[]).forEach(function(cc){ constrChampBySeason[cc.season]=cc; });
+      const playerTeamName=(State.getPlayerTeam()||{}).name||'';
+      const playerTeamId=State.game.playerTeamId;
+      const rows=[...h.champions].reverse().map(function(ch){
+        const cc=constrChampBySeason[ch.season]||null;
+        const driverCol=ch.teamName&&ch.teamName===playerTeamName?'color:var(--red)':'';
+        const constrCol=cc&&cc.teamId===playerTeamId?'color:var(--red)':'';
+        const clickAttr=standingSeasons.has(ch.season)?'onclick="UI.showSeasonStandings('+ch.season+')" style="cursor:pointer"':'';
+        const yearStyle=standingSeasons.has(ch.season)?'style="text-decoration:underline;text-decoration-style:dotted;text-underline-offset:2px" title="View final standings"':'';
+        return '<div class="champ-row" '+clickAttr+'>'
+          +'<div class="champ-year" '+yearStyle+'>'+ch.season+'</div>'
+          +'<div>'
+            +'<div class="champ-driver" style="'+driverCol+'">'+ch.driverName+'</div>'
+            +'<div class="champ-team">'+ch.teamName+'</div>'
+          +'</div>'
+          +'<div>'
+            +'<div class="champ-driver" style="font-size:12px;'+constrCol+'">'+(cc?cc.teamName:'—')+'</div>'
+            +'<div class="champ-team" style="font-size:10px;color:var(--tx3)">'+(cc?cc.points+'pts':'')+'</div>'
+          +'</div>'
+          +'<div class="champ-pts">'+ch.points+'pts</div>'
+          +'</div>';
+      }).join('');
+      c.innerHTML='<div style="margin-bottom:6px">'
+        +'<div style="display:grid;grid-template-columns:48px 1fr 1fr auto;gap:4px;padding:4px 8px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--tx3)">'
+        +'<div></div><div>🥇 Driver</div><div>🏆 Constructor</div><div>Pts</div></div></div>'
+        +'<div class="champ-list">'+rows+'</div>';
+      return;
     }
     if(tab==='goat'){
       const drvs=State.game.drivers
@@ -13489,6 +13524,7 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       <p>Each circuit has a hidden ideal downforce level. Your engineers give you a <strong>recommended range</strong> — e.g. "65–80" — but won\'t reveal the exact number. Getting within 4 of the true ideal gives a pace bonus; landing anywhere in the range avoids penalties; setting outside it costs lap time all race.</p>
       <p><strong>Setup knowledge</strong> is a per-team value that controls how tight your range hint is. A team with high facilities and stable regulations gets a narrow, precise range. After a regulation reset, every team\'s setup knowledge drops — engineers don\'t yet understand what the new car needs — so everyone sees wider, less useful hints in year 1. Knowledge recovers toward your facilities level over 2–3 seasons.</p>
       <p>The circuit type label on the Car page is your first clue — street circuits want high downforce, power circuits want low drag, technical circuits want balance. Learn the circuits and you\'ll make educated guesses even within a wide range.</p>
+      <p><strong>Setup is locked after qualifying.</strong> Once qualifying is complete the aero slider is disabled — you cannot change setup between qualifying and the race. The quality label (Perfect / Good / Poor) reveals after qualifying so you can see how your call landed, but the number is locked in. This applies to both sprint and GP qualifying.</p>
       ${tip('Precision rewards skill', 'Getting the setup exactly right gives a pace bonus — not just avoiding a penalty. Elite teams with high knowledge get tighter hints and extract more from a perfect setup. This means setup matters more at the front of the grid, where tiny margins define race outcomes.')}
       ${warn('New regulations widen every team\'s range. Even Ferrari is guessing in year 1 of new regs. Don\'t be surprised if setup feels harder right after a regulation change — invest in facilities to recover knowledge faster.')}
     `)}
@@ -13598,7 +13634,7 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       <h4>Results heatmap</h4>
       <p>The <strong>Standings → Results</strong> tab shows a finishing position frequency grid for all drivers across the current season — Grand Prix and Sprint shown separately. Gold for P1, silver for P2, bronze for P3, green shades for the points, grey for midfield, red for DNFs. Useful for spotting consistency patterns across the field.</p>
       <h4>Safety car</h4>
-      <p>When a safety car is deployed the field bunches up and position changes stop — no overtaking is possible under the SC. Use it to pit cheaply: pit stop loss is roughly halved under SC conditions. Watch for the SC pit opportunity prompt if your driver is near their planned stop window. The safety car lifts after 2–4 laps and racing resumes.</p>
+      <p>When a safety car is deployed the field bunches up and position changes stop — no overtaking is possible under the SC. Use it to pit cheaply: pit stop loss is roughly halved under SC conditions. The SC pit opportunity prompt fires if your next planned stop is within 8 laps — a much wider window than before, so you will now get the prompt for most realistic undercut opportunities. The safety car lifts after 2–4 laps and racing resumes.</p>
       ${tip('Speed settings', 'Use Very Fast for routine races and Normal/Slow when you\'re in a tight championship battle and want to savour the moment. Speed is set per-session and remembered.')}
       ${tip('Auto settings', 'If you prefer to sim without decisions, turn on Auto Strategy and Auto Aero in Settings. Auto Strategy applies a small pace penalty — engineers are more conservative than a human calling the shots, and their pit timing is never perfectly optimised.')}
     `)}
@@ -14507,6 +14543,7 @@ const sponsorInc=sumSponsorIncome(sponsors2);
            +'</div>'
            +'<div style="display:flex;gap:6px;flex-wrap:wrap">'
            +'<button class="btn btn-outline btn-sm" onclick="GameActions.extendContract('+d.id+');UI.renderOffseason(window._recapTransfers,window._recapChamps?.driverChamp,window._recapChamps?.constructorChamp,window._recapChamps?.retirements||[])">📝 Extend</button>'
+           +'<button class="btn btn-ghost btn-sm" onclick="GameActions.autoRenewDriver('+d.id+')" title="Auto-sign 2yr at +15% — skips negotiation">⚡ Auto</button>'
            +'<button class="btn btn-ghost btn-sm" onclick="UI.showDriverModal('+d.id+')">Profile</button>'
            +'<button class="btn btn-outline btn-sm" onclick="GameActions.demoteToReserve('+d.id+')">⬇️ Reserve</button>'
            +'<button class="btn btn-danger btn-sm" onclick="GameActions.releaseDriver('+d.id+');UI.renderOffseason(window._recapTransfers,window._recapChamps?.driverChamp,window._recapChamps?.constructorChamp,window._recapChamps?.retirements||[])">Release</button>'
@@ -14524,6 +14561,7 @@ const sponsorInc=sumSponsorIncome(sponsors2);
              +'<div style="display:flex;gap:6px;flex-wrap:wrap">'
              +'<button class="btn btn-success btn-sm" onclick="GameActions.promoteReserve('+d.id+');UI.renderOffseason(window._recapTransfers,window._recapChamps?.driverChamp,window._recapChamps?.constructorChamp,window._recapChamps?.retirements||[])">⬆️ Promote to Race Seat</button>'
              +'<button class="btn btn-outline btn-sm" onclick="GameActions.extendContract('+d.id+');UI.renderOffseason(window._recapTransfers,window._recapChamps?.driverChamp,window._recapChamps?.constructorChamp,window._recapChamps?.retirements||[])">📝 Extend</button>'
+             +'<button class="btn btn-ghost btn-sm" onclick="GameActions.autoRenewDriver('+d.id+')" title="Auto-sign 1yr at +15% — skips negotiation">⚡ Auto</button>'
              +'<button class="btn btn-ghost btn-sm" onclick="UI.showDriverModal('+d.id+')">Profile</button>'
              +'<button class="btn btn-danger btn-sm" onclick="GameActions.releaseDriver('+d.id+');UI.renderOffseason(window._recapTransfers,window._recapChamps?.driverChamp,window._recapChamps?.constructorChamp,window._recapChamps?.retirements||[])">Release</button>'
              +'</div>'
@@ -14618,8 +14656,20 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.2.0 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.2.1 · Release Notes</div>
         ${[
+    ['v2.2.1','Apr 2026',[
+            '\U0001f41b Setup lock: the aero slider is now disabled after qualifying — setup is locked in once you go out on track. Changing downforce post-qualifying no longer affects your result.',
+            '\U0001f41b Setup reveal: sprint qualifying now correctly reveals your setup quality label (Perfect / Good / Poor) — previously the label stayed hidden after sprint qualifying.',
+            '\U0001f41b Contract exploit fix: drivers will no longer accept a contract extension that is shorter or cheaper than their current deal — attempts to downgrade a contract are now rejected with a message.',
+            '\U0001f41b AI tyre strategy: drivers doing a scheduled or forced pit stop during wet conditions now correctly switch to the appropriate wet tyre rather than coming out on their pre-planned dry compound. Previously a driver could pit during light rain and rejoin on hards.',
+            '\U0001f41b Safety car pit window: the SC pit opportunity prompt now fires if your next planned stop is within 8 laps (up from 3). Previously a safety car that came out more than 3 laps before your window would give no prompt at all, even when boxing was clearly the right call.',
+            '\U0001f41b Watch Race leaderboard: pitting now correctly drops your driver back on the lap they box. The drop is calculated from actual gap data — the game counts cars behind you with a gap small enough to pass during your pit stop time, so the position loss is realistic rather than estimated.',
+            '\U0001f41b Balance: winter development car performance now correctly caps at 99 — previously a breakthrough winter could push the player car to 100, which AI teams could never reach.',
+            '\U0001f195 Auto-sign drivers: a new \u26a1 Auto button appears next to Extend on driver cards in the offseason screen. Auto-signs a 2-year deal (1yr for reserves) at market demand + 15% premium — no negotiation needed.',
+            '\U0001f195 Auto-sign sponsors: a new \u26a1 Auto button appears on sponsor offer cards in Finance and offseason. Auto-accepts the offer terms at a 10% value penalty — the sponsor gets a slightly better deal for the quick close.',
+            '\U0001f195 Champions tab: constructor champion now shown alongside the driver champion for every season.',
+          ]],
     ['v2.2.0','Apr 2026',[
             '🐛 Sprint weekends: the Schedule detail modal now shows the correct action buttons at every stage of a sprint weekend — Sprint Qualifying, Watch/Sim Sprint, Replay Sprint, Qualifying, and Watch/Sim Race each appear at the right time.',
             '🐛 Sprint weekends: Sprint qualifying and sprint race are now correctly simulated when using Skip Quarter, Sim Half Season, and similar bulk-sim buttons — previously only the main GP was running.',
@@ -15220,10 +15270,10 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const veryClose = Math.abs(df - race.idealDownforce) <= 4;
     const knowledgeLabel = knowledge >= 85 ? 'High confidence' : knowledge >= 65 ? 'Moderate confidence' : knowledge >= 45 ? 'Limited data' : 'Very limited';
     const knowledgeColor = knowledge >= 85 ? 'var(--grn)' : knowledge >= 65 ? 'var(--amber)' : 'var(--red)';
-    const matchBadge = race.qualiDone || race.raceDone
+const matchBadge = race.qualiDone || race.raceDone || race.sprintQualiDone
       ? (veryClose ? '🟢 Perfect — pace bonus' : withinRange ? '🟢 Good setup' : df < hint.low ? '🔴 Too low — pace lost' : '🔴 Too high — pace lost')
       : (withinRange||veryClose ? '🟢 In range' : df < hint.low ? '🟠 Engineers suggest higher' : '🟠 Engineers suggest lower');
-    const badgeNote = (race.qualiDone||race.raceDone) ? '' : ' <span style="font-size:9px;color:var(--tx3)">(outcome after qualifying)</span>';
+    const badgeNote = (race.qualiDone||race.raceDone||race.sprintQualiDone) ? '' : ' <span style="font-size:9px;color:var(--tx3)">(outcome after qualifying)</span>';
     el.innerHTML = '<div style="font-weight:700;margin-bottom:2px">Next race: '+race.name+'</div>'
       + '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">'
       + '<span style="color:var(--tx3)">Recommended: <strong>'+hint.low+' – '+hint.high+'</strong></span>'
@@ -15492,10 +15542,10 @@ const GameActions = {
     const actualRel_bs     = expectedRel_bs     * rdMult_bs;
     const actualDevRate_bs = expectedDevRate_bs * rdMult_bs;
     const actualFac_bs     = expectedFac_bs     * rdMult_bs;
-    team_bs.carPerformance  = clamp(team_bs.carPerformance  + actualAero_bs,    40, 100);
-    team_bs.reliability     = clamp(team_bs.reliability     + actualRel_bs,     40, 100);
-    team_bs.developmentRate = clamp(team_bs.developmentRate + actualDevRate_bs, 40, 100);
-    team_bs.facilities      = clamp(team_bs.facilities      + actualFac_bs,     40, 100);
+    team_bs.carPerformance  = clamp(team_bs.carPerformance  + actualAero_bs,    40, 99);
+    team_bs.reliability     = clamp(team_bs.reliability     + actualRel_bs,     40, 99);
+    team_bs.developmentRate = clamp(team_bs.developmentRate + actualDevRate_bs, 40, 99);
+    team_bs.facilities      = clamp(team_bs.facilities      + actualFac_bs,     40, 99);
     if(expectedDfRange_bs > 0){
       const currentDf_bs = team_bs.downforce||50;
       const targetDf_bs = g.aeroTarget!==undefined?g.aeroTarget:currentDf_bs;
@@ -15586,6 +15636,11 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
   },
   confirmRenew(driverId,years,salary){
     const d=State.getDriver(driverId); if(!d)return;
+    // Prevent downgrade: don't allow a shorter deal or a pay cut versus the current contract
+    if(years<d.contract || salary<d.salary){
+      UI.toast(`${d.name} won't accept a downgrade — offer at least ${d.contract}yr and ${formatMoney(d.salary)}/yr.`,'warning');
+      return;
+    }
     d.contract=years; d.salary=salary; d.morale=clamp(d.morale+15,50,98);
     UI.closeModal();
     if(typeof gtag!=='undefined') gtag('event','driver_signed',{driver_name:d.name,rating:Math.round(d.rating||0),years:years,salary:salary,role:'renewal',season:State.game.season,race_number:State.game.raceIndex});
@@ -15822,6 +15877,10 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
   },
   setDownforce(val){
     const team=State.getPlayerTeam(); if(!team) return;
+    const _lockRace=State.getCurrentRace();
+    if(_lockRace&&(_lockRace.qualiDone||_lockRace.raceDone||_lockRace.sprintQualiDone)){
+      UI.toast('Setup is locked after qualifying — result already calculated.','warning'); return;
+    }
     team.downforce=clamp(parseInt(val),0,100);
     Storage.autosave();
   },
@@ -16358,6 +16417,30 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     if(document.getElementById('view-finance')?.classList.contains('active')) UI.renderFinance();
     else UI.renderOffseasonPlanning();
   },
+  autoSignSponsor(ref){
+    const g=State.game;
+    if(!g.pendingSponsors||!g.pendingSponsors.length) return;
+    const idx=g.pendingSponsors.findIndex(s=>String(s.pendingSponsorId ?? g.pendingSponsors.indexOf(s))===String(ref));
+    if(idx<0) return;
+    const sp={...g.pendingSponsors[idx]};
+    // Auto-sign penalty: value is 10% lower than offer (sponsor gets a better deal for the quick close)
+    sp.value=Math.max(1,Math.floor(sp.value*0.9));
+    if(!sp.totalSeasons) sp.totalSeasons=sp.seasonsLeft||1;
+    if(!sp.seasonsLeft) sp.seasonsLeft=sp.totalSeasons||1;
+    const tierCaps={'Title':1,'Works':1,'Primary':2,'Partner':1,'Secondary':3,'Technical':3,'Associate':5};
+    const cap=tierCaps[sp.type]||3;
+    const existing=(g.sponsors||[]).filter(s=>s.type===sp.type).length;
+    if(existing>=cap&&!sp.isRenewal){UI.toast('Already at the '+sp.type+' sponsor limit.','warning');return;}
+    if(sp.type==='Title'&&!sp.isRenewal){const ct=(g.careerStats?.constructorChampionships||0);if(ct<1){UI.toast('Title sponsors require 1 Constructor Championship.','warning');return;}}
+    g.pendingSponsors.splice(idx,1);
+    if(!g.sponsors) g.sponsors=[];
+    g.sponsors.push(sp);
+    Storage.autosave();
+    if(typeof gtag!=='undefined') gtag('event','sponsor_signed',{sponsor_type:sp.type,sponsor_name:sp.name,value:sp.value,years:sp.totalSeasons,is_renewal:!!sp.isRenewal,auto_sign:true});
+    UI.toast('\u26a1 '+sp.name+' auto-signed — '+sp.totalSeasons+'-yr at '+formatMoney(sp.value)+'/yr (−10% penalty)','success');
+    if(document.getElementById('view-finance')?.classList.contains('active')) UI.renderFinance();
+    else UI.renderOffseasonPlanning();
+  },
   terminateSponsor(idx){
     const g=State.game;
     const sp=g.sponsors[idx]; if(!sp) return;
@@ -16502,6 +16585,26 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
   extendContract(driverId){
     // Re-use the renewDriver modal — same logic, works any time
     GameActions.renewDriver(driverId);
+  },
+  autoRenewDriver(driverId){
+    const d=State.getDriver(driverId); if(!d)return;
+    const demand=State.getDriverDemandSalary(d,(d.isReserve&&!d._wasRaceDriver)?'reserve':'renewal');
+    // Auto-sign penalty: pay 15% premium on 2-year deal (or 1yr for reserves)
+    const penaltyYears=d.isReserve?1:2;
+    const penaltySalary=Math.ceil(demand*1.15);
+    const team=State.getPlayerTeam();
+    const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
+    const _rEffectiveIncome=Math.max(team.revenue,_rSponsorInc+40);
+    if(_rEffectiveIncome<penaltySalary*3){
+      UI.toast('Over budget — cannot auto-sign at penalty rate.','warning'); return;
+    }
+    d.contract=penaltyYears; d.salary=penaltySalary; d.morale=clamp(d.morale+10,50,95);
+    if(typeof gtag!=='undefined') gtag('event','driver_signed',{driver_name:d.name,rating:Math.round(d.rating||0),years:penaltyYears,salary:penaltySalary,role:'auto_renewal',season:State.game.season});
+    UI.toast('\u26a1 '+d.name+' auto-signed '+penaltyYears+'yr at '+formatMoney(penaltySalary)+'/yr (+15% penalty)','success');
+    Storage.autosave();
+    UI.renderDashboard();
+    UI.renderOffseasonPlanning();
+    if(document.getElementById('view-drivers')?.classList.contains('active')) UI.renderDrivers();
   },
   getPlayerSeatMarketSignal(targetDriverId){
     const g=State.game;
@@ -17586,15 +17689,36 @@ window._wrApplyBonusNow = function(driverId, decisionMeta) {
     }
   };
 
+  // Deterministic pit drop: count cars behind that would pass during the stop
+  // A car behind passes if its gap to leader is within (driver's gap + pit stop time)
+  const _pitLapState = clonedStates.find(function(ls){ return (ls.lap||0) === decisionLap; });
+  const _pitDriverEntry = _pitLapState ? (_pitLapState.order||[]).find(function(o){ return o.driverId === driverId; }) : null;
+  const _pitStopTime = (_pitDriverEntry && _pitDriverEntry.pitLoss > 0) ? _pitDriverEntry.pitLoss : 22.0;
+  const _driverGap = _pitDriverEntry ? (_pitDriverEntry.gap || 0) : 0;
+  const _activeCars = (_pitLapState ? (_pitLapState.order||[]) : []).filter(function(o){ return o && !o.dnf && o.pos != null; });
+  // Cars behind the driver that will pass: their gap is close enough to catch the driver in the pits
+  const pitDropPlaces = decisionMeta?.choice === 'pit'
+    ? _activeCars.filter(function(o){
+        return o.pos > currentReplayPos && o.gap != null && o.gap <= _driverGap + _pitStopTime;
+      }).length
+    : 0;
+  const pitDropPos = Math.min(_activeCars.length, currentReplayPos + pitDropPlaces);
+
   for(let i = 0; i < clonedStates.length; i++) {
     const ls = clonedStates[i];
     if(!ls || (ls.lap || 0) < decisionLap) continue;
     const prevState = i > 0 ? clonedStates[i - 1] : null;
     const prevEntry = prevState ? (prevState.order || []).find(function(o){ return o.driverId === driverId; }) : null;
     let desiredPos = currentReplayPos;
-    if((ls.lap || 0) > progressStartLap) {
-      const prog = clamp(((ls.lap || 0) - progressStartLap + 1) / Math.max(1, totalLaps - progressStartLap + 1), 0, 1);
-      desiredPos = Math.round(currentReplayPos + (targetPos - currentReplayPos) * prog);
+    const currentLap = ls.lap || 0;
+    if(currentLap === decisionLap && pitDropPlaces > 0) {
+      // Lap of the pit stop — driver drops back to reflect time lost in pits
+      desiredPos = pitDropPos;
+    } else if(currentLap > progressStartLap) {
+      // Subsequent laps — interpolate from pit drop position back toward final result
+      const recoverFrom = pitDropPlaces > 0 ? pitDropPos : currentReplayPos;
+      const prog = clamp((currentLap - progressStartLap) / Math.max(1, totalLaps - progressStartLap), 0, 1);
+      desiredPos = Math.round(recoverFrom + (targetPos - recoverFrom) * prog);
     }
     ls.order = window._wrPlaceDriverInOrder(ls.order, driverId, desiredPos);
     ls.order = window._wrNormalizeLapOrder(ls.order, race.lapStates?.[i]?.order || ls.order);
@@ -18010,5 +18134,3 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
-
-
