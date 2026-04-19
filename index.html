@@ -1007,11 +1007,11 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
             </div>
           </div>
         </div>
-        ${g.academy ? `<div class="stat-card" onclick="UI.showView('academy')" style="cursor:pointer" title="Driver Academy">
+        <div class="stat-card" id="dash-academy-card" onclick="UI.showView('academy')" style="cursor:pointer;display:none" title="Driver Academy">
           <div class="stat-label">🎓 Academy</div>
-          <div class="stat-val">${(g.academy.juniors||[]).length}<span style="font-size:11px;font-weight:500;color:var(--tx3)">/${g.academy.maxSlots||4}</span></div>
-          <div class="stat-sub">${(g.academy.graduates||[]).length} graduate${(g.academy.graduates||[]).length!==1?'s':''}</div>
-        </div>` : ''}
+          <div id="dash-academy-value" class="stat-val"></div>
+          <div id="dash-academy-sub" class="stat-sub"></div>
+        </div>
         <div class="stat-card" id="dash-dev-card" onclick="UI.showView('car')" style="cursor:pointer" title="Tap to open Car Development">
           <div class="stat-label">Car Development <span style="font-size:9px;color:var(--tx3);font-weight:400">tap to open ›</span></div>
           <div id="dash-dev-content"><div style="font-size:11px;color:var(--tx3)">Loading...</div></div>
@@ -1256,7 +1256,7 @@ const DATA = {
   lastNames: ["Ferretti","Colombo","Moretti","Romano","Conti","Esposito","De Luca","Mancini","Brunetti","Caruso","Ricci","Fabbri","Galli","Cattaneo","Bernardi","Mueller","Hoffmann","Brandt","Kessler","Ritter","Bergmann","Hartmann","Kruger","Werner","Bauer","Schulze","Lindqvist","Eriksson","Bjork","Halvorsen","Andersen","Christensen","Strand","Virtanen","Makinen","Korhonen","Gonzalez","Medina","Reyes","Herrera","Delgado","Vega","Rios","Castillo","Navarro","Palomino","Gutierrez","Vargas","Montoya","Cardenas","Ferreira","Alves","Costa","Neves","Barros","Pinheiro","Nogueira","Teixeira","Murphy","Walsh","Callaghan","Doyle","Brennan","Flanagan","Sheridan","Cassidy","Devlin","Nolan","Smith","Hughes","Clarke","Fletcher","Mason","Shaw","Dawson","Cooper","Hardy","Burns","Morrison","Suzuki","Yamamoto","Tanaka","Nakamura","Fujiwara","Hayashi","Ogawa","Matsuda","Inoue","Kobayashi","Dubois","Lefebvre","Moreau","Laurent","Renard","Girard","Fontaine","Chevalier","Rousseau","Garnier","Schmidt","Fischer","Wagner","Klein","Wolf","Braun","Richter","Koenig","Gruber","Reiter","Papadopoulos","Stavros","Nkosi","Diallo","Okonkwo","Svensson","Nilsson","Holm","Magnusson"],
   nationalities: ["British","German","Dutch","Spanish","Finnish","French","Australian","Brazilian","Italian","Canadian","Mexican","Japanese","Chinese","Indian","American","Belgian","Austrian","Swiss","Russian","Danish","Swedish","Norwegian","New Zealand","Thai","Monegasque","Polish","Czech","Hungarian","Portuguese","Argentine","Colombian","Estonian"],
   teams: [
-    { id:"redbull",   name:"Red Bull Racing",    nation:"Austrian", prestige:90, carPerformance:74, topSpeed:72, cornering:75, tyreManagement:73, dirtyAir:74, aeroEfficiency:74, engineManufacturer:"honda", downforce:55, reliability:72, developmentRate:84, facilities:95, revenue:270, color:"#1E41FF", difficulty:"medium",
+    { id:"redbull",   name:"Red Bull Racing",    nation:"Austrian", prestige:90, carPerformance:74, topSpeed:72, cornering:75, tyreManagement:73, dirtyAir:74, aeroEfficiency:74, engineManufacturer:"redbullford", downforce:55, reliability:72, developmentRate:84, facilities:95, revenue:270, color:"#1E41FF", difficulty:"medium",
       baseDrivers:[
         {name:"Max Verstappen",nationality:"Dutch",    trait:"aggressive", age:28, rating:97, potential:97, qualifying:96, racePace:97, consistency:93, wet:91, aggression:75, marketability:92, morale:78, salary:20, contract:3},
         {name:"Isack Hadjar",   nationality:"French",  trait:"aggressive", age:20, rating:77, potential:92, qualifying:78, racePace:76, consistency:74, wet:73, aggression:70, marketability:73, morale:80, salary:3,  contract:2}
@@ -1276,12 +1276,12 @@ const DATA = {
         {name:"Lando Norris",  nationality:"British",    trait:"overtaker",  age:26, rating:96, potential:97, qualifying:96, racePace:95, consistency:89, wet:90, aggression:72, marketability:97, morale:88, salary:20, contract:3},
         {name:"Oscar Piastri", nationality:"Australian", trait:"consistent", age:25, rating:92, potential:95, qualifying:91, racePace:93, consistency:89, wet:85, aggression:65, marketability:88, morale:90, salary:10, contract:3}
       ]},
-    { id:"aston",     name:"Aston Martin F1",    nation:"British",  prestige:65, carPerformance:58, topSpeed:56, cornering:58, tyreManagement:60, dirtyAir:55, aeroEfficiency:57, engineManufacturer:"mercedes", downforce:57, reliability:48, developmentRate:78, facilities:82, revenue:155, color:"#006F62", difficulty:"hard",
+    { id:"aston",     name:"Aston Martin F1",    nation:"British",  prestige:65, carPerformance:58, topSpeed:56, cornering:58, tyreManagement:60, dirtyAir:55, aeroEfficiency:57, engineManufacturer:"honda", downforce:57, reliability:48, developmentRate:78, facilities:82, revenue:155, color:"#006F62", difficulty:"hard",
       baseDrivers:[
         {name:"Fernando Alonso", nationality:"Spanish",  trait:"rainy",      age:44, rating:89, potential:80, qualifying:87, racePace:90, consistency:91, wet:93, aggression:85, marketability:90, morale:74, salary:12, contract:1},
         {name:"Lance Stroll",    nationality:"Canadian", trait:"consistent", age:27, rating:76, potential:79, qualifying:74, racePace:77, consistency:73, wet:74, aggression:65, marketability:70, morale:70, salary:8,  contract:2}
       ]},
-    { id:"alpine",    name:"Alpine F1 Team",     nation:"French",   prestige:56, carPerformance:71, topSpeed:68, cornering:72, tyreManagement:71, dirtyAir:68, aeroEfficiency:70, engineManufacturer:"renault", downforce:52, reliability:78, developmentRate:75, facilities:74, revenue:140, color:"#0090FF", difficulty:"medium",
+    { id:"alpine",    name:"Alpine F1 Team",     nation:"French",   prestige:56, carPerformance:71, topSpeed:68, cornering:72, tyreManagement:71, dirtyAir:68, aeroEfficiency:70, engineManufacturer:"mercedes", downforce:52, reliability:78, developmentRate:75, facilities:74, revenue:140, color:"#0090FF", difficulty:"medium",
       baseDrivers:[
         {name:"Pierre Gasly",    nationality:"French",    trait:"technical",  age:30, rating:84, potential:85, qualifying:84, racePace:83, consistency:82, wet:80, aggression:74, marketability:78, morale:80, salary:7,  contract:3},
         {name:"Franco Colapinto",nationality:"Argentine", trait:"aggressive", age:22, rating:79, potential:90, qualifying:79, racePace:78, consistency:74, wet:74, aggression:76, marketability:82, morale:85, salary:3,  contract:2}
@@ -1291,7 +1291,7 @@ const DATA = {
         {name:"Alex Albon",  nationality:"Thai",    trait:"consistent", age:30, rating:82, potential:84, qualifying:81, racePace:83, consistency:83, wet:79, aggression:62, marketability:76, morale:80, salary:6,  contract:2},
         {name:"Carlos Sainz",nationality:"Spanish", trait:"technical",  age:31, rating:89, potential:89, qualifying:90, racePace:89, consistency:88, wet:85, aggression:68, marketability:84, morale:80, salary:10, contract:2}
       ]},
-    { id:"racingbulls", name:"Racing Bulls",     nation:"Italian",  prestige:50, carPerformance:70, topSpeed:70, cornering:70, tyreManagement:69, dirtyAir:68, aeroEfficiency:69, engineManufacturer:"honda", downforce:50, reliability:72, developmentRate:70, facilities:68, revenue:122, color:"#6692FF", difficulty:"medium",
+    { id:"racingbulls", name:"Racing Bulls",     nation:"Italian",  prestige:50, carPerformance:70, topSpeed:70, cornering:70, tyreManagement:69, dirtyAir:68, aeroEfficiency:69, engineManufacturer:"redbullford", downforce:50, reliability:72, developmentRate:70, facilities:68, revenue:122, color:"#6692FF", difficulty:"medium",
       baseDrivers:[
         {name:"Liam Lawson",    nationality:"New Zealand", trait:"aggressive", age:23, rating:82, potential:88, qualifying:82, racePace:83, consistency:78, wet:79, aggression:76, marketability:74, morale:82, salary:4,  contract:2},
         {name:"Arvid Lindblad", nationality:"British",     trait:"qualifier",  age:18, rating:72, potential:94, qualifying:73, racePace:71, consistency:68, wet:68, aggression:66, marketability:69, morale:88, salary:2,  contract:2}
@@ -1306,7 +1306,7 @@ const DATA = {
         {name:"Nico Hulkenberg",   nationality:"German",    trait:"consistent", age:38, rating:80, potential:78, qualifying:81, racePace:80, consistency:84, wet:80, aggression:62, marketability:68, morale:76, salary:5,  contract:3},
         {name:"Gabriel Bortoleto", nationality:"Brazilian", trait:"overtaker",  age:21, rating:77, potential:92, qualifying:78, racePace:76, consistency:73, wet:72, aggression:68, marketability:75, morale:87, salary:3,  contract:3}
       ]},
-    { id:"cadillac",  name:"Cadillac F1 Team",   nation:"American", prestige:38, carPerformance:62, topSpeed:61, cornering:61, tyreManagement:62, dirtyAir:58, aeroEfficiency:60, engineManufacturer:"mercedes", downforce:50, reliability:70, developmentRate:66, facilities:60, revenue:112, color:"#C8102E", difficulty:"hard",
+    { id:"cadillac",  name:"Cadillac F1 Team",   nation:"American", prestige:38, carPerformance:62, topSpeed:61, cornering:61, tyreManagement:62, dirtyAir:58, aeroEfficiency:60, engineManufacturer:"ferrari", downforce:50, reliability:70, developmentRate:66, facilities:60, revenue:112, color:"#C8102E", difficulty:"hard",
       baseDrivers:[
         {name:"Sergio Perez",    nationality:"Mexican",  trait:"rainy",     age:36, rating:82, potential:80, qualifying:81, racePace:83, consistency:78, wet:82, aggression:65, marketability:85, morale:72, salary:7,  contract:2},
         {name:"Valtteri Bottas", nationality:"Finnish",  trait:"qualifier", age:36, rating:79, potential:76, qualifying:79, racePace:79, consistency:84, wet:82, aggression:58, marketability:68, morale:68, salary:5,  contract:2}
@@ -1523,35 +1523,35 @@ const DATA = {
   // annualCost: supply fee per customer team (works team pays 0)
   engineManufacturers: [
     { id:'mercedes', name:'Mercedes-AMG HPP', shortName:'Mercedes',
-      powerRating:96, ersRating:94, reliability:92, devRate:8, maxCustomers:4, annualCost:20,
+      powerRating:96, ersRating:94, reliability:92, devRate:8, maxCustomers:4, annualCost:20, worksTeams:['mercedes'],
       color:'#00D2BE', desc:'The benchmark hybrid architecture. Exceptional ERS and top-end power.'},
     { id:'ferrari', name:'Ferrari Power Units', shortName:'Ferrari',
-      powerRating:95, ersRating:90, reliability:89, devRate:8, maxCustomers:4, annualCost:18,
+      powerRating:95, ersRating:90, reliability:89, devRate:8, maxCustomers:4, annualCost:18, worksTeams:['ferrari'],
       color:'#DC0000', desc:'Raw power leader. Slightly less refined ERS than Mercedes but devastating on power tracks.'},
-    { id:'honda', name:'Honda RBPT', shortName:'Honda',
-      powerRating:94, ersRating:92, reliability:88, devRate:9, maxCustomers:2, annualCost:15,
-      color:'#1E41FF', desc:'Honda RBPT 2026 architecture is a step forward. Compact, powerful, and rapidly developing.'},
-    { id:'renault', name:'Renault E-Tech', shortName:'Renault',
-      powerRating:88, ersRating:84, reliability:85, devRate:6, maxCustomers:1, annualCost:0,
-      color:'#0090FF', desc:'Alpine works unit. Lags the top three but Alpine control their own destiny.'},
+    { id:'honda', name:'Honda Racing Corporation', shortName:'Honda',
+      powerRating:94, ersRating:92, reliability:88, devRate:9, maxCustomers:1, annualCost:15, worksTeams:['aston'],
+      color:'#006F62', desc:'Exclusive Aston Martin works deal. Strong hybrid efficiency and compact packaging.'},
+    { id:'redbullford', name:'Red Bull Ford Powertrains', shortName:'RB Ford',
+      powerRating:94, ersRating:91, reliability:87, devRate:9, maxCustomers:2, annualCost:15, worksTeams:['redbull'],
+      color:'#1E41FF', desc:'Red Bull Powertrains with Ford support. High-upside new works programme for Red Bull and Racing Bulls.'},
     { id:'audi', name:'Audi F1 Power Unit', shortName:'Audi',
-      powerRating:82, ersRating:80, reliability:76, devRate:11, maxCustomers:2, annualCost:10,
+      powerRating:82, ersRating:80, reliability:76, devRate:11, maxCustomers:2, annualCost:10, worksTeams:['audi'],
       color:'#C0012E', desc:'New entrant. Behind now but aggressive development trajectory — could be a dark horse by 2029.'},
   ],
 
   // 2026 supplier relationships: teamId -> engineManufacturerId
   engineSupply2026: {
-    redbull:    'honda',
-    racingbulls:'honda',
+    redbull:    'redbullford',
+    racingbulls:'redbullford',
     ferrari:    'ferrari',
     haas:       'ferrari',
     audi:       'audi',
     mercedes:   'mercedes',
     mclaren:    'mercedes',
     williams:   'mercedes',
-    aston:      'mercedes',
-    alpine:     'renault',
-    cadillac:   'mercedes',
+    aston:      'honda',
+    alpine:     'mercedes',
+    cadillac:   'ferrari',
   },
 
   // Circuit sub-stat weights — how much each pillar matters at each circuit type
@@ -1740,7 +1740,7 @@ function getTeamCombinedReliability(team) {
 function getEngineContractCost(teamId, manufacturerId) {
   const eng = _liveEngines().find(e => e.id === manufacturerId);
   if(!eng) return 15;
-  return teamId === manufacturerId ? 0 : eng.annualCost;
+  return (eng.worksTeams||[]).includes(teamId) ? 0 : eng.annualCost;
 }
 
 function getWinterDevEfficiency(carPerf){
@@ -2644,10 +2644,7 @@ nextRegsYear: startYear + randInt(3,5), regsHistory: [],
       // Engine supplier
       engineManufacturer: tDef.engineManufacturer || 'mercedes',
       engineContractYears: 3, // all teams start with 3yr deals
-      engineContractCost: (()=>{
-        const eng = DATA.engineManufacturers.find(e=>e.id===(tDef.engineManufacturer||'mercedes'));
-        return eng ? (tDef.id === tDef.engineManufacturer ? 0 : eng.annualCost) : 15;
-      })(),
+      engineContractCost: getEngineContractCost(tDef.id, tDef.engineManufacturer || 'mercedes'),
       reliability:tDef.reliability, developmentRate:tDef.developmentRate,
       facilities:tDef.facilities, revenue:tDef.revenue, color:tDef.color,
       difficulty:tDef.difficulty, downforce:tDef.downforce||50,
@@ -8898,7 +8895,22 @@ const UI = {
     document.getElementById('dash-points').innerHTML=
       `<strong>${team.seasonPoints}</strong> pts${teamAbove&&ptsGap>0?`<br><span style="font-size:10px;color:var(--tx3)">${ptsGap}pts off P${myStIdx}</span>`:'<br><span style="font-size:10px;color:var(--grn)">Championship lead</span>'}${trendBadge}`;
 
+    const academyCard = document.getElementById('dash-academy-card');
+    const academyValue = document.getElementById('dash-academy-value');
+    const academySub = document.getElementById('dash-academy-sub');
+    if(academyCard && academyValue && academySub){
+      if(g.academy){
+        academyCard.style.display = '';
+        academyValue.innerHTML = `${(g.academy.juniors||[]).length}<span style="font-size:11px;font-weight:500;color:var(--tx3)">/${g.academy.maxSlots||4}</span>`;
+        academySub.textContent = `${(g.academy.graduates||[]).length} graduate${(g.academy.graduates||[]).length!==1?'s':''}`;
+      } else {
+        academyCard.style.display = 'none';
+        academyValue.textContent = '';
+        academySub.textContent = '';
+      }
+    }
 
+ 
 
     if(race){
       const n = Math.min(g.raceIndex+1, g.calendar.length);
@@ -11328,14 +11340,14 @@ const personalSlots = getPersonalSponsorSlots(d);
 
   renderTeams(){
     const pid=State.game.playerTeamId;
-    const teams=[...State.game.teams].sort((a,b)=>b.carPerformance-a.carPerformance);
+    const teams=[...State.game.teams].sort((a,b)=>getTeamOverallCar(b)-getTeamOverallCar(a));
     const tbar=(label,val,color)=>`<div class="team-bar-row"><span class="tbar-name">${label}</span><div class="tbar-track"><div class="tbar-fill" style="width:${val}%;background:${color}"></div></div><span class="tbar-val">${Math.round(val)}</span></div>`;
     document.getElementById('teams-content').innerHTML = `<div class="teams-grid">${teams.map(t=>{
-      const drivers=State.getTeamDrivers(t.id), mine=t.id===pid, pos=State.getConstructorSeasonPos(t.id);
+      const drivers=State.getTeamDrivers(t.id), mine=t.id===pid, pos=State.getConstructorSeasonPos(t.id), overallCar=getTeamOverallCar(t);
       return `<div class="team-card-full${mine?' is-mine':''}">
         <div class="team-full-name" style="color:${t.color}">${t.name}</div>
         <div class="team-full-meta">${t.nation} · Prestige ${t.prestige} · P${pos||'?'} · ${formatMoney(t.revenue)}</div>
-        ${tbar('Car Perf',t.carPerformance,'#dc2626')}
+        ${tbar('Car Perf',overallCar,'#dc2626')}
         ${tbar('Reliability',t.reliability,'#16a34a')}
         ${tbar('Dev Rate',t.developmentRate,'#2563eb')}
         ${tbar('Facilities',t.facilities,'#d97706')}
@@ -11391,16 +11403,17 @@ const personalSlots = getPersonalSponsorSlots(d);
     const prizeIncome=prizeBase+prizeBonus;
     // Merchandise & brand income scales with prestige (you build this over seasons)
     const merchandiseIncome=Math.round(team.prestige*0.3);
-    // Works manufacturer bonus (Mercedes, Ferrari, Red Bull get extra factory funding)
-    const worksBonus=['mercedes','ferrari','redbull','audi','cadillac'].includes(team.id)?20:0;
+    // Works teams get extra factory funding from their integrated PU programme.
+    const worksEntry = _liveEngines().find(e=>e.id===team.engineManufacturer);
+    const isWorksTeam = !!((worksEntry?.worksTeams||[]).includes(team.id));
+    const worksBonus = isWorksTeam ? 20 : 0;
     const totalIncome=sponsorIncome+prizeIncome+merchandiseIncome+worksBonus;
 
     // ── EXPENSES ────────────────────────────────────────────
     // Fixed base ops (travel, hospitality, HQ) — same for everyone
     const opsBase=35;
     // Engine supply — customer teams pay, works teams don't
-    const worksEngines=['mercedes','ferrari','redbull','audi','cadillac'];
-    const engineCost=worksEngines.includes(team.id)?0:12;
+    const engineCost = isWorksTeam ? 0 : (team.engineContractCost||12);
     // Staff & factory scales with facilities — but THIS is something you invest in via car dev
     const staffCost=Math.round(team.facilities*0.35+10);
     // Marketing is small and fixed-ish
