@@ -18673,6 +18673,40 @@ window._wrNormalizeLapOrder = function(order, templateOrder) {
   return active.concat((order || []).filter(function(o){ return o && (o.dnf || o.pos == null); }));
 };
 
+window._wrEstimatePitDrop = function(lapState, driverId, decisionMeta, fallbackPos) {
+  const activeCars = ((lapState?.order) || [])
+    .filter(function(o){ return o && !o.dnf && o.pos != null; })
+    .sort(function(a,b){ return a.pos - b.pos; });
+  const driverEntry = activeCars.find(function(o){ return o.driverId === driverId; }) || null;
+  if(!driverEntry) {
+    const fallbackStopTime = decisionMeta?.isSafetyCarPit || lapState?.safetyCar ? 10.5 : 22.0;
+    return { stopTime: fallbackStopTime, dropPlaces: 0, dropPos: fallbackPos || null, currentPos: fallbackPos || null, driverGap: 0 };
+  }
+  const currentPos = driverEntry.pos || fallbackPos || 1;
+  const driverGap = driverEntry.gap || 0;
+  const stopTime = driverEntry.pitLoss > 0
+    ? driverEntry.pitLoss
+    : ((decisionMeta?.isSafetyCarPit || lapState?.safetyCar) ? 10.5 : 22.0);
+  const fieldSize = activeCars.reduce(function(maxPos, o){ return Math.max(maxPos, o.pos || 0); }, 0) || activeCars.length;
+  const dropPlaces = decisionMeta?.choice === 'pit'
+    ? activeCars.filter(function(o){
+        if(o.driverId === driverId || o.pos <= currentPos || o.gap == null) return false;
+        const gapToDriver = o.gap - driverGap;
+        if(gapToDriver < 0) return false;
+        const followerPitLoss = o.pitThisLap ? (o.pitLoss > 0 ? o.pitLoss : stopTime) : 0;
+        const netGain = stopTime - gapToDriver - followerPitLoss;
+        return netGain > 0.25;
+      }).length
+    : 0;
+  return {
+    stopTime,
+    dropPlaces,
+    dropPos: Math.min(fieldSize, currentPos + dropPlaces),
+    currentPos,
+    driverGap
+  };
+};
+
 window._wrApplyBonusNow = function(driverId, decisionMeta) {
   const WR = window._WR;
   const race = WR && WR.race;
@@ -18814,19 +18848,9 @@ window._wrApplyBonusNow = function(driverId, decisionMeta) {
   // Correct formula: (follower's gap to leader) - (pitting driver's gap to leader) < pit stop time.
   // Previous bug used absolute gap to leader, which counted the whole pack when driver gap was small.
   const _pitLapState = clonedStates.find(function(ls){ return (ls.lap||0) === decisionLap; });
-  const _pitDriverEntry = _pitLapState ? (_pitLapState.order||[]).find(function(o){ return o.driverId === driverId; }) : null;
-  const _pitStopTime = (_pitDriverEntry && _pitDriverEntry.pitLoss > 0) ? _pitDriverEntry.pitLoss : 22.0;
-  const _driverGap = _pitDriverEntry ? (_pitDriverEntry.gap || 0) : 0;
-  const _activeCars = (_pitLapState ? (_pitLapState.order||[]) : []).filter(function(o){ return o && !o.dnf && o.pos != null; });
-  // Cars behind that will pass: their gap to the pitting driver is within the stop time window
-  const pitDropPlaces = decisionMeta?.choice === 'pit'
-    ? _activeCars.filter(function(o){
-        if(o.pos <= currentReplayPos || o.gap == null) return false;
-        const gapToDriver = o.gap - _driverGap;
-        return gapToDriver >= 0 && gapToDriver < _pitStopTime;
-      }).length
-    : 0;
-  const pitDropPos = Math.min(_activeCars.length, currentReplayPos + pitDropPlaces);
+  const pitDropEstimate = window._wrEstimatePitDrop(_pitLapState, driverId, decisionMeta, currentReplayPos);
+  const pitDropPlaces = pitDropEstimate.dropPlaces;
+  const pitDropPos = pitDropEstimate.dropPos || currentReplayPos;
 
   for(let i = 0; i < clonedStates.length; i++) {
     const ls = clonedStates[i];
