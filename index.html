@@ -294,6 +294,7 @@ input:focus,select:focus{border-color:var(--red)}
   box-shadow:0 -4px 24px rgba(0,0,0,.15);
   animation:slideUp .2s ease;
   padding-bottom:env(safe-area-inset-bottom,0px);
+  max-height:70vh;overflow-y:auto;-webkit-overflow-scrolling:touch;
 }
 .drawer-item{
   width:100%;display:flex;align-items:center;gap:14px;
@@ -731,7 +732,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:18px;max-width:320px;padding:14px 16px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
           <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">Latest Update</div>
-          <div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.3.0 is live</div>
+          <div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.3.1 is live</div>
           <div style="font-size:12px;line-height:1.45;color:#666">Engine manufacturers, car sub-stats by circuit, ERS deployment, qualifying tyre choice, overdrive penalty. Driver Academy with juniors, loans &amp; permanent graduate branding.</div>
         </div>
       </div>
@@ -785,7 +786,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </button>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.3.0</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.3.1</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -2582,6 +2583,7 @@ const State = {
       const d = this._buildDriver(dDef, null, nextDriverId++);
       d.isProspect = true;
       d.prospectSeries = dDef.series || 'F2';
+      d.feederContract = dDef.feederContract || randInt(1,3);
       d.scoutedPotential = null;
       allDrivers.push(d);
       prospects.push(d.id);
@@ -2591,6 +2593,7 @@ const State = {
       const d = this._generateDriver(nextDriverId++, startYear, null, 'prospect');
       d.isProspect = true;
       d.prospectSeries = DATA.prospectSeries[Math.floor(Math.random()*DATA.prospectSeries.length)];
+      d.feederContract = randInt(1,4);
       d.scoutedPotential = null;
       allDrivers.push(d);
       prospects.push(d.id);
@@ -6941,11 +6944,16 @@ const spons=sumSponsorIncome(g.sponsors||[]);
       } else {
         d.rating=clamp(d.rating+Math.max(0,gap*0.2+Math.random()),40,99);
       }
-      // Graduate if talented enough or old enough
-      if(d.rating>=74||(d.age>=22&&d.rating>=70)){
+      // Graduate if talented enough or old enough AND feeder contract has expired
+      if(d.feederContract===undefined) d.feederContract = 1; // patch for any missed init
+      d.feederContract = Math.max(0, (d.feederContract||1) - 1);
+      const contractExpired = d.feederContract <= 0;
+      if(contractExpired && (d.rating>=74||(d.age>=22&&d.rating>=70))){
+        const _fromSeries = d.prospectSeries||'F2';
         d.isProspect=false; d.isFreeAgent=true;
         d.contract=0; d.salary=Math.floor(d.rating/15);
-        transfers.push({driverName:d.name,from:d.prospectSeries||'F2',to:'Free Agency',graduated:true});
+        d.prospectSeries=null;
+        transfers.push({driverName:d.name,from:_fromSeries,to:'Free Agency',graduated:true});
       }
     });
 
@@ -6972,7 +6980,8 @@ const spons=sumSponsorIncome(g.sponsors||[]);
         const prevTeam=preDriverTeam[target.id];
         const fromLabel=prevTeam?prevTeam.teamName:'Free Agent';
         target.teamId=team.id; target.contract=randInt(2,3); target.isReserve=false;
-        target.isFreeAgent=false; target.morale=clamp(target.morale+15,60,95);
+        target.isFreeAgent=false; target.isProspect=false; target.prospectSeries=null;
+        target.morale=clamp(target.morale+15,60,95);
         if(!team.driverIds) team.driverIds=[];
         if(!team.driverIds.includes(target.id)) team.driverIds.push(target.id);
         transfers.push({driverName:target.name,from:fromLabel,to:team.name,teamId:team.id,upgrade:true});
@@ -7034,7 +7043,8 @@ const spons=sumSponsorIncome(g.sponsors||[]);
         const prevTeam=preDriverTeam[signed.id];
         const fromLabel=prevTeam?prevTeam.teamName:'Free Agent';
         signed.teamId=team.id; signed.contract=randInt(1,3); signed.isReserve=false;
-        signed.isFreeAgent=false; signed.morale=clamp(signed.morale+10,50,95);
+        signed.isFreeAgent=false; signed.isProspect=false; signed.prospectSeries=null;
+        signed.morale=clamp(signed.morale+10,50,95);
         if(!team.driverIds) team.driverIds=[];
         if(!team.driverIds.includes(signed.id)) team.driverIds.push(signed.id);
         transfers.push({driverName:signed.name,from:fromLabel,to:team.name,teamId:team.id});
@@ -7103,6 +7113,7 @@ const spons=sumSponsorIncome(g.sponsors||[]);
     for(let i=0;i<2;i++){
       const p=State._generateDriver(g.nextDriverId++,g.season+1,null,'prospect');
       p.isProspect=true; p.prospectSeries=DATA.prospectSeries[randInt(0,DATA.prospectSeries.length-1)];
+      p.feederContract=randInt(1,4);
       p.scoutedPotential=null; g.drivers.push(p);
     }
     // Wonderkid — rare generational talent
@@ -7119,6 +7130,7 @@ const spons=sumSponsorIncome(g.sponsors||[]);
       wk.wet=clamp(wk.rating+randInt(-5,8),45,80);
       wk.aggression=randInt(72,92); // hungry and audacious
       wk.prospectSeries=DATA.prospectSeries[randInt(0,DATA.prospectSeries.length-1)];
+      wk.feederContract=randInt(2,4); // wonderkids typically have longer feeder deals
       wk.scoutedPotential=null;
       wk.salary=1;
       g.drivers.push(wk);
@@ -8227,6 +8239,11 @@ const Storage = {
       if(d.aggression===undefined) d.aggression=65;
       if(d.marketability===undefined) d.marketability=65;
       if(d.energyMgmt===undefined) d.energyMgmt = clamp((d.consistency||70)+randInt(-8,8),38,94);
+      // Clear prospectSeries for any driver already in F1 (has a teamId) — badge should be gone
+      if(d.teamId && d.prospectSeries) d.prospectSeries = null;
+      // Patch feederContract for existing prospects that don't have one yet
+      // Set to 0 for existing saves so current prospects remain signable — new prospects will get contracts from now on
+      if(d.isProspect && d.feederContract===undefined) d.feederContract = 0;
     });
     // Ensure quarterDev has exactly 2 entries (Car page uses 2 windows)
     if(!g.quarterDev) g.quarterDev=[];
@@ -8775,7 +8792,7 @@ const UI = {
       // Open window — threshold passed AND not yet submitted
       const openQ = qDevArr.findIndex((q,i)=>!q.applied && racesDone>=qThresholds[i]);
       const carPerf = getTeamOverallCar(team);
-      const carRank = [...g.teams].sort((a,b)=>b.carPerformance-a.carPerformance).findIndex(t=>t.id===team.id)+1;
+      const carRank = [...g.teams].sort((a,b)=>getTeamOverallCar(b)-getTeamOverallCar(a)).findIndex(t=>t.id===team.id)+1;
       const regsThisSeason = g.nextRegsYear === g.season;
       const regsFocus = regsThisSeason ? Math.round((g.regsInvestment||0)*100) : 0;
       const enRoutePkgs = (g.pendingUpgrades||[]).filter(u=>!u.applied);
@@ -8848,13 +8865,14 @@ const UI = {
         </div>`;
       }).join('');
       // Car vs field comparison
-      const allTeamsSorted = [...g.teams].sort((a,b)=>b.carPerformance-a.carPerformance);
+      const allTeamsSorted = [...g.teams].sort((a,b)=>getTeamOverallCar(b)-getTeamOverallCar(a));
       const carFieldRank = allTeamsSorted.findIndex(t=>t.id===team.id)+1;
       const avgField = Math.round(g.teams.reduce((s,t)=>s+getTeamOverallCar(t),0)/g.teams.length);
       const vsAvg = getTeamOverallCar(team) - avgField;
       const vsAvgStr = vsAvg>0?`+${vsAvg.toFixed(1)} vs field`:`${vsAvg.toFixed(1)} vs field`;
       const vsAvgCol = vsAvg>5?'var(--grn)':vsAvg>0?'var(--amber)':'var(--red)';
-      const fieldBar = allTeamsSorted.map(t=>`<div title="${t.name}" style="flex:1;height:${Math.round((t.carPerformance/allTeamsSorted[0].carPerformance)*28)}px;background:${t.id===team.id?'var(--red)':'var(--bd)'};border-radius:2px 2px 0 0;min-width:0"></div>`).join('');
+      const _topTeamOvr = getTeamOverallCar(allTeamsSorted[0]);
+      const fieldBar = allTeamsSorted.map(t=>`<div title="${t.name}" style="flex:1;height:${Math.round((getTeamOverallCar(t)/_topTeamOvr)*28)}px;background:${t.id===team.id?'var(--red)':'var(--bd)'};border-radius:2px 2px 0 0;min-width:0"></div>`).join('');
       const prestige = team.prestige||50;
       const prestigeLabel = prestige>=85?'Elite':prestige>=70?'Established':prestige>=55?'Rising':prestige>=40?'Developing':'Backmarker';
       const prestigeCol = prestige>=85?'var(--grn)':prestige>=70?'var(--blu)':prestige>=55?'var(--amber)':'var(--tx3)';
@@ -8924,7 +8942,7 @@ const UI = {
         return {label:'Mixed Circuit',icon:'🏁',tip:'Balanced setup suits all styles'};
       })();
       // Predicted finish based on car rating vs field
-      const sorted = [...g.teams].sort((a,b)=>b.carPerformance-a.carPerformance);
+      const sorted = [...g.teams].sort((a,b)=>getTeamOverallCar(b)-getTeamOverallCar(a));
       const carRank = sorted.findIndex(t=>t.id===team.id)+1;
       const predMin = Math.max(1,carRank-1), predMax = Math.min(10,carRank+2);
       const predColor = predMin<=3?'var(--grn)':predMin<=6?'var(--amber)':'var(--tx3)';
@@ -10366,7 +10384,7 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
           <span class="dl-pos">${i+1}</span>
           <div class="dl-name-block">
             <div class="dl-name">${d.name}${d.prospectSeries?` <span class="prospect-badge badge-${d.prospectSeries.toLowerCase().replace('indycar','ic')}">${d.prospectSeries}</span>`:''}</div>
-            <div class="dl-team">Prospect · Age ${d.age} · ${d.nationality}</div>
+            <div class="dl-team">Prospect · Age ${d.age} · ${d.nationality}${(d.feederContract||0)>0?` · <span style="color:var(--amber);font-weight:700">${d.feederContract}yr contract</span>`:' · <span style="color:var(--grn);font-weight:700">Free to sign</span>'}</div>
           </div>
           <span class="dl-ovr"><span class="ovr-pill ${ratingClass(Math.round(d.rating))}">${Math.round(d.rating)}</span></span>
           <span class="dl-attr">${potDisplay}</span>
@@ -10563,7 +10581,7 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
         </div>
       </div>` : ''}
       <div class="modal-name" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">${d.name}${contractRiskBadge}</div>
-      <div class="modal-meta">Age ${d.age} · ${d.nationality} · ${team?team.name:'Free Agent'}${potDisplay}</div>
+      <div class="modal-meta">Age ${d.age} · ${d.nationality} · ${team?team.name:'Free Agent'}${potDisplay}${d.isProspect?(d.feederContract>0?` · <span style="color:var(--amber);font-weight:700">⏳ ${d.feederContract}yr feeder contract</span>`:` · <span style="color:var(--grn);font-weight:700">✅ Free to sign now</span>`):''}</div>
       ${activeInjury ? `<div style="margin:10px 0 12px;padding:10px 12px;background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;color:#991b1b;font-size:12px">
         <div style="font-weight:900;margin-bottom:2px">🚑 Injured</div>
         <div>${activeInjury.type} · out for ${racesOut} more race${racesOut===1?'':'s'}${reserveCover?` · reserve stepping in: ${reserveCover.name}`:''}</div>
@@ -10731,8 +10749,29 @@ const personalSlots = getPersonalSponsorSlots(d);
         </div>
       </div>
       <div class="modal-actions">
-        ${fa||d.isProspect?`<button class="btn btn-success btn-sm" onclick="${g.offseasonPending?`GameActions.signDriverOffseason(${d.id})`:`GameActions.signDriver(${d.id})`}">Sign as Race Driver</button>`:''}
-        ${fa||d.isProspect?`<button class="btn btn-outline btn-sm" onclick="${g.offseasonPending?`UI.showSigningNegotiation(${d.id},true)`:`GameActions.signReserve(${d.id})`}">Sign as Reserve</button>`:''}
+        ${(()=>{
+          if(!(fa||d.isProspect)) return '';
+          const locked = d.isProspect && (d.feederContract||0) > 0;
+          if(locked) return `<button class="btn btn-ghost btn-sm" disabled style="opacity:.5" title="Under feeder series contract for ${d.feederContract} more season${d.feederContract!==1?'s':''}">⏳ Contracted (${d.feederContract}yr)</button>`;
+          return `<button class="btn btn-success btn-sm" onclick="${g.offseasonPending?`GameActions.signDriverOffseason(${d.id})`:`GameActions.signDriver(${d.id})`}">Sign as Race Driver</button>`;
+        })()}
+        ${(()=>{
+          if(!(fa||d.isProspect)) return '';
+          const locked = d.isProspect && (d.feederContract||0) > 0;
+          if(locked) return '';
+          return `<button class="btn btn-outline btn-sm" onclick="${g.offseasonPending?`UI.showSigningNegotiation(${d.id},true)`:`GameActions.signReserve(${d.id})`}">Sign as Reserve</button>`;
+        })()}
+        ${(()=>{
+          if(!d.isProspect) return '';
+          const acad = g.academy;
+          if(!acad) return '';
+          const locked = (d.feederContract||0) > 0;
+          if(locked) return '';
+          const openSlots = (acad.maxSlots||4) - (acad.juniors||[]).length;
+          if(openSlots <= 0) return '<button class="btn btn-ghost btn-sm" disabled style="opacity:.5" title="Academy is full">🎓 Academy Full</button>';
+          if(d.age > 22) return '<button class="btn btn-ghost btn-sm" disabled style="opacity:.5" title="Academy juniors must be 22 or under">🎓 Too old for academy</button>';
+          return `<button class="btn btn-outline btn-sm" style="border-color:#7c3aed;color:#7c3aed" onclick="GameActions.signProspectAsJunior(${d.id})">🎓 Sign as Junior</button>`;
+        })()}
         ${mine&&d.isReserve?`<button class="btn btn-outline btn-sm" onclick="GameActions.promoteReserve(${d.id})">⬆️ Promote to Race Driver</button>`:''}
         ${mine&&!fa?`<button class="btn btn-outline btn-sm" onclick="GameActions.extendContract(${d.id})">📝 Extend Contract</button>`:''}
         ${mine&&!fa&&!d.isReserve?`<button class="btn btn-outline btn-sm" onclick="GameActions.demoteToReserve(${d.id})">⬇️ Move to Reserve</button>`:''}
@@ -10819,7 +10858,7 @@ const personalSlots = getPersonalSponsorSlots(d);
     const weatherRisk = race._weatherRisk;
     const strat = DATA.getStrategyOptions(race, weatherRisk);
     const tc = DATA.tires;
-    const currentStratId = GameActions._getRaceStrategyState(race).mode || null;
+    const currentStratId = GameActions._getRaceStrategyState(race).mode || race._pendingStrategy || null;
 
     const compoundPill = (c) => {
       const t = tc[c]; if(!t) return '';
@@ -11498,7 +11537,7 @@ const personalSlots = getPersonalSponsorSlots(d);
             }).join('');
             const offerRows = offers.map(({sp,idx})=>{
               const badge=sp.isRenewal?'<span style="font-size:9px;background:rgba(37,99,235,.1);color:#1d4ed8;padding:1px 5px;border-radius:4px;font-weight:700">RENEWAL</span>':sp.isReplacement?'<span style="font-size:9px;background:rgba(245,158,11,.15);color:#b45309;padding:1px 5px;border-radius:4px;font-weight:700">REPLACEMENT</span>':'<span style="font-size:9px;background:rgba(22,163,74,.1);color:#15803d;padding:1px 5px;border-radius:4px;font-weight:700">NEW</span>';
-              const canSign = (slotsUsed < cap || sp.isRenewal) && (!isLocked || sp.isRenewal);
+              const canSign = (slotsUsed < cap) && (!isLocked || sp.isRenewal);
               const ref=sp.pendingSponsorId ?? idx;
               return '<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 10px;background:var(--bg3);border-radius:7px;border:1px dashed var(--bd);'+(canSign?'cursor:pointer;':'')+';opacity:'+(canSign?'1':'0.5')+'" '+(canSign?'onclick=\'GameActions.negotiateSponsor('+JSON.stringify(ref)+')\'':'')+'>'                +'<div style="flex:1">'                  +'<div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap">'                    +'<span style="font-size:12px;font-weight:700">'+sp.name+'</span>'+badge                  +'</div>'                  +'<div style="font-size:10px;color:var(--tx3);margin-top:2px">'+(sp.totalSeasons||1)+'-yr deal · needs P'+(sp.minPosition||10)+(sp.isReplacement?' · below market rate':'')+(sp.linkedDriverName?' · 🔗 tied to '+sp.linkedDriverName:'')+'</div>'                +'</div>'                +'<div style="font-size:13px;font-weight:900;color:var(--amber);flex-shrink:0;margin-left:8px">+'+formatMoney(sp.value)+'/yr</div>'              +(canSign?'<button onclick="event.stopPropagation();GameActions.autoSignSponsor('+JSON.stringify(ref)+')" style="font-size:10px;padding:2px 7px;border:1px solid var(--bd);border-radius:12px;background:var(--bg2);cursor:pointer;white-space:nowrap" title="Auto-sign at -10% value">⚡ Auto</button>':'')              +'</div>';
             }).join('');
@@ -11745,7 +11784,7 @@ const personalSlots = getPersonalSponsorSlots(d);
                 <div style="font-size:11px;color:rgba(255,255,255,.5);line-height:1.5;margin-bottom:12px;font-style:italic">"Raw, aggressive, and ceiling-less. Give them time and they could be the best on the grid."</div>
                 <div style="display:flex;gap:8px">
                   <button class="btn btn-sm" style="background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2)" onclick="UI.showDriverModal(${d.id})">View Profile</button>
-                  ${!d.teamId?`<button class="btn btn-sm" style="background:#f59e0b;color:#000;border:none;font-weight:700" onclick="GameActions.signDriverOffseason(${d.id})">Sign Wonderkid →</button>`:'<span style="font-size:11px;color:var(--tx3);padding:4px 8px">Already signed</span>'}
+                  ${!d.teamId?(d.feederContract>0?`<button class="btn btn-sm" style="background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2);opacity:.6" disabled>⏳ Contracted (${d.feederContract}yr)</button>`:`<button class="btn btn-sm" style="background:#f59e0b;color:#000;border:none;font-weight:700" onclick="GameActions.signDriverOffseason(${d.id})">Sign Wonderkid →</button>`):'<span style="font-size:11px;color:var(--tx3);padding:4px 8px">Already signed</span>'}
                 </div>
               </div>`;
             }
@@ -11764,7 +11803,7 @@ const personalSlots = getPersonalSponsorSlots(d);
               +'</div>'
               +'<div style="margin-top:8px;display:flex;gap:6px">'
               +'<button class="btn btn-outline btn-sm" onclick="UI.showDriverModal('+d.id+')">View Profile</button>'
-              +(!d.teamId?'<button class="btn btn-success btn-sm" onclick="GameActions.signDriver('+d.id+')">Sign</button>':'')
+              +(!d.teamId?(d.feederContract>0?'<button class="btn btn-ghost btn-sm" disabled style="opacity:.5">⏳ Contracted ('+d.feederContract+'yr)</button>':'<button class="btn btn-success btn-sm" onclick="GameActions.signDriver('+d.id+')">Sign</button>'):'')
               +'</div>'
               +'</div>';
           }).join('')
@@ -12198,7 +12237,7 @@ const activeIncome=formatMoney(sumSponsorIncome(g.sponsors||[]));
             const offerRows=offers.map(({sp,idx})=>{
               const badge=sp.isRenewal?'<span style="font-size:9px;background:rgba(37,99,235,.1);color:#1d4ed8;padding:1px 5px;border-radius:4px;font-weight:700">RENEWAL</span>':sp.isReplacement?'<span style="font-size:9px;background:rgba(245,158,11,.15);color:#b45309;padding:1px 5px;border-radius:4px;font-weight:700">REPLACEMENT</span>':'<span style="font-size:9px;background:rgba(22,163,74,.1);color:#15803d;padding:1px 5px;border-radius:4px;font-weight:700">NEW</span>';
               const borderCol=sp.isRenewal?'rgba(37,99,235,.35)':sp.isReplacement?'var(--amber)':'var(--grn)';
-              const canSign=(slotsUsed<cap||sp.isRenewal)&&(!isLocked||sp.isRenewal);
+              const canSign=(slotsUsed<cap)&&(!isLocked||sp.isRenewal);
               const ref=sp.pendingSponsorId ?? idx;
               return '<div style="background:var(--bg3);border:1px dashed '+borderCol+';border-radius:8px;padding:9px 12px;'+(canSign?'cursor:pointer;':'opacity:0.5;')+';display:flex;justify-content:space-between;align-items:center" '+(canSign?'onclick=\'GameActions.negotiateSponsor('+JSON.stringify(ref)+')\'':'')+'>'                +'<div><div style="display:flex;align-items:center;gap:5px;margin-bottom:2px"><span style="font-size:13px;font-weight:700">'+sp.name+'</span>'+badge+'</div>'                +'<div style="font-size:10px;color:var(--tx3)">'+(sp.totalSeasons||1)+'-yr · needs P'+(sp.minPosition||10)+(sp.linkedDriverName?' · 🔗 '+sp.linkedDriverName:'')+'</div></div>'                +'<div style="font-size:13px;font-weight:800;color:var(--amber)">+'+formatMoney(sp.value)+'/yr</div>'              +(canSign?'<button onclick="event.stopPropagation();GameActions.autoSignSponsor('+JSON.stringify(ref)+')" style="font-size:10px;padding:2px 7px;border:1px solid var(--bd);border-radius:12px;background:var(--bg2);cursor:pointer;white-space:nowrap" title="Auto-sign at -10% value">⚡ Auto</button>':'')              +'</div>';
             }).join('');
@@ -12832,10 +12871,10 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     } else if(polesitter && winner && polesitter.driverId === winner.driverId) {
       moments.push({icon:'✨', text:`Pole-to-win for ${winner.driverName}`});
     }
-    if(race._strategyUsed && race._strategyUsed !== 'auto') {
+    if(race._strategyUsed && race._strategyUsed !== 'auto' && race._strategyUsed !== 'split') {
       const stratData = DATA.getStrategyOptions ? DATA.getStrategyOptions(race, 0) : null;
       const opt = stratData?.options?.find(o=>o.id===race._strategyUsed);
-      if(opt) moments.push({icon:'🔧', text:`Strategy: ${opt.name} — ${opt.description||''}`});
+      if(opt) moments.push({icon:'🔧', text:`Strategy: ${opt.label} — ${opt.desc||''}`});
     }
 
     // Top 5 result rows
@@ -13394,7 +13433,7 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
           const cStandings2 = State.getConstructorStandings();
           const myTeamIdx = cStandings2.findIndex(s=>s.team.id===g2.playerTeamId);
           const myTeamStanding = myTeamIdx + 1;
-          const carRankTeams = [...g2.teams].sort((a,b)=>b.carPerformance-a.carPerformance);
+          const carRankTeams = [...g2.teams].sort((a,b)=>getTeamOverallCar(b)-getTeamOverallCar(a));
           const carRank = carRankTeams.findIndex(t=>t.id===g2.playerTeamId) + 1;
           const standingGap = myTeamStanding - carRank;
           if(standingGap < 2 || roundNum < 3) return '';
@@ -15358,8 +15397,20 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.3.0 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.3.1 · Release Notes</div>
         ${[
+    ['v2.3.1','Apr 2026',[
+            '🐛 ERS Deployment and Qualifying Tyre Choice buttons now update immediately in the strategy modal — no need to close and reopen (reported by IronicGerman).',
+            '🐛 Post-race debrief Race Story no longer shows "Strategy: undefined —" in the key moments list (reported by IronicGerman).',
+            '🐛 Car rank and all team ranking displays now correctly use the full car OVR — fixes rank appearing unchanged after upgrades (reported by Next-Attention5198).',
+            '🐛 Watch Race: SC pit stops no longer cause drivers to drop 15+ places. Safety car stop time (10.5s) is now correctly used for the pit drop calculation (reported by rapsoulish, TemporaryDirector442).',
+            '🐛 Mobile hamburger menu is now scrollable — Finance and other items above Academy are no longer cut off on smaller screens (reported by Total-Ad-6056).',
+            '🐛 Sponsor renewal exploit fixed — renewing a sponsor no longer bypasses the tier cap when a slot is already full (reported by formulavx).',
+            '🐛 Academy recruit and Power Unit review buttons now show a readable error if something goes wrong, rather than silently doing nothing (reported by Spiritual-Walrus-667, puchunz).',
+            '🐛 Prospect series badges (F2, F3, Karting etc.) no longer stick to drivers after they join F1 — cleared at every signing and promotion path. Existing saves patched on load (reported by scuderiaferrarifan).',
+            '🆕 Prospects can now be signed directly as junior academy drivers — 🎓 Sign as Junior button on their profile. Age 22 or under and open slot required (suggested by Typical_Special).',
+            '🆕 Feeder series contracts: prospects now have 1-4 year feeder contracts before they are available to sign. Countdown shown on their card and profile. Ticks down each offseason — once expired they enter free agency when ready (suggested by scuderiaferrarifan).',
+    ]],
     ['v2.3.0','Apr 2026',[
             '🆕 Engine manufacturers: each team now has a real power unit supplier (Mercedes, Ferrari, Honda, Renault, Audi) under a multi-year contract. Engine power feeds into top speed, ERS rating affects deployment quality, and engine reliability compounds with chassis reliability for DNF risk.',
             '🆕 Engine development: manufacturers improve independently each offseason based on their dev rate — Honda aggressive trajectory may close the Mercedes gap, Audi starts behind but develops fastest. Breakthroughs can accelerate a supplier gains.',
@@ -16338,6 +16389,7 @@ const GameActions = {
   },
 
   showRecruitJunior(){
+    try {
     const g = State.game; if(!g || !g.academy) return;
     const acad = g.academy;
     const maxSlots = acad.maxSlots || 4;
@@ -16400,6 +16452,7 @@ const GameActions = {
     </div>`;
     document.getElementById('modal-body').innerHTML = html;
     document.getElementById('driver-detail-modal').classList.remove('hidden');
+    } catch(e) { console.error('showRecruitJunior error:', e); UI.toast('Could not open recruitment screen — try reloading the page. ('+e.message+')','error'); }
   },
 
   showLoanModal(driverId){
@@ -16427,6 +16480,7 @@ const GameActions = {
   },
 
   showEngineMarket(){
+    try {
     const g=State.game; if(!g)return;
     const team=State.getPlayerTeam(); if(!team)return;
     const manufacturers = _liveEngines();
@@ -16481,6 +16535,7 @@ const GameActions = {
     </div>`;
     document.getElementById('modal-body').innerHTML=html;
     document.getElementById('driver-detail-modal').classList.remove('hidden');
+    } catch(e) { console.error('showEngineMarket error:', e); UI.toast('Could not open engine market — try reloading the page. ('+e.message+')','error'); }
   },
 
   renewDriver(driverId){
@@ -17269,7 +17324,9 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     const tierCaps={'Title':1,'Works':1,'Primary':2,'Partner':1,'Secondary':3,'Technical':3,'Associate':5};
     const cap=tierCaps[sp.type]||3;
     const existing=(g.sponsors||[]).filter(s=>s.type===sp.type).length;
-    if(existing>=cap && !sp.isRenewal){
+    // Expired sponsors are removed before renewal offers are created, so existing already reflects
+    // the post-expiry count. No bypass needed — if the slot is full, block regardless of isRenewal.
+    if(existing>=cap){
       UI.toast(`Already at the limit for ${sp.type} sponsors (max ${cap})`, 'warning');
       return;
     }
@@ -17320,7 +17377,7 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     const tierCaps={'Title':1,'Works':1,'Primary':2,'Partner':1,'Secondary':3,'Technical':3,'Associate':5};
     const cap=tierCaps[sp.type]||3;
     const existing=(g.sponsors||[]).filter(s=>s.type===sp.type).length;
-    if(existing>=cap&&!sp.isRenewal){UI.toast('Already at the '+sp.type+' sponsor limit.','warning');return;}
+    if(existing>=cap){UI.toast('Already at the '+sp.type+' sponsor limit.','warning');return;}
     if(sp.type==='Title'&&!sp.isRenewal){const ct=(g.careerStats?.constructorChampionships||0);if(ct<1){UI.toast('Title sponsors require 1 Constructor Championship.','warning');return;}}
     g.pendingSponsors.splice(idx,1);
     if(!g.sponsors) g.sponsors=[];
@@ -17363,6 +17420,7 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
   },
   confirmSigningOffseason(driverId, years, salary, asReserve){
     const d=State.getDriver(driverId); if(!d) return;
+    if(d.isProspect && (d.feederContract||0) > 0){ UI.toast(`${d.name} is still under a feeder series contract.`,'warning'); return; }
     const team=State.getPlayerTeam();
     if(asReserve){
       const current=State.getTeamReserves(team.id);
@@ -17370,6 +17428,7 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       d.teamId=team.id; d.contract=years; d.salary=salary;
       d.morale=clamp(d.morale+10,50,90);
       d.isReserve=true; d.isProspect=false; d.isFreeAgent=false;
+      d.prospectSeries=null;
       if(!team.reserveIds) team.reserveIds=[];
       if(!team.reserveIds.includes(d.id)) team.reserveIds.push(d.id);
       if(typeof gtag!=='undefined') gtag('event','driver_signed',{driver_name:d.name,rating:Math.round(d.rating||0),years:years,salary:salary,role:'reserve',season:State.game.season,race_number:State.game.raceIndex});
@@ -17379,11 +17438,13 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       if(current.length>=2){UI.toast('Already have 2 race drivers. Release one first.','warning');return;}
       d.teamId=team.id; d.contract=years; d.salary=salary;
       d.morale=clamp(d.morale+15,50,95);
+      const _wasProspect=d.isProspect; const _wasFreeAgent=d.isFreeAgent; const _prospectSeries=d.prospectSeries||'F2';
       d.isProspect=false; d.isFreeAgent=false; d.isReserve=false;
+      d.prospectSeries=null;
       if(!team.driverIds) team.driverIds=[];
       if(!team.driverIds.includes(d.id)) team.driverIds.push(d.id);
-      if(typeof gtag!=='undefined') gtag('event','prospect_signed',{driver_name:d.name,potential:Math.round(d.potential||0),rating:Math.round(d.rating||0),series:d.prospectSeries||'F2',season:State.game.season});
-      if(typeof gtag!=='undefined') gtag('event','driver_signed',{driver_name:d.name,rating:Math.round(d.rating||0),years:years,salary:salary,role:'race',type:d.isProspect?'prospect':d.isFreeAgent?'free_agent':'other',season:State.game.season,race_number:State.game.raceIndex});
+      if(typeof gtag!=='undefined') gtag('event','prospect_signed',{driver_name:d.name,potential:Math.round(d.potential||0),rating:Math.round(d.rating||0),series:_prospectSeries,season:State.game.season});
+      if(typeof gtag!=='undefined') gtag('event','driver_signed',{driver_name:d.name,rating:Math.round(d.rating||0),years:years,salary:salary,role:'race',type:_wasProspect?'prospect':_wasFreeAgent?'free_agent':'other',season:State.game.season,race_number:State.game.raceIndex});
       UI.closeModal(); UI.toast(`${d.name} signed · ${years}yr at ${formatMoney(salary)}/yr`,'success');
     }
     Storage.autosave();
@@ -17402,6 +17463,7 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       return;
     }
     d.isReserve=false; d.isFreeAgent=false;
+    d.prospectSeries=null;
     team.reserveIds=(team.reserveIds||[]).filter(id=>id!==driverId);
     if(!team.driverIds) team.driverIds=[];
     if(!team.driverIds.includes(d.id)) team.driverIds.push(d.id);
@@ -17503,6 +17565,37 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     if(typeof gtag!=='undefined') gtag('event','academy_founded',{tier:tier.label,season:g.season});
   },
 
+  signProspectAsJunior(driverId){
+    const g = State.game; if(!g || !g.academy) return;
+    const acad = g.academy;
+    if((acad.juniors||[]).length >= (acad.maxSlots||4)){
+      UI.toast('All academy slots are full.','warning'); return;
+    }
+    const d = State.getDriver(driverId); if(!d || !d.isProspect) return;
+    if(d.age > 22){ UI.toast('Academy juniors must be 22 or under.','warning'); return; }
+    if((d.feederContract||0) > 0){ UI.toast(`${d.name} is under a feeder series contract for ${d.feederContract} more season${d.feederContract!==1?'s':''}.`,'warning'); return; }
+    // Convert prospect into a junior — remove from prospect pool, enrol in academy
+    // Map prospectSeries to series field BEFORE clearing it
+    if(!d.series) d.series = d.prospectSeries || 'F3';
+    d.isProspect = false;
+    d.isJunior = true;
+    d.teamId = null;
+    d.isFreeAgent = false;
+    d.salary = 1;
+    d.contract = 0;
+    d.prospectSeries = null;
+    d.academyName = acad.name;
+    d.yearsInAcademy = 0;
+    d.promotionEligible = false;
+    if(!acad.juniors) acad.juniors = [];
+    acad.juniors.push(d);
+    UI.closeModal();
+    Storage.autosave();
+    UI.toast(`${d.name} signed to ${acad.name} as a junior driver.`, 'success');
+    if(document.getElementById('view-academy')?.classList.contains('active')) UI.renderAcademy();
+    if(document.getElementById('view-drivers')?.classList.contains('active')) UI.renderDrivers();
+  },
+
   signJuniorByIndex(idx){
     const juniorData = UI._recruitPool && UI._recruitPool[idx];
     if(!juniorData){ UI.toast('Recruit data not found — please reopen the recruitment screen.','warning'); return; }
@@ -17570,6 +17663,7 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     d.isReserve = role !== 'race';
     d.isFreeAgent = false;
     d.teamId = g.playerTeamId;
+    d.prospectSeries = null;
     d.contract = 2;
     d.salary = Math.max(1, Math.round(d.rating / 20));
     d.rookie = true;
@@ -17635,11 +17729,12 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     const d=State.getDriver(driverId);
     const dName=d?d.name.split(' ').pop():'Driver';
     Storage.autosave();
-    // Re-render so toggle button updates immediately
-    if(document.getElementById('view-schedule')?.classList.contains('active')) UI.renderSchedule();
     UI.toast(race._usedTyreQuali[driverId]
       ?`${dName}: used tyres in quali — fresh set saved for race start`
       :`${dName}: back to fresh tyres in qualifying`,'success');
+    // Re-render strategy modal in place so tyre toggle updates immediately without closing
+    if(!document.getElementById('strategy-modal').classList.contains('hidden')){ UI.openStrategyPicker(); return; }
+    if(document.getElementById('view-schedule')?.classList.contains('active')) UI.renderSchedule();
   },
   setErsDeploymentForDriver(driverId, deployment){
     const g=State.game; if(!g)return;
@@ -17647,6 +17742,8 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     if(!race._ersDeployment) race._ersDeployment={};
     race._ersDeployment[driverId]=deployment;
     Storage.autosave();
+    // Re-render strategy modal in place so buttons update immediately without closing
+    if(!document.getElementById('strategy-modal').classList.contains('hidden')){ UI.openStrategyPicker(); return; }
     if(document.getElementById('view-schedule')?.classList.contains('active')) UI.renderSchedule();
   },
   setErsDeployment(deployment){
@@ -17882,6 +17979,7 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       d.isFreeAgent = false;
       d.isProspect = false;
       d.isReserve = !!neg.wasReserve;
+      d.prospectSeries = null;
       d.morale = clamp((d.morale||70) + (neg.carryoverFromPlayerTeam?12:16), 45, 98);
       if(!team.driverIds) team.driverIds = [];
       if(!team.reserveIds) team.reserveIds = [];
@@ -18688,15 +18786,16 @@ window._wrEstimatePitDrop = function(lapState, driverId, decisionMeta, fallbackP
     ? driverEntry.pitLoss
     : ((decisionMeta?.isSafetyCarPit || lapState?.safetyCar) ? 10.5 : 22.0);
   const fieldSize = activeCars.reduce(function(maxPos, o){ return Math.max(maxPos, o.pos || 0); }, 0) || activeCars.length;
+  const maxPossibleDrop = Math.max(0, fieldSize - currentPos);
   const dropPlaces = decisionMeta?.choice === 'pit'
-    ? activeCars.filter(function(o){
+    ? Math.min(maxPossibleDrop, activeCars.filter(function(o){
         if(o.driverId === driverId || o.pos <= currentPos || o.gap == null) return false;
         const gapToDriver = o.gap - driverGap;
         if(gapToDriver < 0) return false;
         const followerPitLoss = o.pitThisLap ? (o.pitLoss > 0 ? o.pitLoss : stopTime) : 0;
         const netGain = stopTime - gapToDriver - followerPitLoss;
         return netGain > 0.25;
-      }).length
+      }).length)
     : 0;
   return {
     stopTime,
@@ -18974,7 +19073,8 @@ window._wrPitDecision = function(decisionId, pitNow, auto) {
       nextCompound: ev.nextCompound || 'hard',
       plannedPitLap: ev.plannedPitLap || ev.lap,
       nextPlannedPitLap: ev.nextPlannedPitLap || null,
-      nextStintIndex: ev.nextStintIndex
+      nextStintIndex: ev.nextStintIndex,
+      isSafetyCarPit: !!ev.isSafetyCarPit
     });
 
   } else {
