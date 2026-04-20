@@ -732,7 +732,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:18px;max-width:320px;padding:14px 16px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
           <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">Latest Update</div>
-          <div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.3.1 is live</div>
+          <div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.3.1.1 is live</div>
           <div style="font-size:12px;line-height:1.45;color:#666">Engine manufacturers, car sub-stats by circuit, ERS deployment, qualifying tyre choice, overdrive penalty. Driver Academy with juniors, loans &amp; permanent graduate branding.</div>
         </div>
       </div>
@@ -786,7 +786,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </button>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.3.1</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.3.1.1</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -10384,7 +10384,7 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
           <span class="dl-pos">${i+1}</span>
           <div class="dl-name-block">
             <div class="dl-name">${d.name}${d.prospectSeries?` <span class="prospect-badge badge-${d.prospectSeries.toLowerCase().replace('indycar','ic')}">${d.prospectSeries}</span>`:''}</div>
-            <div class="dl-team">Prospect · Age ${d.age} · ${d.nationality}${(d.feederContract||0)>0?` · <span style="color:var(--amber);font-weight:700">${d.feederContract}yr contract</span>`:' · <span style="color:var(--grn);font-weight:700">Free to sign</span>'}</div>
+            <div class="dl-team">Prospect · Age ${d.age} · ${d.nationality}${(d.feederContract||0)>0?` · <span style="color:var(--amber);font-weight:700">⏳ In feeder series · free ${(g.season||2026)+d.feederContract}</span>`:' · <span style="color:var(--grn);font-weight:700">Free to sign</span>'}</div>
           </div>
           <span class="dl-ovr"><span class="ovr-pill ${ratingClass(Math.round(d.rating))}">${Math.round(d.rating)}</span></span>
           <span class="dl-attr">${potDisplay}</span>
@@ -10581,7 +10581,7 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
         </div>
       </div>` : ''}
       <div class="modal-name" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">${d.name}${contractRiskBadge}</div>
-      <div class="modal-meta">Age ${d.age} · ${d.nationality} · ${team?team.name:'Free Agent'}${potDisplay}${d.isProspect?(d.feederContract>0?` · <span style="color:var(--amber);font-weight:700">⏳ ${d.feederContract}yr feeder contract</span>`:` · <span style="color:var(--grn);font-weight:700">✅ Free to sign now</span>`):''}</div>
+      <div class="modal-meta">Age ${d.age} · ${d.nationality} · ${team?team.name:'Free Agent'}${potDisplay}${d.isProspect?(d.feederContract>0?` · <span style="color:var(--amber);font-weight:700">⏳ In feeder series · free ${(g.season||2026)+d.feederContract}</span>`:` · <span style="color:var(--grn);font-weight:700">✅ Free to sign now</span>`):''}</div>
       ${activeInjury ? `<div style="margin:10px 0 12px;padding:10px 12px;background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;color:#991b1b;font-size:12px">
         <div style="font-weight:900;margin-bottom:2px">🚑 Injured</div>
         <div>${activeInjury.type} · out for ${racesOut} more race${racesOut===1?'':'s'}${reserveCover?` · reserve stepping in: ${reserveCover.name}`:''}</div>
@@ -10752,7 +10752,7 @@ const personalSlots = getPersonalSponsorSlots(d);
         ${(()=>{
           if(!(fa||d.isProspect)) return '';
           const locked = d.isProspect && (d.feederContract||0) > 0;
-          if(locked) return `<button class="btn btn-ghost btn-sm" disabled style="opacity:.5" title="Under feeder series contract for ${d.feederContract} more season${d.feederContract!==1?'s':''}">⏳ Contracted (${d.feederContract}yr)</button>`;
+          if(locked) return `<button class="btn btn-ghost btn-sm" disabled style="opacity:.5" title="Under feeder series contract — available from ${(g.season||2026)+d.feederContract}">⏳ In feeder series · free ${(g.season||2026)+d.feederContract}</button>`;
           return `<button class="btn btn-success btn-sm" onclick="${g.offseasonPending?`GameActions.signDriverOffseason(${d.id})`:`GameActions.signDriver(${d.id})`}">Sign as Race Driver</button>`;
         })()}
         ${(()=>{
@@ -11784,7 +11784,7 @@ const personalSlots = getPersonalSponsorSlots(d);
                 <div style="font-size:11px;color:rgba(255,255,255,.5);line-height:1.5;margin-bottom:12px;font-style:italic">"Raw, aggressive, and ceiling-less. Give them time and they could be the best on the grid."</div>
                 <div style="display:flex;gap:8px">
                   <button class="btn btn-sm" style="background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2)" onclick="UI.showDriverModal(${d.id})">View Profile</button>
-                  ${!d.teamId?(d.feederContract>0?`<button class="btn btn-sm" style="background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2);opacity:.6" disabled>⏳ Contracted (${d.feederContract}yr)</button>`:`<button class="btn btn-sm" style="background:#f59e0b;color:#000;border:none;font-weight:700" onclick="GameActions.signDriverOffseason(${d.id})">Sign Wonderkid →</button>`):'<span style="font-size:11px;color:var(--tx3);padding:4px 8px">Already signed</span>'}
+                  ${!d.teamId?(d.feederContract>0?`<button class="btn btn-sm" style="background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2);opacity:.6" disabled>⏳ In feeder series · free ${(g.season||2026)+d.feederContract}</button>`:`<button class="btn btn-sm" style="background:#f59e0b;color:#000;border:none;font-weight:700" onclick="GameActions.signDriverOffseason(${d.id})">Sign Wonderkid →</button>`):'<span style="font-size:11px;color:var(--tx3);padding:4px 8px">Already signed</span>'}
                 </div>
               </div>`;
             }
@@ -11803,7 +11803,7 @@ const personalSlots = getPersonalSponsorSlots(d);
               +'</div>'
               +'<div style="margin-top:8px;display:flex;gap:6px">'
               +'<button class="btn btn-outline btn-sm" onclick="UI.showDriverModal('+d.id+')">View Profile</button>'
-              +(!d.teamId?(d.feederContract>0?'<button class="btn btn-ghost btn-sm" disabled style="opacity:.5">⏳ Contracted ('+d.feederContract+'yr)</button>':'<button class="btn btn-success btn-sm" onclick="GameActions.signDriver('+d.id+')">Sign</button>'):'')
+              +(!d.teamId?(d.feederContract>0?'<button class="btn btn-ghost btn-sm" disabled style="opacity:.5" title="Under feeder series contract">⏳ In feeder series · free '+(g.season+d.feederContract)+'</button>':'<button class="btn btn-success btn-sm" onclick="GameActions.signDriver('+d.id+')">Sign</button>'):'')
               +'</div>'
               +'</div>';
           }).join('')
@@ -15397,8 +15397,12 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.3.1 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.3.1.1 · Release Notes</div>
         ${[
+    ['v2.3.1.1','Apr 2026',[
+            '🐛 Academy recruit button now closes any open modal before opening — fixes silent failure on Firefox (reported by puchunz).',
+            '🐛 Feeder series contract label now shows the year a prospect will be available (e.g. "⏳ In feeder series · free 2028") instead of the opaque "Contracted (3yr)" — clarifies this is intentional behaviour, not a bug (reported by Next-Attention5198).',
+    ]],
     ['v2.3.1','Apr 2026',[
             '🐛 ERS Deployment and Qualifying Tyre Choice buttons now update immediately in the strategy modal — no need to close and reopen (reported by IronicGerman).',
             '🐛 Post-race debrief Race Story no longer shows "Strategy: undefined —" in the key moments list (reported by IronicGerman).',
@@ -16396,6 +16400,8 @@ const GameActions = {
     if((acad.juniors||[]).length >= maxSlots) {
       UI.toast('All academy slots are filled.','warning'); return;
     }
+    // Close any open modal first to ensure clean state
+    UI.closeModal();
     // Use DATA name pools for variety, seeded with Math.random so each open is different
     const nats = DATA.nationalities;
     const fns = DATA.firstNames;
