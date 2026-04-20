@@ -9109,7 +9109,7 @@ const UI = {
           rb.textContent=race.raceDone?'✓ Race Complete':'Simulate Race';
           const stb2=document.getElementById('btn-strategy');
           if(wb){ wb.style.display=(race.qualiDone&&!race.raceDone)?'':'none'; }
-          if(stb2){ stb2.style.display=(race.qualiDone&&!race.raceDone)?'':'none'; }
+          if(stb2){ stb2.style.display=!race.raceDone?'':'none'; }
           if(wsb) wsb.style.display='none';
         }
       }
