@@ -732,7 +732,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:18px;max-width:320px;padding:14px 16px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
           <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">Latest Update</div>
-          <div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.3.2 is live</div>
+          <div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.3.2.1 is live</div>
           <div style="font-size:12px;line-height:1.45;color:#666">Engine manufacturers, car sub-stats by circuit, ERS deployment, qualifying tyre choice, overdrive penalty. Driver Academy with juniors, loans &amp; permanent graduate branding.</div>
         </div>
       </div>
@@ -786,7 +786,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </button>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.3.2</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.3.2.1</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -2297,6 +2297,7 @@ const Editor = {
     return { data: out, warnings };
   },
   _normalizeTeam(team, fallback) {
+    const validEngines = ['mercedes','ferrari','honda','redbullford','audi'];
     return {
       ...fallback,
       id: fallback.id,
@@ -2311,6 +2312,7 @@ const Editor = {
       revenue: clamp(parseFloat(team?.revenue ?? fallback.revenue) || fallback.revenue, 20, 500),
       color: /^#[0-9a-fA-F]{6}$/.test(String(team?.color || '').trim()) ? String(team.color).trim() : fallback.color,
       difficulty: ['easy','medium','hard'].includes(team?.difficulty) ? team.difficulty : fallback.difficulty,
+      engineManufacturer: validEngines.includes(team?.engineManufacturer) ? team.engineManufacturer : (fallback.engineManufacturer || 'mercedes'),
       baseDrivers: JSON.parse(JSON.stringify(fallback.baseDrivers || []))
     };
   },
@@ -15543,8 +15545,11 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.3.2 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.3.2.1 · Release Notes</div>
         ${[
+    ['v2.3.2.1','Apr 2026',[
+            '🐛 Roster editor: changing the engine supplier now persists correctly — previously the change was saved to the team object but then immediately overwritten by _normalizeTeam which did not include engineManufacturer in its explicit field list. Navigating to another tab and back would revert it to the original. (reported by Polkiu4863)',
+    ]],
     ['v2.3.2','Apr 2026',[
             '🐛 Loaned academy drivers no longer appear as extra race cars — they were bypassing the isJunior filter in qualifying, sprint qualifying, and race grid construction, causing teams to field 3+ cars and expanding grids beyond 22. Fixed at all four entry points: simQualifying, simSprintQualifying, simRace qualiOrder filter, and offseason driverIds cleanup (reported by Penguinref, TTVFrozzle19, Spiritual-Walrus-667).',
             '🐛 Season objectives: "Win the Constructors Championship" no longer shows as Done at race 1 of a new season. Position-type objectives now require at least one race to have been completed before they can register as achieved (reported by Ahhonlyforkis, Teammomofan).',
