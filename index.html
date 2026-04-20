@@ -732,7 +732,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:18px;max-width:320px;padding:14px 16px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
           <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">Latest Update</div>
-          <div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.3.1.4 is live</div>
+          <div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.3.1.5 is live</div>
           <div style="font-size:12px;line-height:1.45;color:#666">Engine manufacturers, car sub-stats by circuit, ERS deployment, qualifying tyre choice, overdrive penalty. Driver Academy with juniors, loans &amp; permanent graduate branding.</div>
         </div>
       </div>
@@ -786,7 +786,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </button>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.3.1.4</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.3.1.5</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -7586,10 +7586,18 @@ const spons=sumSponsorIncome(g.sponsors||[]);
       loansDone.forEach(l => {
         const d = State.getDriver(l.driverId);
         if(d) {
-          d.teamId = g.playerTeamId;
-          d.isReserve = true;
+          // Return to academy — NOT as a reserve driver
+          d.teamId = null;
+          d.isJunior = true;
+          d.isReserve = false;
           d.isFreeAgent = false;
-          d.contract = 1;
+          d.contract = 0;
+          d.salary = 1;
+          // Re-add to acad.juniors if not already there
+          if(!(acad.juniors||[]).some(j=>j.id===d.id)) {
+            acad.juniors = acad.juniors || [];
+            acad.juniors.push(d);
+          }
           // Development boost from race experience during loan
           const expBoost = randFloat(0.8, 2.2);
           d.rating     = clamp(d.rating + expBoost, 40, 97);
@@ -8234,6 +8242,15 @@ const Storage = {
         excessReserveIds.forEach(id => {
           const rd = (g.drivers||[]).find(d=>d.id===id);
           if(rd) { rd.isReserve=false; rd.isFreeAgent=true; rd.teamId=null; rd.contract=0; }
+        });
+      }
+      // Remove any on-loan academy juniors from reserveIds — loan drivers should not occupy reserve slots
+      const loanedIds = new Set((g.academy?.loans||[]).map(l=>l.driverId));
+      if(loanedIds.size > 0) {
+        t.reserveIds = (t.reserveIds||[]).filter(id => !loanedIds.has(id));
+        loanedIds.forEach(id => {
+          const ld = (g.drivers||[]).find(d=>d.id===id);
+          if(ld) { ld.isReserve=false; ld.isJunior=true; }
         });
       }
     });
@@ -8951,7 +8968,7 @@ const UI = {
     if(academyCard && academyValue && academySub){
       if(g.academy){
         academyCard.style.display = '';
-        academyValue.innerHTML = `${(g.academy.juniors||[]).length}<span style="font-size:11px;font-weight:500;color:var(--tx3)">/${g.academy.maxSlots||4}</span>`;
+        academyValue.innerHTML = `${(g.academy.juniors||[]).length + (g.academy.loans||[]).length}<span style="font-size:11px;font-weight:500;color:var(--tx3)">/${g.academy.maxSlots||4}</span>`;
         academySub.textContent = `${(g.academy.graduates||[]).length} graduate${(g.academy.graduates||[]).length!==1?'s':''}`;
       } else {
         academyCard.style.display = 'none';
@@ -10799,7 +10816,7 @@ const personalSlots = getPersonalSponsorSlots(d);
           if(!acad) return '';
           const locked = (d.feederContract||0) > 0;
           if(locked) return '';
-          const openSlots = (acad.maxSlots||4) - (acad.juniors||[]).length;
+          const openSlots = (acad.maxSlots||4) - (acad.juniors||[]).length - (acad.loans||[]).length;
           if(openSlots <= 0) return '<button class="btn btn-ghost btn-sm" disabled style="opacity:.5" title="Academy is full">🎓 Academy Full</button>';
           if(d.age > 22) return '<button class="btn btn-ghost btn-sm" disabled style="opacity:.5" title="Academy juniors must be 22 or under">🎓 Too old for academy</button>';
           return `<button class="btn btn-outline btn-sm" style="border-color:#7c3aed;color:#7c3aed" onclick="GameActions.signProspectAsJunior(${d.id})">🎓 Sign as Junior</button>`;
@@ -11675,7 +11692,9 @@ const personalSlots = getPersonalSponsorSlots(d);
           ${!inLoan && j.rating >= 68
             ? `<button onclick="GameActions.showLoanModal(${j.id})" class="btn btn-outline btn-sm">📤 Arrange Loan</button>`
             : ''}
-          <button onclick="GameActions.releaseJunior(${j.id})" class="btn btn-danger btn-sm" style="margin-left:auto">Release</button>
+          ${!inLoan
+            ? `<button onclick="GameActions.releaseJunior(${j.id})" class="btn btn-danger btn-sm" style="margin-left:auto">Release</button>`
+            : `<div style="font-size:10px;color:var(--tx3);padding:4px 0;margin-left:auto">On loan — returns next offseason</div>`}
         </div>
       </div>`;
     }).join('');
@@ -11698,7 +11717,7 @@ const personalSlots = getPersonalSponsorSlots(d);
         <div style="display:flex;justify-content:space-between;align-items:center">
           <div>
             <div class="dev-section-title" style="margin-bottom:2px">🎓 ${acad.name}</div>
-            <div style="font-size:11px;color:var(--tx3)">${acad.tier} · ${formatMoney(acad.annualBudget)}/yr · ${juniors.length}/${maxSlots} slots used</div>
+            <div style="font-size:11px;color:var(--tx3)">${acad.tier} · ${formatMoney(acad.annualBudget)}/yr · ${juniors.length + loans.length}/${maxSlots} slots used</div>
           </div>
           <div style="text-align:right">
             <div style="font-size:18px;font-weight:900;color:var(--amber)">${graduates.length}</div>
@@ -11715,18 +11734,34 @@ const personalSlots = getPersonalSponsorSlots(d);
             <div style="font-size:9px;color:var(--tx3);text-transform:uppercase;font-weight:700">On Loan</div>
           </div>
           <div style="flex:1;background:var(--bg3);border-radius:7px;padding:8px 10px;text-align:center">
-            <div style="font-size:16px;font-weight:900">${Math.max(0, maxSlots-juniors.length)}</div>
+            <div style="font-size:16px;font-weight:900">${Math.max(0, maxSlots-juniors.length-loans.length)}</div>
             <div style="font-size:9px;color:var(--tx3);text-transform:uppercase;font-weight:700">Open Slots</div>
           </div>
         </div>
       </div>
 
-      ${juniors.length < maxSlots
+      ${(juniors.length + loans.length) < maxSlots
         ? `<button onclick="GameActions.showRecruitJunior()" class="btn btn-red" style="width:100%;margin-bottom:12px">+ Recruit Junior Driver</button>`
         : `<div style="font-size:11px;color:var(--tx3);text-align:center;padding:8px;margin-bottom:12px">All ${maxSlots} slots filled</div>`}
 
-      ${juniors.length > 0
-        ? `<div class="dev-section-title" style="margin-bottom:8px">Current Juniors</div>${juniorCards}`
+      ${juniors.length > 0 || loans.length > 0
+        ? `<div class="dev-section-title" style="margin-bottom:8px">Current Juniors</div>${juniorCards}${loans.length > 0 ? loans.map(l => {
+            const ld = State.getDriver(l.driverId);
+            if(!ld) return '';
+            return `<div style="background:var(--bg2);border:1px solid var(--bd);border-radius:10px;padding:12px 14px;margin-bottom:8px;opacity:0.8">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+                <div>
+                  <div style="font-size:14px;font-weight:800">${ld.name}</div>
+                  <div style="font-size:11px;color:var(--tx3)">Age ${ld.age} · ${ld.series||'F3'} · On loan at ${l.teamName}</div>
+                </div>
+                <div style="text-align:right">
+                  <div style="font-size:18px;font-weight:900;font-family:var(--fm)">${Math.round(ld.rating)}</div>
+                  <div style="font-size:9px;color:var(--tx3)">OVR</div>
+                </div>
+              </div>
+              <div style="font-size:11px;color:var(--blu);background:rgba(37,99,235,.08);border-radius:6px;padding:6px 8px">📤 On loan — returns after this season with a development boost</div>
+            </div>`;
+          }).join('') : ''}`
         : `<div style="text-align:center;padding:24px;color:var(--tx3);font-size:12px">No junior drivers enrolled. Recruit from the junior series to build your pipeline.</div>`}
 
       ${graduates.length > 0 ? `
@@ -15434,8 +15469,15 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.3.1.4 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.3.1.5 · Release Notes</div>
         ${[
+    ['v2.3.1.5','Apr 2026',[
+            '🐛 Academy loan return now correctly places drivers back into the academy — previously returning loan drivers were assigned as reserve drivers, causing slot corruption and displacing existing drivers (reported by puchunz).',
+            '🐛 Sending a junior on loan no longer marks them as a reserve driver or keeps them in acad.juniors during the loan, preventing double-development (academy loop + loan boost).',
+            '🐛 Slot counts throughout the academy (header, dashboard widget, recruit button, Sign as Junior button) now correctly include loaned juniors so the cap cannot be exceeded by signing while a driver is out on loan.',
+            '🐛 Release button is now hidden while a junior is on loan — previously a player could release a loaned driver mid-season.',
+            '🐛 Existing saves patched on load: loaned drivers removed from reserveIds and restored to junior state.',
+    ]],
     ['v2.3.1.4','Apr 2026',[
             '🐛 Academy promote-to-reserve button now correctly enforces the 2-reserve cap — previously there was no check, allowing unlimited reserves to be added. Button is now disabled when both slots are full. Existing saves with excess reserves are patched on load (reported by puchunz).',
     ]],
@@ -16454,7 +16496,8 @@ const GameActions = {
     const g = State.game; if(!g || !g.academy) return;
     const acad = g.academy;
     const maxSlots = acad.maxSlots || 4;
-    if((acad.juniors||[]).length >= maxSlots) {
+    const totalInProgramme = (acad.juniors||[]).length + (acad.loans||[]).length;
+    if(totalInProgramme >= maxSlots) {
       UI.toast('All academy slots are filled.','warning'); return;
     }
     // Close any open modal first to ensure clean state
@@ -17631,7 +17674,8 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
   signProspectAsJunior(driverId){
     const g = State.game; if(!g || !g.academy) return;
     const acad = g.academy;
-    if((acad.juniors||[]).length >= (acad.maxSlots||4)){
+    const totalInProgramme = (acad.juniors||[]).length + (acad.loans||[]).length;
+    if(totalInProgramme >= (acad.maxSlots||4)){
       UI.toast('All academy slots are full.','warning'); return;
     }
     const d = State.getDriver(driverId); if(!d || !d.isProspect) return;
@@ -17667,7 +17711,8 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
   signJunior(juniorData){
     const g = State.game; if(!g || !g.academy) return;
     const acad = g.academy;
-    if((acad.juniors||[]).length >= (acad.maxSlots||4)){
+    const totalInProgramme = (acad.juniors||[]).length + (acad.loans||[]).length;
+    if(totalInProgramme >= (acad.maxSlots||4)){
       UI.toast('All academy slots are full.','warning'); return;
     }
     // Build junior as a proper driver object with unique ID
@@ -17790,10 +17835,19 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     };
     if(!g.academy.loans) g.academy.loans = [];
     g.academy.loans.push(loan);
-    // Move driver to borrowing team temporarily
-    d.teamId = toTeamId; d.isReserve = true; d.isFreeAgent = false; d.contract = 1;
+    // Move driver to borrowing team temporarily — keep isJunior true so they return to academy correctly
+    d.teamId = toTeamId;
+    d.isReserve = false;
+    d.isJunior = true;
+    d.isFreeAgent = false;
+    d.contract = 1;
+    // Remove from acad.juniors during loan — they'll be re-added on return
+    g.academy.juniors = (g.academy.juniors||[]).filter(j=>j.id!==driverId);
+    // Ensure they're not in player team's reserveIds
+    const playerTeam = State.getPlayerTeam();
+    if(playerTeam) playerTeam.reserveIds = (playerTeam.reserveIds||[]).filter(id=>id!==driverId);
     // Loan fee boosts player team revenue
-    State.getPlayerTeam().revenue = Math.min(650, (State.getPlayerTeam().revenue||100) + loanFee);
+    playerTeam.revenue = Math.min(650, (playerTeam.revenue||100) + loanFee);
     UI.closeModal();
     Storage.autosave();
     UI.toast(`${d.name} loaned to ${toTeam.name} for 1 season. +${formatMoney(loanFee)} loan fee received.`, 'success');
