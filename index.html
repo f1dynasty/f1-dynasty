@@ -732,7 +732,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:18px;max-width:320px;padding:14px 16px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
           <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">Latest Update</div>
-          <div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.3.1.2 is live</div>
+          <div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.3.1.3 is live</div>
           <div style="font-size:12px;line-height:1.45;color:#666">Engine manufacturers, car sub-stats by circuit, ERS deployment, qualifying tyre choice, overdrive penalty. Driver Academy with juniors, loans &amp; permanent graduate branding.</div>
         </div>
       </div>
@@ -786,7 +786,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </button>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.3.1.2</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.3.1.3</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -9994,7 +9994,7 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
         <div style="font-size:11px;color:var(--tx3);margin-top:8px">${_engData?.desc||''}</div>
         <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid var(--bd)">
           <div style="font-size:12px">Contract: <strong>${team.engineContractYears||0}yr${(team.engineContractYears||0)!==1?'s':''} remaining</strong>${team.engineContractCost?` · ${formatMoney(team.engineContractCost||0)}/yr`:' · Works team'}</div>
-          ${(team.engineContractYears||0)<=1?`<button onclick="UI.showEngineMarket()" class="btn btn-outline btn-sm" style="border-color:var(--amber);color:var(--amber)">🔄 Review Options</button>`:`<span style="font-size:10px;color:var(--tx3)">Renewable in ${(team.engineContractYears||3)-1}yr</span>`}
+          ${(team.engineContractYears||0)<=1?`<button onclick="GameActions.showEngineMarket()" class="btn btn-outline btn-sm" style="border-color:var(--amber);color:var(--amber)">🔄 Review Options</button>`:`<span style="font-size:10px;color:var(--tx3)">Renewable in ${(team.engineContractYears||3)-1}yr</span>`}
         </div>
         ${g._engineBreakthroughMsg?`<div style="margin-top:8px;padding:8px 10px;background:rgba(249,115,22,.1);border-radius:6px;border-left:3px solid #f97316;font-size:11px;color:#f97316;display:flex;justify-content:space-between;align-items:center"><span>${g._engineBreakthroughMsg}</span><button onclick="State.game._engineBreakthroughMsg=null;UI.renderCar()" style="background:none;border:none;cursor:pointer;color:#f97316;font-size:14px;padding:0 4px">×</button></div>`:''}
       </div>
@@ -11659,7 +11659,7 @@ const personalSlots = getPersonalSponsorSlots(d);
             ? `<div style="font-size:10px;color:var(--tx3);padding:4px 0">${j.yearsInAcademy<2?`${2-j.yearsInAcademy} more season${2-j.yearsInAcademy>1?'s':''} before promotion eligible`:'Needs 72+ rating for promotion'}</div>`
             : ''}
           ${!inLoan && j.rating >= 68
-            ? `<button onclick="UI.showLoanModal(${j.id})" class="btn btn-outline btn-sm">📤 Arrange Loan</button>`
+            ? `<button onclick="GameActions.showLoanModal(${j.id})" class="btn btn-outline btn-sm">📤 Arrange Loan</button>`
             : ''}
           <button onclick="GameActions.releaseJunior(${j.id})" class="btn btn-danger btn-sm" style="margin-left:auto">Release</button>
         </div>
@@ -11708,7 +11708,7 @@ const personalSlots = getPersonalSponsorSlots(d);
       </div>
 
       ${juniors.length < maxSlots
-        ? `<button onclick="UI.showRecruitJunior()" class="btn btn-red" style="width:100%;margin-bottom:12px">+ Recruit Junior Driver</button>`
+        ? `<button onclick="GameActions.showRecruitJunior()" class="btn btn-red" style="width:100%;margin-bottom:12px">+ Recruit Junior Driver</button>`
         : `<div style="font-size:11px;color:var(--tx3);text-align:center;padding:8px;margin-bottom:12px">All ${maxSlots} slots filled</div>`}
 
       ${juniors.length > 0
@@ -12184,7 +12184,7 @@ const activeIncome=formatMoney(sumSponsorIncome(g.sponsors||[]));
       ${g._engineContractExpiring ? `<div style="background:rgba(245,158,11,.1);border:1px solid var(--amber);border-radius:10px;padding:14px 16px;margin-bottom:14px">
         <div style="font-size:13px;font-weight:800;color:var(--amber);margin-bottom:4px">⚡ Engine Contract Expiring</div>
         <div style="font-size:12px;color:var(--tx2);margin-bottom:10px">Your power unit contract has run its term. Renew with your current supplier or explore alternatives on the Car page.</div>
-        <button onclick="UI.showEngineMarket()" class="btn btn-outline btn-sm" style="border-color:var(--amber);color:var(--amber)">🔄 Review Engine Options</button>
+        <button onclick="GameActions.showEngineMarket()" class="btn btn-outline btn-sm" style="border-color:var(--amber);color:var(--amber)">🔄 Review Engine Options</button>
       </div>` : ''}
       <div class="offseason-section-title">🏎️ ${g.season} Car vs Last Season</div>
         <div class="offseason-section-sub">How your car has changed from offseason investments and natural field development.</div>
@@ -15420,16 +15420,15 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.3.1.2 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.3.1.3 · Release Notes</div>
         ${[
-    ['v2.3.1.2','Apr 2026',[
-            '🐛 Car performance OVR now correctly updates after in-season upgrades — the upgrade was applying to the legacy carPerformance field but the displayed OVR is calculated from the five sub-stats (Top Speed, Cornering, Tyre Management, Dirty Air, Aero Efficiency). All three upgrade paths (in-season, stale on load, end-of-season) now distribute gains across sub-stats (reported by Next-Attention5198).',
+    ['v2.3.1.3','Apr 2026',[
+            '🐛 Academy recruit button, Power Unit review options button, and Arrange Loan button now work correctly — all three were calling UI.showRecruitJunior/showEngineMarket/showLoanModal but these functions live in GameActions, causing a silent TypeError on every browser. This was the real root cause of the recruit button bug (reported by puchunz, Spiritual-Walrus-667).',
     ]],
     ['v2.3.1.2','Apr 2026',[
-            '🐛 Car performance OVR now visibly increases after upgrades. Sub-stat distribution was applying fractional gains (0.10–0.30×) to each of the five pillars, so a +4.1 upgrade only moved the OVR by ~0.8. Each sub-stat now receives the full upgrade gain, so OVR reflects what was invested (reported by Next-Attention5198).',
+            '🐛 Car performance OVR now visibly increases after upgrades. Sub-stat distribution was applying fractional gains so a +4.1 upgrade only moved the OVR by ~0.8. Each sub-stat now receives the full upgrade gain (reported by Next-Attention5198).',
     ]],
     ['v2.3.1.1','Apr 2026',[
-            '🐛 Academy recruit button now closes any open modal before opening — fixes silent failure on Firefox (reported by puchunz).',
             '🐛 Feeder series contract label now shows the year a prospect will be available (e.g. "⏳ In feeder series · free 2028") instead of the opaque "Contracted (3yr)" — clarifies this is intentional behaviour, not a bug (reported by Next-Attention5198).',
     ]],
     ['v2.3.1','Apr 2026',[
