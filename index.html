@@ -732,7 +732,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:18px;max-width:320px;padding:14px 16px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
           <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">Latest Update</div>
-          <div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.3.1.3 is live</div>
+          <div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.3.1.4 is live</div>
           <div style="font-size:12px;line-height:1.45;color:#666">Engine manufacturers, car sub-stats by circuit, ERS deployment, qualifying tyre choice, overdrive penalty. Driver Academy with juniors, loans &amp; permanent graduate branding.</div>
         </div>
       </div>
@@ -786,7 +786,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </button>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.3.1.3</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.3.1.4</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -8227,6 +8227,15 @@ const Storage = {
       if(t.sprintWins===undefined) t.sprintWins=0;
       if(t.poles===undefined) t.poles=0;
       if(t.podiums===undefined) t.podiums=0;
+      // Cap reserves at 2 — excess reserves from the academy promotion bug get released to free agency
+      if((t.reserveIds||[]).length > 2) {
+        const excessReserveIds = t.reserveIds.slice(2);
+        t.reserveIds = t.reserveIds.slice(0, 2);
+        excessReserveIds.forEach(id => {
+          const rd = (g.drivers||[]).find(d=>d.id===id);
+          if(rd) { rd.isReserve=false; rd.isFreeAgent=true; rd.teamId=null; rd.contract=0; }
+        });
+      }
     });
     // Patch drivers for new fields
     if(g.drivers) g.drivers.forEach(d=>{
@@ -11653,8 +11662,13 @@ const personalSlots = getPersonalSponsorSlots(d);
         </div>
         <div style="display:flex;gap:6px;flex-wrap:wrap">
           ${j.promotionEligible && !inLoan
-            ? `<button onclick="GameActions.promoteJunior(${j.id},'reserve')" class="btn btn-success btn-sm">⬆️ Promote to Reserve</button>
-               <button onclick="if(confirm('Promoting to race driver will release your current 2nd driver to free agency. Continue?')) GameActions.promoteJunior(${j.id},'race')" class="btn btn-outline btn-sm">🏎 Promote to Race Seat</button>`
+            ? (()=>{
+                const reservesFull = (team.reserveIds||[]).length >= 2;
+                const reserveBtn = reservesFull
+                  ? `<button class="btn btn-ghost btn-sm" disabled style="opacity:.5" title="Reserve slots full — release a reserve first">⬆️ Reserve Full</button>`
+                  : `<button onclick="GameActions.promoteJunior(${j.id},'reserve')" class="btn btn-success btn-sm">⬆️ Promote to Reserve</button>`;
+                return reserveBtn + `<button onclick="if(confirm('Promoting to race driver will release your current 2nd driver to free agency. Continue?')) GameActions.promoteJunior(${j.id},'race')" class="btn btn-outline btn-sm">🏎 Promote to Race Seat</button>`;
+              })()
             : !j.promotionEligible && !inLoan
             ? `<div style="font-size:10px;color:var(--tx3);padding:4px 0">${j.yearsInAcademy<2?`${2-j.yearsInAcademy} more season${2-j.yearsInAcademy>1?'s':''} before promotion eligible`:'Needs 72+ rating for promotion'}</div>`
             : ''}
@@ -15420,8 +15434,11 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.3.1.3 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.3.1.4 · Release Notes</div>
         ${[
+    ['v2.3.1.4','Apr 2026',[
+            '🐛 Academy promote-to-reserve button now correctly enforces the 2-reserve cap — previously there was no check, allowing unlimited reserves to be added. Button is now disabled when both slots are full. Existing saves with excess reserves are patched on load (reported by puchunz).',
+    ]],
     ['v2.3.1.3','Apr 2026',[
             '🐛 Academy recruit button, Power Unit review options button, and Arrange Loan button now work correctly — all three were calling UI.showRecruitJunior/showEngineMarket/showLoanModal but these functions live in GameActions, causing a silent TypeError on every browser. This was the real root cause of the recruit button bug (reported by puchunz, Spiritual-Walrus-667).',
     ]],
@@ -17722,6 +17739,22 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       });
       team.driverIds = [...(team.driverIds||[]).slice(0,1), d.id];
     } else {
+      const currentReserves = (team.reserveIds||[]).length;
+      if(currentReserves >= 2){
+        UI.toast('Reserve slots are full (max 2). Release a reserve driver first.','warning');
+        // Undo all mutations
+        d.isJunior = true;
+        d.isReserve = false;
+        d.isFreeAgent = false;
+        d.teamId = null;
+        d.contract = 0;
+        d.salary = 1;
+        d.rookie = false;
+        acad.juniors = acad.juniors || [];
+        acad.juniors.push(d);
+        acad.graduates = acad.graduates.filter(gr=>gr.id!==d.id);
+        return;
+      }
       if(!team.reserveIds) team.reserveIds = [];
       if(!team.reserveIds.includes(d.id)) team.reserveIds.push(d.id);
     }
