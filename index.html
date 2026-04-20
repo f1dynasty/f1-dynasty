@@ -7658,13 +7658,14 @@ const spons=sumSponsorIncome(g.sponsors||[]);
     if(u.stat==='carPerformance'){
       const _eff=getInSeasonDevEfficiency(team.carPerformance || 70);
       const _v = u.value*_eff;
+      const _baseCpEos = team.carPerformance;
       team.carPerformance=clamp(team.carPerformance+_v,40,99);
       if(_v > 0) {
-        team.cornering      = clamp((team.cornering      ||team.carPerformance)+_v*0.30,40,99);
-        team.aeroEfficiency = clamp((team.aeroEfficiency ||team.carPerformance)+_v*0.25,40,99);
-        team.topSpeed       = clamp((team.topSpeed       ||team.carPerformance)+_v*0.20,40,99);
-        team.tyreManagement = clamp((team.tyreManagement ||team.carPerformance)+_v*0.15,40,99);
-        team.dirtyAir       = clamp((team.dirtyAir       ||team.carPerformance)+_v*0.10,40,99);
+        team.cornering      = clamp((team.cornering      ||_baseCpEos)+_v,40,99);
+        team.aeroEfficiency = clamp((team.aeroEfficiency ||_baseCpEos)+_v,40,99);
+        team.topSpeed       = clamp((team.topSpeed       ||_baseCpEos)+_v,40,99);
+        team.tyreManagement = clamp((team.tyreManagement ||_baseCpEos)+_v,40,99);
+        team.dirtyAir       = clamp((team.dirtyAir       ||_baseCpEos)+_v,40,99);
       }
     }
       if(u.stat==='reliability')    team.reliability=clamp(team.reliability+u.value,40,100);
@@ -8328,13 +8329,14 @@ const Storage = {
           if(t) {
             if(u.stat==='carPerformance') {
               const v = u.value||0;
+              const _baseCpStale = t.carPerformance;
               t.carPerformance = clamp(t.carPerformance + v, 40, 100);
               if(v > 0) {
-                t.cornering      = clamp((t.cornering      ||t.carPerformance)+v*0.30,40,99);
-                t.aeroEfficiency = clamp((t.aeroEfficiency ||t.carPerformance)+v*0.25,40,99);
-                t.topSpeed       = clamp((t.topSpeed       ||t.carPerformance)+v*0.20,40,99);
-                t.tyreManagement = clamp((t.tyreManagement ||t.carPerformance)+v*0.15,40,99);
-                t.dirtyAir       = clamp((t.dirtyAir       ||t.carPerformance)+v*0.10,40,99);
+                t.cornering      = clamp((t.cornering      ||_baseCpStale)+v,40,99);
+                t.aeroEfficiency = clamp((t.aeroEfficiency ||_baseCpStale)+v,40,99);
+                t.topSpeed       = clamp((t.topSpeed       ||_baseCpStale)+v,40,99);
+                t.tyreManagement = clamp((t.tyreManagement ||_baseCpStale)+v,40,99);
+                t.dirtyAir       = clamp((t.dirtyAir       ||_baseCpStale)+v,40,99);
               }
             }
             if(u.stat==='reliability')    t.reliability    = clamp(t.reliability    + (u.value||0), 40, 100);
@@ -15423,6 +15425,9 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     ['v2.3.1.2','Apr 2026',[
             '🐛 Car performance OVR now correctly updates after in-season upgrades — the upgrade was applying to the legacy carPerformance field but the displayed OVR is calculated from the five sub-stats (Top Speed, Cornering, Tyre Management, Dirty Air, Aero Efficiency). All three upgrade paths (in-season, stale on load, end-of-season) now distribute gains across sub-stats (reported by Next-Attention5198).',
     ]],
+    ['v2.3.1.2','Apr 2026',[
+            '🐛 Car performance OVR now visibly increases after upgrades. Sub-stat distribution was applying fractional gains (0.10–0.30×) to each of the five pillars, so a +4.1 upgrade only moved the OVR by ~0.8. Each sub-stat now receives the full upgrade gain, so OVR reflects what was invested (reported by Next-Attention5198).',
+    ]],
     ['v2.3.1.1','Apr 2026',[
             '🐛 Academy recruit button now closes any open modal before opening — fixes silent failure on Firefox (reported by puchunz).',
             '🐛 Feeder series contract label now shows the year a prospect will be available (e.g. "⏳ In feeder series · free 2028") instead of the opaque "Contracted (3yr)" — clarifies this is intentional behaviour, not a bug (reported by Next-Attention5198).',
@@ -16190,22 +16195,14 @@ const GameActions = {
       const nominalVal = u.value;
       const actualVal  = nominalVal * mult;
       if(u.stat==='carPerformance') {
+        const _baseCp = team.carPerformance;
         team.carPerformance=clamp(team.carPerformance+actualVal,40,100);
-        // Distribute gain across sub-stats so getTeamOverallCar() reflects the upgrade
-        // In-season upgrades are aero-focused — cornering and aero efficiency lead, others follow
-        if(actualVal > 0) {
-          team.cornering      = clamp((team.cornering      ||team.carPerformance)+actualVal*0.30,40,99);
-          team.aeroEfficiency = clamp((team.aeroEfficiency ||team.carPerformance)+actualVal*0.25,40,99);
-          team.topSpeed       = clamp((team.topSpeed       ||team.carPerformance)+actualVal*0.20,40,99);
-          team.tyreManagement = clamp((team.tyreManagement ||team.carPerformance)+actualVal*0.15,40,99);
-          team.dirtyAir       = clamp((team.dirtyAir       ||team.carPerformance)+actualVal*0.10,40,99);
-        } else if(actualVal < 0) {
-          // Setback — drag all sub-stats back proportionally
-          team.cornering      = clamp((team.cornering      ||team.carPerformance)+actualVal*0.20,40,99);
-          team.aeroEfficiency = clamp((team.aeroEfficiency ||team.carPerformance)+actualVal*0.20,40,99);
-          team.topSpeed       = clamp((team.topSpeed       ||team.carPerformance)+actualVal*0.20,40,99);
-          team.tyreManagement = clamp((team.tyreManagement ||team.carPerformance)+actualVal*0.20,40,99);
-          team.dirtyAir       = clamp((team.dirtyAir       ||team.carPerformance)+actualVal*0.20,40,99);
+        if(actualVal !== 0) {
+          team.cornering      = clamp((team.cornering      ||_baseCp)+actualVal,40,99);
+          team.aeroEfficiency = clamp((team.aeroEfficiency ||_baseCp)+actualVal,40,99);
+          team.topSpeed       = clamp((team.topSpeed       ||_baseCp)+actualVal,40,99);
+          team.tyreManagement = clamp((team.tyreManagement ||_baseCp)+actualVal,40,99);
+          team.dirtyAir       = clamp((team.dirtyAir       ||_baseCp)+actualVal,40,99);
         }
       }
       if(u.stat==='reliability')    team.reliability=clamp(team.reliability+actualVal,40,100);
@@ -16361,6 +16358,7 @@ const GameActions = {
     const actualRel_bs     = expectedRel_bs     * rdMult_bs;
     const actualDevRate_bs = expectedDevRate_bs * rdMult_bs;
     const actualFac_bs     = expectedFac_bs     * rdMult_bs;
+    const _baseCpWinter = team_bs.carPerformance;
     team_bs.carPerformance  = clamp(team_bs.carPerformance  + actualAero_bs,    40, 99);
     team_bs.reliability     = clamp(team_bs.reliability     + actualRel_bs,     40, 99);
     team_bs.developmentRate = clamp(team_bs.developmentRate + actualDevRate_bs, 40, 99);
@@ -16371,11 +16369,12 @@ const GameActions = {
       const _aeroW = (_bw.aero||0) / Math.max(1, (_bw.aero||0)+(_bw.engine||0)+(_bw.reliability||0)+(_bw.facilities||0));
       const _engW  = (_bw.engine||0) / Math.max(1, (_bw.aero||0)+(_bw.engine||0)+(_bw.reliability||0)+(_bw.facilities||0));
       const _mixW  = 1 - _aeroW - _engW;
-      team_bs.cornering      = clamp((team_bs.cornering     ||team_bs.carPerformance)+actualAero_bs*(_aeroW*0.55+_mixW*0.22),40,99);
-      team_bs.aeroEfficiency = clamp((team_bs.aeroEfficiency||team_bs.carPerformance)+actualAero_bs*(_aeroW*0.45+_mixW*0.20),40,99);
-      team_bs.topSpeed       = clamp((team_bs.topSpeed      ||team_bs.carPerformance)+actualAero_bs*(_engW *0.70+_mixW*0.22),40,99);
-      team_bs.tyreManagement = clamp((team_bs.tyreManagement||team_bs.carPerformance)+actualAero_bs*(_mixW*0.22),40,99);
-      team_bs.dirtyAir       = clamp((team_bs.dirtyAir      ||team_bs.carPerformance)+actualAero_bs*(_mixW*0.14),40,99);
+      const _aeroGain = actualAero_bs;
+      team_bs.cornering      = clamp((team_bs.cornering     ||_baseCpWinter)+_aeroGain*(_aeroW+_mixW*0.5),40,99);
+      team_bs.aeroEfficiency = clamp((team_bs.aeroEfficiency||_baseCpWinter)+_aeroGain*(_aeroW+_mixW*0.5),40,99);
+      team_bs.topSpeed       = clamp((team_bs.topSpeed      ||_baseCpWinter)+_aeroGain*(_engW +_mixW*0.5),40,99);
+      team_bs.tyreManagement = clamp((team_bs.tyreManagement||_baseCpWinter)+_aeroGain,40,99);
+      team_bs.dirtyAir       = clamp((team_bs.dirtyAir      ||_baseCpWinter)+_aeroGain,40,99);
     }
     if(expectedDfRange_bs > 0){
       const currentDf_bs = team_bs.downforce||50;
