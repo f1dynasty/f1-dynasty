@@ -2798,6 +2798,42 @@ return {id,name:`${fn} ${ln}`,age:baseAge,nationality:nat,teamId:teamId||null,ra
   getCurrentRace(){return this.game.calendar[this.game.raceIndex];},
   getFreeAgents(){return this.game.drivers.filter(d=>!d.teamId&&!d.retired&&!d.isProspect&&!d.isReserve&&!d.isJunior);},
   getProspects(){return this.game.drivers.filter(d=>d.isProspect&&!d.retired&&!d.isJunior).sort((a,b)=>b.potential-a.potential);},
+  returnExpiredAcademyLoans(effectiveSeason){
+    const g = this.game;
+    const acad = g?.academy;
+    if(!g || !acad) return [];
+    acad.juniors = acad.juniors || [];
+    acad.loans = acad.loans || [];
+    const loansDone = acad.loans.filter(l => (l.returnSeason || 0) <= effectiveSeason);
+    loansDone.forEach(l => {
+      const d = this.getDriver(l.driverId);
+      if(!d) return;
+      const loanTeam = l.teamId ? this.getTeam(l.teamId) : null;
+      if(loanTeam) {
+        loanTeam.driverIds = (loanTeam.driverIds || []).filter(id => id !== d.id);
+        loanTeam.reserveIds = (loanTeam.reserveIds || []).filter(id => id !== d.id);
+      }
+      d.teamId = null;
+      d.isJunior = true;
+      d.isReserve = false;
+      d.isFreeAgent = false;
+      d.contract = 0;
+      d.salary = 1;
+      if(!acad.juniors.some(j => j.id === d.id)) acad.juniors.push(d);
+      const expBoost = randFloat(0.8, 2.2);
+      d.rating = clamp(d.rating + expBoost, 40, 97);
+      d.racePace = clamp(d.racePace + expBoost * 0.9, 40, 97);
+      d.consistency = clamp(d.consistency + expBoost * 0.5, 40, 97);
+      g.newsFeed = g.newsFeed || [];
+      g.newsFeed.unshift({
+        type:'academy', icon:'🎓',
+        msg:`${d.name} returns from loan at ${l.teamName} — ${expBoost.toFixed(1)} OVR development boost.`,
+        season: effectiveSeason
+      });
+    });
+    acad.loans = acad.loans.filter(l => (l.returnSeason || 0) > effectiveSeason);
+    return loansDone;
+  },
   getDriverStandings(){
     const g = this.game;
     const drivers = g.drivers.filter(d=>!d.retired&&d.teamId&&(!d.isReserve||d.seasonPoints>0)&&!d.isProspect&&!d.isFreeAgent);
@@ -6734,6 +6770,7 @@ const spons=sumSponsorIncome(g.sponsors||[]);
   processOffseason() {
     const g=State.game;
     const transfers=[];
+    const nextSeason = (g.season || 0) + 1;
     const protectedPlayerTeamId = g.playerTeamId;
     const protectedPlayerTeam = State.getPlayerTeam();
     if(protectedPlayerTeam && protectedPlayerTeam._engineIntegrationPenaltyActive){
@@ -6749,6 +6786,8 @@ const spons=sumSponsorIncome(g.sponsors||[]);
     const protectedPlayerRoster = (g.drivers||[])
       .filter(d=>d && d.teamId===protectedPlayerTeamId && !d.retired && (d.contract||0)>0)
       .map(d=>({id:d.id, wasReserve:!!d.isReserve}));
+
+    State.returnExpiredAcademyLoans(nextSeason);
 
     // ── Recalculate all driver market salaries ──────────────────────────────
     // Salaries must reflect current rating, age, and career achievements.
@@ -7581,37 +7620,6 @@ const spons=sumSponsorIncome(g.sponsors||[]);
         if(j.series === 'F3' && j.yearsInAcademy >= 2) j.series = 'F2';
       });
 
-      // Process loans: return drivers whose loan has expired
-      const loansDone = (acad.loans||[]).filter(l => l.returnSeason <= g.season);
-      loansDone.forEach(l => {
-        const d = State.getDriver(l.driverId);
-        if(d) {
-          // Return to academy — NOT as a reserve driver
-          d.teamId = null;
-          d.isJunior = true;
-          d.isReserve = false;
-          d.isFreeAgent = false;
-          d.contract = 0;
-          d.salary = 1;
-          // Re-add to acad.juniors if not already there
-          if(!(acad.juniors||[]).some(j=>j.id===d.id)) {
-            acad.juniors = acad.juniors || [];
-            acad.juniors.push(d);
-          }
-          // Development boost from race experience during loan
-          const expBoost = randFloat(0.8, 2.2);
-          d.rating     = clamp(d.rating + expBoost, 40, 97);
-          d.racePace   = clamp(d.racePace + expBoost * 0.9, 40, 97);
-          d.consistency= clamp(d.consistency + expBoost * 0.5, 40, 97);
-          g.newsFeed.unshift({
-            type:'academy', icon:'🎓',
-            msg:`${d.name} returns from loan at ${l.teamName} — ${expBoost.toFixed(1)} OVR development boost.`,
-            season: g.season
-          });
-        }
-      });
-      acad.loans = (acad.loans||[]).filter(l => l.returnSeason > g.season);
-
       // Academy running cost comes out of next season budget (warn player)
       const annualCost = acad.annualBudget || 0;
       if(annualCost > 0) {
@@ -8190,6 +8198,7 @@ const Storage = {
       if(!g.academy.graduates) g.academy.graduates = [];
       if(!g.academy.loans) g.academy.loans = [];
       if(g.academy.budget === undefined) g.academy.budget = 0;
+      if(g.offseasonPending) State.returnExpiredAcademyLoans(g.season);
     }
     // Patch academy tag on drivers
     (g.drivers||[]).forEach(d => {
