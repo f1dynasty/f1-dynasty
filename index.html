@@ -732,7 +732,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:18px;max-width:320px;padding:14px 16px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
           <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">Latest Update</div>
-          <div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.3.1.5 is live</div>
+          <div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.3.2 is live</div>
           <div style="font-size:12px;line-height:1.45;color:#666">Engine manufacturers, car sub-stats by circuit, ERS deployment, qualifying tyre choice, overdrive penalty. Driver Academy with juniors, loans &amp; permanent graduate branding.</div>
         </div>
       </div>
@@ -786,7 +786,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </button>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.3.1.5</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.3.2</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -1780,6 +1780,7 @@ function getPersonalSponsorSlots(driver){
 function formatMoney(m){if(Math.abs(m)>=1000)return`$${(m/1000).toFixed(1)}B`;return`$${m}M`;}
 function ratingColor(r){if(r>=88)return'rating-high';if(r>=76)return'rating-med';return'rating-low';}
 function escapeHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+function getNationalityFlag(nat){const _f={'British':'🇬🇧','German':'🇩🇪','Dutch':'🇳🇱','Spanish':'🇪🇸','Finnish':'🇫🇮','French':'🇫🇷','Australian':'🇦🇺','Brazilian':'🇧🇷','Italian':'🇮🇹','Canadian':'🇨🇦','Mexican':'🇲🇽','Japanese':'🇯🇵','Chinese':'🇨🇳','Indian':'🇮🇳','American':'🇺🇸','Belgian':'🇧🇪','Austrian':'🇦🇹','Swiss':'🇨🇭','Russian':'🇷🇺','Danish':'🇩🇰','Swedish':'🇸🇪','Norwegian':'🇳🇴','New Zealand':'🇳🇿','Thai':'🇹🇭','Monegasque':'🇲🇨','Polish':'🇵🇱','Czech':'🇨🇿','Hungarian':'🇭🇺','Portuguese':'🇵🇹','Argentine':'🇦🇷','Colombian':'🇨🇴','Estonian':'🇪🇪','South African':'🇿🇦','Nigerian':'🇳🇬'};return _f[nat]||'🏁';}
 // ── SHARE CARD SYSTEM ─────────────────────────────────────────────────────────
 (function(){
   function loadHtml2Canvas(cb){
@@ -2430,7 +2431,7 @@ const Editor = {
         return;
       }
       team.color = nextColor;
-    } else if(['name','nation','difficulty'].includes(field)) {
+    } else if(['name','nation','difficulty','engineManufacturer'].includes(field)) {
       team[field] = String(value || '').trim() || team[field];
     } else {
       team[field] = parseFloat(value);
@@ -2694,62 +2695,68 @@ return {id,name:def.name,age:def.age,nationality:def.nationality||DATA.nationali
     }
     // Pick a nationality first, then choose a name consistent with that origin
     const natGroups = {
-      'British':['Oliver','Harry','Jack','Tom','Ben','Josh','Ethan','Callum','Jamie','Scott','Ollie','Archie','Rory','Alastair','Cian','Declan','Piers','Rupert','Hamish','Alistair'],
-      'German':['Nico','Felix','Tobias','Jan','Lukas','Moritz','Leon','Finn','Erik','Jonas','Lars','Henrik','Kai','Stefan','Markus','Philipp','Hannes','Dominik','Bastian','Sven'],
-      'Dutch':['Pieter','Bram','Joris','Daan'],
-      'French':['Theo','Hugo','Baptiste','Clement','Robin','Julien','Antoine','Florian','Maxime','Adrien','Thibault','Cedric','Alexis'],
-      'Spanish':['Rafael','Diego','Mateo','Santiago','Emilio','Ricardo','Alejandro','Rodrigo','Andres','Inaki'],
-      'Italian':['Luca','Marco','Matteo','Lorenzo','Giulio','Enzo','Fabio','Dante','Dario','Simone','Gianluca','Andrea'],
-      'Brazilian':['Thiago','Roberto','Eduardo','Miguel','Vitor','Tarso'],
-      'Japanese':['Ryo','Ren','Sota','Haruki','Daiki','Sho','Kenji','Takeshi','Naoki','Hiroshi','Yusuke','Kohei','Shun'],
-      'Indian':['Arjun','Jehan','Kush'],
-      'Finnish':['Viktor'],
-      'Swedish':['Viktor','Erik'],
-      'Norwegian':['Lars','Henrik'],
-      'Danish':['Sven'],
-      'Portuguese':['Nuno','Diogo','Afonso'],
-      'Belgian':['Thibault'],
-      'Austrian':['Hannes','Dominik'],
-      'Polish':['Tomas'],
-      'Czech':['Pavel'],
-      'Russian':['Andrei'],
-      'Hungarian':['Tomas'],
-      'Argentine':['Rodrigo','Andres'],
-      'Colombian':['Santiago'],
-      'Mexican':['Miguel','Alejandro'],
-      'Australian':['Ryan','Sean'],
-      'Canadian':['Ryan','Connor','Brendan','Patrick'],
-      'American':['Ryan','Connor','Sean'],
-      'Swiss':['Nico'],
-      'Estonian':['Jan'],
-      'New Zealand':['Callum'],
-      'Chinese':['Ryo'],
-      'Thai':['Arjun'],
-      'Monegasque':['Luca'],
+      'British':['Oliver','Harry','Jack','Tom','Ben','Josh','Ethan','Callum','Jamie','Scott','Ollie','Archie','Rory','Alastair','Cian','Declan','Piers','Rupert','Hamish','Alistair','George','Lewis','Liam','Aaron','Max','Charlie','Alex','Will','Jake','Sam','Finlay','Kieran','Cameron','Murray','Craig','Andrew','Ross','Dale','Bradley','Tristan'],
+      'German':['Nico','Felix','Tobias','Jan','Lukas','Moritz','Leon','Finn','Erik','Jonas','Lars','Henrik','Kai','Stefan','Markus','Philipp','Hannes','Dominik','Bastian','Sven','Pascal','Fabian','Florian','Sebastian','Maximilian','Niklas','Luca','David','Simon','Timo','Michael','Thomas','Jens','Klaus','Ralf','Andre','Marc','Chris','Kimi'],
+      'Dutch':['Pieter','Bram','Joris','Daan','Max','Nyck','Robin','Thierry','Giedo','Dorian','Guido','Rens','Jens','Jeroen','Jules','Sander','Ruben','Tom','Rick','Sem'],
+      'French':['Theo','Hugo','Baptiste','Clement','Robin','Julien','Antoine','Florian','Maxime','Adrien','Thibault','Cedric','Alexis','Romain','Pierre','Esteban','Arthur','Sebastien','Franck','Gregory','Tristan','Yann','Louis','Charles','Victor','Valentin','Quentin','Simon','Etienne','Aurelien'],
+      'Spanish':['Rafael','Diego','Mateo','Santiago','Emilio','Ricardo','Alejandro','Rodrigo','Andres','Inaki','Fernando','Carlos','Nico','Dani','Marc','Alvaro','Pedro','Sergio','Nacho','Borja','Pablo','Jon','Aitor','Unai','David','Ruben','Adrian','Victor','Javi','Roberto'],
+      'Italian':['Luca','Marco','Matteo','Lorenzo','Giulio','Enzo','Fabio','Dante','Dario','Simone','Gianluca','Andrea','Antonio','Roberto','Stefano','Davide','Alberto','Federico','Jacopo','Edoardo','Nicolo','Riccardo','Michele','Filippo','Alessandro','Emanuele','Leonardo','Giorgio','Francesco','Paolo'],
+      'Brazilian':['Thiago','Roberto','Eduardo','Miguel','Vitor','Tarso','Felipe','Bruno','Gabriel','Lucas','Rafael','Rodrigo','Caio','Gustavo','Henrique','Murilo','Joao','Pedro','Rui','Enzo','Carlos','Ayrton','Helio','Mauricio','Raul','Victor','Alex','Andre','Marcus','Diego'],
+      'Japanese':['Ryo','Ren','Sota','Haruki','Daiki','Sho','Kenji','Takeshi','Naoki','Hiroshi','Yusuke','Kohei','Shun','Kazuki','Yuji','Kamui','Hideki','Takuma','Kenta','Nobuharu','Ryosuke','Sena','Kaito','Tsubasa','Yuki','Marino','Nobuto','Daisuke','Isao','Jin'],
+      'Indian':['Arjun','Jehan','Kush','Karun','Narain','Armaan','Akhil','Ruhaan','Aditya','Shahan','Raj','Dev','Vivek','Parth','Rohan','Neel','Karan','Ayush','Dhruv','Ishaan'],
+      'Finnish':['Kimi','Valtteri','Mika','Heikki','JJ','Nico','Sami','Pekka','Jari','Mikko','Ville','Teemu','Antti','Petri','Juha','Timo','Marko','Juuso','Lauri','Eero','Paavo','Riku','Matias','Olli','Eetu'],
+      'Swedish':['Viktor','Erik','Oscar','Tobias','Marcus','Robin','Felix','Linus','Sebastian','Axel','Emil','Hampus','Kristoffer','Per','Fredrik','Anders','Jonas','David','Carl','Mikael','Jesper','Pontus','Joel','Gustav','Nils'],
+      'Norwegian':['Lars','Henrik','Petter','Mads','Andreas','Ole','Espen','Stian','Tor','Bjorn','Kristoffer','Magnus','Stig','Kjetil','Rolf','Johan','Gunnar','Trond','Arild','Geir'],
+      'Danish':['Sven','Kevin','Nicklas','Jan','Christian','Mads','Mikkel','Kasper','Nicolai','Rene','Lars','Peter','Jonas','Jacob','Thomas','Rasmus','Emil','Lukas','Frederik','Simon'],
+      'Portuguese':['Nuno','Diogo','Afonso','Joao','Pedro','Miguel','Vasco','Tiago','Bruno','Andre','Paulo','Carlos','Jorge','Rui','Sergio','Antonio','Luis','Manuel','Francisco','Filipe'],
+      'Belgian':['Thibault','Stoffel','Jerome','Thierry','Maxime','Kevin','Sebastien','Romain','Esteban','Nicolas','Thomas','Simon','Jonas','Kobe','Nico','Yannick','Julien','Pierre','Dries','Bjorn'],
+      'Austrian':['Hannes','Dominik','Niki','Alex','Christian','Gerhard','Patrick','Michael','Franz','Karl','Wolfgang','Lukas','Felix','Jakob','Stefan','Bernd','Thomas','Markus','Klaus','Roland'],
+      'Polish':['Tomas','Robert','Kubica','Kamil','Adrian','Michal','Piotr','Krzysztof','Jakub','Wojciech','Bartosz','Przemek','Lukasz','Slawomir','Rafal','Maciej','Grzegorz','Pawel','Damian','Artur'],
+      'Czech':['Pavel','Tomas','Martin','Ondrej','Jakub','Lukas','Petr','Radek','Libor','Karel','Marek','Jan','Jiri','Michal','Zdenek','Roman','David','Ales','Milos','Vaclav'],
+      'Russian':['Andrei','Sergei','Dmitri','Nikita','Vladimir','Alexei','Mikhail','Pavel','Anton','Ivan','Kirill','Artem','Ilya','Roman','Evgeny','Maxim','Konstantin','Denis','Viktor','Oleg'],
+      'Hungarian':['Tomas','Gabor','Balint','Attila','Andras','Zoltan','Miklos','Istvan','Laszlo','Tibor','Bence','Adam','Kristof','Gergo','Marton','Peter','Sandor','Karoly','Levente','David'],
+      'Argentine':['Rodrigo','Andres','Franco','Nico','Emiliano','Gaston','Facundo','Ezequiel','Matias','Agustin','Lucas','Ignacio','Federico','Sebastian','Gustavo','Leandro','Hernan','Diego','Pablo','Juan'],
+      'Colombian':['Santiago','Felipe','Camilo','Juan','Daniel','Alejandro','Andres','Sebastian','Nicolas','Mateo','Ricardo','Esteban','Jose','Carlos','Miguel','Luis','Paulo','Roberto','David','Victor'],
+      'Mexican':['Miguel','Alejandro','Sergio','Carlos','Jose','Juan','Fernando','Roberto','Eduardo','Mario','Hector','Ruben','Ernesto','Rodrigo','Adrian','Diego','Salvador','Ramon','Alberto','Guillermo'],
+      'Australian':['Ryan','Sean','Oscar','Jack','James','Will','Tom','Daniel','Mark','Scott','Craig','David','Liam','Luke','Matt','Chris','Ben','Adam','Paul','Tim'],
+      'Canadian':['Ryan','Connor','Brendan','Patrick','Lance','Nicholas','William','James','Andrew','Michael','Kyle','Eric','Marc','Simon','Ethan','Justin','Tyler','Dylan','Nolan','Brett'],
+      'American':['Ryan','Connor','Sean','Colton','Josef','Santino','Logan','Alexander','Michael','Zach','Jordan','Taylor','Austin','Brandon','Tyler','Chase','Hunter','Dustin','Kyle','Derek'],
+      'Swiss':['Nico','Sebastian','Marc','Dominic','Rolf','Peter','Hans','Beat','Fabian','Patrick','Rene','Stefan','Michael','Christoph','Tobias','Simon','David','Marco','Luca','Noel'],
+      'Estonian':['Jan','Raul','Martin','Karl','Tanel','Janek','Marek','Silver','Tarmo','Erik','Hans','Markus','Marten','Robin','Joonas','Tonis','Urmas','Risto','Ander','Aigar'],
+      'New Zealand':['Callum','Nick','Marcus','Shane','Brendon','Mitch','Jono','Scott','Dave','Josh','Matt','Jamie','Craig','Alex','Sam','Will','Ben','Mike','Liam','Dylan'],
+      'Chinese':['Ryo','Guanyu','Ye','Wei','Yifei','Zhenwei','Pengyu','Rui','Hao','Cheng','Ming','Lei','Jian','Bo','Yang','Xiao','Fang','Long','Tao','Quan'],
+      'Thai':['Arjun','Alex','Sean','Niko','Pietro','Lance','Ryan','Jack','Ben','Tom'],
+      'Monegasque':['Luca','Charles','Louis','Pierre','Henri','Antoine','Victor','Arthur','Fabio','Hugo'],
     };
     const natLnGroups = {
-      'British':['Murphy','Walsh','Callaghan','Doyle','Brennan','Flanagan','Sheridan','Cassidy','Devlin','Nolan','Smith','Hughes','Clarke','Fletcher','Mason','Shaw','Dawson','Cooper','Hardy','Burns','Morrison'],
-      'German':['Mueller','Hoffmann','Brandt','Kessler','Ritter','Bergmann','Hartmann','Kruger','Werner','Bauer','Schulze','Schmidt','Fischer','Wagner','Klein','Wolf','Braun','Richter','Koenig','Gruber','Reiter'],
-      'Dutch':['Pieter','Bram','Joris','Daan','Svensson','Nilsson','Holm','Magnusson'],
-      'French':['Dubois','Lefebvre','Moreau','Laurent','Renard','Girard','Fontaine','Chevalier','Rousseau','Garnier'],
-      'Spanish':['Gonzalez','Medina','Reyes','Herrera','Delgado','Vega','Rios','Castillo','Navarro','Palomino','Gutierrez','Vargas'],
-      'Italian':['Ferretti','Colombo','Moretti','Romano','Conti','Esposito','De Luca','Mancini','Brunetti','Caruso','Ricci','Fabbri','Galli','Cattaneo','Bernardi'],
-      'Brazilian':['Ferreira','Alves','Costa','Neves','Barros','Pinheiro','Nogueira','Teixeira'],
-      'Japanese':['Suzuki','Yamamoto','Tanaka','Nakamura','Fujiwara','Hayashi','Ogawa','Matsuda','Inoue','Kobayashi'],
-      'Indian':['Nkosi','Diallo'],
-      'Scandinavian':['Lindqvist','Eriksson','Bjork','Halvorsen','Andersen','Christensen','Strand','Virtanen','Makinen','Korhonen','Svensson','Nilsson','Holm','Magnusson'],
-      'Eastern European':['Papadopoulos','Stavros','Tomas','Pavel','Andrei','Nicolas'],
-      'Other':['Montoya','Cardenas','Okonkwo','Gruber','Reiter'],
+      'British':['Murphy','Walsh','Callaghan','Doyle','Brennan','Flanagan','Sheridan','Cassidy','Devlin','Nolan','Smith','Hughes','Clarke','Fletcher','Mason','Shaw','Dawson','Cooper','Hardy','Burns','Morrison','Hamilton','Button','Coulthard','Hill','Collins','Moss','Brooks','Surtees','Stewart','Hunt','Clark','Herbert','Warwick','Palmer','Blundell','Hakkinen'],
+      'German':['Mueller','Hoffmann','Brandt','Kessler','Ritter','Bergmann','Hartmann','Kruger','Werner','Bauer','Schulze','Schmidt','Fischer','Wagner','Klein','Wolf','Braun','Richter','Koenig','Gruber','Reiter','Rosberg','Vettel','Schumacher','Frentzen','Wendlinger','Warsteiner','Niedermayr','Seidel','Pietsch','Hahne'],
+      'Dutch':['Van der Berg','Verstappen','Bleekemolen','Van der Garde','Lammers','Van den Ende','Huisman','Hezemans','Koper','Ammeraal','Vermeer','Kuiper','Bakker','De Jong','Wolff','Danner','Palttala','Ribbens','Doornbos','Halusa'],
+      'French':['Dubois','Lefebvre','Moreau','Laurent','Renard','Girard','Fontaine','Chevalier','Rousseau','Garnier','Alesi','Pironi','Tambay','Laffite','Arnoux','Jabouille','Depailler','Cevert','Beltoise','Servoz-Gavin','Trulli','Panis','Boullion','Gonon','Muller'],
+      'Spanish':['Gonzalez','Medina','Reyes','Herrera','Delgado','Vega','Rios','Castillo','Navarro','Palomino','Gutierrez','Vargas','Alonso','Sainz','de la Rosa','Montoya','Zanardi','Traversini','Merhi','Heidfeld'],
+      'Italian':['Ferretti','Colombo','Moretti','Romano','Conti','Esposito','De Luca','Mancini','Brunetti','Caruso','Ricci','Fabbri','Galli','Cattaneo','Bernardi','Fisichella','Trulli','Pantano','Liuzzi','Badoer','Rossi','Baldi','Capelli','Larini','Nannini','Barrichello','Piquet','Monteiro','Burti','Massa'],
+      'Brazilian':['Ferreira','Alves','Costa','Neves','Barros','Pinheiro','Nogueira','Teixeira','Senna','Piquet','Fittipaldi','Massa','Barrichello','Neves','Morbidelli','Burti','Monteiro','Fraga','Campos','Mendes'],
+      'Japanese':['Suzuki','Yamamoto','Tanaka','Nakamura','Fujiwara','Hayashi','Ogawa','Matsuda','Inoue','Kobayashi','Sato','Nakajima','Takagi','Muroya','Hoshino','Hasemi','Okada','Noda','Kondoh','Ide'],
+      'Indian':['Karthikeyan','Chandok','Mehta','Singh','Kumar','Sharma','Patel','Malhotra','Gupta','Rao','Bose','Nair','Pillai','Verma','Chandra','Rajan','Suresh','Anand','Balaji','Mohan'],
+      'Scandinavian':['Lindqvist','Eriksson','Bjork','Halvorsen','Andersen','Christensen','Strand','Virtanen','Makinen','Korhonen','Svensson','Nilsson','Holm','Magnusson','Raikkonen','Bottas','Kovalainen','Hakkinen','Rosberg','Piquet','Wendlinger','Johansson','Brundle','Heidfeld','Blundell'],
+      'Eastern European':['Papadopoulos','Stavros','Nicolas','Kubica','Malysz','Wisniak','Kwiatkowski','Sobieski','Lech','Wojtyla','Novak','Dvorak','Kopecky','Blazejewski','Bartos','Petrov','Kvyat','Sirotkin','Aleshin','Mazepin','Haryanto','Turvey','Cecotto','Rosina','Vietoris'],
+      'Other':['Montoya','Cardenas','Okonkwo','Gruber','Reiter','Colapinto','Palou','Calderon','Piedrahita','Guerrieri','Newgarden','Rossi','Ericsson','Wehrlein','Ocon'],
+      'Portuguese':['Ferreira','Alves','Costa','Neves','Barros','Pinheiro','Nogueira','Teixeira','Faria','Pereira','Cardoso','Lopes','Rodrigues','Carvalho','Gomes','Sousa','Ribeiro','Marques','Correia','Batista'],
+      'Belgian':['Sax','Claes','Maes','Peeters','Willems','Janssen','Bogaert','Goossens','Hermans','Pieters','Declercq','Vermeersch','Devos','Van den Berg','Mertens','Wouters','Claeys','Lemmens','Deprez','Martens'],
+      'Austrian':['Lauda','Wurz','Marko','Keimeleder','Friesacher','Klien','Premat','Stollsteimer','Kirchhofer','Pommer','Reindl','Stippler','Rast','Kox','Sorensen','Haug','Auer','Schmidt','Binder','Leutwiler'],
+      'Argentine':['Reutemann','Fangio','Gonzalez','Froilan','Menditeguy','Traverso','Pairetti','Genta','Lix Klett','Rivero','Garaicochea','Stanga','Pasqualini','Leguizamon','Spataro','Del Buono','Copello','Guasch','Perez Compac','Maranta'],
+      'Chinese':['Zhou','Ye','Li','Wang','Chen','Zhang','Liu','Yang','Wu','Xu','Zhu','Lin','Zhao','Cheng','Guo','Ma','Han','Lu','Bao','Jin'],
+      'Mexican':['Perez','Gutierrez','Montoya','Rodriguez','Lorenzen','Maya','Granados','Lozano','Angeles','Fuentes','Flores','Torres','Morales','Ramirez','Castro','Ortega','Silva','Cruz','Romero','Mendez'],
     };
     const natToLnGroup = {
-      'British':'British','German':'German','Dutch':'Scandinavian','French':'French',
+      'British':'British','German':'German','Dutch':'Dutch','French':'French',
       'Spanish':'Spanish','Italian':'Italian','Brazilian':'Brazilian','Japanese':'Japanese',
       'Indian':'Indian','Finnish':'Scandinavian','Swedish':'Scandinavian','Norwegian':'Scandinavian',
-      'Danish':'Scandinavian','Portuguese':'French','Belgian':'French','Austrian':'German',
+      'Danish':'Scandinavian','Portuguese':'Portuguese','Belgian':'Belgian','Austrian':'Austrian',
       'Polish':'Eastern European','Czech':'Eastern European','Russian':'Eastern European',
-      'Hungarian':'Eastern European','Argentine':'Spanish','Colombian':'Spanish','Mexican':'Spanish',
+      'Hungarian':'Eastern European','Argentine':'Argentine','Colombian':'Other','Mexican':'Mexican',
       'Australian':'British','Canadian':'British','American':'British','Swiss':'German',
-      'Estonian':'Eastern European','New Zealand':'British','Chinese':'Japanese','Thai':'Japanese','Monegasque':'Italian'
+      'Estonian':'Eastern European','New Zealand':'British','Chinese':'Chinese','Thai':'Other','Monegasque':'Italian'
     };
     const nat = DATA.nationalities[Math.floor(Math.random()*DATA.nationalities.length)];
     const fnPool = natGroups[nat] || DATA.firstNames;
@@ -2836,7 +2843,7 @@ return {id,name:`${fn} ${ln}`,age:baseAge,nationality:nat,teamId:teamId||null,ra
   },
   getDriverStandings(){
     const g = this.game;
-    const drivers = g.drivers.filter(d=>!d.retired&&d.teamId&&(!d.isReserve||d.seasonPoints>0)&&!d.isProspect&&!d.isFreeAgent);
+    const drivers = g.drivers.filter(d=>!d.retired&&d.teamId&&(!d.isReserve||d.seasonPoints>0)&&!d.isProspect&&!d.isFreeAgent&&!d.isJunior);
     // Build countback arrays from calendar results for tied drivers
     const countbackCache = {};
     const dnfCache = {};
@@ -3256,7 +3263,8 @@ const Sim = {
         if(reserve) reserveSubIds.add(reserve.id);
       });
     });
-    const drivers = State.game.drivers.filter(d=>d.teamId&&!d.retired&&!d.isProspect)
+    const _sqLoanedJuniorIds = new Set(((State.game.academy&&State.game.academy.loans)||[]).map(l=>l.driverId));
+    const drivers = State.game.drivers.filter(d=>d.teamId&&!d.retired&&!d.isProspect&&!d.isJunior&&!_sqLoanedJuniorIds.has(d.id))
       .filter(d=>{
         if(d.isReserve){
           return reserveSubIds.has(d.id);
@@ -3307,7 +3315,8 @@ const Sim = {
     }
     const activeInjuries = Sim._getActiveInjuries ? Sim._getActiveInjuries() : [];
     const injuredDriverIds = new Set(activeInjuries.map(inj=>inj.driverId));
-    const drivers = State.game.drivers.filter(d=>d.teamId&&!d.retired&&!d.isReserve&&!d.isProspect)
+    const _loanedJuniorIdSet = new Set(((State.game.academy&&State.game.academy.loans)||[]).map(l=>l.driverId));
+    const drivers = State.game.drivers.filter(d=>d.teamId&&!d.retired&&!d.isReserve&&!d.isProspect&&!d.isJunior&&!_loanedJuniorIdSet.has(d.id))
       .map(d=>{
         // Substitute injured driver with best available reserve from same team
         if(injuredDriverIds.has(d.id)){
@@ -3437,10 +3446,20 @@ const Sim = {
       // setupKnowledge drives tolerance — resets on new regs, recovers over 3 seasons
       // This means year 1 of new regs everyone is guessing wider, regardless of facilities
       const setupKnowledge = State.getSetupKnowledge(team.id);
+      // Per-race hidden offset: the true optimum is not always at the exact midpoint.
+      // Elite teams (high knowledge) have a smaller offset range — they dial it in more precisely.
+      // Offset is seeded deterministically per race so it's consistent across all drivers.
+      if(race._trueIdealOffset === undefined){
+        const _seed = (race.idealDownforce||50) + (race.laps||58) + g.season + g.raceIndex;
+        const _maxOff = Math.max(2, Math.round((100 - setupKnowledge) * 0.10));
+        race._trueIdealOffset = ((_seed * 17 + 31) % (_maxOff * 2 + 1)) - _maxOff;
+      }
+      const _trueIdeal = clamp((race.idealDownforce||50) + race._trueIdealOffset, 0, 100);
+      const _trueDiff = Math.abs((team.downforce || 50) - _trueIdeal);
       const setupTolerance = Math.round((100 - setupKnowledge) * 0.38 + 3);
       // Bonus for truly nailing it — scales with knowledge (elite teams extract more from precision)
-      const setupBonus = setupDiff <= 4 ? -(0.04 + (setupKnowledge - 60) * 0.0025) : 0;
-      const setupPenalty = setupDiff < setupTolerance ? 0 : setupDiff < setupTolerance + 10 ? 0.12 : setupDiff < setupTolerance + 25 ? 0.35 : 0.8;
+      const setupBonus = _trueDiff <= 4 ? -(0.04 + (setupKnowledge - 60) * 0.0025) : 0;
+      const setupPenalty = _trueDiff < setupTolerance ? 0 : _trueDiff < setupTolerance + 10 ? 0.12 : _trueDiff < setupTolerance + 25 ? 0.35 : 0.8;
       // Use circuit-weighted car score instead of flat carPerformance
       const _circuitCarScore = getTeamCarScore(team, race?.circuitType || 'balanced');
       const _combinedRel = getTeamCombinedReliability(team);
@@ -3522,6 +3541,17 @@ const Sim = {
     for(let lap = 1; lap <= race.laps; lap++) {
       const wetness = getWeatherWetness(lap);
       const scActive = !!(scStartLap && scEndLap && lap >= scStartLap && lap <= scEndLap);
+      // Pre-compute per-team dominance drag for this lap — shared between teammates
+      // so both drivers in the same car experience the same drag, preventing artificial gaps
+      const _teamDragCache = {};
+      entries.filter(s=>!s.dnf).forEach(s=>{
+        if(_teamDragCache[s.teamId] !== undefined) return;
+        if(s.performanceEdge >= 6){
+          _teamDragCache[s.teamId] = randFloat(s.performanceEdge * 0.03, Math.min(1.4, s.performanceEdge * 0.10));
+        } else {
+          _teamDragCache[s.teamId] = 0;
+        }
+      });
       const runningOrderBefore = entries
         .filter(s => !s.dnf)
         .sort((a,b)=>a.cumulativeTime-b.cumulativeTime)
@@ -3586,7 +3616,7 @@ const Sim = {
         const warmupPenalty = state.tyreAge < (DATA.tires[state.compound]?.warmupLaps || 1) ? 0.35 : 0;
         const degRatio = life > 0 ? state.tyreAge / life : 0;
         const cliffPenalty = degRatio > 1 ? Math.pow(degRatio - 1, 1.25) * (2.6 + tyreDeg * 2.5) : Math.max(0, degRatio - 0.72) * (0.8 + tyreDeg * 1.3);
-        const tyrePenalty = cliffPenalty * clamp(1.12 - (state.tyreMgmt / 100) * 0.22, 0.82, 1.08);
+        const tyrePenalty = Math.min(3.5, cliffPenalty) * clamp(1.12 - (state.tyreMgmt / 100) * 0.22, 0.82, 1.08);
         state.notes.tyres += tyrePenalty * 0.12;
         const wrongTirePenalty = wetness >= 0.65 && state.compound !== 'wet'
           ? (state.compound === 'inter' ? 0.7 : 3.2)
@@ -3627,12 +3657,10 @@ const Sim = {
         const scPacePenalty = scActive ? randFloat(18, 23) : 0;
         if(scActive) state.notes.safetyCar += 0.08;
         const setupLapPenalty = state.setupPenalty * 0.55;
-        const formNoise = randNorm(state.notes.form * 0.25, Math.max(0.08, (96 - state.consistency) / 110));
+        const formNoise = randNorm(clamp(state.notes.form * 0.25, -0.15, 0.15), Math.max(0.08, (96 - state.consistency) / 110));
         const launchLap = lap === 1 ? randNorm(0, 0.65) - ((state.aggression - 65) / 80) : 0;
-        // Dominance drag — scales up more steeply to prevent runaway gaps at high perf edges
-        const dominanceDrag = state.performanceEdge >= 6
-          ? randFloat(state.performanceEdge * 0.03, Math.min(1.4, state.performanceEdge * 0.10))
-          : 0;
+        // Dominance drag — shared per team per lap to prevent artificial teammate gaps
+        const dominanceDrag = _teamDragCache[state.teamId] || 0;
         const lapTime = state.baseLap
           + newTireBonus
           + warmupPenalty
@@ -3816,10 +3844,13 @@ const Sim = {
       const reserve = chosen || State.game.drivers.find(r=>r.isReserve&&r.teamId===inj.teamId&&!r.retired&&!injuredIdsForRace.has(r.id)&&!reserveSubIds.has(r.id));
       if(reserve) reserveSubIds.add(reserve.id);
     });
+    const _raceSimLoanedIds = new Set(((g.academy&&g.academy.loans)||[]).map(l=>l.driverId));
     const qualiOrder=[...race.qualiResult].filter(e=>{
       if(!e||e.driverId==null) return false;
       const d=State.getDriver(e.driverId);
       if(!d||d.retired||d.isProspect||!d.teamId) return false;
+      // Exclude loaned juniors — they appear in AI team's qualiResult but must not race as extra cars
+      if(d.isJunior&&_raceSimLoanedIds.has(d.id)) return false;
       // Allow reserve drivers only if they subbed for an injured teammate
       if(d.isReserve){
         const hasInjuredTeammate=activeInjuriesForRace.some(inj=>inj.teamId===d.teamId&&injuredIdsForRace.has(inj.driverId));
@@ -6835,11 +6866,18 @@ const spons=sumSponsorIncome(g.sponsors||[]);
       .filter(neg=>neg&&neg.toTeamId===g.playerTeamId)
       .map(neg=>{
         const d=State.getDriver(neg.driverId);
+        // Reset race indices to new season — previous season's raceIndex values are stale
+        const newResolve = Math.min(neg.resolvesAfterRace||0, neg.hardResolveAfterRace||(neg.startRace+4));
+        const remainingRaces = Math.max(0, newResolve - (g.calendar?.length||24));
+        const newResolvesAt = Math.min(remainingRaces + 1, 3); // at most 3 races into new season
         return {
           ...neg,
           offseasonCarryover:true,
           wasReserve:!!d?.isReserve,
-          carryoverFromPlayerTeam:!!(d&&d.teamId===g.playerTeamId)
+          carryoverFromPlayerTeam:!!(d&&d.teamId===g.playerTeamId),
+          startRace: 0,
+          resolvesAfterRace: newResolvesAt,
+          hardResolveAfterRace: newResolvesAt
         };
       });
     g.preSeasonMoves = g.preSeasonMoves.filter(move=>{
@@ -6923,14 +6961,16 @@ const spons=sumSponsorIncome(g.sponsors||[]);
         const d=State.getDriver(id);
         return d && d.teamId===team.id && !d.retired;
       });
-      // Also catch any driver whose teamId points here but isn't in driverIds
+      // Build a set of loaned junior IDs — they belong to borrowing team temporarily but are NOT race drivers
+      const _loanedJuniorIds = new Set(((g.academy&&g.academy.loans)||[]).map(l=>l.driverId));
+      // Also catch any driver whose teamId points here but isn't in driverIds (exclude loaned juniors)
       g.drivers.forEach(d=>{
-        if(d.teamId===team.id && !d.retired && !d.isReserve && !team.driverIds.includes(d.id)){
+        if(d.teamId===team.id && !d.retired && !d.isReserve && !d.isJunior && !_loanedJuniorIds.has(d.id) && !team.driverIds.includes(d.id)){
           team.driverIds.push(d.id);
         }
       });
-      // Hard cap — if still over 2 race drivers, trim lowest rated
-      const raceDrivers=team.driverIds.filter(id=>{const d=State.getDriver(id);return d&&!d.isReserve;});
+      // Hard cap — if still over 2 race drivers, trim lowest rated (also exclude loaned juniors from count)
+      const raceDrivers=team.driverIds.filter(id=>{const d=State.getDriver(id);return d&&!d.isReserve&&!d.isJunior&&!_loanedJuniorIds.has(id);});
       if(raceDrivers.length>2){
         const protectedIds=new Set(raceDrivers.filter(id=>committedMoveDrivers.has(id)));
         const sorted=raceDrivers.sort((a,b)=>{
@@ -7472,12 +7512,13 @@ const spons=sumSponsorIncome(g.sponsors||[]);
     // so it uses the budget allocated during the offseason (not at season end when it may be zero).
     // g.offseasonBudget is preserved here and applied/reset in beginSeason.
     const raceDriversByTeam={};
+    const _offLoanedIds = new Set(((g.academy&&g.academy.loans)||[]).map(l=>l.driverId));
     g.drivers.forEach(d=>{
       if(!d) return;
       d._teammatePressure=0;
       d._retentionLeverage=0;
       d._teamRivalry=false;
-      if(d.teamId&&!d.retired&&!d.isReserve&&!d.isProspect&&!d.isFreeAgent){
+      if(d.teamId&&!d.retired&&!d.isReserve&&!d.isProspect&&!d.isFreeAgent&&!d.isJunior&&!_offLoanedIds.has(d.id)){
         if(!raceDriversByTeam[d.teamId]) raceDriversByTeam[d.teamId]=[];
         raceDriversByTeam[d.teamId].push(d);
       }
@@ -7546,6 +7587,12 @@ const spons=sumSponsorIncome(g.sponsors||[]);
     }
     // Snapshot WDC winner BEFORE the loop resets any seasonPoints
     const _wdcWinnerId = State.getDriverStandings()[0]?.driver?.id || null;
+    // Pre-compute ALL driver standings positions before any resets happen
+    // — positions must be captured as a snapshot so earlier drivers in the loop
+    // don't see incorrect rankings after later drivers have their points zeroed
+    const _preResetStandings = State.getDriverStandings();
+    const _driverStandingsPosMap = {};
+    _preResetStandings.forEach((s, idx)=>{ _driverStandingsPosMap[s.driver.id] = idx + 1; });
     g.drivers.forEach(d=>{
       // Accumulate into career totals before resetting seasonal counters
       d.totalWins        = (d.totalWins        || 0) + (d.wins        || 0);
@@ -7570,7 +7617,7 @@ const spons=sumSponsorIncome(g.sponsors||[]);
         const teamName = primaryTeam ? primaryTeam.name : (d._prevTeamName || '—');
         // If driver changed teams mid-season, note it
         const transferred = primaryTeam && endTeam && primaryTeam.id !== endTeam.id;
-        const driverStandingsPos = State.getDriverStandings().findIndex(s=>s.driver.id===d.id)+1 || null;
+        const driverStandingsPos = _driverStandingsPosMap[d.id] || null;
         d.careerHistory.push({
           season: g.season,
           teamName,
@@ -8734,6 +8781,7 @@ const UI = {
           <label style="display:flex;flex-direction:column;gap:4px"><span style="font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--tx3);text-transform:uppercase">Revenue</span><input type="number" min="20" max="500" value="${team.revenue}" onchange="Editor.updateTeamField('${team.id}','revenue',this.value)" style="font-size:12px;padding:8px 10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg2)"></label>
           <label style="display:flex;flex-direction:column;gap:4px"><span style="font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--tx3);text-transform:uppercase">Prestige</span><input type="number" min="20" max="100" value="${team.prestige}" onchange="Editor.updateTeamField('${team.id}','prestige',this.value)" style="font-size:12px;padding:8px 10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg2)"></label>
           <label style="display:flex;flex-direction:column;gap:4px"><span style="font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--tx3);text-transform:uppercase">Downforce</span><input type="number" min="0" max="100" value="${team.downforce}" onchange="Editor.updateTeamField('${team.id}','downforce',this.value)" style="font-size:12px;padding:8px 10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg2)"></label>
+          <label style="display:flex;flex-direction:column;gap:4px"><span style="font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--tx3);text-transform:uppercase">Engine Supplier</span><select onchange="Editor.updateTeamField('${team.id}','engineManufacturer',this.value)" style="font-size:12px;padding:8px 10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg2)"><option value="mercedes" ${(team.engineManufacturer||'mercedes')==='mercedes'?'selected':''}>Mercedes</option><option value="ferrari" ${(team.engineManufacturer||'')==='ferrari'?'selected':''}>Ferrari</option><option value="honda" ${(team.engineManufacturer||'')==='honda'?'selected':''}>Honda</option><option value="redbullford" ${(team.engineManufacturer||'')==='redbullford'?'selected':''}>RB Ford</option><option value="audi" ${(team.engineManufacturer||'')==='audi'?'selected':''}>Audi</option></select></label>
         </div>
       </div>
       <div class="panel" style="margin-bottom:12px">
@@ -9027,7 +9075,7 @@ const UI = {
         <div class="race-sub">${race.location}, ${race.country} · Round ${n}${sprintStep?'  ·  <strong style="color:var(--red)">'+sprintStep+'</strong>':''}</div>
         ${race.circuitType?`<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">
           <span style="font-size:11px;background:var(--bg3);border:1px solid var(--bd);border-radius:20px;padding:2px 8px;font-weight:600">${race.circuitType==='power'?'⚡ Power Circuit':race.circuitType==='technical'?'⚙️ Technical Circuit':race.circuitType==='street'?'🏙️ Street Circuit':'⚖️ Balanced Circuit'}</span>
-          ${(()=>{const team=State.getPlayerTeam();if(State.game.autoAero) return '<span style="font-size:11px;background:var(--bg3);border:1px solid var(--bd);border-radius:20px;padding:2px 8px;font-weight:700;color:var(--grn)">🤖 Auto setup</span>';const df=team?.downforce||50;const _h=State.getSetupRangeHint(team.id,race.idealDownforce||50);const withinR=df>=_h.low&&df<=_h.high;const veryCloseR=Math.abs(df-(race.idealDownforce||50))<=4;const revealed=race.qualiDone||race.raceDone||race.sprintQualiDone;if(revealed){const col=veryCloseR?'var(--grn)':withinR?'var(--grn)':df<_h.low-10||df>_h.high+10?'var(--red)':'var(--amber)';const lbl=veryCloseR?'✓ Perfect setup':withinR?'✓ Good setup':df<_h.low-10||df>_h.high+10?'✗ Poor setup':'~ Adjusted setup';return '<span onclick="UI.showView(\'car\')" style="font-size:11px;background:var(--bg3);border:1px solid '+col+';border-radius:20px;padding:2px 8px;font-weight:700;color:'+col+';cursor:pointer" title="Tap to adjust aero">'+lbl+'</span>';}const inRange=withinR||veryCloseR;const col=inRange?'var(--grn)':df<_h.low-10||df>_h.high+10?'var(--red)':'var(--amber)';const lbl=inRange?'✓ In range':df<_h.low-10||df>_h.high+10?'✗ Out of range':'~ Near range';return '<span onclick="UI.showView(\'car\')" style="font-size:11px;background:var(--bg3);border:1px solid '+col+';border-radius:20px;padding:2px 8px;font-weight:700;color:'+col+';cursor:pointer" title="Outcome revealed after qualifying">'+lbl+'</span>';})()}
+          ${(()=>{const team=State.getPlayerTeam();if(State.game.autoAero) return '<span style="font-size:11px;background:var(--bg3);border:1px solid var(--bd);border-radius:20px;padding:2px 8px;font-weight:700;color:var(--grn)">🤖 Auto setup</span>';const df=team?.downforce||50;const _h=State.getSetupRangeHint(team.id,race.idealDownforce||50);const withinR=df>=_h.low&&df<=_h.high;const _tio=race._trueIdealOffset||0;const _trueIdealDf=Math.max(0,Math.min(100,(race.idealDownforce||50)+_tio));const veryCloseR=Math.abs(df-_trueIdealDf)<=4;const revealed=race.qualiDone||race.raceDone||race.sprintQualiDone;if(revealed){const col=veryCloseR?'var(--grn)':withinR?'var(--grn)':df<_h.low-10||df>_h.high+10?'var(--red)':'var(--amber)';const lbl=veryCloseR?'✓ Perfect setup':withinR?'✓ Good setup':df<_h.low-10||df>_h.high+10?'✗ Poor setup':'~ Adjusted setup';return '<span onclick="UI.showView(\'car\')" style="font-size:11px;background:var(--bg3);border:1px solid '+col+';border-radius:20px;padding:2px 8px;font-weight:700;color:'+col+';cursor:pointer" title="Tap to adjust aero">'+lbl+'</span>';}const inRange=withinR||veryCloseR;const col=inRange?'var(--grn)':df<_h.low-10||df>_h.high+10?'var(--red)':'var(--amber)';const lbl=inRange?'✓ In range':df<_h.low-10||df>_h.high+10?'✗ Out of range':'~ Near range';return '<span onclick="UI.showView(\'car\')" style="font-size:11px;background:var(--bg3);border:1px solid '+col+';border-radius:20px;padding:2px 8px;font-weight:700;color:'+col+';cursor:pointer" title="Outcome revealed after qualifying">'+lbl+'</span>';})()}
         </div>`:''}
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
           <span style="font-size:11px;background:var(--bg3);padding:3px 8px;border-radius:10px;font-weight:600">${circuitType.icon} ${circuitType.label}</span>
@@ -9140,8 +9188,9 @@ const UI = {
             const seasonP = playerDs.reduce((s,d)=>s+d.podiums,0);
             const seasonPl = playerDs.reduce((s,d)=>s+(d.poles||0),0);
             const cPos = State.getConstructorSeasonPos(team.id)||99;
+            const _racesRun = (g.calendar||[]).filter(r=>r.raceDone).length;
             switch(o.type){
-              case 'position': return cPos<=o.target;
+              case 'position': return _racesRun>0&&cPos<=o.target;
               case 'wins':     return seasonW>=o.target;
               case 'podiums':  return seasonP>=o.target;
               case 'poles':    return seasonPl>=o.target;
@@ -9156,9 +9205,10 @@ const UI = {
           const seasonP = playerDs.reduce((s,d)=>s+d.podiums,0);
           const seasonPl = playerDs.reduce((s,d)=>s+(d.poles||0),0);
           const cPos = State.getConstructorSeasonPos(team.id)||99;
+          const racesRun = (g.calendar||[]).filter(r=>r.raceDone).length;
           let current=0, done=false;
           switch(obj.type){
-            case 'position': current=cPos; done=cPos<=obj.target; break;
+            case 'position': current=cPos; done=racesRun>0&&cPos<=obj.target; break;
             case 'wins':     current=seasonW; done=seasonW>=obj.target; break;
             case 'podiums':  current=seasonP; done=seasonP>=obj.target; break;
             case 'poles':    current=seasonPl; done=seasonPl>=obj.target; break;
@@ -9202,7 +9252,10 @@ const UI = {
 
       if(objHTML) newsPanel.innerHTML = objHTML + '<div id="__news_placeholder"></div>';
       UI._renderNewsPanel(newsPanel.querySelector('#__news_placeholder')||newsPanel);
-      if(newsPanelDesktop) UI._renderNewsPanel(newsPanelDesktop);
+      if(newsPanelDesktop) {
+        newsPanelDesktop.innerHTML = objHTML ? objHTML + '<div id="__news_placeholder_desktop"></div>' : '';
+        UI._renderNewsPanel(newsPanelDesktop.querySelector('#__news_placeholder_desktop')||newsPanelDesktop);
+      }
       // Ensure only one is visible at a time (CSS handles this but belt+braces)
       if(newsPanel && newsPanelDesktop){
         // On desktop, dash-news-desktop shows and dash-news-col is hidden via CSS
@@ -9224,7 +9277,7 @@ const UI = {
             <div>
               <div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#f59e0b;margin-bottom:3px">🌟 Wonderkid</div>
               <div style="font-size:16px;font-weight:900">${wk.name}</div>
-              <div style="font-size:11px;color:rgba(255,255,255,.5);margin-top:1px">Age ${wk.age} · ${wk.nationality}</div>
+              <div style="font-size:11px;color:rgba(255,255,255,.5);margin-top:1px">Age ${wk.age} · ${getNationalityFlag(wk.nationality)} ${wk.nationality}</div>
             </div>
             <div style="text-align:right">
               <div style="font-size:28px;font-weight:900;line-height:1;color:#fff">${Math.round(wk.rating)}</div>
@@ -9836,7 +9889,12 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
     const inSeasonCost = g.inSeasonDev.aero*8 + g.inSeasonDev.reliability*5 + g.inSeasonDev.engine*12;
     const offseasonCost = g.offseasonDev.aero*10 + g.offseasonDev.reliability*6 + g.offseasonDev.engine*15 + g.offseasonDev.facilities*20;
     const currentRace = State.getCurrentRace();
-    const isSetupLocked = !!(currentRace && (currentRace.qualiDone || currentRace.raceDone || currentRace.sprintQualiDone));
+    // On sprint weekends: locked after sprintQualiDone (for sprint), unlocked after sprintDone (re-tune for GP quali), locked again after qualiDone
+    const _isSprint = !!(currentRace && currentRace.sprint);
+    const isSetupLocked = !!(currentRace && (
+      currentRace.qualiDone || currentRace.raceDone ||
+      (_isSprint ? (currentRace.sprintQualiDone && !currentRace.sprintDone) : false)
+    ));
 
     const slider=(key,label,val,max,section,costPer,desc,impact)=>`
       <div class="dev-slider-row">
@@ -10068,7 +10126,8 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
             const knowledgeLabel = knowledge >= 85 ? 'High confidence' : knowledge >= 65 ? 'Moderate confidence' : knowledge >= 45 ? 'Limited data — new regulations' : 'Very limited — early new-reg season';
             const knowledgeColor = knowledge >= 85 ? 'var(--grn)' : knowledge >= 65 ? 'var(--amber)' : 'var(--red)';
             const withinRange = df >= hint.low && df <= hint.high;
-            const veryClose = Math.abs(df - race.idealDownforce) <= 4;
+            const _carTrueIdeal = Math.max(0, Math.min(100, (race.idealDownforce||50) + (race._trueIdealOffset||0)));
+            const veryClose = Math.abs(df - _carTrueIdeal) <= 4;
             const revealed = race.qualiDone || race.raceDone || race.sprintQualiDone;
             const matchBadge = revealed
               ? (veryClose ? '🟢 Perfect — pace bonus' : withinRange ? '🟢 Good setup' : df < hint.low ? '🔴 Too low — pace lost' : '🔴 Too high — pace lost')
@@ -10384,7 +10443,7 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
           const reserveBadge = (d.isReserve || subIds.has(String(d.id))) ? '<span style="font-size:9px;background:rgba(245,158,11,.15);color:#b45309;padding:1px 5px;border-radius:4px;font-weight:700;margin-left:6px">SUB</span>' : '';
           return `<div class="driver-list-row my-drv" onclick="UI.showDriverModal(${d.id})">
             <span class="dl-pos">${i+1}</span>
-            <div class="dl-name-block"><div class="dl-name">${d.name}${reserveBadge}${contractBadge}${injBadge}${formDipBadge}${d.academyName?` <span style="font-size:9px;background:rgba(124,58,237,.12);color:#7c3aed;padding:1px 5px;border-radius:4px;font-weight:700">🎓 Academy</span>`:''}</div><div class="dl-team">Age ${d.age} · ${d.nationality} · Contract: ${d.contract}yr</div></div>
+            <div class="dl-name-block"><div class="dl-name">${d.name}${reserveBadge}${contractBadge}${injBadge}${formDipBadge}${d.academyName?` <span style="font-size:9px;background:rgba(124,58,237,.12);color:#7c3aed;padding:1px 5px;border-radius:4px;font-weight:700">🎓 Academy</span>`:''}</div><div class="dl-team">Age ${d.age} · ${getNationalityFlag(d.nationality)} ${d.nationality} · Contract: ${d.contract}yr</div></div>
             <span class="dl-ovr"><span class="ovr-pill ${ratingClass(Math.round(d.rating))}">${Math.round(d.rating)}</span></span>
             <span class="dl-attr">${Math.round(d.racePace)}</span><span class="dl-attr">${Math.round(d.qualifying)}</span>
             <span class="dl-attr dl-attr-hide">${Math.round(d.consistency)}</span><span class="dl-attr dl-attr-hide">${Math.round(d.wet)}</span>
@@ -10442,7 +10501,7 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
           <span class="dl-pos">${i+1}</span>
           <div class="dl-name-block">
             <div class="dl-name">${d.name}${d.prospectSeries?` <span class="prospect-badge badge-${d.prospectSeries.toLowerCase().replace('indycar','ic')}">${d.prospectSeries}</span>`:''}</div>
-            <div class="dl-team">Prospect · Age ${d.age} · ${d.nationality}${(d.feederContract||0)>0?` · <span style="color:var(--amber);font-weight:700">⏳ In feeder series · free ${(g.season||2026)+d.feederContract}</span>`:' · <span style="color:var(--grn);font-weight:700">Free to sign</span>'}</div>
+            <div class="dl-team">Prospect · Age ${d.age} · ${getNationalityFlag(d.nationality)} ${d.nationality}${(d.feederContract||0)>0?` · <span style="color:var(--amber);font-weight:700">⏳ In feeder series · free ${(g.season||2026)+d.feederContract}</span>`:' · <span style="color:var(--grn);font-weight:700">Free to sign</span>'}</div>
           </div>
           <span class="dl-ovr"><span class="ovr-pill ${ratingClass(Math.round(d.rating))}">${Math.round(d.rating)}</span></span>
           <span class="dl-attr">${potDisplay}</span>
@@ -10639,7 +10698,7 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
         </div>
       </div>` : ''}
       <div class="modal-name" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">${d.name}${contractRiskBadge}</div>
-      <div class="modal-meta">Age ${d.age} · ${d.nationality} · ${team?team.name:'Free Agent'}${potDisplay}${d.isProspect?(d.feederContract>0?` · <span style="color:var(--amber);font-weight:700">⏳ In feeder series · free ${(g.season||2026)+d.feederContract}</span>`:` · <span style="color:var(--grn);font-weight:700">✅ Free to sign now</span>`):''}</div>
+      <div class="modal-meta">Age ${d.age} · ${getNationalityFlag(d.nationality)} ${d.nationality} · ${team?team.name:'Free Agent'}${potDisplay}${d.isProspect?(d.feederContract>0?` · <span style="color:var(--amber);font-weight:700">⏳ In feeder series · free ${(g.season||2026)+d.feederContract}</span>`:` · <span style="color:var(--grn);font-weight:700">✅ Free to sign now</span>`):''}</div>
       ${activeInjury ? `<div style="margin:10px 0 12px;padding:10px 12px;background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;color:#991b1b;font-size:12px">
         <div style="font-weight:900;margin-bottom:2px">🚑 Injured</div>
         <div>${activeInjury.type} · out for ${racesOut} more race${racesOut===1?'':'s'}${reserveCover?` · reserve stepping in: ${reserveCover.name}`:''}</div>
@@ -11149,7 +11208,7 @@ const personalSlots = getPersonalSponsorSlots(d);
     const mkYrBtn=(y,sel)=>'<button onclick="document.querySelectorAll(\'.yr-btn\').forEach(b=>{b.style.background=\'var(--bg3)\';b.style.borderColor=\'var(--bd)\'});this.style.background=\'rgba(192,57,43,.1)\';this.style.borderColor=\'var(--red)\';window._approachYears='+y+'" class="yr-btn" style="flex:1;padding:10px 0;border:1px solid '+(sel?'var(--red)':'var(--bd)')+';border-radius:8px;background:'+(sel?'rgba(192,57,43,.1)':'var(--bg3)')+';cursor:pointer;text-align:center;font-size:13px;font-weight:800;color:'+(sel?'var(--red)':'var(--tx)')+'">'+y+' yr'+(y>1?'s':'')+'</button>';
     document.getElementById('modal-body').innerHTML=
       '<div style="font-size:18px;font-weight:900;margin-bottom:4px">Approach '+d.name+'</div>'
-      +'<div style="font-size:12px;color:var(--tx3);margin-bottom:14px">'+d.nationality+' · '+Math.round(d.rating)+' OVR · Age '+d.age+' · '+(theirTeam?.name||'?')+'</div>'
+      +'<div style="font-size:12px;color:var(--tx3);margin-bottom:14px">'+getNationalityFlag(d.nationality)+' '+d.nationality+' · '+Math.round(d.rating)+' OVR · Age '+d.age+' · '+(theirTeam?.name||'?')+'</div>'
       +'<div style="background:var(--bg3);border-radius:8px;padding:10px 12px;margin-bottom:14px;font-size:12px">'
         +'<div style="font-weight:700;margin-bottom:4px">Driver interest factors</div>'
         +'<div style="color:'+carCol+'">🏎 Car: '+carTxt+'</div>'
@@ -11661,7 +11720,7 @@ const personalSlots = getPersonalSponsorSlots(d);
         <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
           <div>
             <div style="font-size:14px;font-weight:800">${j.name}</div>
-            <div style="font-size:11px;color:var(--tx3)">Age ${j.age} · ${j.series||'F3'} · Year ${j.yearsInAcademy||1} in academy · ${j.nationality||'Unknown'}</div>
+            <div style="font-size:11px;color:var(--tx3)">Age ${j.age} · ${getNationalityFlag(j.nationality||"")} ${j.nationality||"Unknown"} · ${j.series||'F3'} · Year ${j.yearsInAcademy||1} in academy</div>
           </div>
           <div style="text-align:right">
             <div style="font-size:18px;font-weight:900;font-family:var(--fm)">${Math.round(j.rating)}</div>
@@ -12596,7 +12655,10 @@ const activeIncome=formatMoney(sumSponsorIncome(g.sponsors||[]));
       const buildRaceGrid=(races,resultKey,label)=>{
         if(!races.length) return '';
         const raceHeaders=races.map(r=>`<th style="text-align:center;padding:2px 3px;font-size:8px;color:var(--tx3);font-weight:600;white-space:nowrap;min-width:22px;writing-mode:vertical-rl;transform:rotate(180deg);max-height:60px;overflow:hidden">${r.location||r.name.split(' ')[0]}</th>`).join('');
-        const rows=allDrivers.map(d=>{
+        const rows=allDrivers.filter(d=>{
+          // Only show drivers who actually have at least one result in this set of races
+          return races.some(r=>(r[resultKey]||[]).some(x=>String(x.driverId)===String(d.id)));
+        }).map(d=>{
           const cells=races.map(r=>{
             const driverId = String(d.id);
             const entry=(r[resultKey]||[]).find(x=>String(x.driverId)===driverId);
@@ -12723,7 +12785,7 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     document.getElementById('modal-body').innerHTML=`
       ${isWK?'<div style="background:linear-gradient(135deg,#1a1100,#2d1f00);border:1px solid #f59e0b;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:11px;color:#f59e0b;font-weight:700">🌟 Generational talent — potential ceiling: elite</div>':''}
       <div style="font-size:18px;font-weight:900;margin-bottom:2px">${d.name}</div>
-      <div style="font-size:11px;color:var(--tx3);margin-bottom:12px">${d.nationality} · Age ${d.age} · ${Math.round(d.rating)} OVR · Pot. ${Math.round(d.potential)}</div>
+      <div style="font-size:11px;color:var(--tx3);margin-bottom:12px">${getNationalityFlag(d.nationality)} ${d.nationality} · Age ${d.age} · ${Math.round(d.rating)} OVR · Pot. ${Math.round(d.potential)}</div>
       <div style="font-size:12px;color:var(--tx2);font-style:italic;padding:8px 10px;background:var(--bg3);border-radius:7px;margin-bottom:12px">${flavour}</div>
       <div style="margin-bottom:12px">
         ${arow('Race Pace',d.racePace)}${arow('Qualifying',d.qualifying)}${arow('Consistency',d.consistency)}${arow('Wet',d.wet)}
@@ -13871,7 +13933,7 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
           <span style="font-size:10px;font-weight:800;color:${i<3?'#f59e0b':'var(--tx3)'};min-width:22px">${i===0?'🥇':i===1?'🥈':i===2?'🥉':'#'+(i+1)}</span>
           <div style="flex:1;min-width:0">
             <div style="font-weight:700;color:${d.teamId===State.game.playerTeamId?'var(--red)':'var(--tx)'}">${d.name}</div>
-            <div style="font-size:10px;color:var(--tx3);margin-top:1px">${d.nationality} · ${d.championships||0} WDC · ${d.careerWins}W · ${d.careerPodiums}P · ${d.careerPoints}pts</div>
+            <div style="font-size:10px;color:var(--tx3);margin-top:1px">${getNationalityFlag(d.nationality)} ${d.nationality} · ${d.championships||0} WDC · ${d.careerWins}W · ${d.careerPodiums}P · ${d.careerPoints}pts</div>
           </div>
           <div style="text-align:right;flex-shrink:0">
             <div style="font-size:15px;font-weight:900;font-family:var(--fm)">${d[key]||0}</div>
@@ -14004,7 +14066,10 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       const buildGrid=(races,resultKey,label)=>{
         if(!races.length) return '';
         const hdrs=races.map(r=>`<th style="text-align:center;padding:2px 3px;font-size:8px;color:var(--tx3);font-weight:600;white-space:nowrap;min-width:22px;writing-mode:vertical-rl;transform:rotate(180deg);max-height:60px;overflow:hidden">${r.location||r.name.split(' ')[0]}</th>`).join('');
-        const rows=drivers.map(d=>{
+        const rows=drivers.filter(d=>{
+          const sid=String(d.driverId);
+          return races.some(r=>(r[resultKey]||[]).some(x=>String(x.driverId)===sid));
+        }).map(d=>{
           const sid=String(d.driverId);
           const isP=pids.has(sid);
           const tcol=teamColorMap[d.teamId]||'var(--tx3)';
@@ -14331,7 +14396,7 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       <p>Each circuit has a hidden ideal downforce level. Your engineers give you a <strong>recommended range</strong> — e.g. "65–80" — but won\'t reveal the exact number. Getting within 4 of the true ideal gives a pace bonus; landing anywhere in the range avoids penalties; setting outside it costs lap time all race.</p>
       <p><strong>Setup knowledge</strong> is a per-team value that controls how tight your range hint is. A team with high facilities and stable regulations gets a narrow, precise range. After a regulation reset, every team\'s setup knowledge drops — engineers don\'t yet understand what the new car needs — so everyone sees wider, less useful hints in year 1. Knowledge recovers toward your facilities level over 2–3 seasons.</p>
       <p>The circuit type label on the Car page is your first clue — street circuits want high downforce, power circuits want low drag, technical circuits want balance. Learn the circuits and you\'ll make educated guesses even within a wide range.</p>
-      <p><strong>Setup is locked after qualifying.</strong> Once qualifying is complete the aero slider is disabled — you cannot change setup between qualifying and the race. The quality label (Perfect / Good / Poor) reveals after qualifying so you can see how your call landed, but the number is locked in. This applies to both sprint and GP qualifying.</p>
+      <p><strong>Setup is locked after qualifying.</strong> Once qualifying is complete the aero slider is disabled — you cannot change setup between qualifying and the race. The quality label (Perfect / Good / Poor) reveals after qualifying so you can see how your call landed, but the number is locked in. On sprint weekends, setup locks after Sprint Qualifying for the sprint race, then <strong>unlocks again after the Sprint Race</strong> so you can re-tune for GP Qualifying — just like real life.</p>
       ${tip('Precision rewards skill', 'Getting the setup exactly right gives a pace bonus — not just avoiding a penalty. Elite teams with high knowledge get tighter hints and extract more from a perfect setup. This means setup matters more at the front of the grid, where tiny margins define race outcomes.')}
       ${warn('New regulations widen every team\'s range. Even Ferrari is guessing in year 1 of new regs. Don\'t be surprised if setup feels harder right after a regulation change — invest in facilities to recover knowledge faster.')}
     `)}
@@ -15478,8 +15543,22 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.3.1.5 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.3.2 · Release Notes</div>
         ${[
+    ['v2.3.2','Apr 2026',[
+            '🐛 Loaned academy drivers no longer appear as extra race cars — they were bypassing the isJunior filter in qualifying, sprint qualifying, and race grid construction, causing teams to field 3+ cars and expanding grids beyond 22. Fixed at all four entry points: simQualifying, simSprintQualifying, simRace qualiOrder filter, and offseason driverIds cleanup (reported by Penguinref, TTVFrozzle19, Spiritual-Walrus-667).',
+            '🐛 Season objectives: "Win the Constructors Championship" no longer shows as Done at race 1 of a new season. Position-type objectives now require at least one race to have been completed before they can register as achieved (reported by Ahhonlyforkis, Teammomofan).',
+            '🐛 Season objectives panel was only rendering on mobile — it now also appears in the desktop dashboard news column (reported by IronicGerman, OzzyVibes1612).',
+            '🐛 Two-stop strategy: choosing "stay out" at stop 1 no longer causes the second stop prompt to disappear for the rest of the race. When nextPlannedPitLap is null after a stay-out, the second stop lap is now derived from the strategy\'s pitWindows so the deferred stop 1 and stop 2 both fire correctly (reported by Polkiu4863, SowingPants).',
+            '🐛 Active negotiation "races left" counter no longer shows inflated values (e.g. 26 races) at the start of a new season. Carried-over negotiations now have their race indices reset to the new season timeline (reported by Ahhonlyforkis).',
+            '🐛 Race grid history: drivers with no results in a given race set no longer appear as ghost rows — both the current-season Wikipedia grid and the History tab grid now filter to only drivers with at least one race result entry (reported by Ahhonlyforkis).',
+            '🐛 Career history positions: multiple drivers were showing as P1/P2/P3 in the same season. Root cause: getDriverStandings() was called fresh per driver inside the season-end loop, but earlier drivers already had seasonPoints reset to 0, corrupting the ranking for later iterations. All positions now snapshotted in a single pre-reset pass (reported by IronicGerman).',
+            '🐛 Race pace: dominance drag was computed independently per driver per lap using randFloat, meaning two teammates in the same car could accumulate 30-50s of artificial gap over a long race purely from random variance. Drag is now computed once per team per lap and shared between teammates. Also capped tyre cliff penalty at 3.5s/lap max and tightened formNoise drift (reported by IronicGerman).',
+            '🆕 Country flags: nationality emoji flags now appear throughout — driver modal, driver lists, academy, prospects, negotiations, transfer market, Hall of Fame, and dashboard wonderkid widget (suggested by kelthebest).',
+            '🆕 Generated driver name pools expanded: Dutch (4→20 first names), Finnish (1→25), Danish (1→20), Swedish (2→25), Norwegian (2→20), Belgian (1→20), Austrian (2→20), Polish/Czech/Russian/Hungarian all expanded from 1-3 to 20. Authentic surnames added per nationality — Dutch, Portuguese, Belgian, and Austrian drivers now get correct-sounding surnames instead of Scandinavian or German ones.',
+            '🆕 Setup variability: the perfect setup is no longer always at the exact midpoint of the hint range. Each race now generates a hidden offset (±0–10 units, scaling down with higher setup knowledge) so the true optimum is slightly off-centre. The hint range the engineers give you is still centred on the circuit ideal — you have to read between the lines. Elite teams with high setup knowledge face a smaller offset and can nail it more consistently. The "Perfect" label and pace bonus only fire if you hit the true optimum, not just the midpoint (suggested by Polkiu4863).',
+            '🆕 Sprint weekend setup window: on sprint weekends the aero slider now unlocks after the Sprint Race, letting you re-tune for GP Qualifying — just like IRL where teams get a setup window between the sprint and GP quali sessions. Setup locks again once GP Qualifying begins (suggested by Polkiu4863).',
+    ]],
     ['v2.3.1.5','Apr 2026',[
             '🐛 Academy loan return now correctly places drivers back into the academy — previously returning loan drivers were assigned as reserve drivers, causing slot corruption and displacing existing drivers (reported by puchunz).',
             '🐛 Sending a junior on loan no longer marks them as a reserve driver or keeps them in acad.juniors during the loan, preventing double-development (academy loop + loan boost).',
@@ -16140,7 +16219,8 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const hint = State.getSetupRangeHint(team.id, race.idealDownforce);
     const knowledge = State.getSetupKnowledge(team.id);
     const withinRange = df >= hint.low && df <= hint.high;
-    const veryClose = Math.abs(df - race.idealDownforce) <= 4;
+    const _badgeTrueIdeal = Math.max(0, Math.min(100, (race.idealDownforce||50) + (race._trueIdealOffset||0)));
+    const veryClose = Math.abs(df - _badgeTrueIdeal) <= 4;
     const knowledgeLabel = knowledge >= 85 ? 'High confidence' : knowledge >= 65 ? 'Moderate confidence' : knowledge >= 45 ? 'Limited data' : 'Very limited';
     const knowledgeColor = knowledge >= 85 ? 'var(--grn)' : knowledge >= 65 ? 'var(--amber)' : 'var(--red)';
 const matchBadge = race.qualiDone || race.raceDone || race.sprintQualiDone
@@ -16938,8 +17018,11 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
   setDownforce(val){
     const team=State.getPlayerTeam(); if(!team) return;
     const _lockRace=State.getCurrentRace();
-    if(_lockRace&&(_lockRace.qualiDone||_lockRace.raceDone||_lockRace.sprintQualiDone)){
-      UI.toast('Setup is locked after qualifying — result already calculated.','warning'); return;
+    if(_lockRace){
+      const _sprintLock = _lockRace.sprint ? (_lockRace.sprintQualiDone && !_lockRace.sprintDone) : false;
+      if(_lockRace.qualiDone || _lockRace.raceDone || _sprintLock){
+        UI.toast('Setup is locked after qualifying — result already calculated.','warning'); return;
+      }
     }
     team.downforce=clamp(parseInt(val),0,100);
     Storage.autosave();
@@ -19308,13 +19391,29 @@ window._wrPitDecision = function(decisionId, pitNow, auto) {
     if(!WR.pitDecisionBonus) WR.pitDecisionBonus = 0;
     WR.pitDecisionBonus += bonusDelta;
     WR.driverDecisionScores[ev.driverId] += bonusDelta;
+    // If nextPlannedPitLap is null (not found in lapStates scan), derive it from strategy stints
+    // This ensures a 2-stop stay-out still triggers stop 2 prompt after the deferred stop 1
+    let _derivedNextPlanned = ev.nextPlannedPitLap || null;
+    if(!_derivedNextPlanned && ev.nextStintIndex != null && WR.race) {
+      // Find driver's chosenId from most recent lapState entry
+      const _lapStateEntry = (WR.race.lapStates || []).slice().reverse()
+        .map(ls=>(ls.order||[]).find(o=>o.driverId===ev.driverId)).find(Boolean);
+      const _chosenId = _lapStateEntry?.chosenId || WR.race._strategyUsed || WR.race._chosenStrategy;
+      const _strat = _chosenId ? DATA.getStrategyOptions(WR.race, WR.race._weatherRiskUsed || WR.race._weatherRisk || 0)
+        .options.find(o => o.id === _chosenId) : null;
+      if(_strat && _strat.pitWindows && _strat.pitWindows.length > ev.nextStintIndex * 2) {
+        const _wOpen = _strat.pitWindows[ev.nextStintIndex * 2];
+        const _wClose = _strat.pitWindows[ev.nextStintIndex * 2 + 1] || _wOpen;
+        _derivedNextPlanned = Math.round((_wOpen + _wClose) / 2);
+      }
+    }
     window._wrApplyBonusNow(ev.driverId, {
       type:'pit',
       choice:'stay',
       lap: ev.lap,
       nextCompound: ev.nextCompound || 'hard',
       plannedPitLap: ev.plannedPitLap || ev.lap,
-      nextPlannedPitLap: ev.nextPlannedPitLap || null,
+      nextPlannedPitLap: _derivedNextPlanned,
       nextStintIndex: ev.nextStintIndex,
       deferToLap: favourableCarryLap || deferLap,
       forceLap: ev.isForcedPit ? (ev.lap + 1) : (favourableCarryLap || deferLap),
