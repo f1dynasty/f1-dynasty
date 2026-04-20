@@ -732,7 +732,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:18px;max-width:320px;padding:14px 16px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
           <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">Latest Update</div>
-          <div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.3.1.1 is live</div>
+          <div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.3.1.2 is live</div>
           <div style="font-size:12px;line-height:1.45;color:#666">Engine manufacturers, car sub-stats by circuit, ERS deployment, qualifying tyre choice, overdrive penalty. Driver Academy with juniors, loans &amp; permanent graduate branding.</div>
         </div>
       </div>
@@ -786,7 +786,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </button>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.3.1.1</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.3.1.2</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -7655,7 +7655,18 @@ const spons=sumSponsorIncome(g.sponsors||[]);
     // (they were ordered but the season ended before delivery — apply them now silently)
     const team=State.getPlayerTeam();
     (g.pendingUpgrades||[]).filter(u=>!u.applied).forEach(u=>{
-    if(u.stat==='carPerformance'){const _eff=getInSeasonDevEfficiency(team.carPerformance || 70);team.carPerformance=clamp(team.carPerformance+u.value*_eff,40,99);}
+    if(u.stat==='carPerformance'){
+      const _eff=getInSeasonDevEfficiency(team.carPerformance || 70);
+      const _v = u.value*_eff;
+      team.carPerformance=clamp(team.carPerformance+_v,40,99);
+      if(_v > 0) {
+        team.cornering      = clamp((team.cornering      ||team.carPerformance)+_v*0.30,40,99);
+        team.aeroEfficiency = clamp((team.aeroEfficiency ||team.carPerformance)+_v*0.25,40,99);
+        team.topSpeed       = clamp((team.topSpeed       ||team.carPerformance)+_v*0.20,40,99);
+        team.tyreManagement = clamp((team.tyreManagement ||team.carPerformance)+_v*0.15,40,99);
+        team.dirtyAir       = clamp((team.dirtyAir       ||team.carPerformance)+_v*0.10,40,99);
+      }
+    }
       if(u.stat==='reliability')    team.reliability=clamp(team.reliability+u.value,40,100);
       u.applied=true;
     });
@@ -8315,7 +8326,17 @@ const Storage = {
       g.pendingUpgrades.forEach(u=>{
         if(!u.applied && u.arrivesAfterRace <= g.raceIndex) {
           if(t) {
-            if(u.stat==='carPerformance') t.carPerformance = clamp(t.carPerformance + (u.value||0), 40, 100);
+            if(u.stat==='carPerformance') {
+              const v = u.value||0;
+              t.carPerformance = clamp(t.carPerformance + v, 40, 100);
+              if(v > 0) {
+                t.cornering      = clamp((t.cornering      ||t.carPerformance)+v*0.30,40,99);
+                t.aeroEfficiency = clamp((t.aeroEfficiency ||t.carPerformance)+v*0.25,40,99);
+                t.topSpeed       = clamp((t.topSpeed       ||t.carPerformance)+v*0.20,40,99);
+                t.tyreManagement = clamp((t.tyreManagement ||t.carPerformance)+v*0.15,40,99);
+                t.dirtyAir       = clamp((t.dirtyAir       ||t.carPerformance)+v*0.10,40,99);
+              }
+            }
             if(u.stat==='reliability')    t.reliability    = clamp(t.reliability    + (u.value||0), 40, 100);
           }
           u.applied = true;
@@ -11803,7 +11824,7 @@ const personalSlots = getPersonalSponsorSlots(d);
               +'</div>'
               +'<div style="margin-top:8px;display:flex;gap:6px">'
               +'<button class="btn btn-outline btn-sm" onclick="UI.showDriverModal('+d.id+')">View Profile</button>'
-              +(!d.teamId?(d.feederContract>0?'<button class="btn btn-ghost btn-sm" disabled style="opacity:.5" title="Under feeder series contract">⏳ In feeder series · free '+(g.season+d.feederContract)+'</button>':'<button class="btn btn-success btn-sm" onclick="GameActions.signDriver('+d.id+')">Sign</button>'):'')
+              +(!d.teamId?(d.feederContract>0?'<button class="btn btn-ghost btn-sm" disabled style="opacity:.5" title="Under feeder series contract">⏳ In feeder series · free '+((g.season||2026)+d.feederContract)+'</button>':'<button class="btn btn-success btn-sm" onclick="GameActions.signDriver('+d.id+')">Sign</button>'):'')
               +'</div>'
               +'</div>';
           }).join('')
@@ -15397,8 +15418,11 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.3.1.1 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.3.1.2 · Release Notes</div>
         ${[
+    ['v2.3.1.2','Apr 2026',[
+            '🐛 Car performance OVR now correctly updates after in-season upgrades — the upgrade was applying to the legacy carPerformance field but the displayed OVR is calculated from the five sub-stats (Top Speed, Cornering, Tyre Management, Dirty Air, Aero Efficiency). All three upgrade paths (in-season, stale on load, end-of-season) now distribute gains across sub-stats (reported by Next-Attention5198).',
+    ]],
     ['v2.3.1.1','Apr 2026',[
             '🐛 Academy recruit button now closes any open modal before opening — fixes silent failure on Firefox (reported by puchunz).',
             '🐛 Feeder series contract label now shows the year a prospect will be available (e.g. "⏳ In feeder series · free 2028") instead of the opaque "Contracted (3yr)" — clarifies this is intentional behaviour, not a bug (reported by Next-Attention5198).',
@@ -16165,7 +16189,25 @@ const GameActions = {
               : 1.50);
       const nominalVal = u.value;
       const actualVal  = nominalVal * mult;
-      if(u.stat==='carPerformance') team.carPerformance=clamp(team.carPerformance+actualVal,40,100);
+      if(u.stat==='carPerformance') {
+        team.carPerformance=clamp(team.carPerformance+actualVal,40,100);
+        // Distribute gain across sub-stats so getTeamOverallCar() reflects the upgrade
+        // In-season upgrades are aero-focused — cornering and aero efficiency lead, others follow
+        if(actualVal > 0) {
+          team.cornering      = clamp((team.cornering      ||team.carPerformance)+actualVal*0.30,40,99);
+          team.aeroEfficiency = clamp((team.aeroEfficiency ||team.carPerformance)+actualVal*0.25,40,99);
+          team.topSpeed       = clamp((team.topSpeed       ||team.carPerformance)+actualVal*0.20,40,99);
+          team.tyreManagement = clamp((team.tyreManagement ||team.carPerformance)+actualVal*0.15,40,99);
+          team.dirtyAir       = clamp((team.dirtyAir       ||team.carPerformance)+actualVal*0.10,40,99);
+        } else if(actualVal < 0) {
+          // Setback — drag all sub-stats back proportionally
+          team.cornering      = clamp((team.cornering      ||team.carPerformance)+actualVal*0.20,40,99);
+          team.aeroEfficiency = clamp((team.aeroEfficiency ||team.carPerformance)+actualVal*0.20,40,99);
+          team.topSpeed       = clamp((team.topSpeed       ||team.carPerformance)+actualVal*0.20,40,99);
+          team.tyreManagement = clamp((team.tyreManagement ||team.carPerformance)+actualVal*0.20,40,99);
+          team.dirtyAir       = clamp((team.dirtyAir       ||team.carPerformance)+actualVal*0.20,40,99);
+        }
+      }
       if(u.stat==='reliability')    team.reliability=clamp(team.reliability+actualVal,40,100);
       u.applied=true;
       u.actualValue=actualVal;
