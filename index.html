@@ -732,7 +732,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:18px;max-width:320px;padding:14px 16px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
           <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">Latest Update</div>
-          <div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.3.2.2 is live</div>
+          <div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.3.2.5 is live</div>
           <div style="font-size:12px;line-height:1.45;color:#666">Engine manufacturers, car sub-stats by circuit, ERS deployment, qualifying tyre choice, overdrive penalty. Driver Academy with juniors, loans &amp; permanent graduate branding.</div>
         </div>
       </div>
@@ -786,7 +786,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </button>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.3.2.2</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.3.2.5</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -2222,7 +2222,8 @@ const Editor = {
       seasonDrivers: JSON.parse(JSON.stringify(DATA.seasonDrivers)),
       reserveDrivers: JSON.parse(JSON.stringify(DATA.reserveDrivers)),
       namedFreeAgents: JSON.parse(JSON.stringify(DATA.namedFreeAgents)),
-      namedProspects: JSON.parse(JSON.stringify(DATA.namedProspects))
+      namedProspects: JSON.parse(JSON.stringify(DATA.namedProspects)),
+      prospectClasses: [...DATA.prospectSeries]
     };
   },
   _load() {
@@ -2294,17 +2295,36 @@ const Editor = {
       ? data.namedProspects.map((d,i)=>this._normalizeDriver(d, base.namedProspects[i] || this._blankDriver({ contract:0, salary:1, age:19, rating:68, potential:84 })))
       : JSON.parse(JSON.stringify(base.namedProspects));
     if(data && !Array.isArray(data?.namedProspects)) warnings.push('namedProspects');
+    // Prospect classes — editable list of feeder series names
+    out.prospectClasses = Array.isArray(data?.prospectClasses) && data.prospectClasses.length > 0
+      ? data.prospectClasses.map(c=>String(c||'').trim()).filter(Boolean)
+      : [...(base.prospectClasses || DATA.prospectSeries)];
     return { data: out, warnings };
   },
   _normalizeTeam(team, fallback) {
     const validEngines = ['mercedes','ferrari','honda','redbullford','audi'];
+    const _cp = clamp(parseFloat(team?.carPerformance ?? fallback.carPerformance) || fallback.carPerformance, 40, 100);
+    // Sub-stats: use fallback values if present, otherwise derive from carPerformance.
+    // This ensures the landing page OVR reflects edited carPerformance values correctly.
+    const _subStat = (key) => {
+      const fromTeam = parseFloat(team?.[key]);
+      const fromFallback = parseFloat(fallback?.[key]);
+      if(!isNaN(fromTeam) && fromTeam > 0) return clamp(fromTeam, 40, 100);
+      if(!isNaN(fromFallback) && fromFallback > 0) return clamp(fromFallback, 40, 100);
+      return _cp; // derive from carPerformance
+    };
     return {
       ...fallback,
       id: fallback.id,
       name: String(team?.name || fallback.name || '').trim() || fallback.name,
       nation: String(team?.nation || fallback.nation || '').trim() || fallback.nation,
       prestige: clamp(parseInt(team?.prestige ?? fallback.prestige) || fallback.prestige, 20, 100),
-      carPerformance: clamp(parseFloat(team?.carPerformance ?? fallback.carPerformance) || fallback.carPerformance, 40, 100),
+      carPerformance: _cp,
+      topSpeed: _subStat('topSpeed'),
+      cornering: _subStat('cornering'),
+      tyreManagement: _subStat('tyreManagement'),
+      dirtyAir: _subStat('dirtyAir'),
+      aeroEfficiency: _subStat('aeroEfficiency'),
       downforce: clamp(parseFloat(team?.downforce ?? fallback.downforce) || fallback.downforce, 0, 100),
       reliability: clamp(parseFloat(team?.reliability ?? fallback.reliability) || fallback.reliability, 40, 100),
       developmentRate: clamp(parseFloat(team?.developmentRate ?? fallback.developmentRate) || fallback.developmentRate, 40, 100),
@@ -2481,6 +2501,35 @@ const Editor = {
     this.persist();
     if(typeof UI !== 'undefined') UI.renderEditor();
   },
+  getProspectClasses() {
+    return this._state?.prospectClasses || [...DATA.prospectSeries];
+  },
+  addProspectClass(name) {
+    const n = String(name||'').trim();
+    if(!n) return;
+    if(!this._state.prospectClasses) this._state.prospectClasses = [...DATA.prospectSeries];
+    if(this._state.prospectClasses.includes(n)) { if(typeof UI!=='undefined') UI.toast('Class already exists','warning'); return; }
+    this._state.prospectClasses.push(n);
+    this.persist();
+    if(typeof UI !== 'undefined') UI.renderEditor();
+  },
+  removeProspectClass(index) {
+    if(!this._state.prospectClasses) return;
+    this._state.prospectClasses.splice(index, 1);
+    if(this._state.prospectClasses.length === 0) this._state.prospectClasses = ['F2'];
+    this.persist();
+    if(typeof UI !== 'undefined') UI.renderEditor();
+  },
+  renameProspectClass(index, newName) {
+    const n = String(newName||'').trim();
+    if(!n || !this._state.prospectClasses) return;
+    const oldName = this._state.prospectClasses[index]; // capture BEFORE rename
+    this._state.prospectClasses[index] = n;
+    // Update any named prospects using the old name
+    (this._state.namedProspects||[]).forEach(p=>{ if(p.series === oldName) p.series = n; });
+    this.persist();
+    if(typeof UI !== 'undefined') UI.renderEditor();
+  },
   copyJson() {
     this._commitActiveField();
     const text = JSON.stringify(this.getState(), null, 2);
@@ -2595,7 +2644,8 @@ const State = {
     for(let i=namedProspects.length;i<30;i++){
       const d = this._generateDriver(nextDriverId++, startYear, null, 'prospect');
       d.isProspect = true;
-      d.prospectSeries = DATA.prospectSeries[Math.floor(Math.random()*DATA.prospectSeries.length)];
+      const _pClasses = template.prospectClasses && template.prospectClasses.length > 0 ? template.prospectClasses : DATA.prospectSeries;
+      d.prospectSeries = _pClasses[Math.floor(Math.random()*_pClasses.length)];
       d.feederContract = randInt(1,4);
       d.scoutedPotential = null;
       allDrivers.push(d);
@@ -2634,6 +2684,7 @@ nextRegsYear: startYear + randInt(3,5), regsHistory: [],
       offseasonPending: true, startSeason: startYear,
       injuries: [],
       careerStats: {seasons:[], totalWins:0, totalPodiums:0, totalPoles:0, championships:0, constructorChampionships:0},
+      prospectClasses: template.prospectClasses && template.prospectClasses.length > 0 ? [...template.prospectClasses] : [...DATA.prospectSeries],
     };
     return this.game;
   },
@@ -7204,7 +7255,7 @@ const spons=sumSponsorIncome(g.sponsors||[]);
     const wonderkidRoll = wonderkidThisSeason && Math.random() < wonderkidChance;
     for(let i=0;i<2;i++){
       const p=State._generateDriver(g.nextDriverId++,g.season+1,null,'prospect');
-      p.isProspect=true; p.prospectSeries=DATA.prospectSeries[randInt(0,DATA.prospectSeries.length-1)];
+      p.isProspect=true; const _midPCl=(g.prospectClasses&&g.prospectClasses.length>0)?g.prospectClasses:DATA.prospectSeries; p.prospectSeries=_midPCl[randInt(0,_midPCl.length-1)];
       p.feederContract=randInt(1,4);
       p.scoutedPotential=null; g.drivers.push(p);
     }
@@ -7221,7 +7272,7 @@ const spons=sumSponsorIncome(g.sponsors||[]);
       wk.consistency=clamp(wk.rating-randInt(6,12),40,70); // inconsistent yet
       wk.wet=clamp(wk.rating+randInt(-5,8),45,80);
       wk.aggression=randInt(72,92); // hungry and audacious
-      wk.prospectSeries=DATA.prospectSeries[randInt(0,DATA.prospectSeries.length-1)];
+      const _wkPCl=(g.prospectClasses&&g.prospectClasses.length>0)?g.prospectClasses:DATA.prospectSeries; wk.prospectSeries=_wkPCl[randInt(0,_wkPCl.length-1)];
       wk.feederContract=randInt(2,4); // wonderkids typically have longer feeder deals
       wk.scoutedPotential=null;
       wk.salary=1;
@@ -7692,6 +7743,7 @@ const spons=sumSponsorIncome(g.sponsors||[]);
     if(!g.engineManufacturers) g.engineManufacturers = JSON.parse(JSON.stringify(DATA.engineManufacturers));
     g._engineBreakthroughMsg = null;
     g.engineManufacturers.forEach(eng => {
+      const prevPower = eng.powerRating;
       const devGain = randFloat(eng.devRate * 0.06, eng.devRate * 0.16);
       eng.powerRating = Math.min(99, eng.powerRating + devGain * 0.40);
       eng.ersRating   = Math.min(99, eng.ersRating   + devGain * 0.35);
@@ -7699,13 +7751,22 @@ const spons=sumSponsorIncome(g.sponsors||[]);
       // Breakthrough: high devRate engines occasionally surge
       if(eng.devRate >= 9 && Math.random() < 0.18) {
         const boost = randFloat(1.5, 3.2);
+        const prevPow2 = eng.powerRating;
         eng.powerRating = Math.min(99, eng.powerRating + boost);
         eng.ersRating   = Math.min(99, eng.ersRating   + boost * 0.8);
         const playerUsesEng = g.teams.some(t=>t.engineManufacturer===eng.id&&t.id===g.playerTeamId);
-        if(playerUsesEng) g._engineBreakthroughMsg = `⚡ ${eng.shortName} power unit breakthrough — significant step forward heading into ${g.season+1}.`;
+        const gainStr = `+${(eng.powerRating - prevPow2).toFixed(1)} power`;
+        if(playerUsesEng) g._engineBreakthroughMsg = `⚡ ${eng.shortName} power unit breakthrough — significant step forward heading into ${g.season+1}. (${gainStr}, now ${eng.powerRating.toFixed(1)} power / ${eng.ersRating.toFixed(1)} ERS)`;
       }
       // Occasional reliability setback
       if(Math.random() < 0.08) eng.reliability = Math.max(70, eng.reliability - randFloat(1,3));
+      // Gradual convergence — leading engines get marginal gains, backmarkers close more aggressively
+      // This prevents engines from all hitting 99 and keeps competitive variety across a long save
+      const overallStr = (eng.powerRating + eng.ersRating) / 2;
+      if(overallStr >= 97) {
+        // At the top: gains slow to near-zero, slight reliability erosion keeps things interesting
+        eng.powerRating = Math.max(eng.powerRating - randFloat(0, 0.15), eng.powerRating - 0.15);
+      }
     });
     // Tick engine contracts; auto-renew AI teams, flag player
     if(g.teams) g.teams.forEach(t => {
@@ -8541,7 +8602,10 @@ const UI = {
           <div class="land-tcard-drivers">${drivers}</div>
           <div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px">
             <span class="land-tcard-stats">Car ${Math.round(t.carPerformance)} · Reliability ${Math.round(t.reliability)} · Dev ${Math.round(t.developmentRate)}</span>
-            <span style="font-size:13px;font-weight:900;color:#111">${Math.round(getTeamOverallCar(t))}<span style="font-size:9px;font-weight:600;color:#999"> OVR</span></span><span style="font-size:9px;font-weight:600;color:#999;display:block;margin-top:1px">${(_liveEngines().find(e=>e.id===t.engineManufacturer)||{shortName:'?'}).shortName}</span>
+            <div style="text-align:right;line-height:1.2">
+              <span style="font-size:13px;font-weight:900;color:#111">${Math.round(getTeamOverallCar(t))}<span style="font-size:9px;font-weight:600;color:#999"> OVR</span></span>
+              <span style="font-size:9px;font-weight:600;color:#999;display:block">${((_liveEngines().find(e=>e.id===t.engineManufacturer)||{shortName:t.engineManufacturer||'?'}).shortName)}</span>
+            </div>
           </div>
         </div>`;
       }).join('');
@@ -8757,7 +8821,7 @@ const UI = {
             ${input('Morale','morale',driver.morale,'number',20,99)}
             ${input('Salary','salary',driver.salary,'number',0,30)}
             ${input('Contract','contract',driver.contract,'number',0,5)}
-            ${pool==='free-agent'||pool==='prospect' ? input('Series','series',driver.series || (pool==='prospect'?'F3':'FE')) : ''}
+            ${pool==='free-agent'||pool==='prospect' ? select('Series','series',driver.series || (pool==='prospect'?'F2':'FE'), Editor.getProspectClasses()) : ''}
           </div>
         </details>
       `;
@@ -8833,6 +8897,21 @@ const UI = {
         <div style="display:flex;justify-content:flex-end;margin-top:10px"><button class="btn btn-outline btn-sm" onclick="Editor.addDriver('prospect')">Add Prospect</button></div>
         <div style="display:flex;flex-direction:column;gap:10px;margin-top:12px">
           ${Editor.getState().namedProspects.map((driver, index)=>renderDriverCard(driver, index, 'prospect')).join('')}
+        </div>
+      </details>
+      <details class="panel">
+        <summary style="cursor:pointer;font-weight:800;color:var(--tx);list-style:none">Feeder Series Classes</summary>
+        <div style="font-size:12px;color:var(--tx3);margin-top:8px;margin-bottom:10px">Define which series names appear on prospect badges and are assigned to generated prospects. For custom mods (e.g. a 2000 save) you can replace F2/F3 with the series of that era.</div>
+        <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px">
+          ${Editor.getProspectClasses().map((cls, i) => `
+            <div style="display:flex;align-items:center;gap:8px">
+              <input value="${escapeHtml(cls)}" onchange="Editor.renameProspectClass(${i},this.value)" style="flex:1;font-size:12px;padding:6px 10px;border:1px solid var(--bd);border-radius:6px;background:var(--bg2)">
+              <button onclick="Editor.removeProspectClass(${i})" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:16px;padding:0 6px;line-height:1" title="Remove">✕</button>
+            </div>`).join('')}
+        </div>
+        <div style="display:flex;gap:8px">
+          <input id="new-prospect-class-input" placeholder="Add series (e.g. CART, GP2...)" style="flex:1;font-size:12px;padding:6px 10px;border:1px solid var(--bd);border-radius:6px;background:var(--bg2)">
+          <button class="btn btn-outline btn-sm" onclick="Editor.addProspectClass(document.getElementById('new-prospect-class-input').value);document.getElementById('new-prospect-class-input').value=''">Add</button>
         </div>
       </details>
     `;
@@ -10083,20 +10162,33 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
       </div>
       <div class="dev-section" style="margin-bottom:10px">
         <div class="dev-section-title">⚡ Power Unit — ${_engData?.name||'Unknown Supplier'}</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px">
+        ${(()=>{
+          const _snap = g._engineStatsSnapshot && _engData ? g._engineStatsSnapshot[_engData.id] : null;
+          const _trendBadge = (val, snapVal) => {
+            if(!_snap || snapVal == null) return '';
+            const delta = val - snapVal;
+            if(Math.abs(delta) < 0.05) return '';
+            const col = delta > 0 ? '#16a34a' : '#dc2626';
+            return `<span style="font-size:9px;color:${col};font-weight:700;display:block">${delta>0?'+':''}${delta.toFixed(1)}</span>`;
+          };
+          return `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px">
           <div style="background:var(--bg3);border-radius:7px;padding:9px 10px;text-align:center">
             <div style="font-size:10px;color:var(--tx3);font-weight:700;text-transform:uppercase;letter-spacing:.5px">Power</div>
             <div style="font-size:18px;font-weight:900;font-family:var(--fm);color:#f97316">${(_engData?.powerRating||88).toFixed(1)}</div>
+            ${_trendBadge(_engData?.powerRating||88, _snap?.powerRating)}
           </div>
           <div style="background:var(--bg3);border-radius:7px;padding:9px 10px;text-align:center">
             <div style="font-size:10px;color:var(--tx3);font-weight:700;text-transform:uppercase;letter-spacing:.5px">ERS</div>
             <div style="font-size:18px;font-weight:900;font-family:var(--fm);color:#8b5cf6">${(_engData?.ersRating||86).toFixed(1)}</div>
+            ${_trendBadge(_engData?.ersRating||86, _snap?.ersRating)}
           </div>
           <div style="background:var(--bg3);border-radius:7px;padding:9px 10px;text-align:center">
             <div style="font-size:10px;color:var(--tx3);font-weight:700;text-transform:uppercase;letter-spacing:.5px">Reliability</div>
             <div style="font-size:18px;font-weight:900;font-family:var(--fm);color:#16a34a">${(_engData?.reliability||88).toFixed(1)}</div>
+            ${_trendBadge(_engData?.reliability||88, _snap?.reliability)}
           </div>
-        </div>
+        </div>`;
+        })()}
         <div style="font-size:11px;color:var(--tx3);margin-top:8px">${_engData?.desc||''}</div>
         <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid var(--bd)">
           <div style="font-size:12px">Contract: <strong>${team.engineContractYears||0}yr${(team.engineContractYears||0)!==1?'s':''} remaining</strong>${team.engineContractCost?` · ${formatMoney(team.engineContractCost||0)}/yr`:' · Works team'}</div>
@@ -15556,8 +15648,19 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.3.2.2 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.3.2.5 · Release Notes</div>
         ${[
+    ['v2.3.2.5','Apr 2026',[
+            '🐛 Team OVR on landing page now correctly reflects edited carPerformance values. _normalizeTeam was not explicitly normalizing sub-stats (topSpeed, cornering, tyreManagement, dirtyAir, aeroEfficiency) — they came from the base fallback via spread, so editing carPerformance to 95 in the editor left all sub-stats at their original ~87 values, causing getTeamOverallCar to return ~87-88 instead of ~95. Sub-stats now explicitly resolve: use the team value if set, then the fallback value, then derive from carPerformance as a last resort. (reported by scuderiaferrarifan)',
+    ]],
+    ['v2.3.2.4','Apr 2026',[
+            '🐛 Team card on the start screen was showing OVR and engine supplier name running together on one line (e.g. "99 OVR Ford") because the engine shortName span had display:block but was inside an inline context. OVR and engine are now in a proper right-aligned column with the engine name on its own line below. (reported by scuderiaferrarifan)',
+    ]],
+    ['v2.3.2.3','Apr 2026',[
+            '🐛 Engine manufacturer stats now show season-over-season trend badges on the Car page (+0.X green / -0.X red vs the snapshot taken at season start). Previously stats were updating each offseason but there was no visible indication of growth. Breakthrough messages now include actual numbers (e.g. "+2.1 power, now 87.3 power / 84.6 ERS") (reported by puchunz).',
+            '🐛 Engine market availability in long saves: Honda, RB Ford, and Audi maxCustomers were hardcoded — in saves past season 3-4, all slots would fill up and only Ferrari was ever available as a new customer. Capacity now grows dynamically: Honda opens to 2 customers after year 3, RB Ford to 3 after year 4, Audi to 3 after year 2 (reported by puchunz).',
+            '🆕 Editable prospect/feeder series classes in the Roster Editor: the new "Feeder Series Classes" panel lets you define which series names appear on prospect badges and are assigned to generated prospects. Add, remove, or rename classes — e.g. replace F2/F3 with CART/Formula 3000 for a 2000s mod. Classes persist in the editor template JSON and are stored in game state so mid-season generated prospects also use them (requested by Teammomofan).',
+    ]],
     ['v2.3.2.2','Apr 2026',[
             '🐛 Watch Race: safety car pit prompt was firing repeatedly for 4-5 consecutive laps after the player already chose to pit. Two separate causes: (1) suppression window after an SC pit was set to ev.lap (immediately expiring), so each subsequent SC lap regenerated a new prompt for the next planned stop — suppression after SC pit now extends 8 laps; (2) SC prompt generation did not check if the driver pitted in the last 5 laps, so after pitting for stop 1 under SC, the stop 2 prompt fired immediately on the same SC laps. Added a 5-lap recent pit check to the SC prompt condition. (reported by SowingPants)',
     ]],
@@ -16560,6 +16663,11 @@ const GameActions = {
     g.offseasonPending=false;
     g._seasonStartConfirmedFor=g.season;
     g._lastOffseasonDevResult = null;
+    // Snapshot engine stats at season start so Car page can show growth trend
+    g._engineStatsSnapshot = {};
+    (g.engineManufacturers||[]).forEach(eng=>{
+      g._engineStatsSnapshot[eng.id] = {powerRating:eng.powerRating, ersRating:eng.ersRating, reliability:eng.reliability};
+    });
     UI.renderDashboard();
     UI.showView('dashboard');
     // Show winter development results popup
@@ -16704,7 +16812,15 @@ const GameActions = {
       const dealCost = isCurrent ? (team.engineContractCost||0) : getEngineContractCost(team.id, eng.id);
       // Check capacity — count how many teams already use this supplier
       const usersCount = (g.teams||[]).filter(t=>t.engineManufacturer===eng.id).length;
-      const atCapacity = usersCount >= eng.maxCustomers && !isCurrent;
+      // maxCustomers grows over time — engine suppliers can accommodate more teams as the sport matures
+      // Honda starts exclusive (max 1) but can open up after season 3+
+      // RB Ford can expand beyond 2 after season 4+
+      const seasonsElapsed = Math.max(0, (g.season||2026) - 2026);
+      let effectiveMax = eng.maxCustomers;
+      if(eng.id === 'honda' && seasonsElapsed >= 3) effectiveMax = Math.min(2, eng.maxCustomers + 1);
+      if(eng.id === 'redbullford' && seasonsElapsed >= 4) effectiveMax = Math.min(3, eng.maxCustomers + 1);
+      if(eng.id === 'audi' && seasonsElapsed >= 2) effectiveMax = Math.min(3, eng.maxCustomers + 1);
+      const atCapacity = usersCount >= effectiveMax && !isCurrent;
       const switchPenalty = isCurrent ? '' : ' · <span style="color:var(--amber)">Year 1 integration dip: −3 topSpeed</span>';
       const canSwitch = !isCurrent && !atCapacity && (team.engineContractYears||0)===0;
       return `<div style="background:var(--bg${isCurrent?'3':'2'});border:2px solid ${isCurrent?'var(--grn)':'var(--bd)'};border-radius:10px;padding:12px 14px;margin-bottom:8px">
@@ -16731,7 +16847,7 @@ const GameActions = {
           </div>
         </div>
         <div style="font-size:11px;color:var(--tx3);margin-bottom:8px">${eng.desc}${isCurrent?'':switchPenalty}</div>
-        <div style="font-size:11px;color:var(--tx3);margin-bottom:6px">${usersCount} team${usersCount!==1?'s':''} using · max ${eng.maxCustomers}</div>
+        <div style="font-size:11px;color:var(--tx3);margin-bottom:6px">${usersCount} team${usersCount!==1?'s':''} using · max ${effectiveMax}</div>
         ${canSwitch
           ? `<button onclick="GameActions.switchEngine('${eng.id}')" class="btn btn-outline btn-sm" style="width:100%">🔄 Switch to ${eng.shortName} (3yr deal · ${dealCost?formatMoney(dealCost)+'/yr':'works rate'})</button>`
           : isCurrent
