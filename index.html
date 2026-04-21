@@ -732,7 +732,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:18px;max-width:320px;padding:14px 16px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
           <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">Latest Update</div>
-<div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.3.2.10 is live</div>
+<div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.3.3 is live</div>
           <div style="font-size:12px;line-height:1.45;color:#666">Engine manufacturers, car sub-stats by circuit, ERS deployment, qualifying tyre choice, overdrive penalty. Driver Academy with juniors, loans &amp; permanent graduate branding.</div>
         </div>
       </div>
@@ -786,7 +786,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </button>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.3.2.10</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.3.3</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -3184,6 +3184,18 @@ return {id,name:`${fn} ${ln}`,age:baseAge,nationality:nat,teamId:teamId||null,ra
     const low = Math.max(0, Math.min(95, idealDownforce - halfRange + offset));
     const high = Math.min(100, Math.max(5, idealDownforce + halfRange + offset));
     return {low, high, halfRange};
+  },
+  // Ensure _trueIdealOffset is seeded on the race object so the setup quality
+  // label is correct even before the race simulation runs. This must be called
+  // whenever the Car page or qualifying badge is rendered.
+  ensureTrueIdealOffset(race){
+    if(!race || race._trueIdealOffset !== undefined) return;
+    const g = State.game;
+    const team = this.getPlayerTeam();
+    const setupKnowledge = this.getSetupKnowledge(team ? team.id : null);
+    const _seed = (race.idealDownforce||50) + (race.laps||58) + (g ? g.season : 1) + (g ? g.raceIndex : 0);
+    const _maxOff = Math.max(2, Math.round((100 - setupKnowledge) * 0.10));
+    race._trueIdealOffset = ((_seed * 17 + 31) % (_maxOff * 2 + 1)) - _maxOff;
   },
 };
 
@@ -6163,7 +6175,7 @@ events.push({lap:r.dnfLap||laps-5, type:'dnf', driverId:r.driverId, text:`⭐ ${
 
     // ── 5. Transfer rumours (mid-season, expiring contracts) ──
     if(raceN >= 5 && raceN <= totalRaces - 3 && Math.random() < 0.30) {
-      const rumourDrivers = g.drivers.filter(d=>d.teamId&&d.teamId!==ptid&&!d.retired&&!d.isReserve&&d.contract<=1&&d.rating>=76);
+      const rumourDrivers = g.drivers.filter(d=>d.teamId&&d.teamId!==ptid&&!d.retired&&!d.isReserve&&!d.isJunior&&d.contract<=1&&d.rating>=76);
       if(rumourDrivers.length > 0) {
         const d = pick(rumourDrivers);
         const t = State.getTeam(d.teamId);
@@ -6188,7 +6200,7 @@ events.push({lap:r.dnfLap||laps-5, type:'dnf', driverId:r.driverId, text:`⭐ ${
 
       // Find drivers in final year not already committed — never poach player's own drivers
       const candidates = g.drivers.filter(d=>
-        d.teamId && d.teamId !== g.playerTeamId && !d.retired && !d.isReserve && !d.isProspect && !d.isFreeAgent &&
+        d.teamId && d.teamId !== g.playerTeamId && !d.retired && !d.isReserve && !d.isProspect && !d.isFreeAgent && !d.isJunior &&
         d.contract <= 1 && !alreadyMoving.has(d.id)
       );
 
@@ -6286,7 +6298,7 @@ events.push({lap:r.dnfLap||laps-5, type:'dnf', driverId:r.driverId, text:`⭐ ${
     // becomes visible before the offseason rather than surprising the player later.
     if(raceN >= 5 && raceN <= totalRaces - 1 && Math.random() < 0.35) {
       const myRumourDrivers = g.drivers.filter(d=>
-        d.teamId === ptid && !d.retired && !d.isReserve && !d.isProspect && !d.isFreeAgent &&
+        d.teamId === ptid && !d.retired && !d.isReserve && !d.isProspect && !d.isFreeAgent && !d.isJunior &&
         d.contract <= 1 && d.rating >= 76
       );
       if(myRumourDrivers.length > 0) {
@@ -6304,7 +6316,7 @@ events.push({lap:r.dnfLap||laps-5, type:'dnf', driverId:r.driverId, text:`⭐ ${
     // ── 7. Player transfer market notification (race 6 only) ──
     try { if(raceN === 6) {
       const approachable = g.drivers.filter(d=>
-        d.teamId && d.teamId !== ptid && !d.retired && !d.isReserve && !d.isProspect &&
+        d.teamId && d.teamId !== ptid && !d.retired && !d.isReserve && !d.isProspect && !d.isJunior &&
         d.contract <= 1 && d.rating >= 74
       );
       if(approachable.length > 0) {
@@ -8361,6 +8373,20 @@ const Storage = {
       if(!g.academy.graduates) g.academy.graduates = [];
       if(!g.academy.loans) g.academy.loans = [];
       if(g.academy.budget === undefined) g.academy.budget = 0;
+      // Backfill the benched AI seat for loans created before replacedDriverId existed.
+      (g.academy.loans||[]).forEach(loan => {
+        if(loan.replacedDriverId) return;
+        const loanTeam = (g.teams||[]).find(t=>t.id===loan.teamId);
+        if(!loanTeam) return;
+        const listedRaceDrivers = (loanTeam.driverIds||[])
+          .map(id => (g.drivers||[]).find(d=>d.id===id))
+          .filter(d => d && d.id !== loan.driverId && !d.retired && !d.isReserve && !d.isProspect && !d.isFreeAgent && !d.isJunior);
+        const fallbackRaceDrivers = (g.drivers||[])
+          .filter(d => d.teamId===loan.teamId && d.id !== loan.driverId && !d.retired && !d.isReserve && !d.isProspect && !d.isFreeAgent && !d.isJunior);
+        const pool = listedRaceDrivers.length ? listedRaceDrivers : fallbackRaceDrivers;
+        const replaced = pool.slice().sort((a,b)=>(a.rating||0)-(b.rating||0))[0];
+        if(replaced) loan.replacedDriverId = replaced.id;
+      });
       if(g.offseasonPending) State.returnExpiredAcademyLoans(g.season);
     }
     // Patch academy tag on drivers
@@ -9123,7 +9149,7 @@ const UI = {
       csum.innerHTML = `
         <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px">
           <div>
-            <div style="font-size:22px;font-weight:900;font-family:var(--fm)">${team.carPerformance.toFixed(1)}</div>
+            <div style="font-size:22px;font-weight:900;font-family:var(--fm)">${getTeamOverallCar(team).toFixed(1)}<span style="font-size:11px;font-weight:600;color:var(--tx3)"> OVR</span></div>
             <div style="font-size:10px;font-weight:700;color:${prestigeCol};margin-top:1px">${prestigeLabel} · Prestige ${Math.round(prestige)}</div>
           </div>
           <div style="text-align:right">
@@ -10017,6 +10043,9 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
     const seasonProgress = racesDone/totalRaces; // 0-1
     const inSeasonBudget = Math.round(team.revenue * 0.15); // 15% for in-season
     const offseasonBudget = Math.round(team.revenue * 0.35); // 35% for offseason
+    // Pre-seed the true ideal offset so the setup quality label is correct before qualifying
+    const _currentRaceForSetup = State.getCurrentRace();
+    if(_currentRaceForSetup) State.ensureTrueIdealOffset(_currentRaceForSetup);
 
     const abar=(l,v,c)=>`<div class="car-stat-card"><div class="car-stat-name">${l}</div><div class="car-stat-val" style="color:${c}">${v.toFixed(1)}</div><div class="car-stat-bar"><div class="car-stat-fill" style="width:${v}%;background:${c}"></div></div></div>`;
 
@@ -11498,6 +11527,9 @@ const personalSlots = getPersonalSponsorSlots(d);
     race._wrConsumedPitStops = {};
     race._wrPitPromptSuppression = {};
     WR.events=(race.sprintSimEvents&&race.sprintSimEvents.length)?race.sprintSimEvents:(race.sprintLapEvents||[]); WR.idx=0; WR.raceIdx=raceIdx; WR.race=race; WR.paused=false; WR.timer=null; WR.isSprint=true; WR.dnfs={}; WR.retiredIds={}; WR._lastFeedSig=null; WR._podiumBridgeAdded={}; WR.resultState=(race.sprintResult||[]).map(function(r){ return Object.assign({}, r); }); WR.tyreState={};
+    // Snapshot standings before sprint so championship movement shows correctly in debrief
+    WR._preDriverStandings = State.getDriverStandings().map(function(s,i){ return {id:s.driver.id,name:s.driver.name,pos:i+1,pts:s.driver.seasonPoints}; });
+    WR._preConstrStandings = State.getConstructorStandings().map(function(s,i){ return {id:s.team.id,name:s.team.name,pos:i+1,pts:s.team.seasonPoints}; });
     // Seed live positions from sprint quali grid
     WR.lastPos = {}; WR.prevPos = null;
     const sprintGrid = race.sprintQualiResult || race.qualiResult || [];
@@ -11539,6 +11571,9 @@ const personalSlots = getPersonalSponsorSlots(d);
     WR._bonusApplied=null;
     WR._baselinePos=null;
     WR._lastSwap=null;
+    // Snapshot standings before race so championship movement shows correctly in debrief
+    WR._preDriverStandings = State.getDriverStandings().map(function(s,i){ return {id:s.driver.id,name:s.driver.name,pos:i+1,pts:s.driver.seasonPoints}; });
+    WR._preConstrStandings = State.getConstructorStandings().map(function(s,i){ return {id:s.team.id,name:s.team.name,pos:i+1,pts:s.team.seasonPoints}; });
     // Seed live positions from qualifying grid
     WR.lastPos = {}; WR.prevPos = null;
     // Seed from startPos in raceResult — this reflects actual grid inc. penalties
@@ -11901,7 +11936,11 @@ const personalSlots = getPersonalSponsorSlots(d);
             ? (()=>{
                 const reservesFull = (team.reserveIds||[]).length >= 2;
                 const reserveBtn = reservesFull
-                  ? `<button class="btn btn-ghost btn-sm" disabled style="opacity:.5" title="Reserve slots full — release a reserve first">⬆️ Reserve Full</button>`
+                  ? (()=>{
+                      const reserves = (team.reserveIds||[]).map(rid=>State.getDriver(rid)).filter(Boolean);
+                      const releaseRows = reserves.map(r=>`<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:4px 0;border-bottom:1px solid var(--bd);font-size:11px"><span style="font-weight:700">${r.name} <span style="color:var(--tx3);font-weight:400">${Math.round(r.rating)} OVR · Reserve</span></span><button onclick="if(confirm('Release ${r.name} to free agency?')){GameActions.releaseDriver(${r.id});UI.renderDrivers();}" class="btn btn-danger btn-sm" style="font-size:10px;padding:3px 8px">Release</button></div>`).join('');
+                      return `<div style="background:var(--bg3);border:1px solid var(--bd);border-radius:8px;padding:8px 10px;margin-bottom:4px;width:100%"><div style="font-size:10px;font-weight:700;color:var(--amber);margin-bottom:6px">⚠️ Reserve slots full — release one to promote this driver</div>${releaseRows}</div>`;
+                    })()
                   : `<button onclick="GameActions.promoteJunior(${j.id},'reserve')" class="btn btn-success btn-sm">⬆️ Promote to Reserve</button>`;
                 return reserveBtn + `<button onclick="if(confirm('Promoting to race driver will release your current 2nd driver to free agency. Continue?')) GameActions.promoteJunior(${j.id},'race')" class="btn btn-outline btn-sm">🏎 Promote to Race Seat</button>`;
               })()
@@ -12543,6 +12582,9 @@ const activeIncome=formatMoney(sumSponsorIncome(g.sponsors||[]));
 
   showStandingsTab(tab){
     this._activeStandingsTab = tab;
+    if(tab==='drivers' || tab==='constructors'){
+      this._standingsSort[tab] = {col:'pts', dir:-1};
+    }
     document.querySelectorAll('#view-standings-drivers .tab-pill').forEach((b,i)=>b.classList.toggle('active',['drivers','constructors','results','h2h'][i]===tab));
     this.renderStandings(tab);
   },
@@ -15694,8 +15736,15 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.3.2.10 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.3.3 · Release Notes</div>
         ${[
+    ['v2.3.3','Apr 2026',[
+            '🐛 Car page: the headline OVR number now correctly shows the computed car rating (same value as all other OVR displays). Previously it showed the raw carPerformance property which does not account for engine contribution and sub-stat weighting, so it read lower than actual OVR after upgrades (reported by Kuski007).',
+            '🐛 Setup quality: picking the midpoint of the engineers recommended range no longer always registers as a Perfect setup. The hidden true ideal offset is now pre-computed when the Car page is rendered, so the Perfect / Good / Poor label is accurate from the moment you set your aero balance (reported by Polkiu4863).',
+            '🐛 Watch Race: championship standing movement arrows now correctly show in the post-race debrief for both sprint and main races. A pre-standings snapshot was not being saved at Watch Race start, so the section stayed empty (reported by Polkiu4863).',
+            '🐛 Watch Race: two-stop strategy stay-out at stop 1 no longer suppresses the stop 2 prompt. The deferred stop 2 lap is now preserved through the forced stop so the second pit window fires correctly (reported by Polkiu4863).',
+      '✨ Academy: when reserve slots are full and a junior is ready for promotion, the academy screen now shows your current reserves with inline release buttons so you can free a slot without navigating away (suggested by Ahhonlyforkis).',
+    ]],
     ['v2.3.2.10','Apr 2026',[
             '🐛 Academy cleanup and loans: releasing a junior now removes any stale driverIds/reserveIds/loan references first, preventing real reserve drivers from being knocked out by old academy bookkeeping. Loaned academy drivers now take an actual AI race seat for the season, appear in qualifying/races/standings, and the temporarily benched AI driver is excluded until the loan ends. Existing saves are patched so stale reserve slots and active loans rebuild cleanly. (reported by No-Pomegranate4202)',
     ]],
@@ -19349,6 +19398,8 @@ window._wrApplyBonusNow = function(driverId, decisionMeta) {
       orderEntry.nextPlannedPitLap = decisionMeta?.nextPlannedPitLap != null
         ? decisionMeta.nextPlannedPitLap
         : (isWeatherStop ? (fromEntry.nextPlannedPitLap || null) : (
+            // For a deferred forced stop (stay-out), the stop-2 lap was preserved in _deferredNextPlanned
+            fromEntry._deferredNextPlanned != null ? fromEntry._deferredNextPlanned :
             originalNextPlanned != null && originalNextPlanned > Math.max(lap, decisionMeta?.plannedPitLap || lap)
               ? originalNextPlanned
               : null
@@ -19367,6 +19418,12 @@ window._wrApplyBonusNow = function(driverId, decisionMeta) {
       orderEntry.nextPlannedPitLap = decisionMeta?.choice === 'stay' && (decisionMeta?.forceLap != null || decisionMeta?.deferToLap != null)
         ? (decisionMeta.forceLap != null ? decisionMeta.forceLap : decisionMeta.deferToLap)
         : (fromEntry.nextPlannedPitLap || originalNextPlanned || null);
+      // Preserve stop-2 lap across stay-out so the deferred forced stop can pass it forward
+      if(decisionMeta?.choice === 'stay' && decisionMeta?.nextPlannedPitLap != null) {
+        orderEntry._deferredNextPlanned = decisionMeta.nextPlannedPitLap;
+      } else {
+        orderEntry._deferredNextPlanned = fromEntry._deferredNextPlanned || null;
+      }
       orderEntry.tyreAge = (fromEntry.tyreAge || 0) + 1;
       if(decisionMeta?.choice === 'stay') {
         orderEntry.tyrePenalty = +((orderEntry.tyrePenalty || 0) + (decisionMeta?.type === 'weather' ? 0.35 : 0.25)).toFixed(3);
@@ -19451,9 +19508,9 @@ window._wrApplyBonusNow = function(driverId, decisionMeta) {
     });
   }
   if(!WR.isSprint) {
-    State.game.lastRaceResult = { race:{...race}, results: race[resultKey].map(function(r){ return Object.assign({}, r); }) };
+    State.game.lastRaceResult = { race:{...race}, results: race[resultKey].map(function(r){ return Object.assign({}, r); }), preDriverStandings: WR._preDriverStandings || [], preConstrStandings: WR._preConstrStandings || [] };
   } else {
-    State.game.lastSprintResult = { race:{...race}, results: race[resultKey].map(function(r){ return Object.assign({}, r); }) };
+    State.game.lastSprintResult = { race:{...race}, results: race[resultKey].map(function(r){ return Object.assign({}, r); }), preDriverStandings: WR._preDriverStandings || [], preConstrStandings: WR._preConstrStandings || [] };
   }
   window._wrRenderPositions();
 };
