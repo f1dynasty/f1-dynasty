@@ -732,7 +732,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:18px;max-width:320px;padding:14px 16px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
           <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">Latest Update</div>
-<div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.3.2.9 is live</div>
+<div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.3.2.10 is live</div>
           <div style="font-size:12px;line-height:1.45;color:#666">Engine manufacturers, car sub-stats by circuit, ERS deployment, qualifying tyre choice, overdrive penalty. Driver Academy with juniors, loans &amp; permanent graduate branding.</div>
         </div>
       </div>
@@ -786,7 +786,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </button>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.3.2.9</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.3.2.10</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -2841,7 +2841,20 @@ return {id,name:`${fn} ${ln}`,age:baseAge,nationality:nat,teamId:teamId||null,ra
   },
   getTeam(id){return this.game.teams.find(t=>t.id===id);},
   getDriver(id){return this.game.drivers.find(d=>d.id===id);},
-  getTeamDrivers(teamId){return this.game.drivers.filter(d=>d.teamId===teamId&&!d.retired&&!d.isReserve);},
+  getActiveAcademyLoans(){ return ((this.game && this.game.academy && this.game.academy.loans) || []); },
+  getLoanedJuniorIds(){ return new Set(this.getActiveAcademyLoans().map(l=>l.driverId)); },
+  getLoanBenchedDriverIds(){ return new Set(this.getActiveAcademyLoans().map(l=>l.replacedDriverId).filter(Boolean)); },
+  getTeamDrivers(teamId){
+    const loanedIds = this.getLoanedJuniorIds();
+    const benchedIds = this.getLoanBenchedDriverIds();
+    return this.game.drivers.filter(d=>
+      d.teamId===teamId &&
+      !d.retired &&
+      !d.isReserve &&
+      !benchedIds.has(d.id) &&
+      (!d.isJunior || loanedIds.has(d.id))
+    );
+  },
   getTeamReserves(teamId){return this.game.drivers.filter(d=>d.teamId===teamId&&!d.retired&&d.isReserve);},
   getPlayerTeam(){return this.getTeam(this.game.playerTeamId);},
   getPlayerDrivers(){return this.getTeamDrivers(this.game.playerTeamId);},
@@ -2883,6 +2896,11 @@ return {id,name:`${fn} ${ln}`,age:baseAge,nationality:nat,teamId:teamId||null,ra
       if(loanTeam) {
         loanTeam.driverIds = (loanTeam.driverIds || []).filter(id => id !== d.id);
         loanTeam.reserveIds = (loanTeam.reserveIds || []).filter(id => id !== d.id);
+        const replaced = l.replacedDriverId ? this.getDriver(l.replacedDriverId) : null;
+        if(replaced && replaced.teamId === loanTeam.id && !replaced.retired && !replaced.isReserve) {
+          loanTeam.driverIds = loanTeam.driverIds || [];
+          if(!loanTeam.driverIds.includes(replaced.id)) loanTeam.driverIds.push(replaced.id);
+        }
       }
       d.teamId = null;
       d.isJunior = true;
@@ -2907,7 +2925,17 @@ return {id,name:`${fn} ${ln}`,age:baseAge,nationality:nat,teamId:teamId||null,ra
   },
   getDriverStandings(){
     const g = this.game;
-    const drivers = g.drivers.filter(d=>!d.retired&&d.teamId&&(!d.isReserve||d.seasonPoints>0)&&!d.isProspect&&!d.isFreeAgent&&!d.isJunior);
+    const loanedIds = this.getLoanedJuniorIds();
+    const benchedIds = this.getLoanBenchedDriverIds();
+    const drivers = g.drivers.filter(d=>
+      !d.retired &&
+      d.teamId &&
+      (!d.isReserve||d.seasonPoints>0) &&
+      !d.isProspect &&
+      !d.isFreeAgent &&
+      !benchedIds.has(d.id) &&
+      (!d.isJunior || loanedIds.has(d.id))
+    );
     // Build countback arrays from calendar results for tied drivers
     const countbackCache = {};
     const dnfCache = {};
@@ -3327,8 +3355,9 @@ const Sim = {
         if(reserve) reserveSubIds.add(reserve.id);
       });
     });
-    const _sqLoanedJuniorIds = new Set(((State.game.academy&&State.game.academy.loans)||[]).map(l=>l.driverId));
-    const drivers = State.game.drivers.filter(d=>d.teamId&&!d.retired&&!d.isProspect&&!d.isJunior&&!_sqLoanedJuniorIds.has(d.id))
+    const _sqLoanedJuniorIds = State.getLoanedJuniorIds();
+    const _sqLoanBenchedIds = State.getLoanBenchedDriverIds();
+    const drivers = State.game.drivers.filter(d=>d.teamId&&!d.retired&&!d.isProspect&&!_sqLoanBenchedIds.has(d.id)&&(!d.isJunior||_sqLoanedJuniorIds.has(d.id)))
       .filter(d=>{
         if(d.isReserve){
           return reserveSubIds.has(d.id);
@@ -3379,8 +3408,9 @@ const Sim = {
     }
     const activeInjuries = Sim._getActiveInjuries ? Sim._getActiveInjuries() : [];
     const injuredDriverIds = new Set(activeInjuries.map(inj=>inj.driverId));
-    const _loanedJuniorIdSet = new Set(((State.game.academy&&State.game.academy.loans)||[]).map(l=>l.driverId));
-    const drivers = State.game.drivers.filter(d=>d.teamId&&!d.retired&&!d.isReserve&&!d.isProspect&&!d.isJunior&&!_loanedJuniorIdSet.has(d.id))
+    const _loanedJuniorIdSet = State.getLoanedJuniorIds();
+    const _loanBenchIdSet = State.getLoanBenchedDriverIds();
+    const drivers = State.game.drivers.filter(d=>d.teamId&&!d.retired&&!d.isReserve&&!d.isProspect&&!_loanBenchIdSet.has(d.id)&&(!d.isJunior||_loanedJuniorIdSet.has(d.id)))
       .map(d=>{
         // Substitute injured driver with best available reserve from same team
         if(injuredDriverIds.has(d.id)){
@@ -3908,13 +3938,14 @@ const Sim = {
       const reserve = chosen || State.game.drivers.find(r=>r.isReserve&&r.teamId===inj.teamId&&!r.retired&&!injuredIdsForRace.has(r.id)&&!reserveSubIds.has(r.id));
       if(reserve) reserveSubIds.add(reserve.id);
     });
-    const _raceSimLoanedIds = new Set(((g.academy&&g.academy.loans)||[]).map(l=>l.driverId));
+    const _raceSimLoanedIds = State.getLoanedJuniorIds();
+    const _raceSimLoanBenchedIds = State.getLoanBenchedDriverIds();
     const qualiOrder=[...race.qualiResult].filter(e=>{
       if(!e||e.driverId==null) return false;
       const d=State.getDriver(e.driverId);
       if(!d||d.retired||d.isProspect||!d.teamId) return false;
-      // Exclude loaned juniors — they appear in AI team's qualiResult but must not race as extra cars
-      if(d.isJunior&&_raceSimLoanedIds.has(d.id)) return false;
+      if(_raceSimLoanBenchedIds.has(d.id)) return false;
+      if(d.isJunior&&!_raceSimLoanedIds.has(d.id)) return false;
       // Allow reserve drivers only if they subbed for an injured teammate
       if(d.isReserve){
         const hasInjuredTeammate=activeInjuriesForRace.some(inj=>inj.teamId===d.teamId&&injuredIdsForRace.has(inj.driverId));
@@ -8341,9 +8372,11 @@ const Storage = {
       g.engineManufacturers = JSON.parse(JSON.stringify(DATA.engineManufacturers));
     }
     // Patch teams for new fields — also sync driverIds with actual driver teamId assignments
+    const _restoreLoanedIds = new Set((g.academy?.loans||[]).map(l=>l.driverId));
+    const _restoreLoanBenchedIds = new Set((g.academy?.loans||[]).map(l=>l.replacedDriverId).filter(Boolean));
     if(g.teams) g.teams.forEach(t=>{
       // Rebuild driverIds from driver records to fix any desync
-      const actualDrivers = (g.drivers||[]).filter(d=>d.teamId===t.id&&!d.retired&&!d.isReserve&&!d.isProspect&&!d.isFreeAgent);
+      const actualDrivers = (g.drivers||[]).filter(d=>d.teamId===t.id&&!d.retired&&!d.isReserve&&!d.isProspect&&!d.isFreeAgent&&!_restoreLoanBenchedIds.has(d.id)&&(!d.isJunior||_restoreLoanedIds.has(d.id)));
       // Only enforce if we have drivers — prevents wiping legitimate empty teams
       if(actualDrivers.length>0){
         // Hard cap at 2 race drivers — sort by rating desc, release extras to free agency
@@ -8376,6 +8409,10 @@ const Storage = {
       if(t.sprintWins===undefined) t.sprintWins=0;
       if(t.poles===undefined) t.poles=0;
       if(t.podiums===undefined) t.podiums=0;
+      t.reserveIds = (t.reserveIds||[]).filter(id=>{
+        const rd = (g.drivers||[]).find(d=>d.id===id);
+        return !!(rd && rd.teamId===t.id && !rd.retired && rd.isReserve && !_restoreLoanedIds.has(id));
+      });
       // Cap reserves at 2 — excess reserves from the academy promotion bug get released to free agency
       if((t.reserveIds||[]).length > 2) {
         const excessReserveIds = t.reserveIds.slice(2);
@@ -8386,10 +8423,8 @@ const Storage = {
         });
       }
       // Remove any on-loan academy juniors from reserveIds — loan drivers should not occupy reserve slots
-      const loanedIds = new Set((g.academy?.loans||[]).map(l=>l.driverId));
-      if(loanedIds.size > 0) {
-        t.reserveIds = (t.reserveIds||[]).filter(id => !loanedIds.has(id));
-        loanedIds.forEach(id => {
+      if(_restoreLoanedIds.size > 0) {
+        _restoreLoanedIds.forEach(id => {
           const ld = (g.drivers||[]).find(d=>d.id===id);
           if(ld) { ld.isReserve=false; ld.isJunior=true; }
         });
@@ -15659,8 +15694,11 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.3.2.9 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.3.2.10 · Release Notes</div>
         ${[
+    ['v2.3.2.10','Apr 2026',[
+            '🐛 Academy cleanup and loans: releasing a junior now removes any stale driverIds/reserveIds/loan references first, preventing real reserve drivers from being knocked out by old academy bookkeeping. Loaned academy drivers now take an actual AI race seat for the season, appear in qualifying/races/standings, and the temporarily benched AI driver is excluded until the loan ends. Existing saves are patched so stale reserve slots and active loans rebuild cleanly. (reported by No-Pomegranate4202)',
+    ]],
     ['v2.3.2.9','Apr 2026',[
             '🐛 Roster editor carPerformance edits now clear the previously derived hidden car sub-stats before re-normalising the team. That stale data was overriding the new carPerformance value, so teams like Aston Martin could still show their old low OVR in the landing page and in new careers even after being edited to 99. (reported by scuderiaferrarifan)',
     ]],
@@ -18067,7 +18105,12 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     const g = State.game; if(!g || !g.academy) return;
     const d = State.getDriver(driverId); if(!d) return;
     g.academy.juniors = (g.academy.juniors||[]).filter(j=>j.id!==driverId);
-    d.isJunior = false; d.isFreeAgent = true; d.teamId = null;
+    g.academy.loans = (g.academy.loans||[]).filter(l=>l.driverId!==driverId);
+    (g.teams||[]).forEach(t=>{
+      t.driverIds = (t.driverIds||[]).filter(id=>id!==driverId);
+      t.reserveIds = (t.reserveIds||[]).filter(id=>id!==driverId);
+    });
+    d.isJunior = false; d.isReserve = false; d.isFreeAgent = true; d.teamId = null; d.contract = 0;
     g.drivers = g.drivers.filter(dr=>dr.id!==driverId);
     Storage.autosave();
     UI.toast(`${d.name} released from the academy.`, 'info');
@@ -18078,10 +18121,14 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     const g = State.game; if(!g || !g.academy) return;
     const d = State.getDriver(driverId); if(!d) return;
     const toTeam = State.getTeam(toTeamId); if(!toTeam) return;
+    const replacedDriver = State.getTeamDrivers(toTeamId)
+      .filter(td=>td.id!==driverId)
+      .sort((a,b)=>(a.rating||0)-(b.rating||0))[0] || null;
     const loanFee = Math.round((d.rating||60) / 8);
     const loan = {
       driverId, driverName: d.name,
       teamId: toTeamId, teamName: toTeam.name,
+      replacedDriverId: replacedDriver ? replacedDriver.id : null,
       loanSeason: g.season,
       returnSeason: g.season + 1,
       loanFee,
@@ -18096,6 +18143,8 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     d.contract = 1;
     // Remove from acad.juniors during loan — they'll be re-added on return
     g.academy.juniors = (g.academy.juniors||[]).filter(j=>j.id!==driverId);
+    toTeam.driverIds = (toTeam.driverIds||[]).filter(id=>id!==driverId && id!==(replacedDriver&&replacedDriver.id));
+    toTeam.driverIds.push(driverId);
     // Ensure they're not in player team's reserveIds
     const playerTeam = State.getPlayerTeam();
     if(playerTeam) playerTeam.reserveIds = (playerTeam.reserveIds||[]).filter(id=>id!==driverId);
