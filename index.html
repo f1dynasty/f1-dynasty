@@ -732,7 +732,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:18px;max-width:320px;padding:14px 16px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
           <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">Latest Update</div>
-<div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.3.2.8 is live</div>
+<div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.3.2.9 is live</div>
           <div style="font-size:12px;line-height:1.45;color:#666">Engine manufacturers, car sub-stats by circuit, ERS deployment, qualifying tyre choice, overdrive penalty. Driver Academy with juniors, loans &amp; permanent graduate branding.</div>
         </div>
       </div>
@@ -786,7 +786,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </button>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.3.2.8</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.3.2.9</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -2450,6 +2450,7 @@ const Editor = {
     const team = this.getTeam(teamId);
     if(!team) return;
     const fallback = (this._base.teams || []).find(t=>t.id===teamId) || team;
+    const derivedCarFields = ['topSpeed','cornering','tyreManagement','dirtyAir','aeroEfficiency'];
     if(field === 'color') {
       const nextColor = String(value || '').trim();
       if(!/^#[0-9a-fA-F]{6}$/.test(nextColor)) {
@@ -2462,6 +2463,11 @@ const Editor = {
       team[field] = String(value || '').trim() || team[field];
     } else {
       team[field] = parseFloat(value);
+    }
+    if(field === 'carPerformance') {
+      // carPerformance is the only car stat exposed in the editor, so keep the
+      // hidden sub-stats derived from it instead of preserving stale prior values.
+      derivedCarFields.forEach(key => { delete team[key]; });
     }
     const normalized = this._normalizeTeam(team, fallback);
     Object.assign(team, normalized);
@@ -15653,8 +15659,11 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.3.2.8 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.3.2.9 · Release Notes</div>
         ${[
+    ['v2.3.2.9','Apr 2026',[
+            '🐛 Roster editor carPerformance edits now clear the previously derived hidden car sub-stats before re-normalising the team. That stale data was overriding the new carPerformance value, so teams like Aston Martin could still show their old low OVR in the landing page and in new careers even after being edited to 99. (reported by scuderiaferrarifan)',
+    ]],
     ['v2.3.2.8','Apr 2026',[
             '🐛 Roster editor carPerformance changes now always keep the hidden car sub-stats in sync when those sub-stats were not explicitly set. Previously the normaliser only re-derived them in a narrow "raised above fallback" case, so edited teams could still show stale OVR values on the landing page and in new careers. (reported by scuderiaferrarifan)',
     ]],
