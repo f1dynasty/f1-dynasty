@@ -732,7 +732,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:18px;max-width:320px;padding:14px 16px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
           <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">Latest Update</div>
-          <div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.3.2.1 is live</div>
+          <div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.3.2.2 is live</div>
           <div style="font-size:12px;line-height:1.45;color:#666">Engine manufacturers, car sub-stats by circuit, ERS deployment, qualifying tyre choice, overdrive penalty. Driver Academy with juniors, loans &amp; permanent graduate branding.</div>
         </div>
       </div>
@@ -786,7 +786,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </button>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.3.2.1</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.3.2.2</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -4424,7 +4424,18 @@ const Sim = {
         } else if(canManualPit && !pitPromptSuppressed && lapState.safetyCar && plannedStopLap && !o.pitThisLap && lap <= plannedStopLap && plannedStopLap <= lap + 8) {
           // Don't offer SC pit if driver pitted on the immediately preceding lap
           const justPitted = prevEntryForDriver && o.pitStops > (prevEntryForDriver.pitStops || 0);
-          if(justPitted) {/* skip */} else {
+          // Don't offer SC pit if driver pitted within the last 5 laps (prevents repeated SC prompts after pitting)
+          const recentScPit = (() => {
+            for(let back = 1; back <= 5; back++) {
+              const pastIdx = lapStates.indexOf(lapState) - back;
+              if(pastIdx < 0) break;
+              const pastEntry = (lapStates[pastIdx]?.order||[]).find(x=>x.driverId===o.driverId);
+              const prevPastEntry = pastIdx > 0 ? (lapStates[pastIdx-1]?.order||[]).find(x=>x.driverId===o.driverId) : null;
+              if(pastEntry && prevPastEntry && (pastEntry.pitStops||0) > (prevPastEntry.pitStops||0)) return true;
+            }
+            return false;
+          })();
+          if(justPitted || recentScPit) {/* skip */} else {
           const strategyOpt = DATA.getStrategyOptions(race, race._weatherRiskUsed || race._weatherRisk || 0).options.find(opt => opt.id === chosenStrategyId);
           const stintIndexForPrompt = prevEntryForDriver?.stintIndex ?? o.stintIndex ?? 0;
           const plannedCompound = strategyOpt?.stints?.[Math.min(stintIndexForPrompt + 1, Math.max(0, (strategyOpt?.stints?.length || 1) - 1))]?.compound || o.compound || 'medium';
@@ -15545,8 +15556,11 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.3.2.1 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.3.2.2 · Release Notes</div>
         ${[
+    ['v2.3.2.2','Apr 2026',[
+            '🐛 Watch Race: safety car pit prompt was firing repeatedly for 4-5 consecutive laps after the player already chose to pit. Two separate causes: (1) suppression window after an SC pit was set to ev.lap (immediately expiring), so each subsequent SC lap regenerated a new prompt for the next planned stop — suppression after SC pit now extends 8 laps; (2) SC prompt generation did not check if the driver pitted in the last 5 laps, so after pitting for stop 1 under SC, the stop 2 prompt fired immediately on the same SC laps. Added a 5-lap recent pit check to the SC prompt condition. (reported by SowingPants)',
+    ]],
     ['v2.3.2.1','Apr 2026',[
             '🐛 Roster editor: changing the engine supplier now persists correctly — previously the change was saved to the team object but then immediately overwritten by _normalizeTeam which did not include engineManufacturer in its explicit field list. Navigating to another tab and back would revert it to the original. (reported by Polkiu4863)',
     ]],
@@ -19270,8 +19284,10 @@ window._wrPitDecision = function(decisionId, pitNow, auto) {
     if(!WR.race._wrConsumedPitStops) WR.race._wrConsumedPitStops = {};
     if(!WR.race._wrPitPromptSuppression) WR.race._wrPitPromptSuppression = {};
     WR.race._wrConsumedPitStops[`${ev.driverId}:${ev.stopNum}`] = true;
+    // After pitting under safety car, suppress further SC pit prompts for this driver
+    // for the remainder of the SC period (~8 laps) — otherwise every SC lap re-offers a stop
     WR.race._wrPitPromptSuppression[ev.driverId] = pitNow
-      ? ev.lap
+      ? (ev.isSafetyCarPit ? ev.lap + 8 : ev.lap)
       : (ev.isForcedPit ? (ev.lap + 1) : (ev.isSafetyCarPit ? (ev.plannedPitLap || (ev.lap + 1)) : Math.max(ev.lap + 1, Math.min((ev.windowClose || ev.lap) + 1, ev.lap + 2))));
   }
   if(!WR.driverDecisionScores) WR.driverDecisionScores = {};
