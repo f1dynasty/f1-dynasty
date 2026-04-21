@@ -732,7 +732,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:18px;max-width:320px;padding:14px 16px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
           <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">Latest Update</div>
-          <div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.3.2.7 is live</div>
+<div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.3.2.8 is live</div>
           <div style="font-size:12px;line-height:1.45;color:#666">Engine manufacturers, car sub-stats by circuit, ERS deployment, qualifying tyre choice, overdrive penalty. Driver Academy with juniors, loans &amp; permanent graduate branding.</div>
         </div>
       </div>
@@ -786,7 +786,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </button>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.3.2.7</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.3.2.8</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -2306,14 +2306,14 @@ const Editor = {
     const _cp = clamp(parseFloat(team?.carPerformance ?? fallback.carPerformance) || fallback.carPerformance, 40, 100);
     const _fallbackCp = parseFloat(fallback?.carPerformance) || 70;
     // Sub-stats: use explicitly set value if present, otherwise:
-    // - if carPerformance was edited up from the fallback, derive sub-stats from new carPerformance
-    //   (editor only exposes carPerformance, not individual sub-stats)
+    // - if carPerformance differs from the fallback, derive sub-stats from the edited carPerformance
+    //   (the roster editor exposes carPerformance, not the hidden sub-stats used by OVR)
     // - otherwise use fallback sub-stat value
-    const _cpWasRaised = _cp > _fallbackCp + 2;
+    const _cpWasEdited = Math.abs(_cp - _fallbackCp) > 0.01;
     const _subStat = (key) => {
       const fromTeam = parseFloat(team?.[key]);
       if(!isNaN(fromTeam) && fromTeam > 0) return clamp(fromTeam, 40, 100);
-      if(_cpWasRaised) return _cp; // carPerformance was edited — derive sub-stats from it
+      if(_cpWasEdited) return _cp; // carPerformance was edited — keep hidden sub-stats in sync
       const fromFallback = parseFloat(fallback?.[key]);
       if(!isNaN(fromFallback) && fromFallback > 0) return clamp(fromFallback, 40, 100);
       return _cp;
@@ -15653,8 +15653,11 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.3.2.7 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.3.2.8 · Release Notes</div>
         ${[
+    ['v2.3.2.8','Apr 2026',[
+            '🐛 Roster editor carPerformance changes now always keep the hidden car sub-stats in sync when those sub-stats were not explicitly set. Previously the normaliser only re-derived them in a narrow "raised above fallback" case, so edited teams could still show stale OVR values on the landing page and in new careers. (reported by scuderiaferrarifan)',
+    ]],
     ['v2.3.2.7','Apr 2026',[
             '🐛 Roster editor "Reset to defaults" was restoring a stale cached _base instead of fresh DATA values. Editor.init() has an early-return guard ("if _state exists, return") which meant _base was only ever captured once per session — subsequent resets used whatever _base was from the first init, which could contain previous edits. resetToDefault() now always re-captures _base directly from DATA before resetting state. (reported by scuderiaferrarifan)',
     ]],
