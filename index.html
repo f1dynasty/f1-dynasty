@@ -732,7 +732,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:18px;max-width:320px;padding:14px 16px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
           <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">Latest Update</div>
-          <div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.3.2.5 is live</div>
+          <div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.3.2.6 is live</div>
           <div style="font-size:12px;line-height:1.45;color:#666">Engine manufacturers, car sub-stats by circuit, ERS deployment, qualifying tyre choice, overdrive penalty. Driver Academy with juniors, loans &amp; permanent graduate branding.</div>
         </div>
       </div>
@@ -786,7 +786,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </button>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.3.2.5</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.3.2.6</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -2304,14 +2304,19 @@ const Editor = {
   _normalizeTeam(team, fallback) {
     const validEngines = ['mercedes','ferrari','honda','redbullford','audi'];
     const _cp = clamp(parseFloat(team?.carPerformance ?? fallback.carPerformance) || fallback.carPerformance, 40, 100);
-    // Sub-stats: use fallback values if present, otherwise derive from carPerformance.
-    // This ensures the landing page OVR reflects edited carPerformance values correctly.
+    const _fallbackCp = parseFloat(fallback?.carPerformance) || 70;
+    // Sub-stats: use explicitly set value if present, otherwise:
+    // - if carPerformance was edited up from the fallback, derive sub-stats from new carPerformance
+    //   (editor only exposes carPerformance, not individual sub-stats)
+    // - otherwise use fallback sub-stat value
+    const _cpWasRaised = _cp > _fallbackCp + 2;
     const _subStat = (key) => {
       const fromTeam = parseFloat(team?.[key]);
-      const fromFallback = parseFloat(fallback?.[key]);
       if(!isNaN(fromTeam) && fromTeam > 0) return clamp(fromTeam, 40, 100);
+      if(_cpWasRaised) return _cp; // carPerformance was edited — derive sub-stats from it
+      const fromFallback = parseFloat(fallback?.[key]);
       if(!isNaN(fromFallback) && fromFallback > 0) return clamp(fromFallback, 40, 100);
-      return _cp; // derive from carPerformance
+      return _cp;
     };
     return {
       ...fallback,
@@ -15648,8 +15653,12 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.3.2.5 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.3.2.6 · Release Notes</div>
         ${[
+    ['v2.3.2.6','Apr 2026',[
+            '🐛 Roster editor: setting a team\'s carPerformance higher than the base team value (e.g. setting Cadillac from 62 to 99) was not propagating to sub-stats (topSpeed, cornering etc.) in game. _normalizeTeam now detects when carPerformance was raised significantly above the fallback and derives all sub-stats from the new value rather than the old fallback. Teams in custom mods should now show the correct OVR on the Teams page. (reported by scuderiaferrarifan)',
+            '🐛 Winter development debrief was showing the raw computed gain (+3) even when the 99 stat cap meant only +1 was actually applied. Debrief now shows the real applied delta. Also raised the carPerformance and sub-stat winter dev cap from 99 to 100. (reported by scuderiaferrarifan)',
+    ]],
     ['v2.3.2.5','Apr 2026',[
             '🐛 Team OVR on landing page now correctly reflects edited carPerformance values. _normalizeTeam was not explicitly normalizing sub-stats (topSpeed, cornering, tyreManagement, dirtyAir, aeroEfficiency) — they came from the base fallback via spread, so editing carPerformance to 95 in the editor left all sub-stats at their original ~87 values, causing getTeamOverallCar to return ~87-88 instead of ~95. Sub-stats now explicitly resolve: use the team value if set, then the fallback value, then derive from carPerformance as a last resort. (reported by scuderiaferrarifan)',
     ]],
@@ -16628,10 +16637,12 @@ const GameActions = {
     const actualDevRate_bs = expectedDevRate_bs * rdMult_bs;
     const actualFac_bs     = expectedFac_bs     * rdMult_bs;
     const _baseCpWinter = team_bs.carPerformance;
-    team_bs.carPerformance  = clamp(team_bs.carPerformance  + actualAero_bs,    40, 99);
+    team_bs.carPerformance  = clamp(team_bs.carPerformance  + actualAero_bs,    40, 100);
     team_bs.reliability     = clamp(team_bs.reliability     + actualRel_bs,     40, 99);
     team_bs.developmentRate = clamp(team_bs.developmentRate + actualDevRate_bs, 40, 99);
     team_bs.facilities      = clamp(team_bs.facilities      + actualFac_bs,     40, 99);
+    // Track what actually applied after the cap — used in debrief display
+    const _actualAppliedAero = team_bs.carPerformance - _baseCpWinter;
     // Distribute winter dev gains across car sub-stats
     if(actualAero_bs > 0) {
       const _bw = bw2 || {};
@@ -16639,11 +16650,11 @@ const GameActions = {
       const _engW  = (_bw.engine||0) / Math.max(1, (_bw.aero||0)+(_bw.engine||0)+(_bw.reliability||0)+(_bw.facilities||0));
       const _mixW  = 1 - _aeroW - _engW;
       const _aeroGain = actualAero_bs;
-      team_bs.cornering      = clamp((team_bs.cornering     ||_baseCpWinter)+_aeroGain*(_aeroW+_mixW*0.5),40,99);
-      team_bs.aeroEfficiency = clamp((team_bs.aeroEfficiency||_baseCpWinter)+_aeroGain*(_aeroW+_mixW*0.5),40,99);
-      team_bs.topSpeed       = clamp((team_bs.topSpeed      ||_baseCpWinter)+_aeroGain*(_engW +_mixW*0.5),40,99);
-      team_bs.tyreManagement = clamp((team_bs.tyreManagement||_baseCpWinter)+_aeroGain,40,99);
-      team_bs.dirtyAir       = clamp((team_bs.dirtyAir      ||_baseCpWinter)+_aeroGain,40,99);
+      team_bs.cornering      = clamp((team_bs.cornering     ||_baseCpWinter)+_aeroGain*(_aeroW+_mixW*0.5),40,100);
+      team_bs.aeroEfficiency = clamp((team_bs.aeroEfficiency||_baseCpWinter)+_aeroGain*(_aeroW+_mixW*0.5),40,100);
+      team_bs.topSpeed       = clamp((team_bs.topSpeed      ||_baseCpWinter)+_aeroGain*(_engW +_mixW*0.5),40,100);
+      team_bs.tyreManagement = clamp((team_bs.tyreManagement||_baseCpWinter)+_aeroGain,40,100);
+      team_bs.dirtyAir       = clamp((team_bs.dirtyAir      ||_baseCpWinter)+_aeroGain,40,100);
     }
     if(expectedDfRange_bs > 0){
       const currentDf_bs = team_bs.downforce||50;
@@ -16656,7 +16667,7 @@ const GameActions = {
       rdMult: rdMult_bs,
       spent: {aero:bw2.aero||0, engine:bw2.engine||0, reliability:bw2.reliability||0, facilities:bw2.facilities||0},
       expected: {aero:expectedAero_bs, rel:expectedRel_bs},
-      actual:   {aero:actualAero_bs,   rel:actualRel_bs},
+      actual:   {aero:_actualAppliedAero, rel:actualRel_bs},
       label: rdMult_bs<0?'difficult winter':rdMult_bs>=1.6?'breakthrough':rdMult_bs>=1.25?'ahead of schedule':rdMult_bs>=0.85?'as planned':rdMult_bs>=0.35?'below expectations':'setback',
     };
     g.offseasonBudget={aero:0,engine:0,reliability:0,facilities:0};
