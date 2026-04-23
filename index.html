@@ -97,7 +97,7 @@ input:focus,select:focus{border-color:var(--red)}
 /* ── LANDING ── */
 #page-landing{
   align-items:flex-start;justify-content:flex-start;
-  background:#fff;overflow-y:auto;position:relative;flex-direction:column;
+  background:#fff;overflow-y:hidden;position:relative;flex-direction:column;
 }
 .land-topbar{position:fixed;top:0;left:0;right:0;height:3px;background:var(--red);z-index:10}
 /* Two-col layout on wide screens */
@@ -732,8 +732,8 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:18px;max-width:320px;padding:14px 16px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
           <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">Latest Update</div>
-<div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.3.3 is live</div>
-          <div style="font-size:12px;line-height:1.45;color:#666">Engine manufacturers, car sub-stats by circuit, ERS deployment, qualifying tyre choice, overdrive penalty. Driver Academy with juniors, loans &amp; permanent graduate branding.</div>
+<div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.3.4 is live</div>
+          <div style="font-size:12px;line-height:1.45;color:#666">AI teams now sign reserve drivers, academy tier upgrades, contract alerts for reserve drivers, FIA minimum age for race seats, and a raft of bug fixes from community reports.</div>
         </div>
       </div>
     </div>
@@ -786,7 +786,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </button>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.3.3</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.3.4</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -869,7 +869,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
 <div id="page-game" class="page">
   <nav id="main-nav">
     <div class="nav-row1">
-      <div class="nav-brand"><span class="nav-f1-badge">F1</span><span class="nav-dm">Dynasty</span></div>
+      <div class="nav-brand" onclick="if(confirm('Return to main menu? Your progress is auto-saved.')){Storage.autosave();UI.showPage('landing');}" style="cursor:pointer" title="Main menu"><span class="nav-f1-badge">F1</span><span class="nav-dm">Dynasty</span></div>
       <div class="nav-meta">
         <span id="nav-season" class="season-badge"></span>
         <span id="nav-team" class="team-badge"></span>
@@ -2742,20 +2742,29 @@ return {id,name:def.name,age:def.age,nationality:def.nationality||DATA.nationali
       baseRating = Math.max(52, potential - 18 - Math.floor(Math.random()*12));
     } else if(isFreeAgent){
       baseAge = 26 + Math.floor(Math.random()*10);
-      potential = 68 + Math.floor(Math.random()*20);
-      baseRating = 70 + Math.floor(Math.random()*18);
+      potential = 66 + Math.floor(Math.random()*18); // was 68+20, now 66-83 max
+      baseRating = 68 + Math.floor(Math.random()*16); // was 68+18, cap reduced
     } else if(isReserve){
       baseAge = 20 + Math.floor(Math.random()*8);
-      potential = 65 + Math.floor(Math.random()*25);
-      baseRating = 62 + Math.floor(Math.random()*18);
+      potential = 63 + Math.floor(Math.random()*22); // was 65+25
+      baseRating = 60 + Math.floor(Math.random()*17); // was 62+18
     } else if(isRookie){
       baseAge = 19 + Math.floor(Math.random()*4);
-      potential = 72 + Math.floor(Math.random()*26);
-      baseRating = Math.max(55, potential - 15 - Math.floor(Math.random()*15));
+      potential = 70 + Math.floor(Math.random()*23); // was 72+26
+      baseRating = Math.max(53, potential - 16 - Math.floor(Math.random()*15));
     } else {
+      // 'generated' — newgen filling AI race seat
       baseAge = 22 + Math.floor(Math.random()*10);
-      potential = 68 + Math.floor(Math.random()*25);
-      baseRating = 68 + Math.floor(Math.random()*20);
+      // Rare chance of genuine elite potential (~8%), otherwise midfield talent
+      const eliteRoll = Math.random();
+      if(eliteRoll < 0.08){
+        potential = 88 + Math.floor(Math.random()*7); // 88-94, true elite — rare
+      } else if(eliteRoll < 0.28){
+        potential = 80 + Math.floor(Math.random()*9); // 80-88, upper midfield
+      } else {
+        potential = 66 + Math.floor(Math.random()*15); // 66-80, regular grid filler
+      }
+      baseRating = 66 + Math.floor(Math.random()*18); // was 68+20, cap reduced
     }
     // Pick a nationality first, then choose a name consistent with that origin
     const natGroups = {
@@ -2837,7 +2846,7 @@ return {id,name:def.name,age:def.age,nationality:def.nationality||DATA.nationali
 const _genConsistency=clamp(baseRating+randInt(-10,5),40,99);
 const _genAggression=randInt(45,90);
 const _genEnergyMgmt=clamp(_genConsistency+randInt(-10,10)+(100-_genAggression)*0.08,38,94);
-return {id,name:`${fn} ${ln}`,age:baseAge,nationality:nat,teamId:teamId||null,rating:baseRating,potential,qualifying:clamp(baseRating+randInt(-5,5),45,99),racePace:clamp(baseRating+randInt(-5,5),45,99),consistency:_genConsistency,wet:clamp(baseRating+randInt(-10,10),40,99),aggression:_genAggression,energyMgmt:_genEnergyMgmt,marketability:clamp(baseRating+randInt(-15,15),30,99),morale:randInt(60,90),salary:isProspect?1:isFreeAgent?Math.floor(baseRating/12):isReserve?1:Math.floor(baseRating/15),contract:randInt(1,3),seasonPoints:0,totalPoints:0,wins:0,sprintWins:0,poles:0,podiums:0,fastestLaps:0,championships:0,retired:false,rookie:isRookie,isReserve:isReserve||false,isProspect:isProspect||false,isFreeAgent:isFreeAgent||false,careerStart:season};
+return {id,name:`${fn} ${ln}`,age:baseAge,nationality:nat,teamId:teamId||null,rating:baseRating,potential,qualifying:clamp(baseRating+randInt(-5,5),45,99),racePace:clamp(baseRating+randInt(-5,5),45,99),consistency:_genConsistency,wet:clamp(baseRating+randInt(-10,10),40,99),aggression:_genAggression,energyMgmt:_genEnergyMgmt,marketability:clamp(baseRating+randInt(-15,15),30,99),morale:randInt(60,90),salary:isProspect?1:isFreeAgent?Math.floor(baseRating/12):isReserve?1:Math.floor(baseRating/15),contract:randInt(1,3),seasonPoints:0,totalPoints:0,wins:0,sprintWins:0,poles:0,podiums:0,fastestLaps:0,championships:0,retired:false,rookie:isRookie,isReserve:isReserve||false,isProspect:isProspect||false,isFreeAgent:isFreeAgent||false,_isGenerated:true,careerStart:season};
   },
   getTeam(id){return this.game.teams.find(t=>t.id===id);},
   getDriver(id){return this.game.drivers.find(d=>d.id===id);},
@@ -7141,16 +7150,22 @@ const spons=sumSponsorIncome(g.sponsors||[]);
       } else {
         d.rating=clamp(d.rating+Math.max(0,gap*0.2+Math.random()),40,99);
       }
-      // Graduate if talented enough or old enough AND feeder contract has expired
+      // Graduate if feeder contract has expired
       if(d.feederContract===undefined) d.feederContract = 1; // patch for any missed init
       d.feederContract = Math.max(0, (d.feederContract||1) - 1);
       const contractExpired = d.feederContract <= 0;
-      if(contractExpired && (d.rating>=74||(d.age>=22&&d.rating>=70))){
+      // All expired-contract prospects graduate to free agency — even lower-rated ones.
+      // Previously only those rated 74+ or age 22+ at 70+ were promoted, leaving
+      // lower-rated prospects stuck in the scouting pool with no visible sign path.
+      if(contractExpired){
         const _fromSeries = d.prospectSeries||'F2';
         d.isProspect=false; d.isFreeAgent=true;
         d.contract=0; d.salary=Math.floor(d.rating/15);
         d.prospectSeries=null;
-        transfers.push({driverName:d.name,from:_fromSeries,to:'Free Agency',graduated:true});
+        // Only surface in transfer digest if they meet a reasonable quality bar
+        if(d.rating>=70 || d.age<=22){
+          transfers.push({driverName:d.name,from:_fromSeries,to:'Free Agency',graduated:true});
+        }
       }
     });
 
@@ -7225,6 +7240,7 @@ const spons=sumSponsorIncome(g.sponsors||[]);
       const teamReserveIds=new Set(team.reserveIds||[]);
       const freeAgents=State.getFreeAgents().filter(fa=>{
         if(teamReserveIds.has(fa.id)) return false;
+        if((fa.rating||0) < 68) return false; // don't put very low-rated drivers in race seats
         if(fa.salary>(fa.rating>=85?team.revenue/9:fa.rating>=78?team.revenue/11:team.revenue/13)) return false;
         // Elite free agents won't drop to a significantly weaker team
         // Check against their previous team's car performance
@@ -7253,6 +7269,49 @@ const spons=sumSponsorIncome(g.sponsors||[]);
         if(!team.driverIds) team.driverIds=[];
         if(!team.driverIds.includes(rookie.id)) team.driverIds.push(rookie.id);
         transfers.push({driverName:rookie.name,from:'Academy',to:team.name,teamId:team.id,rookie:true});
+      }
+    });
+
+    // ── AI RESERVE SIGNING — fill empty reserve slots for AI teams ──
+    // Run after race seats are filled so reserve candidates don't get scooped into race seats first
+    g.teams.forEach(team=>{
+      if(team.id===g.playerTeamId) return;
+      // Release expired reserve contracts first
+      (team.reserveIds||[]).forEach(rid=>{
+        const rd=State.getDriver(rid);
+        if(!rd||rd.retired||(rd.contract||0)<=0){
+          team.reserveIds=(team.reserveIds||[]).filter(id=>id!==rid);
+          if(rd&&!rd.retired){rd.teamId=null;rd.isFreeAgent=true;rd.isReserve=false;}
+        }
+      });
+      // Rebuild reserveIds from actual driver state (patch any desync)
+      team.reserveIds=(team.reserveIds||[]).filter(rid=>{
+        const rd=State.getDriver(rid);
+        return rd&&rd.teamId===team.id&&rd.isReserve&&!rd.retired;
+      });
+      const reserveSlotsNeeded=2-(team.reserveIds||[]).length;
+      if(reserveSlotsNeeded<=0) return;
+      // Candidates: free agents with moderate ratings, affordable on reserve salary
+      const raceDriverIds=new Set((team.driverIds||[]));
+      const reserveCandidates=State.getFreeAgents().filter(fa=>{
+        if(raceDriverIds.has(fa.id)) return false;
+        // Don't sign elite drivers as reserves — they want race seats
+        if(fa.rating>=82) return false;
+        // Don't sign very low-rated drivers — they wouldn't get an F1 reserve contract
+        if((fa.rating||0) < 60) return false;
+        // Budget check — reserve salaries are much cheaper
+        const resSal=State.getDriverDemandSalary(fa,'reserve');
+        if(resSal>team.revenue/20) return false;
+        return true;
+      }).sort((a,b)=>b.rating-a.rating);
+      for(let i=0;i<Math.min(reserveSlotsNeeded,reserveCandidates.length);i++){
+        const res=reserveCandidates[i];
+        res.teamId=team.id; res.contract=randInt(1,2); res.isReserve=true;
+        res.isFreeAgent=false; res.isProspect=false; res.prospectSeries=null;
+        res.salary=State.getDriverDemandSalary(res,'reserve');
+        res.morale=clamp(res.morale+5,45,90);
+        if(!team.reserveIds) team.reserveIds=[];
+        if(!team.reserveIds.includes(res.id)) team.reserveIds.push(res.id);
       }
     });
     const playerRosterTeam = State.getPlayerTeam();
@@ -7304,10 +7363,19 @@ const spons=sumSponsorIncome(g.sponsors||[]);
     const playerYoungCore = g.drivers.filter(d=>d.teamId===g.playerTeamId&&!d.retired&&d.age<=24&&(d.potential||0)>=90).length
       + g.drivers.filter(d=>d.teamId===g.playerTeamId&&d.isReserve&&!d.retired&&(d.potential||0)>=88).length;
     // Add new prospects to the pool — smaller intake, rarer wonderkid spikes
+    // Throttle generation: count active named (non-generated) drivers on the grid to avoid
+    // flooding the pool early when real-world drivers still dominate. Once real drivers
+    // dwindle below 10 active grid spots, spawn rate picks up to keep the pipeline healthy.
+    const _namedGridDrivers = g.drivers.filter(d=>d.teamId&&!d.retired&&!d.isProspect&&!d.isReserve&&!d.isJunior&&!d.isFreeAgent&&!d._isGenerated).length;
+    const _prospectsInPool = g.drivers.filter(d=>d.isProspect&&!d.retired).length;
+    // Fewer prospects needed when named drivers still fill the grid; more when the grid is mostly newgens
+    const _targetProspectPool = _namedGridDrivers >= 15 ? 4 : _namedGridDrivers >= 10 ? 6 : 10;
+    // Always add at least 1 prospect per season to keep the pipeline flowing; cap at 2 ──
+    const _prospectsToAdd = Math.max(1, Math.min(2, _targetProspectPool - _prospectsInPool));
     const wonderkidThisSeason = !g.drivers.some(d=>d.isProspect&&d.isWonderkid); // max 1 wonderkid in pool at a time
     const wonderkidChance = playerYoungCore>=2 ? 0.10 : 0.18;
     const wonderkidRoll = wonderkidThisSeason && Math.random() < wonderkidChance;
-    for(let i=0;i<2;i++){
+    for(let i=0;i<_prospectsToAdd;i++){
       const p=State._generateDriver(g.nextDriverId++,g.season+1,null,'prospect');
       p.isProspect=true; const _midPCl=(g.prospectClasses&&g.prospectClasses.length>0)?g.prospectClasses:DATA.prospectSeries; p.prospectSeries=_midPCl[randInt(0,_midPCl.length-1)];
       p.feederContract=randInt(1,4);
@@ -8594,6 +8662,47 @@ const Storage = {
       g._seasonEndProcessing = false;
       g.offseasonPending = false;
     }
+    // ── Migration: tag any on-grid driver without a teamId-based name as generated (for prospect throttle) ──
+    // Named drivers from DATA never have _isGenerated set; only _generateDriver sets it.
+    // Old saves have generated drivers without the flag — safe to infer from absence of a matching DATA entry.
+    if(g.drivers && g.teams) {
+      const _namedPool = new Set();
+      (DATA.teams||[]).forEach(t=>{
+        (t.baseDrivers||[]).forEach(d=>{ if(d.name) _namedPool.add(d.name); });
+      });
+      Object.values(DATA.seasonDrivers||{}).forEach(yr=>Object.values(yr).forEach(arr=>(arr||[]).forEach(d=>{ if(d.name) _namedPool.add(d.name); })));
+      (DATA.namedFreeAgents||[]).forEach(d=>{ if(d.name) _namedPool.add(d.name); });
+      (DATA.namedProspects||[]).forEach(d=>{ if(d.name) _namedPool.add(d.name); });
+      Object.values(DATA.reserveDrivers||{}).forEach(arr=>(arr||[]).forEach(d=>{ if(d.name) _namedPool.add(d.name); }));
+      g.drivers.forEach(d=>{
+        if(d._isGenerated===undefined) {
+          d._isGenerated = !_namedPool.has(d.name);
+        }
+      });
+    }
+    // ── Migration: patch seasonEnd snapshot fields for saves that pre-date them ──
+    // If seasonEndCarPerf is undefined (never been set), null it out so the car stats
+    // display falls back to "no delta" rather than comparing current vs current (always 0).
+    // This prevents the offseason car screen showing 0 regression on old saves.
+    if(g.seasonEndCarPerf === undefined) g.seasonEndCarPerf = null;
+    if(g.seasonEndReliability === undefined) g.seasonEndReliability = null;
+    if(g.seasonEndDevRate === undefined) g.seasonEndDevRate = null;
+    if(g.seasonEndTopSpeed === undefined) g.seasonEndTopSpeed = null;
+    if(g.seasonEndCornering === undefined) g.seasonEndCornering = null;
+    if(g.seasonEndTyreMgmt === undefined) g.seasonEndTyreMgmt = null;
+    if(g.seasonEndDirtyAir === undefined) g.seasonEndDirtyAir = null;
+    if(g.seasonEndAeroEff === undefined) g.seasonEndAeroEff = null;
+    // ── Migration: resync AI team reserveIds against driver state ──
+    // Old saves may have stale reserveIds pointing at drivers who no longer have isReserve set
+    if(g.teams && g.drivers){
+      g.teams.forEach(t=>{
+        if(t.id===g.playerTeamId) return; // player team managed separately
+        t.reserveIds=(t.reserveIds||[]).filter(rid=>{
+          const rd=g.drivers.find(d=>d.id===rid);
+          return rd&&rd.teamId===t.id&&rd.isReserve&&!rd.retired;
+        });
+      });
+    }
     return g;
   }
 };
@@ -9618,24 +9727,27 @@ const UI = {
     if(contractWarnTop && contractWarnPanel){
       const racesLeft = g.calendar.filter(r=>!r.raceDone).length;
       const myDrivers = State.getPlayerDrivers();
+      const myReserves = State.getPlayerReserves();
       const expiringDrivers = myDrivers.filter(d=>d.contract<=1);
+      const expiringReserves = myReserves.filter(d=>d.contract<=1);
+      const allExpiring = [...expiringDrivers, ...expiringReserves];
       const ignoredSeason = g._ignoredContractWarnSeason || null;
       const ignored = ignoredSeason === g.season;
-      if(expiringDrivers.length>0){
+      if(allExpiring.length>0){
         const urgency = racesLeft<=3 && racesLeft>0
           ? `Final ${racesLeft} race${racesLeft!==1?'s':''} of the season.`
           : `Rival teams may start circling before the offseason.`;
-        const rows = expiringDrivers.map(d=>`
+        const rows = allExpiring.map(d=>`
           <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bd);gap:8px">
             <div>
-              <div style="font-size:13px;font-weight:700">${d.name}</div>
+              <div style="font-size:13px;font-weight:700">${d.name}${d.isReserve?' <span style=\"font-size:10px;color:var(--tx3);font-weight:600\">(Reserve)</span>':''}</div>
               <div style="font-size:11px;color:var(--tx3);margin-top:1px">${d.contract===0?'Contract expired':'Final year of contract'} · ${racesLeft} race${racesLeft!==1?'s':''} left</div>
             </div>
             <button class="btn btn-outline btn-sm" onclick="GameActions.renewDriver(${d.id})">📝 Renew</button>
           </div>`).join('');
         contractWarnTop.innerHTML = `<div class="panel" style="border:1px solid var(--amber);background:rgba(245,158,11,.05)">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px">
-            <div class="panel-title" style="color:var(--amber);margin:0">⚠️ Contract${expiringDrivers.length>1?'s':''} at Risk</div>
+            <div class="panel-title" style="color:var(--amber);margin:0">⚠️ Contract${allExpiring.length>1?'s':''} at Risk</div>
             <button class="btn btn-ghost btn-sm" onclick="UI.ignoreDashContractWarning()" style="white-space:nowrap">Ignore</button>
           </div>
           ${rows}
@@ -9645,7 +9757,7 @@ const UI = {
           <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
             <div>
               <div style="font-size:11px;font-weight:800;color:var(--amber)">⚠️ Contract reminder</div>
-              <div style="font-size:11px;color:var(--tx3);margin-top:2px">${expiringDrivers.map(d=>d.name.split(' ').slice(-1)[0]).join(', ')} ${expiringDrivers.length>1?'need renewals':'needs a renewal'}.</div>
+              <div style="font-size:11px;color:var(--tx3);margin-top:2px">${allExpiring.map(d=>d.name.split(' ').slice(-1)[0]+(d.isReserve?' (R)':'')).join(', ')} ${allExpiring.length>1?'need renewals':'needs a renewal'}.</div>
             </div>
             <button class="btn btn-outline btn-sm" onclick="UI.showView('drivers')">View</button>
           </div>
@@ -9879,7 +9991,7 @@ const UI = {
             ${item('🔧','Reserve Drivers',`${reserves.length}/2 signed (optional)`,reserves.length>=2,'Go to Drivers',"UI.showView('drivers');UI.showDriverTab('reserves')")}
 
             ${(()=>{ const ob_w=Math.round(team.revenue*0.35/5)*5; const bw=g.offseasonBudget||{}; const sw=(bw.aero||0)+(bw.engine||0)+(bw.reliability||0)+(bw.facilities||0); const dd=sw>0; const ss=dd?formatMoney(sw)+' of '+formatMoney(ob_w)+' allocated':'No budget allocated yet'; return item('🏗','Winter Development',ss,dd,'Configure',"UI.showView('car')"); })()}
-${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors||[]).length; const done=active>0; const sub=done?active+' active · '+formatMoney(sumSponsorIncome(g.sponsors||[]))+'/yr':(pending>0?'0 active · '+pending+' offer'+(pending>1?'s':'')+' waiting':'No active sponsors — sign an offer'); return item('💰','Sponsorship',sub,done,'View Offers',"UI.showView('finance')"); })()}
+${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors||[]).length; const done=active>0; const sub=done?active+' active · '+formatMoney(sumSponsorIncome(g.sponsors||[]))+'/yr':(pending>0?'0 active · '+pending+' offer'+(pending>1?'s':'')+' waiting':'⚠️ No sponsors or offers — click View Offers to generate one'); return item('💰','Sponsorship',sub,done,'View Offers',"UI.showView('finance')"); })()}
             <div style="padding-top:10px;margin-top:2px">
               <button class="btn btn-red" style="width:100%;opacity:${allReady?1:0.5}" onclick="GameActions.beginSeason()">${allReady?"🚦 Begin Season "+g.season:"⚠️ Complete checklist above first"}</button>
             </div>
@@ -10337,6 +10449,37 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
           </div>
         </div>`}
       </div>
+      ${(()=>{
+        // Mid-season financial position — show available budget so player doesn't need to flick to Finance
+        if(g.offseasonPending) return ''; // offseason handled by winter dev section above
+        const _sponsors = sumSponsorIncome(g.sponsors||[]);
+        const _prize = 42 + Math.round((11 - (State.getConstructorSeasonPos(team.id)||10)) * 3.5);
+        const _merch = Math.round(team.prestige * 0.3);
+        const _worksB = ['mercedes','ferrari','redbull','audi','cadillac'].includes(team.id) ? 20 : 0;
+        const _annualIncome = _sponsors + _prize + _merch + _worksB;
+        const _dSals = State.getPlayerDrivers().reduce((s,d)=>s+d.salary,0);
+        const _rSals = State.getPlayerReserves().reduce((s,d)=>s+d.salary,0);
+        const _scTierF = DATA.scoutingTiers.find(t=>t.id===(g.scoutingTier||'none'));
+        const _scC = _scTierF ? _scTierF.salary : 0;
+        const _engC = ['mercedes','ferrari','redbull','audi','cadillac'].includes(team.id) ? 0 : (team.engineContractCost||12);
+        const _opsB = 35;
+        const _staffC = Math.round(team.facilities * 0.35 + 10);
+        const _qSpend = (g.quarterDev||[]).filter(q=>q.applied).reduce((s,q)=>s+(q.aero*6+q.reliability*4+q.engine*10),0);
+        const _annualExpenses = _dSals + _rSals + _scC + _opsB + _engC + _staffC;
+        const _netAnnual = _annualIncome - _annualExpenses; // ongoing costs only; upgrade spend shown separately
+        const _netColor = _netAnnual >= 20 ? 'var(--grn)' : _netAnnual >= 0 ? 'var(--amber)' : 'var(--red)';
+        const _upgradeWindowBudget = Math.round(team.revenue * 0.15);
+        return `<div style="background:var(--bg2);border:1px solid var(--bd);border-radius:9px;padding:10px 14px;margin-bottom:10px">
+          <div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);margin-bottom:6px">💰 Financial Position</div>
+          <div style="display:flex;gap:16px;flex-wrap:wrap">
+            <div><div style="font-size:10px;color:var(--tx3)">Annual Income</div><div style="font-size:13px;font-weight:800;font-family:var(--fm)">${formatMoney(_annualIncome)}</div></div>
+            <div><div style="font-size:10px;color:var(--tx3)">Annual Costs</div><div style="font-size:13px;font-weight:800;font-family:var(--fm)">${formatMoney(_annualExpenses)}</div></div>
+            <div><div style="font-size:10px;color:var(--tx3)">Upgrade Spend</div><div style="font-size:13px;font-weight:800;font-family:var(--fm)">${formatMoney(_qSpend)}</div></div>
+            <div><div style="font-size:10px;color:var(--tx3)">Net</div><div style="font-size:13px;font-weight:800;font-family:var(--fm);color:${_netColor}">${_netAnnual>=0?'+':''}${formatMoney(_netAnnual)}</div></div>
+            <div><div style="font-size:10px;color:var(--tx3)">Per Upgrade Window</div><div style="font-size:13px;font-weight:800;font-family:var(--fm)">${formatMoney(_upgradeWindowBudget)}</div></div>
+          </div>
+        </div>`;
+      })()}
       ${quarterHTML}
 `;
   },
@@ -11982,6 +12125,17 @@ const personalSlots = getPersonalSponsorSlots(d);
             <div style="font-size:9px;color:var(--tx3);font-weight:700;text-transform:uppercase">Graduates</div>
           </div>
         </div>
+        ${(()=>{
+          const _tiers=[{label:'Starter Programme',cost:8,slots:2},{label:'Development Academy',cost:15,slots:4},{label:'Elite Academy',cost:28,slots:6}];
+          const _ci=_tiers.findIndex(t=>t.label===acad.tier);
+          if(_ci<0||_ci>=_tiers.length-1) return '';
+          const _nt=_tiers[_ci+1];
+          const _ec=Math.max(0,_nt.cost-(acad.annualBudget||0));
+          return '<div style="margin-top:8px;padding:8px 10px;background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.25);border-radius:8px;display:flex;justify-content:space-between;align-items:center;gap:8px">'
+            +'<div><div style="font-size:12px;font-weight:700;color:var(--amber)">\u2b06\ufe0f Upgrade to '+_nt.label+'</div>'
+            +'<div style="font-size:11px;color:var(--tx3)">'+_nt.slots+' slots · '+formatMoney(_nt.cost)+'/yr'+(_ec>0?' (+'+formatMoney(_ec)+'/yr)':'')+' · Takes effect immediately</div></div>'
+            +'<button class="btn btn-outline btn-sm" style="border-color:var(--amber);color:var(--amber);flex-shrink:0" onclick="if(confirm(\'Upgrade to '+_nt.label+'? Annual cost will increase to '+formatMoney(_nt.cost)+'/yr from next season.\')) GameActions.upgradeAcademy()">Upgrade</button></div>';
+        })()}
         <div style="display:flex;gap:6px;margin-top:10px">
           <div style="flex:1;background:var(--bg3);border-radius:7px;padding:8px 10px;text-align:center">
             <div style="font-size:16px;font-weight:900">${juniors.length}</div>
@@ -12114,7 +12268,7 @@ const personalSlots = getPersonalSponsorSlots(d);
                 <div style="font-size:11px;color:rgba(255,255,255,.5);line-height:1.5;margin-bottom:12px;font-style:italic">"Raw, aggressive, and ceiling-less. Give them time and they could be the best on the grid."</div>
                 <div style="display:flex;gap:8px">
                   <button class="btn btn-sm" style="background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2)" onclick="UI.showDriverModal(${d.id})">View Profile</button>
-                  ${!d.teamId?(d.feederContract>0?`<button class="btn btn-sm" style="background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2);opacity:.6" disabled>⏳ In feeder series · free ${(g.season||2026)+d.feederContract}</button>`:`<button class="btn btn-sm" style="background:#f59e0b;color:#000;border:none;font-weight:700" onclick="GameActions.signDriverOffseason(${d.id})">Sign Wonderkid →</button>`):'<span style="font-size:11px;color:var(--tx3);padding:4px 8px">Already signed</span>'}
+                  ${!d.teamId?(d.feederContract>0?`<button class="btn btn-sm" style="background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2);opacity:.6" disabled>⏳ In feeder series · free ${(g.season||2026)+d.feederContract}</button>`:d.age<18?`<button class="btn btn-sm" style="background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2)" onclick="GameActions.signReserve(${d.id})">Sign as Reserve</button>`+((g.academy&&(g.academy.juniors||[]).length<(g.academy.maxSlots||4)&&d.age<=22)?`<button class="btn btn-sm" style="background:rgba(124,58,237,.8);color:#fff;border:none;font-weight:700" onclick="GameActions.signProspectAsJunior(${d.id})">🎓 Sign as Junior</button>`:''):`<button class="btn btn-sm" style="background:#f59e0b;color:#000;border:none;font-weight:700" onclick="GameActions.signDriverOffseason(${d.id})">Sign Wonderkid →</button>`):'<span style="font-size:11px;color:var(--tx3);padding:4px 8px">Already signed</span>'}
                 </div>
               </div>`;
             }
@@ -12133,7 +12287,7 @@ const personalSlots = getPersonalSponsorSlots(d);
               +'</div>'
               +'<div style="margin-top:8px;display:flex;gap:6px">'
               +'<button class="btn btn-outline btn-sm" onclick="UI.showDriverModal('+d.id+')">View Profile</button>'
-              +(!d.teamId?(d.feederContract>0?'<button class="btn btn-ghost btn-sm" disabled style="opacity:.5" title="Under feeder series contract">⏳ In feeder series · free '+((g.season||2026)+d.feederContract)+'</button>':'<button class="btn btn-success btn-sm" onclick="GameActions.signDriver('+d.id+')">Sign</button>'):'')
+              +(!d.teamId?(d.feederContract>0?'<button class="btn btn-ghost btn-sm" disabled style="opacity:.5" title="Under feeder series contract">⏳ In feeder series · free '+((g.season||2026)+d.feederContract)+'</button>':d.age<18?'<button class="btn btn-outline btn-sm" onclick="GameActions.signReserve('+d.id+')">Sign as Reserve</button>'+(g.academy&&(g.academy.juniors||[]).length<(g.academy.maxSlots||4)&&d.age<=22?'<button class="btn btn-outline btn-sm" style="border-color:#7c3aed;color:#7c3aed" onclick="GameActions.signProspectAsJunior('+d.id+')">🎓 Junior</button>':''):'<button class="btn btn-success btn-sm" onclick="GameActions.signDriver('+d.id+')">Sign</button>'):'')
               +'</div>'
               +'</div>';
           }).join('')
@@ -12522,16 +12676,18 @@ const activeIncome=formatMoney(sumSponsorIncome(g.sponsors||[]));
           </div>`;
         })()}
         <div class="car-stats-grid">
-          ${[['Car Performance',team.carPerformance,g.seasonEndCarPerf||team.carPerformance,'#dc2626'],
-             ['Top Speed',team.topSpeed||team.carPerformance,g.seasonEndTopSpeed||team.topSpeed||team.carPerformance,'#f97316'],
-             ['Cornering',team.cornering||team.carPerformance,g.seasonEndCornering||team.cornering||team.carPerformance,'#8b5cf6'],
-             ['Tyre Mgmt',team.tyreManagement||team.carPerformance,g.seasonEndTyreMgmt||team.tyreManagement||team.carPerformance,'#06b6d4'],
-             ['Aero Eff.',team.aeroEfficiency||team.carPerformance,g.seasonEndAeroEff||team.aeroEfficiency||team.carPerformance,'#ec4899'],
-             ['Reliability',team.reliability,g.seasonEndReliability||team.reliability,'#16a34a'],
-             ['Dev Rate',team.developmentRate,g.seasonEndDevRate||team.developmentRate,'#2563eb'],
-             ['Facilities',team.facilities,team.facilities,'#d97706']].map(([l,v,prev,c])=>{
-            const delta=v-prev; const sign=delta>0?'+':'';
-            const deltaHtml=delta!==0?` <span style="font-size:10px;font-weight:700;color:${delta>0?'var(--grn)':'var(--red)'}">${sign}${delta.toFixed(1)}</span>`:'';
+          ${[['Car Performance',team.carPerformance,g.seasonEndCarPerf,'#dc2626'],
+             ['Top Speed',team.topSpeed||team.carPerformance,g.seasonEndTopSpeed,'#f97316'],
+             ['Cornering',team.cornering||team.carPerformance,g.seasonEndCornering,'#8b5cf6'],
+             ['Tyre Mgmt',team.tyreManagement||team.carPerformance,g.seasonEndTyreMgmt,'#06b6d4'],
+             ['Aero Eff.',team.aeroEfficiency||team.carPerformance,g.seasonEndAeroEff,'#ec4899'],
+             ['Reliability',team.reliability,g.seasonEndReliability,'#16a34a'],
+             ['Dev Rate',team.developmentRate,g.seasonEndDevRate,'#2563eb'],
+             ['Facilities',team.facilities,null,'#d97706']].map(([l,v,prev,c])=>{
+            const hasPrev = prev !== null && prev !== undefined;
+            const delta = hasPrev ? v - prev : 0;
+            const sign=delta>0?'+':'';
+            const deltaHtml=hasPrev && delta!==0?` <span style="font-size:10px;font-weight:700;color:${delta>0?'var(--grn)':'var(--red)'}">${sign}${delta.toFixed(1)}</span>`:'';
             return `<div class="car-stat-card"><div class="car-stat-name">${l}</div>
               <div class="car-stat-val" style="color:${c}">${v.toFixed(1)}${deltaHtml}</div>
               <div class="car-stat-bar"><div class="car-stat-fill" style="width:${v}%;background:${c}"></div></div></div>`;
@@ -12847,7 +13003,7 @@ const activeIncome=formatMoney(sumSponsorIncome(g.sponsors||[]));
       // Per-race grid (Wikipedia style) — each column = one race, each row = one driver
       const buildRaceGrid=(races,resultKey,label)=>{
         if(!races.length) return '';
-        const raceHeaders=races.map(r=>`<th style="text-align:center;padding:2px 3px;font-size:8px;color:var(--tx3);font-weight:600;white-space:nowrap;min-width:22px;writing-mode:vertical-rl;transform:rotate(180deg);max-height:60px;overflow:hidden">${r.location||r.name.split(' ')[0]}</th>`).join('');
+        const raceHeaders=races.map(r=>`<th style="text-align:center;padding:2px 3px;font-size:8px;color:var(--tx3);font-weight:600;white-space:nowrap;min-width:22px;writing-mode:vertical-lr;transform:rotate(180deg);max-height:60px;overflow:hidden">${r.location||r.name.split(' ')[0]}</th>`).join('');
         const rows=allDrivers.filter(d=>{
           // Only show drivers who actually have at least one result in this set of races
           return races.some(r=>(r[resultKey]||[]).some(x=>String(x.driverId)===String(d.id)));
@@ -14258,7 +14414,7 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       g2.teams.forEach(t=>{ if(!teamColorMap[t.id]) teamColorMap[t.id]=t.color; });
       const buildGrid=(races,resultKey,label)=>{
         if(!races.length) return '';
-        const hdrs=races.map(r=>`<th style="text-align:center;padding:2px 3px;font-size:8px;color:var(--tx3);font-weight:600;white-space:nowrap;min-width:22px;writing-mode:vertical-rl;transform:rotate(180deg);max-height:60px;overflow:hidden">${r.location||r.name.split(' ')[0]}</th>`).join('');
+        const hdrs=races.map(r=>`<th style="text-align:center;padding:2px 3px;font-size:8px;color:var(--tx3);font-weight:600;white-space:nowrap;min-width:22px;writing-mode:vertical-lr;transform:rotate(180deg);max-height:60px;overflow:hidden">${r.location||r.name.split(' ')[0]}</th>`).join('');
         const rows=drivers.filter(d=>{
           const sid=String(d.driverId);
           return races.some(r=>(r[resultKey]||[]).some(x=>String(x.driverId)===sid));
@@ -14572,6 +14728,7 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       <h4>Diminishing returns and regression</h4>
       <p>Every car — including yours — regresses slightly each offseason as rivals copy your concepts. Higher-rated cars regress more (a 95-rated car loses ~2–3 points; a 70-rated car loses ~0.5). Winter development spending must therefore cover <em>maintenance</em> as well as improvement. Additionally, the higher your car rating, the less value each dollar buys — a 95-rated car gets roughly 20% of the gain a 60-rated car gets for the same investment. The Car page shows your current <strong>development efficiency %</strong>.</p>
       ${warn('A maxed-out car still needs investment every offseason just to stay in place. If you spend nothing, rivals will close the gap within 1–2 seasons.')}
+      ${tip('Financial position on Car page', 'A compact income/costs/net summary appears above the upgrade windows on the Car page — check it before allocating your upgrade budget so you know exactly where you stand without navigating to Finance.')}
       ${tip('Facilities first if you\'re rebuilding', 'Investing in Facilities in the offseason improves your development rate — meaning every subsequent R&D dollar goes further. If you\'re a mid-field team trying to close the gap, facilities investment compounds over time.')}
       <h4>Regulation changes</h4>
       <p>Every 4–7 seasons the FIA introduces major technical regulation changes. When this happens, car performance is compressed toward midfield and randomised across the field — dominant teams can lose big, backmarkers can gain big. No dynasty is safe from a regulation reset.</p>
@@ -14642,16 +14799,21 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     `)}
 
     ${sec('🔭','Scouting — Finding Hidden Gems',`
-      <p>The scouting system lets you assess junior series drivers before signing them. Without scouting, you only see a driver's current rating — not their potential ceiling.</p>
+      <p>The scouting system lets you assess junior series drivers before signing them. Without scouting, you only see a driver's current rating — not their potential ceiling. Each season you must choose a scouting tier before starting — this is part of the pre-season checklist.</p>
       <h4>Scouting tiers</h4>
       <table class="guide-table">
         <tr><th>Tier</th><th>Accuracy</th><th>Cost</th><th>Worth it?</th></tr>
-        <tr><td>Basic Scout</td><td>±15 OVR</td><td>Low</td><td>Better than nothing</td></tr>
-        <tr><td>Pro Scout</td><td>±8 OVR</td><td>Medium</td><td>Good for most uses</td></tr>
-        <tr><td>Elite Scout</td><td>±4 OVR</td><td>High</td><td>Worth it for wonderkids</td></tr>
+        <tr><td>No Scout</td><td>±~30 OVR</td><td>Free</td><td>Flying blind — potential readings are wild guesses</td></tr>
+        <tr><td>Junior Scout</td><td>±~10 OVR</td><td>$2M/yr</td><td>Better than nothing for early careers</td></tr>
+        <tr><td>Experienced Scout</td><td>±~6 OVR</td><td>$5M/yr</td><td>Good for most uses</td></tr>
+        <tr><td>Elite Scout Network</td><td>±~3 OVR</td><td>$12M/yr</td><td>Worth it for wonderkid accuracy</td></tr>
       </table>
-      <p>Reports take several races to return. Queue multiple prospects simultaneously to get more options. Reports show the potential as <strong>Pot ~X (±Y)</strong> — the true value is within that band.</p>
+      <p>Reports take several races to return (Elite: ~3 races, Experienced: ~5, Junior: ~8). Queue multiple prospects simultaneously. Reports show the potential as a number with an accuracy margin — the true value is within that band.</p>
+      <h4>How to sign scouted prospects</h4>
+      <p>Prospects in feeder series show an <strong>⏳ In feeder series · free [year]</strong> tag. Once their contract expires and they meet a basic quality threshold, they automatically graduate to <strong>free agency</strong> and appear in the Free Agents tab on the Drivers page — sign them just like any other free agent. While they're still a prospect you can also sign them as a <strong>reserve driver</strong> or academy junior directly from their profile card in the Scouting tab.</p>
+      <p>Drivers under 18 cannot hold a race seat — if a young prospect you scouted has expired their feeder contract but is still under 18, you can sign them as reserve or junior to develop them until they reach race-eligible age.</p>
       ${tip('Wonderkid priority', 'When you see TRANSFER BUZZ in the scouting view, drop everything and send your scout. Wonderkid windows are short — other teams will sign them in the offseason transfer market if you hesitate.')}
+      ${tip('Re-scout every season', 'New prospects enter the pool each offseason. The Scout button in the Scouting tab queues all currently unscouted prospects — tap it at the start of each season to keep your reports current.')}
     `)}
 
     ${sec('💰','Finance — How Money Works',`
@@ -14800,10 +14962,11 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       <h4>Qualifying tyre choice</h4>
       <p>In the strategy picker before qualifying, you can nominate a driver to run on <strong>used tyres</strong>. This costs 1–3 qualifying positions depending on their trait, but saves a fresh set of softs for the race start — giving an undercut advantage in the opening stint. Technical trait drivers lose the least time on used rubber; aggressive drivers lose the most.</p>
       <h4>Driver Academy</h4>
-      <p>Found an academy from the Academy tab. Three tiers are available — Starter ($8M/yr, 2 slots), Development ($15M/yr, 4 slots), and Elite ($28M/yr, 6 slots). The annual cost is deducted from your team revenue each offseason, competing with driver salaries and facilities investment. Name your academy — the name is permanent and attaches to every driver you graduate.</p>
+      <p>Found an academy from the Academy tab. Three tiers are available — Starter ($8M/yr, 2 slots), Development ($15M/yr, 4 slots), and Elite ($28M/yr, 6 slots). The annual cost is deducted from your team revenue each offseason. You can upgrade to a higher tier at any time from the Academy page — the new cost and slot count take effect from the next offseason. Name your academy — the name is permanent and attaches to every driver you graduate.</p>
       <p>Recruit junior drivers aged 14–18 from F3 and F4. Each junior has a current rating and a potential ceiling shown in amber. They develop passively each offseason — the rate depends on the gap to their ceiling and your facilities rating. After 2+ seasons at 72+ overall they become eligible for promotion. You can also send them on a 1-season loan to an AI team: they gain race experience and return with a development boost, while you collect a loan fee.</p>
       <p>Every driver promoted through your academy carries your academy name on their profile card permanently. The Academy tab keeps a lifetime graduate scoreboard — their season of graduation, peak rating, and current team. This is your dynasty legacy: a world champion who came through your programme will always be marked as one of yours.</p>
       ${tip('Academy vs scouting', 'Scouting identifies ready-to-sign talent from outside. An academy is a slower pipeline — you invest years before seeing a return. The payoff is cost (juniors are cheap), loyalty (they grow up in your system), and prestige (the graduate tag is permanent). Elite teams run both.')}
+      ${warn('Drivers under 18 cannot be signed as race drivers — FIA superlicence rules require a minimum age of 18 for an F1 race seat. You can still sign under-18 drivers as reserve drivers or academy juniors.')}
       ${tip('Use the transfer window strategically', 'If a top driver is in their final year at a rival, approach early (race 6–8) before other AI teams commit. The longer you wait, the more rival bids accumulate and the harder acceptance becomes.')}
     `)}
 
@@ -14828,6 +14991,7 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       <h4>Notable Grid Changes</h4>
       <p>Departures, signings (rated 80+ OVR), retirements with career summary, and drivers graduating from feeder series to the free agent pool. Use this to spot opportunities — a rival team losing a key driver to retirement opens a signing window.</p>
       ${tip('Open it every season', 'The digest is collapsed by default — tap the header to expand it. It only takes 15 seconds to read but tells you exactly where you stand vs the field before you start planning.')}
+      ${tip('Car stats delta', 'On the Car page during the offseason, each stat shows a coloured delta (▲▼) against where it was at season end — after regression but before your winter development spend. A stat showing −1.8 means the field closed that much on you from natural regression; your winter investment then adds back on top.')}
     `)}
 
     ${sec('🔄','Season Flow — What Happens When',`
@@ -14838,7 +15002,7 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       <p><strong>Mid-season</strong> → Queue quarterly upgrade packages (arrive 2–4 races later) → Monitor standings and board objectives → In-season development if budget allows</p>
       <p><strong>Season end</strong> → Season recap modal with championship results, objective outcomes, revenue summary → Driver aging and development runs → Transfer market opens</p>
       ${tip('Next button', 'The red Next button (bottom centre on mobile, visible on dashboard) is your main progression button. It advances to the next pending action — next race, or next offseason — so you never have to hunt for what to do.')}
-      ${tip('Contract warning', 'In the final 3 races of the season, an amber warning panel appears on the dashboard if any of your drivers are in their last year of contract. Use the Renew button directly from that panel — don\'t wait for the offseason if a rival could poach them.')}
+      ${tip('Contract warning', 'In the final 3 races of the season, an amber warning panel appears on the dashboard if any of your race or reserve drivers are in their last year of contract. Reserve drivers are labelled (Reserve) in the panel. Use the Renew button directly from that panel — don\'t wait for the offseason if a rival could poach them.')}
       ${tip('Sprint weekends', 'Sprint weekends have two separate results. The dashboard Last Race panel shows both a Last Race and a Sprint tab. A Race Recap pops after both the sprint and the GP so you always get the full picture for each session.')}
     `)}
 
@@ -15736,8 +15900,24 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.3.3 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.3.4 · Release Notes</div>
         ${[
+    ['v2.3.4','Apr 2026',[
+            '🐛 AI reserve drivers: AI teams now sign reserve drivers during the offseason. Previously AI teams never filled their reserve slots after the first season, so all AI team reserve benches would show empty from season 2 onwards (reported by OzzyVibes1612).',
+            '🐛 Landing page double scrollbar: fixed a double scrollbar on non-mobile devices where both the page and the right panel were independently scrollable. The page container no longer adds its own scroll track (reported by IronicGerman).',
+            '🐛 Race grid history: circuit name column headers were appearing upside down in both the Results tab grid and the History tab grid. Fixed writing-mode direction so names read correctly top-to-bottom (reported by Total-Ad-6056).',
+            '🐛 Sponsor softlock: if all sponsors expired simultaneously and no pending offers existed, the pre-season checklist blocked Begin Season with no way to proceed. The game now generates an emergency sponsor offer in this scenario so the player is never stuck (reported by Formula1antagonist).',
+            '🐛 Car regression display: offseason car stats delta display on old saves was showing 0 change for all stats because the season-end snapshot fields were missing. Existing saves are patched on load so the display correctly reflects actual changes going forward.',
+            '🐛 Prospect signing: scouted prospects with expired feeder contracts but below the old rating threshold (74) were stuck in the scouting pool with no visible path to sign them. All prospects with expired contracts now graduate to free agency and appear in the free agents tab (reported by Total-Ad-6056).',
+            '🐛 90+ driver prevalence: generated newgen drivers had rating/potential ranges that produced too many elite-rated drivers over time. Ranges tightened — genuine elite potential (88+) now requires an ~8% roll, keeping most newgens in the realistic midfield bracket (reported by Total-Ad-6056).',
+            '✨ Contract alerts for reserve drivers: the dashboard contract-at-risk warning panel now includes reserve drivers with expiring contracts, not just race drivers. Reserve names show a (Reserve) tag so you know which is which (suggested by Total-Ad-6056).',
+            '✨ Financial position on Car page: a compact income/costs/net summary now appears above the upgrade windows so you can see your current financial position without navigating to Finance (suggested by Total-Ad-6056).',
+            '✨ Academy tier upgrades: founded academies can now be upgraded from Starter to Development to Elite at any time from the Academy page. Cost and slot count update immediately (suggested by Total-Ad-6056).',
+            '✨ F1 Dynasty logo is now a link back to the main menu — tap the nav logo at any time to return to the landing page (your progress is auto-saved first) (suggested by scuderiaferrarifan).',
+            '⚖️ FIA minimum age for F1 race seats: drivers under 18 can no longer be signed as race drivers. The error message explains the rule and suggests signing them as a reserve or junior instead. Reserve and academy signing are unaffected (suggested by scuderiaferrarifan).',
+            '⚖️ Prospect pool throttle: in early seasons when the named real-world grid is still mostly intact, the pool is topped up more conservatively (targeting 4–6 prospects vs 10+ in later saves). This prevents a year-1 flood of unscoutable prospects and means newgens feel meaningful when they do appear (suggested by scuderiaferrarifan).',
+            '🔧 Save migration: AI team reserveIds are now resynced against actual driver state on load, clearing stale references from old saves.',
+    ]],
     ['v2.3.3','Apr 2026',[
             '🐛 Car page: the headline OVR number now correctly shows the computed car rating (same value as all other OVR displays). Previously it showed the raw carPerformance property which does not account for engine contribution and sub-stat weighting, so it read lower than actual OVR after upgrades (reported by Kuski007).',
             '🐛 Setup quality: picking the midpoint of the engineers recommended range no longer always registers as a Perfect setup. The hidden true ideal offset is now pre-computed when the Car page is rendered, so the Perfect / Good / Poor label is accurate from the moment you set your aero balance (reported by Polkiu4863).',
@@ -16691,7 +16871,27 @@ const GameActions = {
       UI.showView('scouting'); return;
     }
     if(!status.sponsorsDone){
-      UI.toast('Sign at least one sponsor before starting the season','warning');
+      // Softlock guard — if no sponsors AND no pending offers, generate an emergency offer so the player isn't stuck
+      if(!(g.pendingSponsors||[]).length){
+        if(!g.pendingSponsors) g.pendingSponsors=[];
+        const emergencyTeam = State.getPlayerTeam();
+        const _emergencyBrands=['Aramco','MSC Cruises','Pirelli','AWS','DHL','Heineken','Rolex'];
+        const _avail=_emergencyBrands.filter(b=>!(g.sponsors||[]).some(s=>s.name===b)&&!g.pendingSponsors.some(s=>s.name===b));
+        if(_avail.length && emergencyTeam){
+          const _eb=_avail[Math.floor(Math.random()*_avail.length)];
+          g.pendingSponsors.push({
+            name:_eb,
+            type:'Associate',
+            value:Math.max(1, Math.round((emergencyTeam.revenue*0.08)/5)*5),
+            seasonsLeft:1,
+            totalSeasons:1,
+            minPosition:12,
+            isEmergency:true,
+            pendingSponsorId:Date.now()
+          });
+        }
+      }
+      UI.toast('You need at least one sponsor — sign a waiting offer on the Finance page first','warning');
       UI.showView('finance'); return;
     }
     // Check reserve drivers (optional — just warn if missing)
@@ -17861,6 +18061,7 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     const d=State.getDriver(driverId); if(!d) return;
     const team=State.getPlayerTeam(), current=State.getPlayerDrivers();
     if(current.length>=2){UI.toast('Already have 2 race drivers. Release one first.','warning');return;}
+    if((d.age||0) < 18){UI.toast(`${d.name} is only ${d.age} — FIA regulations require a driver to be at least 18 to hold an F1 race seat. Sign as reserve or junior instead.`,'warning');return;}
     // Open negotiation modal instead of instant sign
     UI.showSigningNegotiation(driverId, false);
   },
@@ -18009,6 +18210,24 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     UI.toast(`${name} founded! Recruit your first junior driver.`, 'success');
     UI.renderAcademy();
     if(typeof gtag!=='undefined') gtag('event','academy_founded',{tier:tier.label,season:g.season});
+  },
+
+  upgradeAcademy(){
+    const g = State.game; if(!g || !g.academy) return;
+    const tiers = [
+      {label:'Starter Programme', cost:8, slots:2},
+      {label:'Development Academy', cost:15, slots:4},
+      {label:'Elite Academy', cost:28, slots:6},
+    ];
+    const ci = tiers.findIndex(t=>t.label===g.academy.tier);
+    if(ci < 0 || ci >= tiers.length-1){UI.toast('Already at the highest academy tier.','info');return;}
+    const next = tiers[ci+1];
+    g.academy.tier = next.label;
+    g.academy.annualBudget = next.cost;
+    g.academy.maxSlots = next.slots;
+    Storage.autosave();
+    UI.toast(`Academy upgraded to ${next.label} — ${next.slots} slots, ${formatMoney(next.cost)}/yr`,'success');
+    UI.renderAcademy();
   },
 
   signProspectAsJunior(driverId){
@@ -18615,7 +18834,8 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     const d=State.getDriver(driverId); if(!d) return;
     const team=State.getPlayerTeam(), current=State.getPlayerDrivers();
     if(current.length>=2){UI.toast('Already have 2 race drivers. Release one first.','warning');return;}
-
+    // FIA superlicence minimum age: drivers must be 18 to hold an F1 race seat
+    if((d.age||0) < 18){UI.toast(`${d.name} is only ${d.age} — FIA regulations require a driver to be at least 18 to hold an F1 race seat.`,'warning');return;}
     // Open negotiation modal
     UI.showSigningNegotiation(driverId, false);
   },
