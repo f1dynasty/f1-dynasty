@@ -733,8 +733,8 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:18px;max-width:320px;padding:14px 16px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
           <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">Latest Update</div>
-        <div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.3.4.1 is live</div>
-          <div style="font-size:12px;line-height:1.45;color:#666">AI teams now sign reserve drivers, academy tier upgrades, contract alerts for reserve drivers, FIA minimum age for race seats, and a raft of bug fixes from community reports.</div>
+        <div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.3.4.2 is live</div>
+          <div style="font-size:12px;line-height:1.45;color:#666">Emergency sponsor offers now surface correctly in preseason, and AI teams get a final offseason roster repair so they do not begin the year with a missing race driver.</div>
         </div>
       </div>
     </div>
@@ -787,7 +787,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </button>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.3.4.1</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.3.4.2</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -7320,6 +7320,77 @@ const spons=sumSponsorIncome(g.sponsors||[]);
         if(!team.reserveIds.includes(res.id)) team.reserveIds.push(res.id);
       }
     });
+    // ── FINAL AI ROSTER REPAIR ──
+    // Rebuild from live driver state and hard-fill any missing seats after retirements or transfer edge cases.
+    g.teams.forEach(team=>{
+      if(team.id===g.playerTeamId) return;
+      const actualRaceDrivers=State.getTeamDrivers(team.id)
+        .filter(d=>!d.isProspect&&!d.isFreeAgent&&!d.isJunior)
+        .sort((a,b)=>(b.rating||0)-(a.rating||0));
+      const actualReserves=State.getTeamReserves(team.id)
+        .filter(d=>!d.isProspect&&!d.isJunior)
+        .sort((a,b)=>(b.rating||0)-(a.rating||0));
+      actualRaceDrivers.slice(2).forEach(d=>{
+        d.teamId=null;
+        d.isReserve=false;
+        d.isFreeAgent=true;
+        if((d.contract||0)>0) d.contract=0;
+      });
+      actualReserves.slice(2).forEach(d=>{
+        d.teamId=null;
+        d.isReserve=false;
+        d.isFreeAgent=true;
+        if((d.contract||0)>0) d.contract=0;
+      });
+      team.driverIds=actualRaceDrivers.slice(0,2).map(d=>d.id);
+      team.reserveIds=actualReserves.slice(0,2).map(d=>d.id);
+      while(team.driverIds.length<2){
+        const takenIds=new Set(team.driverIds.concat(team.reserveIds||[]));
+        const freeAgent=State.getFreeAgents()
+          .filter(d=>!carriedNegotiationDriverIds.has(d.id)&&!takenIds.has(d.id))
+          .sort((a,b)=>(b.rating||0)-(a.rating||0))[0];
+        if(freeAgent){
+          freeAgent.teamId=team.id;
+          freeAgent.isReserve=false;
+          freeAgent.isFreeAgent=false;
+          freeAgent.isProspect=false;
+          freeAgent.prospectSeries=null;
+          freeAgent.contract=Math.max(1, freeAgent.contract||randInt(1,2));
+          if(!team.driverIds.includes(freeAgent.id)) team.driverIds.push(freeAgent.id);
+          continue;
+        }
+        const rookie=State._generateDriver(g.nextDriverId++,g.season+1,team.id,'generated');
+        rookie.isReserve=false;
+        rookie.isFreeAgent=false;
+        rookie.contract=Math.max(1, rookie.contract||2);
+        g.drivers.push(rookie);
+        team.driverIds.push(rookie.id);
+      }
+      while((team.reserveIds||[]).length<2){
+        const takenIds=new Set(team.driverIds.concat(team.reserveIds||[]));
+        const reserveFreeAgent=State.getFreeAgents()
+          .filter(d=>!carriedNegotiationDriverIds.has(d.id)&&!takenIds.has(d.id)&&(d.rating||0)>=58&&(d.rating||0)<82)
+          .sort((a,b)=>(b.rating||0)-(a.rating||0))[0];
+        if(reserveFreeAgent){
+          reserveFreeAgent.teamId=team.id;
+          reserveFreeAgent.isReserve=true;
+          reserveFreeAgent.isFreeAgent=false;
+          reserveFreeAgent.isProspect=false;
+          reserveFreeAgent.prospectSeries=null;
+          reserveFreeAgent.contract=Math.max(1, reserveFreeAgent.contract||1);
+          reserveFreeAgent.salary=State.getDriverDemandSalary(reserveFreeAgent,'reserve');
+          if(!team.reserveIds.includes(reserveFreeAgent.id)) team.reserveIds.push(reserveFreeAgent.id);
+          continue;
+        }
+        const reserveRookie=State._generateDriver(g.nextDriverId++,g.season+1,team.id,'generated');
+        reserveRookie.isReserve=true;
+        reserveRookie.isFreeAgent=false;
+        reserveRookie.contract=1;
+        reserveRookie.salary=State.getDriverDemandSalary(reserveRookie,'reserve');
+        g.drivers.push(reserveRookie);
+        if(!team.reserveIds.includes(reserveRookie.id)) team.reserveIds.push(reserveRookie.id);
+      }
+    });
     const playerRosterTeam = State.getPlayerTeam();
     if(playerRosterTeam){
       const protectedDrivers = protectedPlayerRoster
@@ -11850,6 +11921,9 @@ const personalSlots = getPersonalSponsorSlots(d);
 
   renderFinance(){
     const g=State.game, team=State.getPlayerTeam();
+    if((g.offseasonPending||g.raceIndex===0)&&!(g.sponsors||[]).length&&!(g.pendingSponsors||[]).length&&window.GameActions?.ensureEmergencySponsorOffer){
+      GameActions.ensureEmergencySponsorOffer();
+    }
     const drivers=State.getPlayerDrivers();
     const sponsors=g.sponsors||[];
     const sponsorTypeOrder=['Title','Works','Primary','Partner','Secondary','Technical','Associate'];
@@ -11866,6 +11940,7 @@ const personalSlots = getPersonalSponsorSlots(d);
         || ((bsp.value||0)-(asp.value||0))
         || asp.name.localeCompare(bsp.name);
     });
+    const emergencyOffers=sortedPendingSponsors.filter(({sp})=>sp.isEmergency);
     const sponsorSummaryHtml=sponsorTypeOrder.map(type=>{
       const signed=sortedSponsors.filter(({sp})=>sp.type===type).length;
       const available=sortedPendingSponsors.filter(({sp})=>sp.type===type).length;
@@ -11964,6 +12039,10 @@ const personalSlots = getPersonalSponsorSlots(d);
           <div class="finance-card-title" style="margin:0">Sponsorship Deals</div>
           <div style="font-size:11px;color:var(--grn);font-weight:700">+${formatMoney(sponsorIncome)}/yr total</div>
         </div>
+        ${emergencyOffers.length?`<div style="margin-bottom:12px;padding:10px 12px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.35);border-radius:8px">
+          <div style="font-size:11px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:#b45309;margin-bottom:4px">Emergency Offer Available</div>
+          <div style="font-size:12px;color:var(--tx2);line-height:1.5">You need at least one sponsor to begin preseason. A fallback sponsor offer has been added below so you always have a visible way forward.</div>
+        </div>`:''}
         ${(()=>{
           const tierCaps={'Title':1,'Works':1,'Primary':2,'Partner':1,'Secondary':3,'Technical':3,'Associate':5};
           const constrTitles=(g.careerStats?.constructorChampionships||0);
@@ -12308,6 +12387,9 @@ const personalSlots = getPersonalSponsorSlots(d);
 
   renderOffseasonPlanning(){
     const g=State.game, team=State.getPlayerTeam();
+    if((g.offseasonPending||g.raceIndex===0)&&!(g.sponsors||[]).length&&!(g.pendingSponsors||[]).length&&window.GameActions?.ensureEmergencySponsorOffer){
+      GameActions.ensureEmergencySponsorOffer();
+    }
     const sponsorTypeOrder=['Title','Works','Primary','Partner','Secondary','Technical','Associate'];
     const sponsorTypeRank=t=>{ const i=sponsorTypeOrder.indexOf(t); return i>=0?i:99; };
     const sponsorEntries=(g.sponsors||[]).map((sp,idx)=>({sp,idx}));
@@ -12331,6 +12413,7 @@ const personalSlots = getPersonalSponsorSlots(d);
         <span style="color:var(--tx3)">${signed} signed · ${available} available</span>
       </div>`;
     }).filter(Boolean).join('');
+    const emergencyOffers=sortedPendingSponsors.filter(({sp})=>sp.isEmergency);
     // Generate morale + chemistry summary for offseason view
     const _chemSummary = State.getPlayerDrivers().map(d=>{
       const td=DATA.traitDefs[d.trait||'consistent']||{};
@@ -12507,6 +12590,10 @@ const personalSlots = getPersonalSponsorSlots(d);
           <a href="javascript:void(0)" onclick="UI.showView('scouting')" class="offseason-badge ${g.scoutingChosen?'ob-done':'ob-pending'}" style="text-decoration:none">${g.scoutingChosen?'✓ Set':'Choose →'}</a>
         </div>
 
+        ${emergencyOffers.length?`<div style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.35);border-radius:9px;padding:12px 14px;margin-bottom:14px">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#b45309;margin-bottom:6px">⚠️ Emergency sponsor rescue</div>
+          <div style="font-size:12px;color:var(--tx2);line-height:1.55">No active sponsors were found, so a fallback offer has been added. Open Finance and sign it before starting the season.</div>
+        </div>`:''}
         ${(()=>{
           const unhappy=(g.sponsors||[]).filter(s=>s.lastSeasonMood==='unhappy'||s.lastSeasonMood==='very_unhappy');
           const expiring=(g.sponsors||[]).filter(s=>s.seasonsLeft<=1);
@@ -15906,8 +15993,12 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.3.4.1 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.3.4.2 · Release Notes</div>
         ${[
+    ['v2.3.4.2','Apr 2026',[
+            '🐛 Emergency sponsor rescue visibility: preseason now proactively creates a fallback sponsor offer when you have no active deals, and both Offseason and Finance show a clear emergency callout so the offer is not hidden.',
+            '🐛 AI roster repair: added a final offseason sanity pass that rebuilds each AI team from live driver state and force-fills missing race and reserve seats after retirements, releases, and transfer-chain edge cases.',
+    ]],
     ['v2.3.4.1','Apr 2026',[
             '🐛 Mobile main menu scroll: the landing page now scrolls properly on mobile again, fixing a regression where some phones could not reach the lower part of the main menu.',
             '🐛 Driver negotiations near season end: player-target talks carried into offseason are now protected from the AI signing pass, so a driver you are still negotiating with cannot immediately disappear into another team before you resolve the deal.',
@@ -16884,26 +16975,7 @@ const GameActions = {
       UI.showView('scouting'); return;
     }
     if(!status.sponsorsDone){
-      // Softlock guard — if no sponsors AND no pending offers, generate an emergency offer so the player isn't stuck
-      if(!(g.pendingSponsors||[]).length){
-        if(!g.pendingSponsors) g.pendingSponsors=[];
-        const emergencyTeam = State.getPlayerTeam();
-        const _emergencyBrands=['Aramco','MSC Cruises','Pirelli','AWS','DHL','Heineken','Rolex'];
-        const _avail=_emergencyBrands.filter(b=>!(g.sponsors||[]).some(s=>s.name===b)&&!g.pendingSponsors.some(s=>s.name===b));
-        if(_avail.length && emergencyTeam){
-          const _eb=_avail[Math.floor(Math.random()*_avail.length)];
-          g.pendingSponsors.push({
-            name:_eb,
-            type:'Associate',
-            value:Math.max(1, Math.round((emergencyTeam.revenue*0.08)/5)*5),
-            seasonsLeft:1,
-            totalSeasons:1,
-            minPosition:12,
-            isEmergency:true,
-            pendingSponsorId:Date.now()
-          });
-        }
-      }
+      this.ensureEmergencySponsorOffer();
       UI.toast('You need at least one sponsor — sign a waiting offer on the Finance page first','warning');
       UI.showView('finance'); return;
     }
@@ -17296,7 +17368,31 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     const seasonStarted=(g.calendar||[]).some(r=>r.qualiDone||r.raceDone||r.sprintQualiDone||r.sprintDone);
     const status=this._getPreseasonStatus();
     if(!seasonStarted) g.offseasonPending=true;
+    if(g.offseasonPending) this.ensureEmergencySponsorOffer();
     return status;
+  },
+  ensureEmergencySponsorOffer(){
+    const g=State.game;
+    if(!g || (!g.offseasonPending && g.raceIndex!==0)) return null;
+    if((g.sponsors||[]).length>0 || (g.pendingSponsors||[]).length>0) return null;
+    const emergencyTeam = State.getPlayerTeam();
+    if(!emergencyTeam) return null;
+    if(!g.pendingSponsors) g.pendingSponsors=[];
+    const emergencyBrands=['Aramco','MSC Cruises','Pirelli','AWS','DHL','Heineken','Rolex'];
+    const availableBrands=emergencyBrands.filter(b=>!(g.sponsors||[]).some(s=>s.name===b)&&!g.pendingSponsors.some(s=>s.name===b));
+    if(!availableBrands.length) return null;
+    const offer={
+      name:availableBrands[Math.floor(Math.random()*availableBrands.length)],
+      type:'Associate',
+      value:Math.max(1, Math.round((emergencyTeam.revenue*0.08)/5)*5),
+      seasonsLeft:1,
+      totalSeasons:1,
+      minPosition:12,
+      isEmergency:true,
+      pendingSponsorId:Date.now()
+    };
+    g.pendingSponsors.push(offer);
+    return offer;
   },
   _ensureCanEnterWeekend(){
     const g=State.game;
