@@ -733,8 +733,8 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:18px;max-width:320px;padding:14px 16px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
           <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">Latest Update</div>
-        <div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.3.4.2 is live</div>
-          <div style="font-size:12px;line-height:1.45;color:#666">Emergency sponsor offers now surface correctly in preseason, and AI teams get a final offseason roster repair so they do not begin the year with a missing race driver.</div>
+        <div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.3.6 is live</div>
+          <div style="font-size:12px;line-height:1.45;color:#666">Release candidate fixes: Hard/Nightmare prospect caps now apply on fresh saves, duplicate real-driver starts are cleaned up, academy retirements are hardened, and grid scouting reports now resolve correctly.</div>
         </div>
       </div>
     </div>
@@ -771,6 +771,13 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
           </button>
         </div>
       </div>
+      <div class="land-form-title">Difficulty</div>
+      <div id="landing-difficulty-row" style="display:flex;gap:8px;margin-bottom:16px">
+        <button onclick="UI.setLandingDifficulty('normal',this)" class="diff-btn diff-btn-active" data-diff="normal" style="flex:1;padding:9px 6px;border:1.5px solid var(--red);border-radius:8px;font-size:12px;font-weight:700;background:rgba(192,57,43,.08);color:var(--red);cursor:pointer">Normal</button>
+        <button onclick="UI.setLandingDifficulty('hard',this)" class="diff-btn" data-diff="hard" style="flex:1;padding:9px 6px;border:1.5px solid #e0e0dd;border-radius:8px;font-size:12px;font-weight:700;background:#fff;color:#888;cursor:pointer">Hard</button>
+        <button onclick="UI.setLandingDifficulty('nightmare',this)" class="diff-btn" data-diff="nightmare" style="flex:1;padding:9px 6px;border:1.5px solid #e0e0dd;border-radius:8px;font-size:12px;font-weight:700;background:#fff;color:#888;cursor:pointer">Nightmare</button>
+      </div>
+      <div id="landing-difficulty-desc" style="font-size:11px;color:var(--tx3);margin-bottom:14px;margin-top:-10px;min-height:16px">Standard experience. Board targets are fair and your starting budget is intact.</div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
         <div class="land-form-title" style="margin:0">Choose Your Constructor</div>
         <div style="display:flex;align-items:center;gap:10px">
@@ -787,7 +794,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </button>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.3.4.2</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.3.6</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -990,7 +997,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
     <!-- DASHBOARD -->
     <div id="view-dashboard" class="view active">
       <div class="view-top">
-        <div id="dash-title" class="view-title">Dashboard</div>
+        <div id="dash-title" class="view-title">Dashboard</div><span id="dash-difficulty-badge" style="display:none;font-size:10px;font-weight:700;padding:2px 8px;border-radius:8px;margin-left:8px;vertical-align:middle"></span>
         <div id="dash-next-race" class="view-sub"></div>
       </div>
 
@@ -1692,6 +1699,13 @@ const DATA = {
 
 // =============================================
 // UTILITIES
+// ── Difficulty helpers ───────────────────────────────────────────────────────
+const DIFFICULTY = {
+  normal:    { label:'Normal',    budgetMult:1.0, devRateBoostAI:0,   boardStrictness:1.0, stratVariety:0,   prospectCap:97 },
+  hard:      { label:'Hard',      budgetMult:0.80, devRateBoostAI:4,  boardStrictness:1.3, stratVariety:1,   prospectCap:93 },
+  nightmare: { label:'Nightmare', budgetMult:0.62, devRateBoostAI:8,  boardStrictness:1.6, stratVariety:2,   prospectCap:89 },
+};
+function getDiff(g){ return DIFFICULTY[(g&&g.gameDifficulty)||'normal'] || DIFFICULTY.normal; }
 // =============================================
 function clamp(v,min,max){return Math.max(min,Math.min(max,v));}
 function randInt(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
@@ -2513,6 +2527,37 @@ const Editor = {
     this.persist();
     if(typeof UI !== 'undefined') UI.renderEditor();
   },
+  startSwap(pool, index, teamId, year) {
+    const key = [pool, teamId||'', year||'', index].join(':');
+    if(!window._editorSwapSelection) {
+      // First click — select this driver
+      window._editorSwapSelection = { key, pool, index, teamId: teamId||null, year: year||null };
+      if(typeof UI !== 'undefined') { UI.renderEditor(); UI.toast('Driver selected — now click ⇄ on the driver to swap with.', 'info'); }
+      return;
+    }
+    if(window._editorSwapSelection.key === key) {
+      // Clicked same driver again — deselect
+      window._editorSwapSelection = null;
+      if(typeof UI !== 'undefined') UI.renderEditor();
+      return;
+    }
+    // Second click — perform the swap
+    const a = window._editorSwapSelection;
+    const listA = this.getPool(a.pool, a.teamId, a.year);
+    const listB = this.getPool(pool, teamId||null, year||null);
+    if(!listA || !listB || !listA[a.index] || !listB[index]) {
+      window._editorSwapSelection = null;
+      if(typeof UI !== 'undefined') { UI.renderEditor(); UI.toast('Swap failed — driver not found.', 'error'); }
+      return;
+    }
+    const driverA = listA[a.index];
+    const driverB = listB[index];
+    listA[a.index] = driverB;
+    listB[index] = driverA;
+    window._editorSwapSelection = null;
+    this.persist();
+    if(typeof UI !== 'undefined') { UI.renderEditor(); UI.toast(`Swapped ${driverA.name} ↔ ${driverB.name}`, 'success'); }
+  },
   getProspectClasses() {
     return this._state?.prospectClasses || [...DATA.prospectSeries];
   },
@@ -2600,6 +2645,7 @@ const State = {
     const teams = template.teams.map(t => this._buildTeam(t));
     const allDrivers = [];
     let nextDriverId = 1;
+    this._generatingNames = [];
     teams.forEach(team => {
       // Pick correct season lineup
       const seasonLineup = (template.seasonDrivers[startYear]||{})[team.id];
@@ -2642,8 +2688,8 @@ const State = {
     const prospects = [];
     const namedProspects = [...(template.namedProspects||[])];
     namedProspects.forEach(dDef => {
-      // Skip if already exists as a race driver (reserves can also be in namedProspects)
-      if(allDrivers.some(x=>x.name===dDef.name && !x.isReserve)) return;
+      // Never seed the same real driver twice at game start.
+      if(allDrivers.some(x=>x.name===dDef.name)) return;
       const d = this._buildDriver(dDef, null, nextDriverId++);
       d.isProspect = true;
       d.prospectSeries = dDef.series || 'F2';
@@ -2683,7 +2729,7 @@ const State = {
     const calData=startYear<=2026?DATA.calendar:DATA.calendarFull;
     const calendar=calData.map((race,i)=>({...race,id:i,season:startYear,qualiDone:false,raceDone:false,qualiResult:null,raceResult:null,sprintQualiDone:false,sprintDone:false,sprintQualiResult:null,sprintResult:null}));
     this.game = {
-      version:1, managerName, playerTeamId:teamId, season:startYear, raceIndex:0,
+      version:1, managerName, playerTeamId:teamId, season:startYear, raceIndex:0, gameDifficulty: this._pendingDifficulty || 'normal',
       teams, drivers:allDrivers, nextDriverId, calendar,
       engineManufacturers: JSON.parse(JSON.stringify(DATA.engineManufacturers)),
       academy: null, // null = not founded yet
@@ -2698,6 +2744,16 @@ nextRegsYear: startYear + randInt(3,5), regsHistory: [],
       careerStats: {seasons:[], totalWins:0, totalPodiums:0, totalPoles:0, championships:0, constructorChampionships:0},
       prospectClasses: template.prospectClasses && template.prospectClasses.length > 0 ? [...template.prospectClasses] : [...DATA.prospectSeries],
     };
+    this._generatingNames = null;
+    // Apply difficulty budget penalty to player team starting revenue
+    const _diff = getDiff(this.game);
+    if(_diff.budgetMult < 1.0) {
+      const _pt = this.game.teams.find(t=>t.id===teamId);
+      if(_pt) {
+        _pt.revenue = Math.round(_pt.revenue * _diff.budgetMult);
+        if(this.game.finances && this.game.finances[teamId]) this.game.finances[teamId].revenue = _pt.revenue;
+      }
+    }
     return this.game;
   },
   _buildTeam(tDef) {
@@ -2739,7 +2795,17 @@ return {id,name:def.name,age:def.age,nationality:def.nationality||DATA.nationali
     let baseAge, potential, baseRating;
     if(isProspect){
       baseAge = 17 + Math.floor(Math.random()*5);
-      potential = 72 + Math.floor(Math.random()*26);
+      // Tiered potential: ~8% elite (88-97), ~22% upper (78-88), ~70% midfield (62-78)
+      const potRoll = Math.random();
+      if(potRoll < 0.08)       potential = 88 + Math.floor(Math.random()*10); // elite ceiling
+      else if(potRoll < 0.30)  potential = 78 + Math.floor(Math.random()*11); // upper
+      else                     potential = 62 + Math.floor(Math.random()*17); // midfield
+      // Difficulty caps the absolute ceiling of generated prospects.
+      // During new-game generation this.game is not built yet, so fall back to the
+      // pending difficulty selected on the landing page.
+      const _diffGame = this.game || { gameDifficulty: this._pendingDifficulty || 'normal' };
+      const _pCap = getDiff(_diffGame).prospectCap;
+      potential = Math.min(potential, _pCap);
       baseRating = Math.max(52, potential - 18 - Math.floor(Math.random()*12));
     } else if(isFreeAgent){
       baseAge = 26 + Math.floor(Math.random()*10);
@@ -2838,7 +2904,7 @@ return {id,name:def.name,age:def.age,nationality:def.nationality||DATA.nationali
     const lnPool = natLnGroups[lnGroup] || DATA.lastNames;
     // Ensure generated name is unique across all existing drivers (retry up to 8 times)
     let fn, ln;
-    const _existingNames = new Set((this.game?.drivers||[]).filter(d=>!d.retired).map(d=>d.name));
+    const _existingNames = new Set([...(this.game?.drivers||[]).filter(d=>!d.retired).map(d=>d.name), ...(this._generatingNames||[])]);
     for(let _ni=0;_ni<8;_ni++){
       fn = fnPool[Math.floor(Math.random()*fnPool.length)];
       ln = lnPool[Math.floor(Math.random()*lnPool.length)];
@@ -2847,6 +2913,8 @@ return {id,name:def.name,age:def.age,nationality:def.nationality||DATA.nationali
 const _genConsistency=clamp(baseRating+randInt(-10,5),40,99);
 const _genAggression=randInt(45,90);
 const _genEnergyMgmt=clamp(_genConsistency+randInt(-10,10)+(100-_genAggression)*0.08,38,94);
+    if(!this._generatingNames) this._generatingNames = [];
+    this._generatingNames.push(`${fn} ${ln}`);
 return {id,name:`${fn} ${ln}`,age:baseAge,nationality:nat,teamId:teamId||null,rating:baseRating,potential,qualifying:clamp(baseRating+randInt(-5,5),45,99),racePace:clamp(baseRating+randInt(-5,5),45,99),consistency:_genConsistency,wet:clamp(baseRating+randInt(-10,10),40,99),aggression:_genAggression,energyMgmt:_genEnergyMgmt,marketability:clamp(baseRating+randInt(-15,15),30,99),morale:randInt(60,90),salary:isProspect?1:isFreeAgent?Math.floor(baseRating/12):isReserve?1:Math.floor(baseRating/15),contract:randInt(1,3),seasonPoints:0,totalPoints:0,wins:0,sprintWins:0,poles:0,podiums:0,fastestLaps:0,championships:0,retired:false,rookie:isRookie,isReserve:isReserve||false,isProspect:isProspect||false,isFreeAgent:isFreeAgent||false,_isGenerated:true,careerStart:season};
   },
   getTeam(id){return this.game.teams.find(t=>t.id===id);},
@@ -2916,7 +2984,7 @@ return {id,name:`${fn} ${ln}`,age:baseAge,nationality:nat,teamId:teamId||null,ra
       d.isJunior = true;
       d.isReserve = false;
       d.isFreeAgent = false;
-      d.contract = 0;
+      d.contract = 1; // keep contract=1 so the free-agent release loop ignores this driver
       d.salary = 1;
       if(!acad.juniors.some(j => j.id === d.id)) acad.juniors.push(d);
       const expBoost = randFloat(0.8, 2.2);
@@ -2932,6 +3000,32 @@ return {id,name:`${fn} ${ln}`,age:baseAge,nationality:nat,teamId:teamId||null,ra
     });
     acad.loans = acad.loans.filter(l => (l.returnSeason || 0) > effectiveSeason);
     return loansDone;
+  },
+  retireOverAgeAcademyDrivers(){
+    const g = this.game;
+    const acad = g?.academy;
+    if(!g || !acad) return [];
+    acad.juniors = acad.juniors || [];
+    acad.loans = acad.loans || [];
+    const academyDriverIds = new Set([
+      ...acad.juniors.map(j => j.id),
+      ...acad.loans.map(l => l.driverId)
+    ]);
+    const overAgeIds = (g.drivers||[])
+      .filter(d => academyDriverIds.has(d.id) && !d.retired && (d.age||0) >= 30)
+      .map(d => d.id);
+    if(overAgeIds.length === 0) return [];
+    overAgeIds.forEach(jid => {
+      const d = this.getDriver(jid);
+      if(d) { d.retired = true; d.teamId = null; d.isJunior = false; d.isFreeAgent = false; d.isReserve = false; }
+      (g.teams||[]).forEach(t => {
+        t.driverIds = (t.driverIds||[]).filter(id => id !== jid);
+        t.reserveIds = (t.reserveIds||[]).filter(id => id !== jid);
+      });
+    });
+    acad.juniors = acad.juniors.filter(j => !overAgeIds.includes(j.id));
+    acad.loans = acad.loans.filter(l => !overAgeIds.includes(l.driverId));
+    return overAgeIds;
   },
   getDriverStandings(){
     const g = this.game;
@@ -3521,10 +3615,32 @@ const Sim = {
           chosenId = (stratData.options.find(o=>o.recommended)?.id) || stratData.options[0]?.id;
         } else {
           const recommended = stratData.options.find(o=>o.recommended);
+          const _diff = getDiff(g);
+          // Strategy variety: backmarkers and midfield use non-optimal strategies for realism
+          // On Hard/Nightmare, AI strategy spread is wider
+          const varietyRoll = Math.random();
+          const varietyThresh = _diff.stratVariety === 2 ? 0.55 : _diff.stratVariety === 1 ? 0.40 : 0.25;
+          const isBackmarker = startPos >= 14;
+          const isMidfield = startPos >= 8 && startPos < 14;
           if(weather !== 'dry' && weatherRisk > 0.15 && driver.wet >= 84) {
             chosenId = (stratData.options.find(o=>o.id === 'reactive') || recommended || stratData.options[0])?.id;
           } else if(startPos <= 4 && stratData.oneStopBetter) {
             chosenId = (stratData.options.find(o=>o.id === '1stop_MH') || recommended || stratData.options[0])?.id;
+          } else if(isBackmarker && varietyRoll < varietyThresh) {
+            // Backmarkers gamble: soft start for aggressive strategy or hard for longevity
+            const gamblerRoll = Math.random();
+            if(gamblerRoll < 0.45) {
+              chosenId = stratData.options.find(o=>o.id==='1stop_SH')?.id || stratData.options.find(o=>o.id==='2stop_SMH')?.id;
+            } else {
+              // Hard tyre start — long first stint, late pit
+              chosenId = stratData.options.find(o=>o.id==='1stop_MH')?.id;
+            }
+            chosenId = chosenId || recommended?.id || stratData.options[0]?.id;
+          } else if(isMidfield && varietyRoll < varietyThresh * 0.6) {
+            // Midfield teams occasionally split strategy from teammate
+            const altOptions = stratData.options.filter(o=>o.id !== recommended?.id);
+            chosenId = altOptions.length ? altOptions[Math.floor(Math.random()*altOptions.length)].id : recommended?.id;
+            chosenId = chosenId || recommended?.id || stratData.options[0]?.id;
           } else if(startPos >= 10 && !stratData.oneStopBetter) {
             chosenId = (stratData.options.find(o=>o.id === '2stop_SMH') || recommended || stratData.options[0])?.id;
           } else {
@@ -6323,6 +6439,50 @@ events.push({lap:r.dnfLap||laps-5, type:'dnf', driverId:r.driverId, text:`⭐ ${
       }
     }
 
+    // ── 6b. AI teams poach player drivers with expiring contracts ──────────────
+    // From race 8+, a rival can approach a player driver in their final year.
+    // Player gets a news item and can renew before the driver decides.
+    try { if(raceN >= 8 && raceN <= totalRaces - 2 && Math.random() < 0.35) {
+      const alreadyMoving = new Set((g.preSeasonMoves||[]).map(m=>m.driverId));
+      const alreadyNeg    = new Set((g.pendingNegotiations||[]).map(n=>n.driverId));
+      // Find player drivers in their last year who aren't already committed/in talks
+      const poachTargets = g.drivers.filter(d=>
+        d.teamId === g.playerTeamId && !d.retired && !d.isReserve && !d.isJunior &&
+        d.contract <= 1 && !alreadyMoving.has(d.id) && !alreadyNeg.has(d.id)
+      );
+      if(poachTargets.length > 0) {
+        const target = poachTargets[Math.floor(Math.random()*poachTargets.length)];
+        // Only elite or high-morale mismatch drivers get poached
+        const isValuable = target.rating >= 82;
+        const isMoraleLow = target.morale < 58;
+        if(isValuable || isMoraleLow) {
+          // Find a suitor that's a step up in car performance
+          const playerCar = getTeamOverallCar(State.getPlayerTeam());
+          const suitors = g.teams.filter(t=>t.id!==g.playerTeamId&&!t.retired).sort((a,b)=>b.prestige-a.prestige);
+          const suitor = suitors.find(t=>{
+            const tDvrs = State.getTeamDrivers(t.id).filter(d=>!d.isReserve);
+            const committed = (g.preSeasonMoves||[]).filter(m=>m.toTeamId===t.id&&!m.isRenewal).length;
+            if(tDvrs.length + committed >= 2) return false;
+            const carAdvantage = getTeamOverallCar(t) - playerCar;
+            return carAdvantage >= -3 && t.revenue/10 >= target.salary * 0.9;
+          });
+          if(suitor) {
+            const sName = suitor.name;
+            const dName = target.name;
+            const reason = isMoraleLow ? `unhappy at ${State.getPlayerTeam()?.name||'your team'}` : `attracted by a stronger project at ${sName}`;
+            if(!g.newsFeed) g.newsFeed=[];
+            g.newsFeed.unshift({
+              msg:`⚠️ <strong>EXCLUSIVE:</strong> ${sName} have made an approach for <strong>${dName}</strong>, ${reason}. His contract expires at season end — renew or risk losing him.`,
+              type:'warning', icon:'🔀', race:raceN, ts:Date.now()
+            });
+            // Store the poach so the offseason can action it if player hasn't renewed
+            if(!g.poachAttempts) g.poachAttempts=[];
+            g.poachAttempts.push({driverId:target.id, suitorId:suitor.id, suitorName:sName, race:raceN});
+          }
+        }
+      }
+    } } catch(e) { console.warn('Poach attempt error:', e); }
+
     // ── 7. Player transfer market notification (race 6 only) ──
     try { if(raceN === 6) {
       const approachable = g.drivers.filter(d=>
@@ -6922,6 +7082,7 @@ const spons=sumSponsorIncome(g.sponsors||[]);
       const latestSeason = g.careerStats.seasons[g.careerStats.seasons.length-1];
       latestSeason.bigDevGain = (g.lastSeasonSnapshot?.drivers||[]).some(sd => (sd.ratingDelta||0) >= 5);
     }
+    State.retireOverAgeAcademyDrivers();
     // ── END POST-DEV DELTA CAPTURE ────────────────────────────────────────────
 
     return {driverChamp, constructorChamp, retirements: g.retirements.filter(r=>r.season===g.season), objResults: g.boardObjectivesResult||[]};
@@ -7061,7 +7222,7 @@ const spons=sumSponsorIncome(g.sponsors||[]);
       }
       if(!toTeam.driverIds.includes(d.id)) toTeam.driverIds.push(d.id);
       executedMoves.add(d.id);
-      transfers.push({driverName:d.name,from:move.fromTeamName,to:move.toTeamName,teamId:move.toTeamId,preSigned:true,reason:move.reason||'pre-season agreement'});
+      transfers.push({driverName:d.name,from:move.fromTeamName,to:move.toTeamName,teamId:move.toTeamId,preSigned:true,reason:move.reason||'pre-season agreement',rating:Math.round(d.rating||0)});
     });
     g.preSeasonMoves=[];
     g.pendingNegotiations=carryNegotiations; // keep player-target talks alive into offseason so they can be resolved manually
@@ -7071,7 +7232,7 @@ const spons=sumSponsorIncome(g.sponsors||[]);
 
     // ── Release expired contracts ──
     g.drivers.forEach(d=>{
-      if(!d.retired&&d.contract<=0&&!executedMoves.has(d.id)){
+      if(!d.retired&&!d.isJunior&&d.contract<=0&&!executedMoves.has(d.id)){
         // Remember prev team for UI
         if(d.teamId){ const t=State.getTeam(d.teamId); d._prevTeamName=t?t.name:''; }
         d.teamId=null;
@@ -7169,6 +7330,14 @@ const spons=sumSponsorIncome(g.sponsors||[]);
         if(d.rating>=70 || d.age<=22){
           transfers.push({driverName:d.name,from:_fromSeries,to:'Free Agency',graduated:true});
         }
+        // Bookmark notification — alert player if they were watching this driver
+        if(d.bookmarked) {
+          if(!g.newsFeed) g.newsFeed=[];
+          g.newsFeed.unshift({
+            msg:`⭐ <strong>${d.name}</strong> is now a free agent — you bookmarked them earlier. Head to the Drivers tab to sign before a rival team does.`,
+            type:'success', icon:'⭐', race:g.raceIndex, ts:Date.now()
+          });
+        }
       }
     });
 
@@ -7205,10 +7374,28 @@ const spons=sumSponsorIncome(g.sponsors||[]);
     });
 
     // ── PLAYER POACH ATTEMPTS ───────────────────────────────────────────────
-    // Rival interest is handled during the season via the normal transfer-watch flow.
-    // Do not generate fresh poach attempts inside offseason processing, or player
-    // rosters can feel like they are collapsing while trying to complete preseason.
-    if(!g.poachAttempts) g.poachAttempts=[];
+    // Action any outstanding poach attempts — if the player didn't renew the driver,
+    // they leave to the rival team that approached them.
+    if(g.poachAttempts && g.poachAttempts.length > 0) {
+      g.poachAttempts.forEach(attempt => {
+        const d = State.getDriver(attempt.driverId);
+        if(!d || d.retired || d.teamId !== g.playerTeamId) return; // already gone or renewed
+        if((d.contract||0) > 0) return; // player renewed — skip
+        // Driver leaves to suitor
+        const suitor = State.getTeam(attempt.suitorId);
+        if(!suitor) { d.teamId=null; d.isFreeAgent=true; return; }
+        const suitorDrivers = State.getTeamDrivers(suitor.id).filter(x=>!x.isReserve);
+        if(suitorDrivers.length >= 2) { d.teamId=null; d.isFreeAgent=true; return; } // full — goes free agent
+        const playerTeamObj = State.getPlayerTeam();
+        if(playerTeamObj) playerTeamObj.driverIds = (playerTeamObj.driverIds||[]).filter(id=>id!==d.id);
+        d.teamId = suitor.id; d.contract = d.rating>=86?2:1; d.salary = State.getDriverDemandSalary(d,'approach');
+        d.isReserve=false; d.isFreeAgent=false; d.morale=clamp(d.morale+10,50,95);
+        if(!suitor.driverIds) suitor.driverIds=[];
+        if(!suitor.driverIds.includes(d.id)) suitor.driverIds.push(d.id);
+        executedMoves.add(d.id);
+        transfers.push({driverName:d.name, from:playerTeamObj?.name||'your team', to:suitor.name, teamId:suitor.id, rating:Math.round(d.rating), reason:'poached — contract expired'});
+      });
+    }
     g.poachAttempts = [];
     // Patch downforce on teams for old saves
     if(g.teams) g.teams.forEach(t=>{ if(t.downforce===undefined) t.downforce=50; });
@@ -7676,7 +7863,7 @@ const spons=sumSponsorIncome(g.sponsors||[]);
         : 0;
       const infraDecay = team.facilities >= 95 ? randFloat(1.6, 2.8) : team.facilities >= 88 ? randFloat(0.9, 1.8) : randFloat(0.2, 0.8);
       const relDecayAi = team.reliability >= 95 ? randFloat(1.3, 2.4) : team.reliability >= 88 ? randFloat(0.6, 1.5) : randFloat(0.1, 0.6);
-      const _aiCarDelta = devGain + ceilingPull + floorPull + pressureBoost + eraConvergence + rivalLift - leaderPenalty + randFloat(-1.2, 1.2);
+      const _aiCarDelta = devGain + ceilingPull + floorPull + pressureBoost + eraConvergence + rivalLift - leaderPenalty + randFloat(-1.2, 1.2) + getDiff(g).devRateBoostAI * (team.developmentRate/100) * 0.04;
       team.carPerformance = clamp(team.carPerformance + _aiCarDelta, 40, 97);
       // Engine PU nudges topSpeed toward the manufacturer's power rating over time
       const _aiEng = _liveEngines().find(e=>e.id===team.engineManufacturer);
@@ -7930,6 +8117,10 @@ const spons=sumSponsorIncome(g.sponsors||[]);
         if(j.series === 'F3' && j.yearsInAcademy >= 2) j.series = 'F2';
       });
 
+      // Release over-age academy drivers who should have retired — cover both
+      // juniors still in the programme and any juniors currently out on loan.
+      State.retireOverAgeAcademyDrivers();
+
       // Academy running cost comes out of next season budget (warn player)
       const annualCost = acad.annualBudget || 0;
       if(annualCost > 0) {
@@ -8055,7 +8246,25 @@ const spons=sumSponsorIncome(g.sponsors||[]);
     const chosen = [pick(hard), pick(medium), pick(easy)].filter(Boolean);
     // Deduplicate by id
     const seen = new Set();
-    g.boardObjectives = chosen.filter(o=>o&&!seen.has(o.id)&&seen.add(o.id)).slice(0,3);
+    const _diffCfg = getDiff(g);
+    g.boardObjectives = chosen.filter(o=>o&&!seen.has(o.id)&&seen.add(o.id)).slice(0,3).map(o=>{
+      // On Hard/Nightmare: tighten position targets, increase win/podium targets, reduce rewards
+      if(_diffCfg.boardStrictness > 1.0) {
+        const scaled = Object.assign({}, o);
+        if(o.type === 'wins' || o.type === 'podiums' || o.type === 'poles') {
+          scaled.target = Math.round(o.target * _diffCfg.boardStrictness);
+          scaled.label = scaled.label.replace(/\d+/, scaled.target);
+        } else if(o.type === 'position') {
+          // Tighten position target by 1 on hard, 2 on nightmare
+          const tighten = _diffCfg.boardStrictness >= 1.6 ? 2 : 1;
+          scaled.target = Math.max(1, o.target - tighten);
+          scaled.label = scaled.label.replace(/P\d+|top \d+|P2 or better|\d+ in Constructors/, `top ${scaled.target}`);
+        }
+        scaled.reward = Math.round(o.reward * 0.75); // lower bonus on hard modes
+        return scaled;
+      }
+      return o;
+    });
     // ── END BOARD OBJECTIVES ────────────────────────────────────────────────────
     // ── Sponsor contract management ───────────────────────────────────────────
     // Model:
@@ -8470,6 +8679,10 @@ const Storage = {
     if(!g.poachAttempts) g.poachAttempts=[];
     if(!g.injuries) g.injuries=[];
     if(!g.careerStats) g.careerStats={seasons:[],totalWins:0,totalPodiums:0,totalPoles:0,championships:0,constructorChampionships:0};
+    if(!g.gameDifficulty) g.gameDifficulty='normal';
+    if(!g.scoutedGridDrivers) g.scoutedGridDrivers=[];
+    if(!g.gridScoutQueue) g.gridScoutQueue=[];
+    if(!g.poachAttempts) g.poachAttempts=[];
     // ── New field patches — safe defaults for all fields added after v1.0 ──────
     if(g.lastSprintResult===undefined) g.lastSprintResult=null;
     if(g.autoAero===undefined) g.autoAero=false;
@@ -8913,6 +9126,21 @@ const UI = {
     }
   },  // end renderLanding
 
+  setLandingDifficulty(diff, btn) {
+    document.querySelectorAll('.diff-btn').forEach(b => {
+      b.classList.remove('diff-btn-active');
+      b.style.cssText = b.style.cssText.replace(/border:[^;]+;/,'border:1.5px solid #e0e0dd;').replace(/background:[^;]+;/,'background:#fff;').replace(/color:[^;]+;/,'color:#888;');
+    });
+    btn.classList.add('diff-btn-active');
+    btn.style.cssText = btn.style.cssText.replace(/border:[^;]+;/,'border:1.5px solid var(--red);').replace(/background:[^;]+;/,'background:rgba(192,57,43,.08);').replace(/color:[^;]+;/,'color:var(--red);');
+    const descs = {
+      normal:'Standard experience. Board targets are fair and your starting budget is intact.',
+      hard:'AI teams develop faster, board targets are tougher and you start with 20% less budget.',
+      nightmare:'Brutal. AI packs tightly behind you, board expectations are relentless, 38% less starting budget.'
+    };
+    const descEl = document.getElementById('landing-difficulty-desc');
+    if(descEl) descEl.textContent = descs[diff] || '';
+  },
   showLandingGuide(section) {
     if(typeof gtag!=='undefined') gtag('event','guide_opened',{context:'landing',section:section||'general'});
     const existing = document.getElementById('landing-guide-overlay');
@@ -9049,8 +9277,10 @@ const UI = {
           </select>
         </label>`;
       const traitIcon = {consistent:'📐',technical:'🔬',aggressive:'🔥',qualifier:'🎯',rainy:'🌧',overtaker:'⚡'}[driver.trait||'consistent']||'';
+      const swapKey = [pool, opts.teamId||'', opts.year||'', index].join(':');
+      const isSwapSelected = window._editorSwapSelection && window._editorSwapSelection.key === swapKey;
       return `
-        <details ${cardOpen?'open':''} ontoggle="Editor.setCardOpen('${pool}',${index}${extraTeamArgs}${extraSeasonArg},this.open)" style="border:1px solid var(--bd);border-radius:10px;background:var(--bg2);overflow:hidden">
+        <details ${cardOpen?'open':''} ontoggle="Editor.setCardOpen('${pool}',${index}${extraTeamArgs}${extraSeasonArg},this.open)" style="border:1px solid ${isSwapSelected?'var(--amber)':'var(--bd)'};border-radius:10px;background:var(--bg2);overflow:hidden">
           <summary style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;cursor:pointer;list-style:none;gap:8px">
             <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:0">
               <span style="font-size:13px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(driver.name||'Driver')}</span>
@@ -9059,6 +9289,7 @@ const UI = {
             </div>
             <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
               <span style="font-size:11px;font-weight:800;font-family:var(--fm);color:var(--tx)">${driver.rating} OVR</span>
+              <button class="btn btn-ghost btn-sm" onclick="event.preventDefault();event.stopPropagation();Editor.startSwap('${pool}',${index}${extraTeamArgs}${extraSeasonArg})" style="padding:2px 8px;font-size:11px;${isSwapSelected?'background:var(--amber);color:#000':'border-color:var(--amber);color:var(--amber)'}" title="Swap this driver with another">⇄</button>
               <button class="btn btn-ghost btn-sm" onclick="event.preventDefault();event.stopPropagation();Editor.removeDriver('${pool}',${index}${extraTeamArgs}${extraSeasonArg})" style="padding:2px 8px;font-size:11px">✕</button>
             </div>
           </summary>
@@ -9196,7 +9427,16 @@ const UI = {
       GameActions._syncOffseasonPending();
     }
     const cpos = State.getConstructorSeasonPos(team.id);
+    const _diffLabel = getDiff(g).label;
     document.getElementById('dash-title').textContent = `${g.managerName} — ${g.season}`;
+    // Show difficulty badge if not normal
+    const _diffBadgeEl = document.getElementById('dash-difficulty-badge');
+    if(_diffBadgeEl) {
+      _diffBadgeEl.style.display = (g.gameDifficulty && g.gameDifficulty !== 'normal') ? '' : 'none';
+      _diffBadgeEl.textContent = _diffLabel;
+      _diffBadgeEl.style.background = g.gameDifficulty === 'nightmare' ? 'rgba(220,0,0,.15)' : 'rgba(245,158,11,.15)';
+      _diffBadgeEl.style.color = g.gameDifficulty === 'nightmare' ? '#dc0000' : '#b45309';
+    }
     document.getElementById('nav-season').textContent = g.season;
     const shortName = team.name.replace('Scuderia ','').replace(' F1 Team','').replace(' Racing','').replace('-AMG','').replace(' F1',''); document.getElementById('nav-team').textContent = shortName;
 
@@ -10893,14 +11133,14 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
         const qe=queue.find(q=>q.driverId===d.id);
         const racesLeft=qe?Math.max(0,qe.completesAfterRace-racesDone):0;
         const potDisplay = hasReport
-          ? `<span class="ovr-pill ${ratingClass(sp)}" title="Scouted potential">${sp} pot</span>`
+          ? `<span class="ovr-pill ${ratingClass(sp)}" title="Scouted potential">${sp}</span>`
           : isPending
             ? `<span style="font-size:10px;color:var(--amber);font-weight:600">⏳${racesLeft}r</span>`
             : `<span style="font-size:10px;color:var(--tx3)">—</span>`;
         return `<div class="driver-list-row${myIds.includes(d.id)||myResIds.includes(d.id)?' my-drv':''}" onclick="UI.showDriverModal(${d.id})">
           <span class="dl-pos">${i+1}</span>
           <div class="dl-name-block">
-            <div class="dl-name">${d.name}${d.prospectSeries?` <span class="prospect-badge badge-${d.prospectSeries.toLowerCase().replace('indycar','ic')}">${d.prospectSeries}</span>`:''}</div>
+            <div class="dl-name">${d.name}${d.prospectSeries?` <span class="prospect-badge badge-${d.prospectSeries.toLowerCase().replace('indycar','ic')}">${d.prospectSeries}</span>`:''}${d.bookmarked?` <span style="font-size:11px;color:#f59e0b" title="Bookmarked">⭐</span>`:''}</div>
             <div class="dl-team">Prospect · Age ${d.age} · ${getNationalityFlag(d.nationality)} ${d.nationality}${(d.feederContract||0)>0?` · <span style="color:var(--amber);font-weight:700">⏳ In feeder series · free ${(g.season||2026)+d.feederContract}</span>`:' · <span style="color:var(--grn);font-weight:700">Free to sign</span>'}</div>
           </div>
           <span class="dl-ovr"><span class="ovr-pill ${ratingClass(Math.round(d.rating))}">${Math.round(d.rating)}</span></span>
@@ -10908,14 +11148,14 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
           <span class="dl-attr">${Math.round(d.racePace)}</span>
           <span class="dl-attr">${Math.round(d.qualifying)}</span>
           <span class="dl-attr dl-attr-hide">${Math.round(d.consistency)}</span>
-          <span class="dl-pts">${d.seasonPoints}</span>
+          <span class="dl-pts" onclick="event.stopPropagation();GameActions.bookmarkProspect(${d.id})" style="cursor:pointer;font-size:16px;color:${d.bookmarked?'#f59e0b':'var(--tx3)'};" title="${d.bookmarked?'Remove bookmark':'Bookmark this prospect'}">${d.bookmarked?'⭐':'☆'}</span>
         </div>`;
       }).join('');
       const hdr2=`<div class="driver-list-row driver-list-header">
         <span class="dlh-label">#</span><span class="dlh-label">Driver</span>
         <span class="dlh-label">OVR</span><span class="dlh-label">POT</span>
         <span class="dlh-label">PACE</span><span class="dlh-label">QUALI</span>
-        <span class="dlh-label dl-attr-hide">CON</span><span class="dlh-label">PTS</span>
+        <span class="dlh-label dl-attr-hide">CON</span><span class="dlh-label" title="Bookmark">☆</span>
       </div>`;
       const scoutNote = (()=>{
         const tier = DATA.scoutingTiers.find(t=>t.id===(g.scoutingTier||'none'));
@@ -11294,6 +11534,17 @@ const personalSlots = getPersonalSponsorSlots(d);
         ${mine&&!fa&&!d.isReserve?`<button class="btn btn-outline btn-sm" onclick="GameActions.demoteToReserve(${d.id})">⬇️ Move to Reserve</button>`:''}
         ${mine&&!fa?`<button class="btn btn-danger btn-sm" onclick="GameActions.releaseDriver(${d.id})">Release</button>`:''}
         ${(()=>{if(mine||fa||d.isReserve||d.isProspect||g.offseasonPending) return '';const inTalks=(g.pendingNegotiations||[]).some(n=>n.driverId===d.id);const alreadyAgreed=(g.preSeasonMoves||[]).some(m=>m.driverId===d.id)||((g.pendingNegotiations||[]).some(n=>n.driverId===d.id&&n.toTeamId!==g.playerTeamId));if(d.contract>1) return '';const tooEarly=g.raceIndex<6;if(tooEarly) return '<button class="btn btn-ghost btn-sm" disabled style="opacity:.5" title="Transfer window opens from race 6">📋 Approach (available race 6+)</button>';if(alreadyAgreed) return '<button class="btn btn-ghost btn-sm" disabled style="opacity:.5">✅ Deal agreed</button>';if(inTalks) return '<button class="btn btn-ghost btn-sm" disabled style="opacity:.6">⏳ In talks — check Paddock News</button>';return `<button class="btn btn-outline btn-sm" style="border-color:var(--grn);color:var(--grn)" onclick="UI.showApproachPicker(${d.id})">📋 Approach for Next Season</button>`})()}
+        ${(()=>{
+          // Scout a grid driver — adds them to a watchlist with scouted rating reveal
+          if(mine||d.isProspect||d.isFreeAgent||d.isReserve||!d.teamId) return '';
+          const scoutTier=DATA.scoutingTiers.find(t=>t.id===(g.scoutingTier||'none'));
+          if(!scoutTier||scoutTier.id==='none') return '';
+          const alreadyScouted = (g.scoutedGridDrivers||[]).some(s=>s.driverId===d.id);
+          if(alreadyScouted) return `<button class="btn btn-ghost btn-sm" disabled style="opacity:.6">🔭 Scouted</button>`;
+          const inQueue = (g.gridScoutQueue||[]).some(s=>s.driverId===d.id);
+          if(inQueue) return `<button class="btn btn-ghost btn-sm" disabled style="opacity:.6">⏳ Scouting...</button>`;
+          return `<button class="btn btn-ghost btn-sm" style="border-color:var(--blu);color:var(--blu)" onclick="GameActions.scoutGridDriver(${d.id})">🔭 Scout Driver</button>`;
+        })()}
         <button class="btn btn-ghost btn-sm" onclick="UI.closeModal()">Close</button>
       </div>`;
     document.getElementById('driver-detail-modal').classList.remove('hidden');
@@ -11755,7 +12006,7 @@ const personalSlots = getPersonalSponsorSlots(d);
     const sprintGrid = race.sprintQualiResult || race.qualiResult || [];
     sprintGrid.forEach(function(r){ WR.lastPos[r.driverId] = r.position; });
     document.getElementById('wr-race-name').textContent='🏃 Sprint — '+race.name;
-    document.getElementById('wr-lap-counter').textContent=race.location+' · 17 laps';
+    document.getElementById('wr-lap-counter').textContent=race.location+' · '+(race.laps ? Math.round(race.laps*0.30) : 17)+' laps';
     document.getElementById('wr-feed').innerHTML='';
     const initBar = document.getElementById('wr-my-drivers');
     if(initBar) initBar.innerHTML = (State.getPlayerRacingDrivers ? State.getPlayerRacingDrivers() : State.getPlayerDrivers()).map(function(d){
@@ -11791,6 +12042,10 @@ const personalSlots = getPersonalSponsorSlots(d);
     WR._bonusApplied=null;
     WR._baselinePos=null;
     WR._lastSwap=null;
+    // Snapshot original lapStates before any pit decisions mutate them — used for accurate gap calculations
+    WR._originalLapStates = (race.lapStates || []).map(function(ls){
+      return Object.assign({}, ls, { order: (ls.order || []).map(function(o){ return Object.assign({}, o); }) });
+    });
     // Snapshot standings before race so championship movement shows correctly in debrief
     WR._preDriverStandings = State.getDriverStandings().map(function(s,i){ return {id:s.driver.id,name:s.driver.name,pos:i+1,pts:s.driver.seasonPoints}; });
     WR._preConstrStandings = State.getConstructorStandings().map(function(s,i){ return {id:s.team.id,name:s.team.name,pos:i+1,pts:s.team.seasonPoints}; });
@@ -12382,7 +12637,42 @@ const personalSlots = getPersonalSponsorSlots(d);
               return '<div style="font-size:12px;color:var(--amber);font-weight:600;padding:10px 0;border-top:1px solid var(--bd);margin-top:8px">⏳ '+pendingCount+' more report'+(pendingCount!==1?'s':'')+' in progress — next due in '+racesLeft+' race'+(racesLeft!==1?'s':'')+'</div>';
             })() : '');
         })()}
-      </div>`;
+      </div>
+      ${(()=>{
+        const gridReports = (g.scoutedGridDrivers||[]).filter(s=>State.getDriver(s.driverId)&&!State.getDriver(s.driverId).retired);
+        const pendingGrid = (g.gridScoutQueue||[]);
+        if(!gridReports.length && !pendingGrid.length) return '';
+        const racesDone=g.calendar.filter(r=>r.raceDone).length;
+        const rows = gridReports.map(s=>{
+          const d=State.getDriver(s.driverId);
+          if(!d) return '';
+          return `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-top:1px solid var(--bd)">
+            <div>
+              <div style="font-size:13px;font-weight:700">${d.name} <span style="font-size:10px;color:var(--tx3)">${d.nationality}</span></div>
+              <div style="font-size:11px;color:var(--tx3)">${State.getTeam(d.teamId)?.name||'Free Agent'} · Age ${d.age}</div>
+            </div>
+            <div style="text-align:right">
+              <div><span class="ovr-pill ${ratingClass(s.result)}" style="font-size:12px">${s.result} OVR</span></div>
+              <button class="btn btn-sm btn-ghost" style="margin-top:4px;font-size:10px" onclick="UI.showDriverModal(${d.id})">View →</button>
+            </div>
+          </div>`;
+        }).join('');
+        const pendingRows = pendingGrid.map(q=>{
+          const d=State.getDriver(q.driverId);
+          if(!d) return '';
+          const racesLeft=Math.max(1,q.completesAfterRace-racesDone);
+          return `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-top:1px solid var(--bd);opacity:.6">
+            <div style="font-size:13px;font-weight:700">${d.name}</div>
+            <span style="font-size:11px;color:var(--amber);font-weight:600">⏳ ${racesLeft}r remaining</span>
+          </div>`;
+        }).join('');
+        return `<div class="offseason-section">
+          <div class="offseason-section-title">🔭 Grid Driver Reports</div>
+          <div class="offseason-section-sub">Scouted ratings on current grid drivers. Use their driver profile to approach them.</div>
+          <div style="border:1px solid var(--bd);border-radius:8px;overflow:hidden">${rows}${pendingRows}</div>
+        </div>`;
+      })()}
+      `;
   },
 
   renderOffseasonPlanning(){
@@ -15778,19 +16068,22 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     // Blockbuster: high-rated driver moving teams (rating 85+)
     const blockbusters = transfers.filter(t=>!t.left&&!t.graduated&&!t.rookie&&t.from&&t.from!=='Free Agent'&&t.from!=='Academy').filter(t=>{
       const d=State.game.drivers.find(x=>x.name===t.driverName);
-      return d && d.rating>=85;
+      // Use stored transfer rating if driver state is no longer valid (e.g. displaced post-move)
+      const rating = (d&&!d.isFreeAgent) ? d.rating : (t.rating||0);
+      return rating>=85;
     });
 
     const blockbusterHTML = blockbusters.map(t=>{
       const d=State.game.drivers.find(x=>x.name===t.driverName);
+      const displayRating = Math.round((d&&!d.isFreeAgent)?d.rating:(t.rating||d?.rating||0));
       return `<div style="background:linear-gradient(135deg,#1a1a1a 0%,#2d1f00 100%);border:1px solid #f59e0b;border-radius:10px;padding:14px;margin-bottom:10px;color:#fff">
         <div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#f59e0b;margin-bottom:8px">⚡ BLOCKBUSTER SIGNING</div>
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
           <div style="flex:1">
             <div style="font-size:18px;font-weight:900">${t.driverName}</div>
-            <div style="font-size:11px;color:rgba(255,255,255,.5);margin-top:2px">${d?d.nationality+' · ':''} ${Math.round(d?.rating||0)} OVR · Age ${d?.age||'?'}</div>
+            <div style="font-size:11px;color:rgba(255,255,255,.5);margin-top:2px">${d?d.nationality+' · ':''} ${displayRating} OVR · Age ${d?.age||'?'}</div>
           </div>
-          <div style="font-size:22px;font-weight:900;color:#f59e0b">${starRating(d?.rating||0)}</div>
+          <div style="font-size:22px;font-weight:900;color:#f59e0b">${starRating(displayRating)}</div>
         </div>
         <div style="display:flex;align-items:center;gap:10px;font-size:13px">
           <span style="color:rgba(255,255,255,.5);font-weight:600">${t.from}</span>
@@ -15993,11 +16286,24 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.3.4.2 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.3.5 · Release Notes</div>
         ${[
-    ['v2.3.4.2','Apr 2026',[
-            '🐛 Emergency sponsor rescue visibility: preseason now proactively creates a fallback sponsor offer when you have no active deals, and both Offseason and Finance show a clear emergency callout so the offer is not hidden.',
-            '🐛 AI roster repair: added a final offseason sanity pass that rebuilds each AI team from live driver state and force-fills missing race and reserve seats after retirements, releases, and transfer-chain edge cases.',
+    ['v2.3.5','Apr 2026',[
+            '🐛 Academy driver free agent bug: academy juniors returning from loan no longer appear as free agents. The return function previously set contract=0, which caused the offseason release loop to flag them as free agents. Contract is now preserved correctly on loan return, and the release loop explicitly skips isJunior drivers (reported by OzzyVibes1612).',
+            '🐛 Over-age academy drivers not retiring: juniors left in the academy past age 30 now correctly retire at the end of each offseason. Previously they stayed in the academy indefinitely. Any active loans for over-age juniors are also cleaned up to prevent phantom seat deletions (reported by Snappers5).',
+            '🐛 Loan filling wrong seat: loaning an academy driver to a team with an empty seat now correctly fills the vacant slot instead of replacing the team\'s only remaining driver. The replaced driver logic now only applies when the borrowing team is full (2 race drivers) (reported by _boj).',
+            '🐛 Sprint race lap counter: the watch race lap counter for sprint races no longer shows the full race lap count. Initialisation now uses the correct sprint lap formula (30% of race laps), and the in-progress counter updates correctly throughout the sprint (reported by NuFu).',
+            '🐛 Duplicate driver names at game start: generated drivers now correctly check names against all previously generated drivers in the same batch, not just the game\'s driver array (which was empty during initialisation). Multiple Freddie Slaters and other duplicates can no longer appear at game start (reported by ImBuckAndWeGonFuck).',
+            '🐛 Watch Race pit drop on second stop: P2 dropping to P22 on a second pit stop even with a 33s gap. The original lapStates were being mutated by the first pit decision, so the second stop\'s gap calculation used corrupted positions from the already-adjusted order. The original lapStates are now snapshotted at race start and used exclusively for gap calculations, keeping both pit stops accurate regardless of order (reported by IronicGerman).',
+            '🐛 POT label appearing as text in prospects table: the scouted potential badge in the Drivers > Prospects tab was rendering the word "pot" as visible text inside the badge. Now shows the number only (reported by IronicGerman).',
+            '🐛 Blockbuster signing card: the blockbuster card on the offseason screen now correctly shows driver rating and star count even if the driver\'s state changed during offseason processing. Rating is now stored on the transfer record at the time of the move (reported by ImBuckAndWeGonFuck).',
+            '✨ Difficulty settings: choose Normal, Hard, or Nightmare at game start. Hard reduces your starting budget by 20%, tightens board objectives, and makes AI teams develop faster. Nightmare cuts budget by 38%, board targets are relentless, and AI competition is brutal. A difficulty badge on the dashboard reminds you which mode you\'re playing. Existing saves stay on Normal (suggested by Traditional_Ice_5636).',
+            '✨ Prospect potential distribution: the prospect pool now uses a tiered system — 8% of generated prospects have elite ceilings (88+), 22% are upper-tier (78–88), and 70% are realistic midfield talent (62–78). Previously the flat range produced too many 90+ ceilings, flooding the grid with elite-rated drivers within a few seasons. Difficulty also caps the absolute ceiling: Hard limits prospects to 93, Nightmare to 89 (reported by No-Pomegranate4202).',
+            '✨ AI strategy variety: backmarker teams (P14+) now gamble on alternative strategies — soft tyre aggressive starts or long hard-tyre stints instead of always following the recommended strategy. Midfield teams occasionally split from their teammate. Strategy spread widens on Hard and Nightmare difficulty, making races feel more varied (reported by IronicGerman, Spiritual-Walrus-667, _boj).',
+            '✨ Driver poaching: rival teams can now approach your drivers mid-season if their contracts are expiring. You\'ll see a warning in Paddock News — renew the driver before the season ends or they leave to the rival in the offseason. Affects 82+ rated drivers or those with low morale. Toggle protection by renewing early (suggested by Polkiu4863).',
+            '✨ Bookmark prospects: tap the ☆ star on any prospect row in the Drivers tab to bookmark them. Bookmarked drivers show a ⭐ badge. When a bookmarked driver\'s feeder contract expires and they enter free agency, you get a Paddock News alert so you can sign them before a rival does (suggested by Anhonlyforkis, Formulaoneson_Za).',
+            '✨ Scout grid drivers: while a scout is hired, a 🔭 Scout Driver button now appears on any active grid driver\'s profile. Scout reports take 2–6 races depending on tier and reveal a rated OVR estimate. Completed reports appear in a new Grid Driver Reports section on the Scouting page. Use this to evaluate transfer targets before approaching them (suggested by Formulaoneson_Za).',
+            '✨ Roster editor driver swap: a ⇄ button now appears on every driver card in the editor. Click ⇄ on one driver then ⇄ on another to instantly swap their positions — works across teams, reserves, free agents, and prospects. No more manual stat copying to move a driver between slots (suggested by Polkiu4863, scuderiaferrarifan, EmiliusReturns).',
     ]],
     ['v2.3.4.1','Apr 2026',[
             '🐛 Mobile main menu scroll: the landing page now scrolls properly on mobile again, fixing a regression where some phones could not reach the lower part of the main menu.',
@@ -16791,6 +17097,35 @@ const GameActions = {
     UI.renderScouting();
   },
 
+  bookmarkProspect(driverId){
+    const g=State.game; if(!g) return;
+    const d=State.getDriver(driverId); if(!d) return;
+    d.bookmarked = !d.bookmarked;
+    Storage.autosave();
+    if(document.getElementById('view-drivers')?.classList.contains('active')) UI.renderDrivers();
+    UI.renderScouting();
+    UI.toast(d.bookmarked ? `⭐ ${d.name} bookmarked — you'll be notified when they become available.` : `${d.name} removed from watchlist.`, 'info');
+  },
+
+  scoutGridDriver(driverId){
+    const g=State.game; if(!g) return;
+    const d=State.getDriver(driverId); if(!d||!d.teamId) return;
+    const tier=DATA.scoutingTiers.find(t=>t.id===(g.scoutingTier||'none'));
+    if(!tier||tier.id==='none'){UI.toast('Hire a scout first from the Scouting tab.','warning');return;}
+    if(!g.gridScoutQueue) g.gridScoutQueue=[];
+    if(g.gridScoutQueue.some(s=>s.driverId===driverId)){UI.toast('Already scouting this driver.','info');return;}
+    const weeksMap={basic:6,standard:4,elite:2};
+    const racesNeeded=weeksMap[tier.id]||4;
+    const racesDone=g.calendar.filter(r=>r.raceDone).length;
+    const errorRange=Math.round((100-tier.accuracy)/5);
+    const noise=randInt(-errorRange,errorRange);
+    const result=clamp(Math.round(d.rating+noise),40,99); // scout sees current rating, not potential
+    g.gridScoutQueue.push({driverId, completesAfterRace:racesDone+racesNeeded, result});
+    Storage.autosave();
+    UI.closeModal();
+    UI.toast(`🔭 Scouting ${d.name} — report ready in ~${racesNeeded} races.`,'info');
+  },
+
   scoutProspects(){
     const g=State.game;
     const tier=DATA.scoutingTiers.find(t=>t.id===(g.scoutingTier||'none'));
@@ -16939,17 +17274,38 @@ const GameActions = {
   processScoutingQueue(){
     // Call this after each race completes to reveal due reports
     const g=State.game;
-    if(!g.scoutingQueue||g.scoutingQueue.length===0) return 0;
+    const hasProspectQueue = !!(g.scoutingQueue&&g.scoutingQueue.length>0);
+    const hasGridQueue = !!(g.gridScoutQueue&&g.gridScoutQueue.length>0);
+    if(!hasProspectQueue && !hasGridQueue) return 0;
     const racesDone=g.calendar.filter(r=>r.raceDone).length;
     let revealed=0;
-    g.scoutingQueue=g.scoutingQueue.filter(q=>{
-      if(racesDone>=q.completesAfterRace){
-        const d=State.getDriver(q.driverId);
-        if(d){d.scoutedPotential=q.result;revealed++;}
-        return false; // remove from queue
-      }
-      return true; // keep in queue
-    });
+    if(hasProspectQueue) {
+      g.scoutingQueue=g.scoutingQueue.filter(q=>{
+        if(racesDone>=q.completesAfterRace){
+          const d=State.getDriver(q.driverId);
+          if(d){d.scoutedPotential=q.result;revealed++;}
+          return false; // remove from queue
+        }
+        return true; // keep in queue
+      });
+    }
+    // Process grid driver scout queue
+    if(g.gridScoutQueue&&g.gridScoutQueue.length>0){
+      if(!g.scoutedGridDrivers) g.scoutedGridDrivers=[];
+      g.gridScoutQueue=g.gridScoutQueue.filter(q=>{
+        if(racesDone>=q.completesAfterRace){
+          const d=State.getDriver(q.driverId);
+          if(d&&!g.scoutedGridDrivers.some(s=>s.driverId===d.id)){
+            g.scoutedGridDrivers.push({driverId:d.id,name:d.name,result:q.result,season:g.season});
+            if(!g.newsFeed) g.newsFeed=[];
+            g.newsFeed.unshift({msg:`🔭 Scout report on <strong>${d.name}</strong> ready — rated ${q.result} OVR. Check their driver profile.`,type:'info',icon:'🔭',race:g.raceIndex,ts:Date.now()});
+            revealed++;
+          }
+          return false;
+        }
+        return true;
+      });
+    }
     return revealed;
   },
 
@@ -18498,9 +18854,11 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     const g = State.game; if(!g || !g.academy) return;
     const d = State.getDriver(driverId); if(!d) return;
     const toTeam = State.getTeam(toTeamId); if(!toTeam) return;
-    const replacedDriver = State.getTeamDrivers(toTeamId)
-      .filter(td=>td.id!==driverId)
-      .sort((a,b)=>(a.rating||0)-(b.rating||0))[0] || null;
+    // Only bench an existing driver if the team is FULL (2 race drivers) — if they have an empty seat, fill it directly
+    const toTeamRaceDrivers = State.getTeamDrivers(toTeamId).filter(td=>td.id!==driverId&&!td.isReserve);
+    const replacedDriver = toTeamRaceDrivers.length >= 2
+      ? toTeamRaceDrivers.sort((a,b)=>(a.rating||0)-(b.rating||0))[0]
+      : null;
     const loanFee = Math.round((d.rating||60) / 8);
     const loan = {
       driverId, driverName: d.name,
@@ -19307,7 +19665,7 @@ window._wrTick = function() {
       });
     }
   }
-  document.getElementById('wr-lap-counter').textContent = 'Lap '+ev.lap+' / '+race.laps;
+  document.getElementById('wr-lap-counter').textContent = 'Lap '+ev.lap+' / '+(WR.isSprint ? (race.laps ? Math.round(race.laps*0.30) : 17) : race.laps);
 
   // ── PIT DECISION — pause and ask player ──────────────────────
   if(ev.type === 'pit_decision' && !WR.isSprint) {
@@ -19766,8 +20124,9 @@ window._wrApplyBonusNow = function(driverId, decisionMeta) {
   // Deterministic pit drop: count cars behind that would pass during the stop
   // A car behind passes if its gap TO THE PITTING DRIVER is less than the pit stop time.
   // Correct formula: (follower's gap to leader) - (pitting driver's gap to leader) < pit stop time.
-  // Previous bug used absolute gap to leader, which counted the whole pack when driver gap was small.
-  const _pitLapState = clonedStates.find(function(ls){ return (ls.lap||0) === decisionLap; });
+  // Use original (pre-decision) lapStates so stop-2 gap calculations aren't corrupted by stop-1 position mutation.
+  const _originalStates = WR._originalLapStates || clonedStates;
+  const _pitLapState = _originalStates.find(function(ls){ return (ls.lap||0) === decisionLap; });
   const pitDropEstimate = window._wrEstimatePitDrop(_pitLapState, driverId, decisionMeta, currentReplayPos);
   const pitDropPlaces = pitDropEstimate.dropPlaces;
   const pitDropPos = pitDropEstimate.dropPos || currentReplayPos;
@@ -19789,7 +20148,7 @@ window._wrApplyBonusNow = function(driverId, decisionMeta) {
       desiredPos = Math.round(recoverFrom + (targetPos - recoverFrom) * prog);
     }
     ls.order = window._wrPlaceDriverInOrder(ls.order, driverId, desiredPos);
-    ls.order = window._wrNormalizeLapOrder(ls.order, race.lapStates?.[i]?.order || ls.order);
+    ls.order = window._wrNormalizeLapOrder(ls.order, _originalStates[i]?.order || ls.order);
     const liveEntry = (ls.order || []).find(function(o){ return o.driverId === driverId; });
     const stopLap = decisionMeta?.choice === 'stay'
       ? (decisionMeta.forceLap != null ? decisionMeta.forceLap : null)
@@ -20150,6 +20509,9 @@ document.addEventListener('DOMContentLoaded', () => {
       : document.getElementById('landing-start-year');
     const managerName=(managerInput?.value || '').trim()||'Player';
     const startYear=parseInt(yearInput?.value)||2026;
+    // Read selected difficulty from button state
+    const diffBtn = document.querySelector('.diff-btn-active');
+    State._pendingDifficulty = diffBtn ? diffBtn.dataset.diff : 'normal';
     State.newGame(managerName,teamId,startYear);
     Storage.saveGame();
     if(typeof gtag!=='undefined'){
