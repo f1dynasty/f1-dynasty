@@ -733,7 +733,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:18px;max-width:320px;padding:14px 16px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
           <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">Latest Update</div>
-        <div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.3.5.1 is live</div>
+        <div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.3.5.2 is live</div>
           <div style="font-size:12px;line-height:1.45;color:#666">Release candidate fixes: Hard/Nightmare prospect caps now apply on fresh saves, duplicate real-driver starts are cleaned up, academy retirements are hardened, and grid scouting reports now resolve correctly.</div>
         </div>
       </div>
@@ -794,7 +794,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </button>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.3.5.1</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.3.5.2</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -10011,7 +10011,11 @@ const UI = {
       // Championship threat
       const conStandings = [...g.teams].sort((a,b)=>b.seasonPoints-a.seasonPoints);
       const myIdx = conStandings.findIndex(t=>t.id===team.id);
-      const racesLeft = g.calendar.filter(r=>!r.raceDone).length;
+      const remainingRaces = g.calendar.filter(r=>!r.raceDone);
+      const racesLeft = remainingRaces.length;
+      const getConstructorWeekendMax = (raceObj) => 43 + (raceObj?.sprint ? 15 : 0);
+      const remainingConstructorMax = remainingRaces.reduce((sum, r) => sum + getConstructorWeekendMax(r), 0);
+      const nextWeekendMax = remainingRaces.length ? getConstructorWeekendMax(remainingRaces[0]) : 0;
       const threats = [];
       if(myIdx===0){
         // Player is leading — show gap over P2
@@ -10023,12 +10027,12 @@ const UI = {
         if(myIdx>0){
           const above = conStandings[myIdx-1];
           const gap = above.seasonPoints - team.seasonPoints;
-          threats.push({team:above, gap, dir:'up', catchable: gap <= racesLeft*26});
+          threats.push({team:above, gap, dir:'up', catchable: gap <= remainingConstructorMax});
         }
         if(myIdx<conStandings.length-1){
           const below = conStandings[myIdx+1];
           const gap = team.seasonPoints - below.seasonPoints;
-          threats.push({team:below, gap, dir:'down', danger: gap<=26});
+          threats.push({team:below, gap, dir:'down', danger: gap<=nextWeekendMax});
         }
       }
 
@@ -10053,7 +10057,7 @@ const UI = {
               <span style="font-size:13px;font-weight:900;font-family:var(--fm);color:${col}">${ptsLabel}</span>
             </div>`;
           }).join('')}
-          <div style="font-size:10px;color:var(--tx3);margin-top:6px">${racesLeft} race${racesLeft!==1?'s':''} left · ${racesLeft*26} pts max</div>
+          <div style="font-size:10px;color:var(--tx3);margin-top:6px">${racesLeft} race${racesLeft!==1?'s':''} left · ${remainingConstructorMax} pts max</div>
         </div>` : '';
 
       formEl.innerHTML = doneRaces.length
