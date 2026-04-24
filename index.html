@@ -733,7 +733,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:18px;max-width:320px;padding:14px 16px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
           <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">Latest Update</div>
-        <div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.3.6 is live</div>
+        <div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.3.5.1 is live</div>
           <div style="font-size:12px;line-height:1.45;color:#666">Release candidate fixes: Hard/Nightmare prospect caps now apply on fresh saves, duplicate real-driver starts are cleaned up, academy retirements are hardened, and grid scouting reports now resolve correctly.</div>
         </div>
       </div>
@@ -794,7 +794,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </button>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.3.6</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.3.5.1</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -4597,6 +4597,22 @@ const Sim = {
               wetTire: 'wet',
               wetTireName: 'Wet',
               isFullWet: true,
+              promptKey: weatherKey,
+              driverPositions: prevSnap
+            });
+          }
+        } else if(prevEntryForDriver && prevWetness >= 0.78 && lapState.wetness < 0.78 && lapState.wetness >= 0.28 && prevEntryForDriver.compound === 'wet') {
+          const weatherKey = `${o.driverId}:${lap}:inter-dry`;
+          if(!weatherDecisionLogged[weatherKey] && !consumedPrompts[weatherKey]) {
+            weatherDecisionLogged[weatherKey] = true;
+            events.push({
+              lap,
+              type: 'weather_decision',
+              driverId: o.driverId,
+              driverName: rr.driverName,
+              recommendSwitch: true,
+              wetTire: 'inter',
+              wetTireName: 'Inter',
               promptKey: weatherKey,
               driverPositions: prevSnap
             });
@@ -17542,6 +17558,10 @@ const GameActions = {
     const g = State.game; if(!g) return;
     const d = State.getDriver(driverId);
     if(!d) return;
+    if((d.age||0) < 18) {
+      UI.toast(`${d.name} is only ${d.age} — FIA regulations require a driver to be at least 18 to take an F1 race seat, including academy loans.`, 'warning');
+      return;
+    }
     const availableTeams = g.teams.filter(t=>t.id!==g.playerTeamId);
     const rows = availableTeams.map(t=>`
       <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:8px;padding:10px 12px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center">
@@ -18861,6 +18881,10 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     const g = State.game; if(!g || !g.academy) return;
     const d = State.getDriver(driverId); if(!d) return;
     const toTeam = State.getTeam(toTeamId); if(!toTeam) return;
+    if((d.age||0) < 18) {
+      UI.toast(`${d.name} is only ${d.age} — FIA regulations require a driver to be at least 18 to take an F1 race seat, including academy loans.`, 'warning');
+      return;
+    }
     // Only bench an existing driver if the team is FULL (2 race drivers) — if they have an empty seat, fill it directly
     const toTeamRaceDrivers = State.getTeamDrivers(toTeamId).filter(td=>td.id!==driverId&&!td.isReserve);
     const replacedDriver = toTeamRaceDrivers.length >= 2
