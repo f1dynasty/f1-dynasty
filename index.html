@@ -2288,9 +2288,10 @@ const Editor = {
       out.teams.forEach(team => {
         const fallback = (base.seasonDrivers?.[year]?.[team.id]) || (base.teams.find(t=>t.id===team.id)?.baseDrivers) || [];
         const incoming = incomingYear[team.id];
-        out.seasonDrivers[year][team.id] = Array.isArray(incoming)
+        const normalizedLineup = Array.isArray(incoming)
           ? incoming.map((d,i)=>this._normalizeDriver(d, fallback[i] || fallback[0] || this._blankDriver()))
           : JSON.parse(JSON.stringify(fallback));
+        out.seasonDrivers[year][team.id] = normalizedLineup.slice(0, 2);
       });
     });
     out.reserveDrivers = {};
@@ -2298,9 +2299,10 @@ const Editor = {
     out.teams.forEach(team => {
       const fallback = base.reserveDrivers?.[team.id] || [];
       const incoming = data?.reserveDrivers?.[team.id];
-      out.reserveDrivers[team.id] = Array.isArray(incoming)
+      const normalizedReserves = Array.isArray(incoming)
         ? incoming.map((d,i)=>this._normalizeDriver(d, fallback[i] || fallback[0] || this._blankDriver({ contract:1, salary:1, rating:70 })))
         : JSON.parse(JSON.stringify(fallback));
+      out.reserveDrivers[team.id] = normalizedReserves.slice(0, 2);
     });
     out.namedFreeAgents = Array.isArray(data?.namedFreeAgents)
       ? data.namedFreeAgents.map((d,i)=>this._normalizeDriver(d, base.namedFreeAgents[i] || this._blankDriver({ contract:0, salary:3 })))
@@ -2512,6 +2514,11 @@ const Editor = {
   },
   addDriver(pool, teamId, year) {
     const list = this.getPool(pool, teamId, year);
+    const hardCap = pool === 'lineup' || pool === 'reserve' ? 2 : null;
+    if(hardCap !== null && list.length >= hardCap) {
+      if(typeof UI !== 'undefined') UI.toast(pool === 'lineup' ? 'Starting lineup is capped at 2 drivers.' : 'Reserve pool is capped at 2 drivers.', 'warning');
+      return;
+    }
     const fallback = list[list.length - 1] || this._blankDriver(pool === 'prospect' ? { age:19, salary:1, contract:0, series:'F3', rating:68, potential:85 } : pool === 'free-agent' ? { contract:0, series:'FE' } : {});
     list.push(this._normalizeDriver({}, fallback));
     this.persist();
@@ -2649,7 +2656,7 @@ const State = {
     teams.forEach(team => {
       // Pick correct season lineup
       const seasonLineup = (template.seasonDrivers[startYear]||{})[team.id];
-      const driversToUse = seasonLineup || team.baseDrivers;
+      const driversToUse = (seasonLineup || team.baseDrivers || []).slice(0, 2);
       driversToUse.forEach(dDef => {
         const driver = this._buildDriver(dDef, team.id, nextDriverId++);
         allDrivers.push(driver);
@@ -2667,7 +2674,7 @@ const State = {
     // Real named reserve drivers per team
     teams.forEach(team => {
       team.reserveIds = [];
-      const namedRes = (template.reserveDrivers||{})[team.id] || [];
+      const namedRes = ((template.reserveDrivers||{})[team.id] || []).slice(0, 2);
       namedRes.forEach(dDef => {
         // Skip if a driver with this name already exists (e.g. they're a race driver)
         if(allDrivers.some(x=>x.name===dDef.name)) return;
