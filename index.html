@@ -733,7 +733,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:18px;max-width:320px;padding:14px 16px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
           <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">Latest Update</div>
-<div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.3.6 is live</div>
+<div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.3.6.1 is live</div>
           <div style="font-size:12px;line-height:1.45;color:#666">Release candidate fixes: Hard/Nightmare prospect caps now apply on fresh saves, duplicate real-driver starts are cleaned up, academy retirements are hardened, and grid scouting reports now resolve correctly.</div>
         </div>
       </div>
@@ -794,7 +794,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </button>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.3.6</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.3.6.1</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -8115,12 +8115,13 @@ const spons=sumSponsorIncome(g.sponsors||[]);
         const teamName = primaryTeam ? primaryTeam.name : (d._prevTeamName || '—');
         // If driver changed teams mid-season, note it
         const transferred = primaryTeam && endTeam && primaryTeam.id !== endTeam.id;
-        const driverStandingsPos = _driverStandingsPosMap[d.id] || null;
+        const archivedDriverRow = (seasonStandingsSnapshot.drivers||[]).find(r=>r.driverId===d.id) || null;
+        const driverStandingsPos = archivedDriverRow?.position || _driverStandingsPosMap[d.id] || null;
         d.careerHistory.push({
           season: g.season,
           teamName,
           endTeamName: transferred ? endTeam.name : null,
-          points: d.seasonPoints,
+          points: archivedDriverRow?.points ?? d.seasonPoints,
           position: driverStandingsPos,
           wins: d.wins,
           podiums: d.podiums,
@@ -8592,7 +8593,7 @@ const Storage = {
       if(slot === -1) slot = this._newSlot();
       const currentRaceIndex = State.game.raceIndex || 0;
       const strippedCal = (State.game.calendar||[]).map((r,i)=>this._compactRaceForSave(r, i, currentRaceIndex));
-      const saveNews = (State.game.newsFeed||[]).slice(-30);
+      const saveNews = (State.game.newsFeed||[]).slice(-50);
       const saveHistory = State.game.history ? {
         ...State.game.history,
         seasonStandings: Array.isArray(State.game.history.seasonStandings) ? State.game.history.seasonStandings : [],
@@ -8618,7 +8619,7 @@ const Storage = {
       // older completed races lose it so saves stay compact over long careers.
       const currentRaceIndex = State.game.raceIndex || 0;
       const strippedCalendar = (State.game.calendar||[]).map((r,i)=>this._compactRaceForSave(r, i, currentRaceIndex));
-      const saveNews = (State.game.newsFeed||[]).slice(-30);
+      const saveNews = (State.game.newsFeed||[]).slice(-50);
       const saveHistory = State.game.history ? {
         ...State.game.history,
         seasonStandings: Array.isArray(State.game.history.seasonStandings) ? State.game.history.seasonStandings : [],
@@ -8730,6 +8731,22 @@ const Storage = {
     if(!g.pendingUpgrades) g.pendingUpgrades=[];
     if(!g.offseasonBudget) g.offseasonBudget={aero:0,engine:0,reliability:0,facilities:0};
     if(!g.poachAttempts) g.poachAttempts=[];
+    // Repair older saves where driver career history positions drifted from the archived
+    // season standings. The archived table is the canonical source for final position/points.
+    const _seasonStandingsByYear = new Map((g.history?.seasonStandings||[]).map(ss=>[ss.season, ss]));
+    (g.drivers||[]).forEach(d=>{
+      if(!Array.isArray(d.careerHistory) || !d.careerHistory.length) return;
+      d.careerHistory = d.careerHistory.map(entry=>{
+        const snap = _seasonStandingsByYear.get(entry.season);
+        const archivedRow = snap && Array.isArray(snap.drivers) ? snap.drivers.find(r=>String(r.driverId)===String(d.id)) : null;
+        if(!archivedRow) return entry;
+        return {
+          ...entry,
+          position: archivedRow.position ?? entry.position,
+          points: archivedRow.points ?? entry.points
+        };
+      });
+    });
     if(!g.injuries) g.injuries=[];
     if(!g.careerStats) g.careerStats={seasons:[],totalWins:0,totalPodiums:0,totalPoles:0,championships:0,constructorChampionships:0};
     if(!g.gameDifficulty) g.gameDifficulty='normal';
@@ -16362,8 +16379,14 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.3.6 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.3.6.1 · Release Notes</div>
         ${[
+    ['v2.3.6.1','Apr 2026',[
+            '🐛 Academy recruit reroll exploit fixed: reopening the Recruit Junior modal no longer refreshes the candidate pool, so players cannot spam the screen for free high-potential academy classes.',
+            '🐛 Watch Race two-stop stay-out regression fixed: for 2-stop strategies like Medium → Medium → Hard, choosing stay out at stop 1 now still preserves the later hard-tyre stop instead of collapsing the run into an illegal Medium → Medium one-stopper.',
+            '🐛 Driver career history repair: saves now reconcile stored season positions against archived end-of-season standings when loading, repairing older histories where impossible P1/P2 rows could persist.',
+            '🐛 Save/load Paddock News retention increased: saves now keep a larger slice of recent feed items so mid-season news is less likely to disappear immediately after saving and reloading.',
+    ]],
     ['v2.3.6','Apr 2026',[
             '🐛 Watch Race injury substitute replay: race replays now keep using the lineup that actually started that session, so reserve subs stay highlighted correctly in the header, commentary, timing tower, and result table even after the game advances to the next weekend.',
             '🐛 Watch Race reserve-sub pit prompts: replay decision recalculations now preserve the watched race lineup, so forced reserve replacements continue to receive pit and weather prompts correctly instead of dropping back to the next weekend\'s driver set mid-replay.',
@@ -17559,28 +17582,32 @@ const GameActions = {
     const fns = DATA.firstNames;
     const lns = DATA.lastNames;
     const seriesPool = ['F4','F4','F3','F3','F3'];
-    // Store pool on UI object so signJunior can retrieve by index (avoids JSON in onclick)
-    UI._recruitPool = [];
-    for(let i=0;i<8;i++){
-      const age = randInt(14,18);
-      const pot = randInt(74, 96);
-      const base = clamp(pot - randInt(22,38), 38, 62);
-      const fn = fns[randInt(0,fns.length-1)];
-      const ln = lns[randInt(0,lns.length-1)];
-      UI._recruitPool.push({
-        name: `${fn} ${ln}`,
-        age, nationality: nats[randInt(0,nats.length-1)],
-        series: seriesPool[randInt(0,seriesPool.length-1)],
-        rating: base, potential: pot,
-        racePace:   clamp(base+randInt(-4,4),35,65),
-        qualifying: clamp(base+randInt(-4,4),35,65),
-        consistency:clamp(base+randInt(-6,4),32,62),
-        wet:        clamp(base+randInt(-8,8),32,72),
-        energyMgmt: clamp(base+randInt(-5,8),35,68),
-        aggression: randInt(45,82), marketability: randInt(40,70),
-        morale: randInt(70,90), salary: 1, contract: 0,
-      });
+    // Keep one stable recruit board until the player signs someone, so reopening the modal
+    // can't be used to reroll into a better academy class for free.
+    if(!Array.isArray(g._academyRecruitPool) || !g._academyRecruitPool.length){
+      g._academyRecruitPool = [];
+      for(let i=0;i<8;i++){
+        const age = randInt(14,18);
+        const pot = randInt(74, 96);
+        const base = clamp(pot - randInt(22,38), 38, 62);
+        const fn = fns[randInt(0,fns.length-1)];
+        const ln = lns[randInt(0,lns.length-1)];
+        g._academyRecruitPool.push({
+          name: `${fn} ${ln}`,
+          age, nationality: nats[randInt(0,nats.length-1)],
+          series: seriesPool[randInt(0,seriesPool.length-1)],
+          rating: base, potential: pot,
+          racePace:   clamp(base+randInt(-4,4),35,65),
+          qualifying: clamp(base+randInt(-4,4),35,65),
+          consistency:clamp(base+randInt(-6,4),32,62),
+          wet:        clamp(base+randInt(-8,8),32,72),
+          energyMgmt: clamp(base+randInt(-5,8),35,68),
+          aggression: randInt(45,82), marketability: randInt(40,70),
+          morale: randInt(70,90), salary: 1, contract: 0,
+        });
+      }
     }
+    UI._recruitPool = g._academyRecruitPool;
     const potColor = pot => pot>=90?'var(--grn)':pot>=82?'var(--amber)':'var(--tx3)';
     const rows = UI._recruitPool.map((p,idx) => `
       <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:10px;padding:11px 13px;margin-bottom:7px">
@@ -18851,6 +18878,8 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     if(!acad.juniors) acad.juniors = [];
     acad.juniors.push(junior);
     g.drivers.push(junior);
+    g._academyRecruitPool = null;
+    UI._recruitPool = null;
     UI.closeModal();
     Storage.autosave();
     UI.toast(`${junior.name} signed to ${acad.name}.`, 'success');
@@ -20171,8 +20200,11 @@ window._wrApplyBonusNow = function(driverId, decisionMeta) {
       order: (ls.order || []).map(function(o){ return Object.assign({}, o); })
     });
   });
+  const stopLapForDecision = decisionMeta?.choice === 'stay'
+    ? (decisionMeta?.forceLap != null ? decisionMeta.forceLap : (decisionMeta?.deferToLap != null ? decisionMeta.deferToLap : (decisionLap + 1)))
+    : decisionLap;
   const progressStartLap = decisionMeta?.choice === 'stay'
-    ? Math.min(totalLaps - 2, decisionMeta.forceLap || decisionMeta.deferToLap || (decisionLap + 1))
+    ? Math.min(totalLaps - 2, stopLapForDecision)
     : Math.min(totalLaps - 2, decisionLap);
   const applyPitMeta = function(orderEntry, priorEntry, lap, didPit) {
     if(!orderEntry) return;
@@ -20214,11 +20246,12 @@ window._wrApplyBonusNow = function(driverId, decisionMeta) {
       orderEntry.pitStops = fromEntry.pitStops || 0;
       orderEntry.stintIndex = fromEntry.stintIndex || 0;
       orderEntry.plannedPitLap = null;
-      orderEntry.nextPlannedPitLap = decisionMeta?.choice === 'stay' && (decisionMeta?.forceLap != null || decisionMeta?.deferToLap != null)
-        ? (decisionMeta.forceLap != null ? decisionMeta.forceLap : decisionMeta.deferToLap)
+      const pendingForcedStop = decisionMeta?.choice === 'stay' && stopLapForDecision != null && lap < stopLapForDecision;
+      orderEntry.nextPlannedPitLap = pendingForcedStop
+        ? stopLapForDecision
         : (fromEntry.nextPlannedPitLap || originalNextPlanned || null);
       // Preserve stop-2 lap across stay-out so the deferred forced stop can pass it forward
-      if(decisionMeta?.choice === 'stay' && decisionMeta?.nextPlannedPitLap != null) {
+      if(pendingForcedStop && decisionMeta?.nextPlannedPitLap != null) {
         orderEntry._deferredNextPlanned = decisionMeta.nextPlannedPitLap;
       } else {
         orderEntry._deferredNextPlanned = fromEntry._deferredNextPlanned || null;
@@ -20262,9 +20295,7 @@ window._wrApplyBonusNow = function(driverId, decisionMeta) {
     ls.order = window._wrPlaceDriverInOrder(ls.order, driverId, desiredPos);
     ls.order = window._wrNormalizeLapOrder(ls.order, _originalStates[i]?.order || ls.order);
     const liveEntry = (ls.order || []).find(function(o){ return o.driverId === driverId; });
-    const stopLap = decisionMeta?.choice === 'stay'
-      ? (decisionMeta.forceLap != null ? decisionMeta.forceLap : null)
-      : decisionLap;
+    const stopLap = stopLapForDecision;
     applyPitMeta(liveEntry, prevEntry, ls.lap || 0, (ls.lap || 0) === stopLap);
   }
 
