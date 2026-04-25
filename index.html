@@ -733,8 +733,8 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:18px;max-width:320px;padding:14px 16px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
           <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">Latest Update</div>
-<div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.3.6.1 is live</div>
-          <div style="font-size:12px;line-height:1.45;color:#666">Release candidate fixes: Hard/Nightmare prospect caps now apply on fresh saves, duplicate real-driver starts are cleaned up, academy retirements are hardened, and grid scouting reports now resolve correctly.</div>
+<div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.3.6.2 is live</div>
+          <div style="font-size:12px;line-height:1.45;color:#666">Hotfix release: fixed the season-end rollover crash, plus recent academy, Watch Race, and history fixes from the previous update.</div>
         </div>
       </div>
     </div>
@@ -794,7 +794,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </button>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.3.6.1</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.3.6.2</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -8115,7 +8115,8 @@ const spons=sumSponsorIncome(g.sponsors||[]);
         const teamName = primaryTeam ? primaryTeam.name : (d._prevTeamName || '—');
         // If driver changed teams mid-season, note it
         const transferred = primaryTeam && endTeam && primaryTeam.id !== endTeam.id;
-        const archivedDriverRow = (seasonStandingsSnapshot.drivers||[]).find(r=>r.driverId===d.id) || null;
+        const archivedSeasonSnapshot = (g.history?.seasonStandings||[]).find(ss=>ss.season===g.season) || null;
+        const archivedDriverRow = (archivedSeasonSnapshot?.drivers||[]).find(r=>r.driverId===d.id) || null;
         const driverStandingsPos = archivedDriverRow?.position || _driverStandingsPosMap[d.id] || null;
         d.careerHistory.push({
           season: g.season,
@@ -16379,8 +16380,12 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.3.6.1 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.3.6.2 · Release Notes</div>
         ${[
+    ['v2.3.6.2','Apr 2026',[
+            '🚨 Hotfix: fixed a season rollover crash that could block careers from advancing with the error "seasonStandingsSnapshot is not defined". End Season now completes properly again and the new year begins as expected.',
+            '🛠️ Career history snapshot patch corrected: the end-of-season archive now reads driver standings from the stored season history instead of an out-of-scope temporary variable, so the repair logic no longer breaks offseason processing.',
+    ]],
     ['v2.3.6.1','Apr 2026',[
             '🐛 Academy recruit reroll exploit fixed: reopening the Recruit Junior modal no longer refreshes the candidate pool, so players cannot spam the screen for free high-potential academy classes.',
             '🐛 Watch Race two-stop stay-out regression fixed: for 2-stop strategies like Medium → Medium → Hard, choosing stay out at stop 1 now still preserves the later hard-tyre stop instead of collapsing the run into an illegal Medium → Medium one-stopper.',
