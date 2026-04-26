@@ -4980,10 +4980,11 @@ const Sim = {
         .sort((a,b)=>a.pos-b.pos)
         .slice(0,3);
       if(!leaders.length) return '';
+      const useProjectedOrderOnly = !!lapState?._wrReplayAdjusted;
       return leaders.map(function(o){
         const rr = resultById[o.driverId];
         const surname = rr ? rr.driverName.split(' ').slice(-1)[0] : '?';
-        const gapText = o.pos === 1 ? '' : ` +${(o.gap || 0).toFixed(1)}s`;
+        const gapText = (o.pos === 1 || useProjectedOrderOnly) ? '' : ` +${(o.gap || 0).toFixed(1)}s`;
         return `P${o.pos} ${surname}${gapText}`;
       }).join(' · ');
     };
@@ -21358,6 +21359,7 @@ window._wrApplyBonusNow = function(driverId, decisionMeta) {
     }
     ls.order = window._wrPlaceDriverInOrder(ls.order, driverId, desiredPos);
     ls.order = window._wrNormalizeLapOrder(ls.order, _originalStates[i]?.order || ls.order);
+    ls._wrReplayAdjusted = true;
     const liveEntry = (ls.order || []).find(function(o){ return o.driverId === driverId; });
     const stopLap = stopLapForDecision;
     applyPitMeta(liveEntry, prevEntry, ls.lap || 0, (ls.lap || 0) === stopLap);
