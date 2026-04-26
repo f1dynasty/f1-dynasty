@@ -733,7 +733,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:18px;max-width:320px;padding:14px 16px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
           <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">Latest Update</div>
-      <div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.3.7.2 is live</div>
+      <div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.3.7.3 is live</div>
           <div style="font-size:12px;line-height:1.45;color:#666">Staff system, team orders with position swap, qualifying time deltas, standings movement indicators, driver numbers, roster editor custom years, and historical driver data for 2020-2023.</div>
         </div>
       </div>
@@ -794,7 +794,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </button>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.3.7.2</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.3.7.3</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -5585,6 +5585,55 @@ const Sim = {
       };
       return pri(a) - pri(b);
     });
+    // If there is a long quiet stretch with no notable logged events, inject a light
+    // timing snapshot so Watch Race doesn't feel like it skipped half the grand prix.
+    const fillerEvents = [];
+    let lastLapWithEvent = 1;
+    const lapsWithEvents = new Set(events.map(ev => ev.lap));
+    events.forEach(ev => {
+      if((ev.lap - lastLapWithEvent) > 8) {
+        for(let fillerLap = lastLapWithEvent + 8; fillerLap < ev.lap; fillerLap += 8) {
+          if(fillerLap <= 1 || fillerLap >= laps || lapsWithEvents.has(fillerLap)) continue;
+          const fillerState = lapStates.find(ls => (ls.lap || 0) === fillerLap);
+          const fillerSummary = fillerState ? topSummary(fillerState) : '';
+          if(!fillerSummary) continue;
+          fillerEvents.push({
+            lap: fillerLap,
+            type: 'timing',
+            text: `⏱ Lap ${fillerLap} — ${fillerSummary}`,
+            driverPositions: snapFromLapState(fillerState)
+          });
+          lapsWithEvents.add(fillerLap);
+        }
+      }
+      lastLapWithEvent = Math.max(lastLapWithEvent, ev.lap || lastLapWithEvent);
+    });
+    if(fillerEvents.length) {
+      events.push(...fillerEvents);
+      events.sort((a,b)=>{
+        if(a.lap !== b.lap) return a.lap - b.lap;
+        const isPlayerTagged = function(ev){
+          var txt = (ev && ev.text) || '';
+          return txt.indexOf('⭐ ') >= 0 || txt.indexOf('⬆️ ') >= 0 || txt.indexOf('⬇️ ') >= 0;
+        };
+        const pri = function(ev){
+          if(!ev) return 50;
+          if(ev.type === 'start') return 0;
+          if(ev.type === 'pit_decision' || ev.type === 'weather_decision') return 1;
+          if((ev.type === 'position_change' || ev.type === 'overtake') && isPlayerTagged(ev)) return 2;
+          if(ev.type === 'dnf' && isPlayerTagged(ev)) return 3;
+          if(ev.type === 'pit' && isPlayerTagged(ev)) return 4;
+          if(ev.type === 'timing' && isPlayerTagged(ev)) return 5;
+          if(ev.type === 'pit') return 5;
+          if(ev.type === 'position_change' || ev.type === 'overtake') return 6;
+          if(ev.type === 'dnf') return 7;
+          if(ev.type === 'timing') return 8;
+          if(ev.type === 'finish') return 20;
+          return 10;
+        };
+        return pri(a) - pri(b);
+      });
+    }
     return events;
   },
 
@@ -9323,10 +9372,34 @@ const Storage = {
     (g.drivers||[]).forEach(d => {
       if(d.academyName === undefined) d.academyName = null;
     });
-    // Patch engine manufacturers into game state if not present
-    if(!g.engineManufacturers) {
-      g.engineManufacturers = JSON.parse(JSON.stringify(DATA.engineManufacturers));
-    }
+    // Patch engine manufacturers into game state and normalize them against the
+    // saved season-start snapshot. Older saves could fall back to default supplier
+    // numbers while still carrying a newer breakthrough message/snapshot, making
+    // the Car page show 82/80 Audi while the save history says the engine had
+    // already developed far beyond that. Engine ratings only move in the offseason,
+    // so current live values should never sit materially below the season-start snap.
+    const _savedEnginesById = new Map(((g.engineManufacturers||[])||[]).map(eng=>[eng.id, eng]));
+    g.engineManufacturers = (DATA.engineManufacturers||[]).map(def=>{
+      const saved = _savedEnginesById.get(def.id) || {};
+      const snap = g._engineStatsSnapshot && g._engineStatsSnapshot[def.id] ? g._engineStatsSnapshot[def.id] : null;
+      const merged = {
+        ...def,
+        ...saved,
+        id: def.id
+      };
+      if(snap){
+        if((merged.powerRating ?? def.powerRating) + 0.25 < (snap.powerRating ?? -Infinity)) {
+          merged.powerRating = snap.powerRating;
+        }
+        if((merged.ersRating ?? def.ersRating) + 0.25 < (snap.ersRating ?? -Infinity)) {
+          merged.ersRating = snap.ersRating;
+        }
+        if((merged.reliability ?? def.reliability) + 0.5 < (snap.reliability ?? -Infinity)) {
+          merged.reliability = snap.reliability;
+        }
+      }
+      return merged;
+    });
     // Patch teams for new fields — also sync driverIds with actual driver teamId assignments
     const _restoreLoanedIds = new Set((g.academy?.loans||[]).map(l=>l.driverId));
     const _restoreLoanBenchedIds = new Set((g.academy?.loans||[]).map(l=>l.replacedDriverId).filter(Boolean));
@@ -17076,8 +17149,12 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.3.7.2 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.3.7.3 · Release Notes</div>
         ${[
+    ['v2.3.7.3','Apr 2026',[
+            '🐛 Engine supplier save-state repair: some older or partially migrated saves could fall back to default engine manufacturer stats on the Car page while still carrying a newer breakthrough message/snapshot, causing mismatches like Audi showing 82.0 power despite a later breakthrough note. Save restore now normalizes live engine manufacturer values against the saved season-start snapshot so the engine card, engine market, and breakthrough context stay in sync (reported by Leo3409).',
+            '🐛 Watch Race long-gap filler: if the replay goes through a long quiet stretch with no logged moves, pit calls, or weather events, it now injects a lightweight timing snapshot instead of appearing to jump from one lap number to another. This is presentation-only and does not alter the underlying race result (reported by IronicGerman).',
+    ]],
     ['v2.3.7.2','Apr 2026',[
             '🐛 Watch Race sprint cleanup: team-order state is now fully reset between sessions, fixing cases where a PASS instruction from the previous race could still appear on the next sprint replay.',
             '🐛 Pit-call summary wording clarified: post-race feedback now labels shared gains properly instead of showing confusing duplicated text like "gained 2 places, gained 2 places".',
