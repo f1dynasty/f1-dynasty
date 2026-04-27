@@ -733,8 +733,8 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:18px;max-width:320px;padding:14px 16px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
           <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">Latest Update</div>
-      <div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.3.8 is live</div>
-          <div style="font-size:12px;line-height:1.45;color:#666">Pre-season roster fixes, academy loan grid caps, cleaner car-development deltas, dark-mode contract readability, and a return path to the full Pre-Season overview.</div>
+      <div style="font-size:14px;font-weight:800;color:#111;margin-bottom:5px">v2.3.8.1 is live</div>
+          <div style="font-size:12px;line-height:1.45;color:#666">Hotfix for signed or promoted drivers disappearing from My Team, plus the preseason roster, academy loan, dark-mode, and winter dev fixes from 2.3.8.</div>
         </div>
       </div>
     </div>
@@ -794,7 +794,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </button>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.3.8</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.3.8.1</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -3394,6 +3394,44 @@ return {id,name:`${fn} ${ln}`,age:baseAge,nationality:nat,teamId:teamId||null,ra
     });
 
     g.teams.forEach(team=>{
+      team.driverIds = Array.from(new Set((team.driverIds||[]).filter(Boolean)));
+      team.reserveIds = Array.from(new Set((team.reserveIds||[]).filter(Boolean)));
+      const listedRaceIds = new Set(team.driverIds);
+      const listedReserveIds = new Set(team.reserveIds);
+
+      // Seat ownership wins over stale status flags. This covers cases where a newly
+      // signed/generated/academy driver has the right team assignment but an old
+      // isFreeAgent/isJunior/isProspect flag still hides them from My Team.
+      g.drivers.forEach(d=>{
+        if(!d || d.retired) return;
+        const listedRace = listedRaceIds.has(d.id);
+        const listedReserve = listedReserveIds.has(d.id);
+        if(listedRace || listedReserve){
+          d.teamId = team.id;
+          d.isFreeAgent = false;
+          d.isProspect = false;
+          d.prospectSeries = null;
+          d.isReserve = listedReserve;
+          if(!loanedIds.has(d.id)) d.isJunior = false;
+        }
+      });
+
+      // If a driver is already contracted to the team but missing from the seat arrays,
+      // add them back before we cap and normalize the roster.
+      g.drivers.forEach(d=>{
+        if(!d || d.retired || d.teamId !== team.id || (d.contract||0) <= 0) return;
+        d.isFreeAgent = false;
+        d.isProspect = false;
+        d.prospectSeries = null;
+        if(d.isReserve){
+          if(!team.reserveIds.includes(d.id)) team.reserveIds.push(d.id);
+          if(!loanedIds.has(d.id)) d.isJunior = false;
+        } else {
+          if(!team.driverIds.includes(d.id)) team.driverIds.push(d.id);
+          if(!loanedIds.has(d.id)) d.isJunior = false;
+        }
+      });
+
       const rosterOrder = new Map((team.driverIds||[]).map((id,idx)=>[id,idx]));
       const eligible = g.drivers
         .filter(d=>d.teamId===team.id && !d.retired && !d.isReserve && !d.isProspect && !d.isFreeAgent && !benchedIds.has(d.id) && (!d.isJunior || loanedIds.has(d.id)))
@@ -7794,7 +7832,8 @@ const spons=sumSponsorIncome(g.sponsors||[]);
       const oldTeam=d.teamId?State.getTeam(d.teamId):null;
       if(oldTeam){oldTeam.driverIds=(oldTeam.driverIds||[]).filter(id=>id!==d.id);}
       d.teamId=move.toTeamId; d.contract=move.years||2; d.salary=move.salary||d.salary;
-      d.isFreeAgent=false; d.isReserve=false;
+      d.isFreeAgent=false; d.isReserve=false; d.isProspect=false; d.isJunior=false;
+      d.prospectSeries=null;
       d.morale=clamp(d.morale+10,50,95);
       if(!toTeam.driverIds) toTeam.driverIds=[];
       // Hard cap — never put more than 2 race drivers on a team
@@ -8186,6 +8225,9 @@ const spons=sumSponsorIncome(g.sponsors||[]);
       protectedDrivers.forEach(d=>{
         d.teamId = protectedPlayerTeamId;
         d.isFreeAgent = false;
+        d.isProspect = false;
+        d.isJunior = false;
+        d.prospectSeries = null;
       });
       const uniqueById = arr => arr.filter((d, idx)=>arr.findIndex(x=>x.id===d.id)===idx);
       const raceKeep = uniqueById(
@@ -8197,8 +8239,8 @@ const spons=sumSponsorIncome(g.sponsors||[]);
         protectedDrivers.filter(d=>!raceKeep.some(r=>r.id===d.id)).map(d=>{ d.isReserve=true; return d; })
           .concat(State.getPlayerReserves().filter(d=>!raceKeep.some(r=>r.id===d.id)))
       ).slice(0,2);
-      raceKeep.forEach(d=>{ d.isReserve=false; d.teamId=protectedPlayerTeamId; d.isFreeAgent=false; });
-      reserveKeep.forEach(d=>{ d.isReserve=true; d.teamId=protectedPlayerTeamId; d.isFreeAgent=false; });
+      raceKeep.forEach(d=>{ d.isReserve=false; d.teamId=protectedPlayerTeamId; d.isFreeAgent=false; d.isProspect=false; d.isJunior=false; d.prospectSeries=null; });
+      reserveKeep.forEach(d=>{ d.isReserve=true; d.teamId=protectedPlayerTeamId; d.isFreeAgent=false; d.isProspect=false; d.isJunior=false; d.prospectSeries=null; });
       playerRosterTeam.driverIds = raceKeep.map(d=>d.id);
       playerRosterTeam.reserveIds = reserveKeep.map(d=>d.id);
       g.drivers.forEach(d=>{
@@ -8208,9 +8250,15 @@ const spons=sumSponsorIncome(g.sponsors||[]);
         if(inRace){
           d.isReserve = false;
           d.isFreeAgent = false;
+          d.isProspect = false;
+          d.isJunior = false;
+          d.prospectSeries = null;
         } else if(inReserve){
           d.isReserve = true;
           d.isFreeAgent = false;
+          d.isProspect = false;
+          d.isJunior = false;
+          d.prospectSeries = null;
         } else {
           d.teamId = null;
           d.isReserve = false;
@@ -17243,8 +17291,12 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.3.8 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.3.8.1 · Release Notes</div>
         ${[
+    ['v2.3.8.1','Apr 2026',[
+            '🐛 Hotfix: signed or promoted drivers could still show as assigned in their profile and in All Drivers but fail to appear in My Team if stale status flags survived the move. Player roster reconciliation now treats assigned race/reserve seats as the source of truth and clears stale free-agent / prospect / junior flags when a driver is already seated.',
+            '🐛 Player roster carryover cleanup: preseason player-roster preservation, academy promotions, committed move handling, and forced offseason signing decisions now all normalize driver state more aggressively so generated free agents, academy graduates, and reserve promotions cannot be left in a half-signed state.',
+    ]],
     ['v2.3.8','Apr 2026',[
             '🐛 Dark mode readability: sponsor negotiation cards now inherit the themed text colour so deal labels and contract terms stay readable on dark backgrounds.',
             '🐛 Pre-season access: the dashboard checklist now has a Full Overview button so the full Pre-Season overview can be reopened after navigating away.',
@@ -19765,7 +19817,7 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     if(current.length<=1){UI.toast('You need at least 1 race driver.','warning');return;}
     if(reserves.length>=2){UI.toast('Already have 2 reserve drivers. Promote or release one first.','warning');return;}
     d.teamId=team.id;
-    d.isReserve=true; d.isFreeAgent=false; d.isJunior=false;
+    d.isReserve=true; d.isFreeAgent=false; d.isProspect=false; d.isJunior=false;
     d._wasRaceDriver=true; // flag: this driver held a race seat — blocks reserve-rate renewal exploit
     team.driverIds=(team.driverIds||[]).filter(id=>id!==driverId);
     if(!team.reserveIds) team.reserveIds=[];
@@ -19930,6 +19982,7 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     acad.juniors = (acad.juniors||[]).filter(j=>j.id!==driverId);
 
     // Place driver on team
+    d.isProspect = false;
     d.isJunior = false;
     d.isReserve = role !== 'race';
     d.isFreeAgent = false;
@@ -20304,6 +20357,7 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       d.salary = neg.salaryOffer || d.salary;
       d.isFreeAgent = false;
       d.isProspect = false;
+      d.isJunior = false;
       d.isReserve = !!neg.wasReserve;
       d.prospectSeries = null;
       d.morale = clamp((d.morale||70) + (neg.carryoverFromPlayerTeam?12:16), 45, 98);
@@ -20316,6 +20370,7 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       } else {
         if(!team.driverIds.includes(d.id)) team.driverIds.push(d.id);
       }
+      if(State.reconcileTeamRosters) State.reconcileTeamRosters();
       if(!g.newsFeed) g.newsFeed = [];
       g.newsFeed.unshift({msg:`✅ <strong>${d.name}</strong> accepted our forced end-of-season deadline and signed immediately with <strong>${team.name}</strong>. ${formatMoney(d.salary)}/yr, ${d.contract}yr deal.`,type:'transfers',icon:'📋',race:undefined,ts:Date.now()});
       UI.toast(`✅ ${d.name} accepts the late contract push`,'success');
