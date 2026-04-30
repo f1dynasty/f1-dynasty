@@ -745,7 +745,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
         </div>
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:18px;max-width:320px;padding:14px 16px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
-          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v2.4.0 — What's New</div>
+          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v2.4.0.1 — What's New</div>
           <div style="font-size:13px;font-weight:900;color:#111;margin-bottom:8px">Biggest update yet</div>
           <div style="display:flex;flex-direction:column;gap:5px">
             <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">✨</span><span><strong>Create your own team</strong> — name, colour, engine, tier</span></div>
@@ -871,7 +871,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </div>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.4.0</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.4.0.1</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -10351,7 +10351,7 @@ const Storage = {
         team.staff = State._generateTeamStaff(team.carPerformance||70);
       } else {
         DATA.staffRoles.forEach(role => {
-          if(!team.staff[role.id]) team.staff[role.id] = State._generateStaffMember(role.id, 45, 75);
+          if(!(role.id in team.staff)) team.staff[role.id] = State._generateStaffMember(role.id, 45, 75);
         });
       }
     });
@@ -18432,9 +18432,9 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.4.0 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.4.0.1 · Release Notes</div>
         ${[
-    ['v2.4.0','Apr 2026',[
+    ['v2.4.0.1','Apr 2026',[
             '🐛 Mid-season upgrade popup shows wrong gain: the arrival notification was displaying the pre-cap expected gain (nominal × RNG multiplier) rather than the actual clamped delta. For teams near the 100 ceiling, this made the popup show e.g. "+7.2" when the real gain was +5.0 because carPerformance was already at 93.7. Upgrade arrival now stores and displays the real before/after delta (reported by IronicGerman).',
             '🐛 Sub-stats capping at 99 while Car Performance shows lower: car sub-stats (Top Speed, Cornering, Tyre Mgmt, Dirty Air, Aero Eff) could drift up to 99 via repeated upgrades even when Car Performance was several points lower, making the Car page misleading. Sub-stats are now soft-capped to carPerformance + 8. Applied during upgrade arrival, winter development, and on save load to repair existing saves (reported by IronicGerman).',
             '🆕 Pre-sign to reserve seat: the pre-sign modal now offers a choice — commit a final-year prospect to a race seat or a reserve slot. Reserve pre-signs are protected from the free agent market but the driver may still attract race seat interest from other teams (requested by gsx512, scuderiaferrarifan).',
