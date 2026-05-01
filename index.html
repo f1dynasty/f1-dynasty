@@ -745,18 +745,16 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
         </div>
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:18px;max-width:320px;padding:14px 16px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
-          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v2.4.0.1 — What's New</div>
-          <div style="font-size:13px;font-weight:900;color:#111;margin-bottom:8px">Biggest update yet</div>
+          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v2.4.1 — What's New</div>
+          <div style="font-size:13px;font-weight:900;color:#111;margin-bottom:8px">Bug fixes and balance</div>
           <div style="display:flex;flex-direction:column;gap:5px">
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">✨</span><span><strong>Create your own team</strong> — name, colour, engine, tier</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🟨</span><span><strong>Race penalties</strong> — 5s/10s incidents based on aggression & battles</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">⚡</span><span><strong>Engine editor</strong> — add/delete/rename suppliers, edit stats</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">📋</span><span><strong>Pre-sign to reserve</strong> — secure prospects as race or reserve driver</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🏆</span><span><strong>Custom points system</strong> — set your own points per position</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🔩</span><span><strong>PU recovery</strong> — engine stats now go up as well as down</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">💾</span><span><strong>Roster save slots</strong> — 3 named slots for your custom grids</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🧪</span><span><strong>Reserve dev contribution</strong> — strong reserves improve your car</span></div>
-            <div style="font-size:11px;color:#777;margin-top:4px;padding-top:6px;border-top:1px solid #ece9e4">+ AI engine switching, variable loan fees, sponsor goal labels, late-game economy scaling, upgrade popup accuracy, sub-stat cap fix, and more.</div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>Swap Positions fix</strong> -- Give Position now persists and updates standings</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>Retired driver signing</strong> -- can no longer sign retired drivers from History tab</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>DNF custom points</strong> -- DNFs now earn position-based custom points</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🆕</span><span><strong>Prospect reserve signing</strong> -- sign feeder series prospects as reserves immediately</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">⚖️</span><span><strong>Balanced objectives</strong> -- targets now scale with car competitiveness</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>AI driver quality</strong> -- AI teams renew good drivers and release weak ones</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>Academy on firing</strong> -- juniors stay with old team when you move</span></div>
           </div>
           <button onclick="UI.showChangelog()" style="margin-top:10px;width:100%;padding:7px;background:none;border:1.5px solid rgba(192,57,43,.3);border-radius:7px;font-size:11px;font-weight:700;color:var(--red);cursor:pointer">Full release notes →</button>
         </div>
@@ -3879,7 +3877,12 @@ return {id,name:`${fn} ${ln}`,age:baseAge,nationality:nat,teamId:teamId||null,tr
       const regularRaceDrivers = g.drivers
         .filter(d=>d.teamId===loanTeam.id && d.id!==loanDriver.id && !d.retired && !d.isReserve && !d.isProspect && !d.isFreeAgent && !d.isJunior)
         .sort((a,b)=>(a.rating||0)-(b.rating||0));
+      // Only bench someone if team has 2+ regular race drivers — if they have an empty seat, fill it
       if(!loan.replacedDriverId && regularRaceDrivers.length >= 2) loan.replacedDriverId = regularRaceDrivers[0].id;
+      // If team now has <2 regular drivers (driver left/retired), clear replaced so loan fills the seat
+      if(loan.replacedDriverId && regularRaceDrivers.length < 2) {
+        loan.replacedDriverId = null;
+      }
       if(loan.replacedDriverId) benchedIds.add(loan.replacedDriverId);
     });
 
@@ -4297,12 +4300,18 @@ return {id,name:`${fn} ${ln}`,age:baseAge,nationality:nat,teamId:teamId||null,tr
       objPool.push({id:'pos_top5',label:'Finish top 5 in Constructors',type:'position',target:5,reward:28,difficulty:'hard',icon:'🏆'});
       objPool.push({id:'pos_top8',label:'Finish top 8 in Constructors',type:'position',target:8,reward:18,difficulty:'medium',icon:'📈'});
     }
-    const winTarget = lastWins >= 5 ? 8 : lastWins >= 2 ? 5 : lastWins >= 1 ? 3 : 1;
-    objPool.push({id:'wins',label:`Achieve ${winTarget} race win${winTarget>1?'s':''}`,type:'wins',target:winTarget,reward:winTarget*6+12,difficulty:winTarget>=5?'hard':'medium',icon:'🏁'});
-    const podTarget = Math.max(3, lastPos <= 5 ? 10 : 5);
+    const winTarget = lastWins >= 5 ? 8 : lastWins >= 2 ? 5 : lastWins >= 1 ? 3 : carRank <= 5 ? 1 : 0;
+    if(winTarget > 0) objPool.push({id:'wins',label:`Achieve ${winTarget} race win${winTarget>1?'s':''}`,type:'wins',target:winTarget,reward:winTarget*6+12,difficulty:winTarget>=5?'hard':'medium',icon:'🏁'});
+    const podTarget = Math.max(2, lastPos <= 5 ? 10 : lastPos <= 8 ? 5 : 3);
     objPool.push({id:'podiums',label:`Earn ${podTarget} podiums this season`,type:'podiums',target:podTarget,reward:podTarget*3+8,difficulty:'medium',icon:'🥉'});
-    objPool.push({id:'poles',label:'Secure at least 3 pole positions',type:'poles',target:3,reward:15,difficulty:'easy',icon:'⚡'});
-    if(seasons.length === 0) objPool.push({id:'first_win',label:'Win your first race',type:'wins',target:1,reward:40,difficulty:'medium',icon:'🎯'});
+    const poleTarget = carRank <= 3 ? 5 : carRank <= 6 ? 3 : 1;
+    objPool.push({id:'poles',label:`Secure at least ${poleTarget} pole position${poleTarget>1?'s':''}`,type:'poles',target:poleTarget,reward:poleTarget*5+5,difficulty:'easy',icon:'⚡'});
+    // Points-based objective for backmarker teams who aren't expected to win
+    if(carRank > 6) {
+      const ptsTarget = Math.max(20, Math.round((teamCount - carRank + 1) * 12));
+      objPool.push({id:'points',label:`Score at least ${ptsTarget} constructor points`,type:'points',target:ptsTarget,reward:20,difficulty:'medium',icon:'📊'});
+    }
+    if(seasons.length === 0 && carRank <= 6) objPool.push({id:'first_win',label:'Win your first race',type:'wins',target:1,reward:40,difficulty:'medium',icon:'🎯'});
     const easy = objPool.filter(o=>o.difficulty==='easy');
     const medium = objPool.filter(o=>o.difficulty==='medium');
     const hard = objPool.filter(o=>o.difficulty==='hard');
@@ -4315,8 +4324,10 @@ return {id,name:`${fn} ${ln}`,age:baseAge,nationality:nat,teamId:teamId||null,tr
     g.boardObjectives = [pickedHard, pickedMedium, pickedEasy].filter(o=>o&&!seen.has(o.id)&&seen.add(o.id)).slice(0,3).map(o=>{
       if(diffCfg.boardStrictness <= 1.0) return o;
       const scaled = Object.assign({}, o);
-      if(o.type === 'wins' || o.type === 'podiums' || o.type === 'poles') {
-        scaled.target = Math.max(1, Math.round(o.target * diffCfg.boardStrictness));
+      // Soften strictness for weaker teams — backmarkers shouldn't get nightmare-level targets
+      const effectiveStrictness = carRank > 6 ? Math.min(1.15, diffCfg.boardStrictness) : carRank > 3 ? Math.min(1.35, diffCfg.boardStrictness) : diffCfg.boardStrictness;
+      if(o.type === 'wins' || o.type === 'podiums' || o.type === 'poles' || o.type === 'points') {
+        scaled.target = Math.max(1, Math.round(o.target * effectiveStrictness));
         scaled.label = scaled.label.replace(/\d+/, scaled.target);
       } else if(o.type === 'position') {
         const tighten = diffCfg.boardStrictness >= 1.6 ? 2 : 1;
@@ -4430,7 +4441,10 @@ const Sim = {
       results.push({driverId:driver.id,driverName:driver.name,teamId:team.id,teamName:team.name,startPos:startPos+1,score:dnf?-999:score,dnf,dnfLap:dnf?randInt(3,sprintLaps-2):null});
     });
     results.sort((a,b)=>b.score-a.score);
-    results.forEach(r=>{r.position=r.dnf?null:pos++;});
+    var _spPos=1;
+    results.forEach(r=>{r.position=r.dnf?null:_spPos++;});
+    // Classify DNFs at back for custom sprint points
+    results.filter(r=>r.dnf).sort((a,b)=>(b.dnfLap||0)-(a.dnfLap||0)).forEach(r=>{r.position=_spPos++;});
     const _sprintPreD = State.getDriverStandings().map((s,i)=>({id:s.driver.id,name:s.driver.name,pos:i+1,pts:s.driver.seasonPoints}));
     const _sprintPreC = State.getConstructorStandings().map((s,i)=>({id:s.team.id,name:s.team.name,pos:i+1,pts:s.team.seasonPoints}));
     results.forEach(r=>{
@@ -5406,6 +5420,9 @@ const Sim = {
     results.sort((a,b)=>b.score-a.score);
     let finishPos=1;
     results.forEach(r=>{ r.position=r.dnf?null:finishPos++; });
+    // Classify DNFs at back of field — gives them positions for custom point systems
+    const dnfDrivers=results.filter(r=>r.dnf).sort((a,b)=>(b.dnfLap||0)-(a.dnfLap||0));
+    dnfDrivers.forEach(r=>{ r.position=finishPos++; });
     const finishers=results.filter(r=>!r.dnf);
     if(finishers.length>0){
       const flCandidates=finishers.slice(0,Math.min(10,finishers.length));
@@ -5416,8 +5433,15 @@ const Sim = {
       flWinner.fastestLap=true;
     }
     results.forEach(r=>{
-      if(r.dnf)return;
-      const _ptsTable2=(State.game&&State.game.customPoints)||DATA.points;const pts=_ptsTable2[r.position-1]||0;
+      const _ptsTable2=(State.game&&State.game.customPoints)||DATA.points;
+      if(r.dnf){
+        // DNF drivers get custom points based on classified position (if custom points cover that position)
+        const customActive = !!(State.game&&State.game.customPoints);
+        r.points = customActive && r.position ? (_ptsTable2[r.position-1]||0) : 0;
+        if(r.points>0) State.addPoints(r.driverId,r.points,r.teamId);
+        return;
+      }
+      const pts=_ptsTable2[r.position-1]||0;
       r.points=pts; // no fastest lap point from 2026 season
       State.addPoints(r.driverId,r.points,r.teamId);
       const driver=State.getDriver(r.driverId);
@@ -5486,11 +5510,22 @@ const Sim = {
       if(r.dnf && r.startPos == null) return;
       startSnap[r.driverId] = r.startPos || null;
     });
-    const snapFromLapState = function(lapState) {
+    const snapFromLapState = function(lapState, prevLapState) {
       const snap = {};
+      const prevPos = {};
+      if(prevLapState) {
+        (prevLapState.order || []).forEach(o => { if(o && !o.dnf && o.pos) prevPos[o.driverId] = o.pos; });
+      }
       (lapState?.order || []).forEach(o => {
         if(!o) return;
-        snap[o.driverId] = o.dnf ? null : (o.pos || null);
+        var pos = o.dnf ? null : (o.pos || null);
+        // Cap pit-lap position drop to max 8 places — prevents unrealistic P8->P24 display
+        if(pos && o.pitThisLap && prevPos[o.driverId]) {
+          var maxDrop = 8;
+          var cappedPos = Math.min(pos, prevPos[o.driverId] + maxDrop);
+          pos = cappedPos;
+        }
+        snap[o.driverId] = pos;
       });
       results.forEach(r => {
         if(snap[r.driverId] === undefined) snap[r.driverId] = r.dnf ? null : (r.position || r.startPos || null);
@@ -5707,8 +5742,8 @@ const Sim = {
     lapStates.forEach((lapState, idx) => {
       const prev = idx > 0 ? lapStates[idx - 1] : null;
       const lap = lapState.lap || (idx + 1);
-      const snap = snapFromLapState(lapState);
-      const prevSnap = prev ? snapFromLapState(prev) : startSnap;
+      const snap = snapFromLapState(lapState, prev);
+      const prevSnap = prev ? snapFromLapState(prev, idx > 1 ? lapStates[idx-2] : null) : startSnap;
 
       (lapState.order || []).forEach(o => {
         if(!o || o.dnf || !playerIds.includes(o.driverId)) return;
@@ -6309,7 +6344,7 @@ const Sim = {
     });
 
     const finalState = lapStates[lapStates.length - 1];
-    const finalSnap = snapFromLapState(finalState);
+    const finalSnap = snapFromLapState(finalState, lapStates.length > 1 ? lapStates[lapStates.length - 2] : null);
     const winner = finishers[0];
     events.push({
       lap: laps,
@@ -6369,7 +6404,7 @@ const Sim = {
             lap: fillerLap,
             type: 'timing',
             text: `⏱ Lap ${fillerLap} — ${fillerSummary}`,
-            driverPositions: snapFromLapState(fillerState)
+            driverPositions: snapFromLapState(fillerState, fillerLap > 1 ? lapStates.find(ls=>(ls.lap||0)===fillerLap-1) : null)
           });
           lapsWithEvents.add(fillerLap);
         }
@@ -7998,6 +8033,7 @@ events.push({lap:r.dnfLap||laps-5, type:'dnf', driverId:r.driverId, text:`⭐ ${
         case 'wins':     achieved = seasonWins >= obj.target; break;
         case 'podiums':  achieved = seasonPodiums >= obj.target; break;
         case 'poles':    achieved = seasonPoles >= obj.target; break;
+        case 'points':   achieved = (playerTeam.seasonPoints||0) >= obj.target; break;
         case 'legacy':   achieved = false; break; // legacy score removed
         default:         achieved = false;
       }
@@ -8550,6 +8586,24 @@ const spons=sumSponsorIncome(g.sponsors||[]);
     // Clear demotion flags — after a full offseason, reserve pricing is fair again
     g.drivers.forEach(d=>{ delete d._wasRaceDriver; });
 
+    // ── AI contract renewal — AI teams renew competitive drivers before they enter free agency ──
+    g.drivers.forEach(d=>{
+      if(d.retired || d.isJunior || d.isProspect || d.isFreeAgent || !d.teamId) return;
+      if((d.contract||0) > 0) return; // not expiring
+      if(d.teamId === g.playerTeamId) return; // player handles their own
+      if(executedMoves.has(d.id)) return;
+      const team = State.getTeam(d.teamId);
+      if(!team) return;
+      // Renew if driver is good enough for the team
+      const teamCarRank = [...(g.teams||[])].sort((a,b)=>getTeamOverallCar(b)-getTeamOverallCar(a)).findIndex(t=>t.id===team.id) + 1;
+      const minRenew = teamCarRank <= 3 ? 80 : teamCarRank <= 6 ? 72 : 66;
+      const shouldRenew = (d.rating||0) >= minRenew && d.morale >= 45 && d.age <= 37;
+      if(shouldRenew) {
+        d.contract = randInt(1,3);
+        d.salary = State.getDriverDemandSalary ? State.getDriverDemandSalary(d,'signing') : Math.floor((d.rating||70)/15);
+      }
+    });
+
     // ── Release expired contracts ──
     g.drivers.forEach(d=>{
       if(!d.retired&&!d.isJunior&&d.contract<=0&&!executedMoves.has(d.id)){
@@ -8605,13 +8659,18 @@ const spons=sumSponsorIncome(g.sponsors||[]);
       preTeamDrivers[team.id]=State.getTeamDrivers(team.id).map(d=>({id:d.id,name:d.name,teamName:team.name}));
     });
 
-    // ── Force-release low morale / too old drivers ──
+    // ── Force-release low morale / too old / underperforming drivers ──
     g.teams.forEach(team=>{
+      if(team.id===g.playerTeamId) return; // player controls their own roster
+      const teamCarRank = [...(g.teams||[])].sort((a,b)=>getTeamOverallCar(b)-getTeamOverallCar(a)).findIndex(t=>t.id===team.id) + 1;
+      // Minimum acceptable rating scales with team car rank
+      const minAcceptable = teamCarRank <= 3 ? 75 : teamCarRank <= 6 ? 70 : 65;
       State.getTeamDrivers(team.id).forEach(d=>{
         const protectedContractedDriver = (d.contract||0)>0;
         if(protectedContractedDriver) return;
         if(d.morale<40){d.teamId=null;d.contract=0;d._departReason='low morale';}
-        else if(d.age>38&&d.rating<72){d.teamId=null;d.contract=0;d._departReason='released (declining performance)';}
+        else if(d.age>36&&d.rating<70){d.teamId=null;d.contract=0;d._departReason='released (declining performance)';}
+        else if(d.rating < minAcceptable && d.age > 30){d.teamId=null;d.contract=0;d._departReason='released (not meeting team standards)';}
       });
     });
 
@@ -11672,6 +11731,7 @@ const UI = {
               case 'wins':     return seasonW>=o.target;
               case 'podiums':  return seasonP>=o.target;
               case 'poles':    return seasonPl>=o.target;
+              case 'points':   return (team.seasonPoints||0)>=o.target;
               case 'legacy':   return false;
             }
           }).length}/${objectives.length} on track</span>
@@ -11690,6 +11750,7 @@ const UI = {
             case 'wins':     current=seasonW; done=seasonW>=obj.target; break;
             case 'podiums':  current=seasonP; done=seasonP>=obj.target; break;
             case 'poles':    current=seasonPl; done=seasonPl>=obj.target; break;
+            case 'points':   current=team.seasonPoints||0; done=current>=obj.target; break;
             case 'legacy':   current=0; done=false; break;
           }
           const pct = obj.type==='position' ? (done?100:0) : Math.min(100,Math.round(current/obj.target*100));
@@ -13474,6 +13535,7 @@ const personalSlots = getPersonalSponsorSlots(d);
       <div class="modal-actions">
         ${(()=>{
           if(!(fa||d.isProspect)) return '';
+          if(d.retired) return '';
           const locked = d.isProspect && (d.feederContract||0) > 0;
           if(locked) {
             const isFinalYear = d.feederContract === 1;
@@ -13488,8 +13550,10 @@ const personalSlots = getPersonalSponsorSlots(d);
         })()}
         ${(()=>{
           if(!(fa||d.isProspect)) return '';
+          if(d.retired) return '';
           const locked = d.isProspect && (d.feederContract||0) > 0;
-          if(locked) return '';
+          const alreadyCommitted = locked && (g.committedProspects||[]).some(c=>c.driverId===d.id);
+          if(alreadyCommitted) return '';
           return `<button class="btn btn-outline btn-sm" onclick="${g.offseasonPending?`UI.showSigningNegotiation(${d.id},true)`:`GameActions.signReserve(${d.id})`}">Sign as Reserve</button>`;
         })()}
         ${(()=>{
@@ -13975,7 +14039,7 @@ const personalSlots = getPersonalSponsorSlots(d);
     race._wrConsumedPromptKeys = {};
     race._wrConsumedPitStops = {};
     race._wrPitPromptSuppression = {};
-    WR.events=(race.sprintSimEvents&&race.sprintSimEvents.length)?race.sprintSimEvents:(race.sprintLapEvents||[]); WR.idx=0; WR.raceIdx=raceIdx; WR.race=race; WR.paused=false; WR.timer=null; WR.isSprint=true; WR.dnfs={}; WR.retiredIds={}; WR._lastFeedSig=null; WR._podiumBridgeAdded={}; WR.resultState=(race.sprintResult||[]).map(function(r){ return Object.assign({}, r); }); WR.tyreState={}; WR.pitDecisions=[]; WR.pitDecisionBonus=0; WR.weatherDecisions=[]; WR.weatherCallBonus=0; WR.weatherCalls=[]; WR.positionDeltas={}; WR.driverDecisionScores={}; WR._baselinePosByDriver={}; WR._bonusApplied=null; WR._baselinePos=null; WR._lastSwap=null; WR.teamOrders={};
+    WR.events=(race.sprintSimEvents&&race.sprintSimEvents.length)?race.sprintSimEvents:(race.sprintLapEvents||[]); WR.idx=0; WR.raceIdx=raceIdx; WR.race=race; WR.paused=false; WR.timer=null; WR.isSprint=true; WR.dnfs={}; WR.retiredIds={}; WR._lastFeedSig=null; WR._podiumBridgeAdded={}; WR.resultState=(race.sprintResult||[]).map(function(r){ return Object.assign({}, r); }); WR.tyreState={}; WR.pitDecisions=[]; WR.pitDecisionBonus=0; WR.weatherDecisions=[]; WR.weatherCallBonus=0; WR.weatherCalls=[]; WR.positionDeltas={}; WR.driverDecisionScores={}; WR._baselinePosByDriver={}; WR._bonusApplied=null; WR._baselinePos=null; WR._lastSwap=null; WR.teamOrders={}; WR._positionSwaps=[];
     WR.playerDriverIds = window._wrGetPlayerIds(race);
     WR.basePlayerDriverIds = window._wrGetBasePlayerIds(race);
     WR.subDriverIds = Array.from(window._wrGetSubIds(race));
@@ -14025,7 +14089,7 @@ const personalSlots = getPersonalSponsorSlots(d);
     WR._bonusApplied=null;
     WR._baselinePos=null;
     WR._lastSwap=null;
-    WR.teamOrders={};
+    WR.teamOrders={}; WR._positionSwaps=[];
     WR.playerDriverIds = window._wrGetPlayerIds(race);
     WR.basePlayerDriverIds = window._wrGetBasePlayerIds(race);
     WR.subDriverIds = Array.from(window._wrGetSubIds(race));
@@ -14099,7 +14163,7 @@ const personalSlots = getPersonalSponsorSlots(d);
       (WR.pitDecisions||[]).forEach(d=>{ if(d.autoTimer) clearInterval(d.autoTimer); d.autoTimer=null; });
       (WR.weatherDecisions||[]).forEach(d=>{ if(d.autoTimer) clearInterval(d.autoTimer); d.autoTimer=null; });
       WR.tyreState={};
-      WR.teamOrders={};
+      WR.teamOrders={}; WR._positionSwaps=[];
     }
     document.getElementById('watch-race-modal').style.display='none';
     UI.renderDashboard(); UI.renderSchedule();
@@ -14705,7 +14769,7 @@ const personalSlots = getPersonalSponsorSlots(d);
                 <div style="font-size:11px;color:rgba(255,255,255,.5);line-height:1.5;margin-bottom:12px;font-style:italic">"Raw, aggressive, and ceiling-less. Give them time and they could be the best on the grid."</div>
                 <div style="display:flex;gap:8px">
                   <button class="btn btn-sm" style="background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2)" onclick="UI.showDriverModal(${d.id})">View Profile</button>
-                  ${!d.teamId?(d.feederContract>0?`<button class="btn btn-sm" style="background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2);opacity:.6" disabled>⏳ In feeder series · free ${(g.season||2026)+d.feederContract}</button>`:d.age<18?`<button class="btn btn-sm" style="background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2)" onclick="GameActions.signReserve(${d.id})">Sign as Reserve</button>`+((g.academy&&(g.academy.juniors||[]).length<(g.academy.maxSlots||4)&&d.age<=22)?`<button class="btn btn-sm" style="background:rgba(124,58,237,.8);color:#fff;border:none;font-weight:700" onclick="GameActions.signProspectAsJunior(${d.id})">🎓 Sign as Junior</button>`:''):`<button class="btn btn-sm" style="background:#f59e0b;color:#000;border:none;font-weight:700" onclick="GameActions.signDriverOffseason(${d.id})">Sign Wonderkid →</button>`):'<span style="font-size:11px;color:var(--tx3);padding:4px 8px">Already signed</span>'}
+                  ${!d.teamId?(d.feederContract>0?`<button class="btn btn-sm" style="background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2);opacity:.6" disabled>⏳ In feeder series · free ${(g.season||2026)+d.feederContract}</button><button class="btn btn-sm" style="background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2)" onclick="GameActions.signReserve(${d.id})">Sign as Reserve</button>`:d.age<18?`<button class="btn btn-sm" style="background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2)" onclick="GameActions.signReserve(${d.id})">Sign as Reserve</button>`+((g.academy&&(g.academy.juniors||[]).length<(g.academy.maxSlots||4)&&d.age<=22)?`<button class="btn btn-sm" style="background:rgba(124,58,237,.8);color:#fff;border:none;font-weight:700" onclick="GameActions.signProspectAsJunior(${d.id})">🎓 Sign as Junior</button>`:''):`<button class="btn btn-sm" style="background:#f59e0b;color:#000;border:none;font-weight:700" onclick="GameActions.signDriverOffseason(${d.id})">Sign Wonderkid →</button>`):'<span style="font-size:11px;color:var(--tx3);padding:4px 8px">Already signed</span>'}
                 </div>
               </div>`;
             }
@@ -14724,7 +14788,7 @@ const personalSlots = getPersonalSponsorSlots(d);
               +'</div>'
               +'<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">'
               +'<button class="btn btn-outline btn-sm" onclick="UI.showDriverModal('+d.id+')">View Profile</button>'
-              +(!d.teamId?(d.feederContract>0?(function(){var _isFinal=d.feederContract===1;var _committed=(g.committedProspects||[]).some(function(c){return c.driverId===d.id;});var _yr=(g.season||2026)+d.feederContract;var _lBtn='<button class="btn btn-ghost btn-sm" disabled style="opacity:.5">⏳ In feeder series · free '+_yr+'</button>';if(_committed) return _lBtn+'<button class="btn btn-ghost btn-sm" disabled style="opacity:.6;border-color:var(--amber);color:var(--amber)">✅ Committed for '+_yr+'</button>';if(_isFinal) return _lBtn+'<button class="btn btn-outline btn-sm" style="border-color:var(--amber);color:var(--amber)" onclick="GameActions.commitProspect('+d.id+')">📋 Pre-sign for '+_yr+'</button>';return _lBtn;})():d.age<18?'<button class="btn btn-outline btn-sm" onclick="GameActions.signReserve('+d.id+')">Sign as Reserve</button>'+(g.academy&&(g.academy.juniors||[]).length<(g.academy.maxSlots||4)&&d.age<=22?'<button class="btn btn-outline btn-sm" style="border-color:#7c3aed;color:#7c3aed" onclick="GameActions.signProspectAsJunior('+d.id+')">🎓 Junior</button>':''):'<button class="btn btn-success btn-sm" onclick="GameActions.signDriver('+d.id+')">Sign</button>'):'' )
+              +(!d.teamId?(d.feederContract>0?(function(){var _isFinal=d.feederContract===1;var _committed=(g.committedProspects||[]).some(function(c){return c.driverId===d.id;});var _yr=(g.season||2026)+d.feederContract;var _lBtn='<button class="btn btn-ghost btn-sm" disabled style="opacity:.5">⏳ In feeder series · free '+_yr+'</button>';var _resBtn='<button class="btn btn-outline btn-sm" onclick="GameActions.signReserve('+d.id+')">Sign as Reserve</button>';if(_committed) return _lBtn+'<button class="btn btn-ghost btn-sm" disabled style="opacity:.6;border-color:var(--amber);color:var(--amber)">✅ Committed for '+_yr+'</button>';if(_isFinal) return _lBtn+'<button class="btn btn-outline btn-sm" style="border-color:var(--amber);color:var(--amber)" onclick="GameActions.commitProspect('+d.id+')">📋 Pre-sign for '+_yr+'</button>'+_resBtn;return _lBtn+_resBtn;})():d.age<18?'<button class="btn btn-outline btn-sm" onclick="GameActions.signReserve('+d.id+')">Sign as Reserve</button>'+(g.academy&&(g.academy.juniors||[]).length<(g.academy.maxSlots||4)&&d.age<=22?'<button class="btn btn-outline btn-sm" style="border-color:#7c3aed;color:#7c3aed" onclick="GameActions.signProspectAsJunior('+d.id+')">🎓 Junior</button>':''):'<button class="btn btn-success btn-sm" onclick="GameActions.signDriver('+d.id+')">Sign</button>'):'' )
               +'</div>'
               +'</div>';
           }).join('')
@@ -15076,6 +15140,16 @@ const activeIncome=formatMoney(sumSponsorIncome(g.sponsors||[]));
             .filter(fa=>!fa.isProspect)
             .sort((a,b)=>b.rating-a.rating)
             .slice(0,8);
+          // Emergency: if player has open seats and no free agents exist, generate reserve-quality drivers
+          if(!freeAgents.length && myDrivers.length < 2) {
+            const g2 = State.game;
+            for(let _ei=0; _ei<3; _ei++) {
+              const emg = State._generateDriver(g2.nextDriverId++, g2.season, null, 'free-agent');
+              emg.isFreeAgent = true; emg.contract = 0; emg.salary = Math.max(1, Math.floor((emg.rating||65)/15));
+              g2.drivers.push(emg);
+              freeAgents.push(emg);
+            }
+          }
           const starRating = r => r>=92?'★★★★★':r>=85?'★★★★':r>=76?'★★★':r>=66?'★★':r>=55?'★':'';
           const starCol = r => r>=92?'#f59e0b':r>=85?'#f59e0b':r>=76?'#6b7280':r>=66?'#6b7280':'#9ca3af';
           if(!freeAgents.length) return '<div style="font-size:12px;color:var(--tx3);padding:8px 0">No free agents available right now.</div>';
@@ -17928,6 +18002,7 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
 
   acceptNewTeamOffer(newTeamId){
     const g=State.game;
+    const oldTeamId=g.playerTeamId;
     g.playerTeamId=newTeamId;
     g.playerFired=false;
     g.playerFired=false; g._awaitingJobChoice=false;
@@ -17945,6 +18020,21 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     g.lastSeasonSnapshot={};
     g.lastObjBonus=0;
     g.boardObjectivesResult=[];
+    // Academy stays with the old team — detach juniors and loans from player control
+    if(g.academy) {
+      // Release all juniors back to the old team's academy pool (they don't follow the manager)
+      (g.academy.juniors||[]).forEach(j=>{
+        const d=State.getDriver(j.driverId);
+        if(d){d.teamId=oldTeamId; d.isJunior=true;}
+      });
+      // Return all loans
+      (g.academy.loans||[]).forEach(l=>{
+        const d=State.getDriver(l.driverId);
+        if(d){d.teamId=oldTeamId; d.isJunior=true; d.isReserve=false;}
+      });
+      // Reset academy for new team
+      g.academy={juniors:[],loans:[],graduates:g.academy.graduates||[],maxSlots:g.academy.maxSlots||4,facilities:1};
+    }
     Storage.autosave();
     this.showPage('offseason');
     this.renderOffseasonPlanning();
@@ -18432,8 +18522,21 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.4.0.1 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.4.1 · Release Notes</div>
         ${[
+    ['v2.4.1','May 2026',[
+            '🐛 Swap Positions fix: the Give Position team order in Watch Race now persists for the rest of the race instead of reverting on the next event tick. The swap also correctly updates championship points, wins, and podiums in real time so the post-race debrief and standings are always consistent (reported by Standard-Poem7823, Alternative_Fish9659).',
+            '🐛 Retired driver signing: retired drivers viewed from the History tab can no longer be signed as race driver, reserve, or junior. Sign buttons are hidden and all signing functions block retired drivers with a toast message (reported by scuderiaferrarifan).',
+            '🐛 DNF custom points: drivers who DNF now receive a classified position at the back of the field. With custom point systems where every position scores, DNFs correctly earn their position-based points instead of being hardcoded to zero (reported by moorbre).',
+            '🆕 Prospect reserve signing: prospects still under feeder series contracts can now be signed directly as reserve drivers without waiting for their contract to expire. Available from the driver profile, scouting tab, and wonderkid cards (requested by Spiritual-Walrus-667).',
+            '⚖️ Season objectives rebalanced: objectives now scale with actual car competitiveness. Backmarker and midfield teams get achievable targets (e.g. score X constructor points) instead of win/pole demands. Difficulty scaling is softened for weaker teams so nightmare mode does not demand 5 poles from a P8 car. A new constructor points objective type is available for lower-ranked teams (reported by Standard-Poem7823).',
+            '🐛 AI driver quality in long saves: AI teams now auto-renew competitive drivers whose contracts expire instead of always releasing them to free agency. Teams also release underperforming drivers more aggressively based on their car ranking, preventing low-rated veterans from blocking seats for decades (reported by puchunz).',
+            '🐛 Academy on firing: when the player is fired and takes over a new team, academy juniors and loaned drivers now stay with the old team instead of following the manager. The new team starts with a fresh academy (reported by Snappers5).',
+            '🐛 Time penalties in Watch Race: penalties now visibly drop the penalised driver 1-2 positions in the race standings and position tower, rather than being purely cosmetic. The position change is written to the race result immediately (reported by IronicGerman).',
+            '🐛 Pit stop position display: drivers entering the pits no longer show an unrealistic position drop (e.g. P8 to P24) in Watch Race. Pit-lap position changes are capped at 8 places to match real F1 pit loss (reported by rapsoulish).',
+            '🐛 Signing availability: if no free agents are available during the offseason and the player has open race seats, emergency free agents are generated so the player is never stuck unable to fill their roster (reported by obonnor).',
+            '🐛 Loaned academy drivers: if the borrowing team loses a driver (retirement/release) and drops below 2 race drivers, the loaned junior now correctly fills the empty seat instead of remaining benched behind a ghost replaced-driver reference (reported by No-Pomegranate4202).',
+    ]],
     ['v2.4.0.1','Apr 2026',[
             '🐛 Mid-season upgrade popup shows wrong gain: the arrival notification was displaying the pre-cap expected gain (nominal × RNG multiplier) rather than the actual clamped delta. For teams near the 100 ceiling, this made the popup show e.g. "+7.2" when the real gain was +5.0 because carPerformance was already at 93.7. Upgrade arrival now stores and displays the real before/after delta (reported by IronicGerman).',
             '🐛 Sub-stats capping at 99 while Car Performance shows lower: car sub-stats (Top Speed, Cornering, Tyre Mgmt, Dirty Air, Aero Eff) could drift up to 99 via repeated upgrades even when Car Performance was several points lower, making the Car page misleading. Sub-stats are now soft-capped to carPerformance + 8. Applied during upgrade arrival, winter development, and on save load to repair existing saves (reported by IronicGerman).',
@@ -21026,6 +21129,7 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
   },
   signDriverOffseason(driverId){
     const d=State.getDriver(driverId); if(!d) return;
+    if(d.retired){UI.toast(`${d.name} has retired and cannot be signed.`,'warning');return;}
     const team=State.getPlayerTeam(), current=State.getPlayerDrivers();
     if(current.length>=2){UI.toast('Already have 2 race drivers. Release one first.','warning');return;}
     if((d.age||0) < 18){UI.toast(`${d.name} is only ${d.age} — FIA regulations require a driver to be at least 18 to hold an F1 race seat. Sign as reserve or junior instead.`,'warning');return;}
@@ -21034,7 +21138,8 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
   },
   confirmSigningOffseason(driverId, years, salary, asReserve){
     const d=State.getDriver(driverId); if(!d) return;
-    if(d.isProspect && (d.feederContract||0) > 0){ UI.toast(`${d.name} is still under a feeder series contract.`,'warning'); return; }
+    if(d.retired){UI.toast(`${d.name} has retired and cannot be signed.`,'warning');return;}
+    if(d.isProspect && (d.feederContract||0) > 0 && !asReserve){ UI.toast(`${d.name} is still under a feeder series contract. Sign as reserve instead.`,'warning'); return; }
     const team=State.getPlayerTeam();
     if(asReserve){
       const current=State.getTeamReserves(team.id);
@@ -21867,6 +21972,7 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
 
   signDriver(driverId){
     const d=State.getDriver(driverId); if(!d) return;
+    if(d.retired){UI.toast(`${d.name} has retired and cannot be signed.`,'warning');return;}
     const team=State.getPlayerTeam(), current=State.getPlayerDrivers();
     if(current.length>=2){UI.toast('Already have 2 race drivers. Release one first.','warning');return;}
     // FIA superlicence minimum age: drivers must be 18 to hold an F1 race seat
@@ -21876,6 +21982,7 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
   },
   signReserve(driverId){
     const d=State.getDriver(driverId); if(!d) return;
+    if(d.retired){UI.toast(`${d.name} has retired and cannot be signed.`,'warning');return;}
     const team=State.getPlayerTeam();
     const current=State.getTeamReserves(team.id);
     if(current.length>=2){UI.toast('Already have 2 reserve drivers.','warning');return;}
@@ -21999,7 +22106,49 @@ window._wrGivePosition = function(aheadId, behindId) {
   if(rsA && rsB) {
     var tmpPos = rsA.position; rsA.position = rsB.position; rsB.position = tmpPos;
     var tmpPts = rsA.points; rsA.points = rsB.points; rsB.points = tmpPts;
+    // Write swap back to actual race result so championship stats stay consistent
+    var race = State.game.calendar[WR.raceIdx];
+    var resultKey = WR.isSprint ? 'sprintResult' : 'raceResult';
+    if(race && Array.isArray(race[resultKey])) {
+      var gameRsA = race[resultKey].find(function(r){ return r.driverId === aheadId; });
+      var gameRsB = race[resultKey].find(function(r){ return r.driverId === behindId; });
+      if(gameRsA && gameRsB) {
+        var _oldPosA = gameRsA.position, _oldPtsA = gameRsA.points||0;
+        var _oldPosB = gameRsB.position, _oldPtsB = gameRsB.points||0;
+        gameRsA.position = rsA.position; gameRsA.points = rsA.points;
+        gameRsB.position = rsB.position; gameRsB.points = rsB.points;
+        // Update season points for both drivers and teams
+        var _updateStats = function(dId, tId, oldPts, newPts, oldPos, newPos) {
+          var d = State.getDriver(dId), t = State.getTeam(tId);
+          var delta = (newPts||0) - (oldPts||0);
+          if(d){ d.seasonPoints = Math.max(0,(d.seasonPoints||0)+delta); d.totalPoints = Math.max(0,(d.totalPoints||0)+delta);
+            if(oldPos===1 && newPos!==1) d.wins = Math.max(0,(d.wins||0)-1);
+            if(oldPos!==1 && newPos===1) d.wins = (d.wins||0)+1;
+            if(oldPos<=3 && newPos>3) d.podiums = Math.max(0,(d.podiums||0)-1);
+            if(oldPos>3 && newPos<=3) d.podiums = (d.podiums||0)+1;
+          }
+          if(t){ t.seasonPoints = Math.max(0,(t.seasonPoints||0)+delta); t.totalPoints = Math.max(0,(t.totalPoints||0)+delta);
+            if(oldPos===1 && newPos!==1) t.wins = Math.max(0,(t.wins||0)-1);
+            if(oldPos!==1 && newPos===1) t.wins = (t.wins||0)+1;
+            if(oldPos<=3 && newPos>3) t.podiums = Math.max(0,(t.podiums||0)-1);
+            if(oldPos>3 && newPos<=3) t.podiums = (t.podiums||0)+1;
+          }
+        };
+        _updateStats(aheadId, gameRsA.teamId, _oldPtsA, rsA.points, _oldPosA, rsA.position);
+        _updateStats(behindId, gameRsB.teamId, _oldPtsB, rsB.points, _oldPosB, rsB.position);
+      }
+    }
+    // Update lastRaceResult/lastSprintResult so recap shows correct data
+    if(race) {
+      var _lrKey = WR.isSprint ? 'lastSprintResult' : 'lastRaceResult';
+      if(State.game[_lrKey]) State.game[_lrKey].results = WR.resultState.map(function(r){ return Object.assign({},r); });
+    }
   }
+  // Track persistent swap so position updates don't overwrite it
+  if(!WR._positionSwaps) WR._positionSwaps = [];
+  // Remove any existing swap involving these drivers
+  WR._positionSwaps = WR._positionSwaps.filter(function(s){ return s.a !== aheadId && s.a !== behindId && s.b !== aheadId && s.b !== behindId; });
+  WR._positionSwaps.push({a: aheadId, b: behindId});
   // Mark swap executed
   WR.teamOrders['_swap'] = true;
   WR.teamOrders[aheadId] = 'none';
@@ -22014,6 +22163,19 @@ window._wrGivePosition = function(aheadId, behindId) {
     feed.scrollTop = feed.scrollHeight;
   }
   window._wrRenderPositions();
+};
+
+window._wrApplyPositionSwaps = function() {
+  var WR = window._WR;
+  if(!WR || !WR._positionSwaps || !WR._positionSwaps.length) return;
+  WR._positionSwaps.forEach(function(s) {
+    var posA = WR.lastPos[s.a];
+    var posB = WR.lastPos[s.b];
+    if(posA != null && posB != null) {
+      WR.lastPos[s.a] = posB;
+      WR.lastPos[s.b] = posA;
+    }
+  });
 };
 
 window.WRSpeed = function(ms, btn) {
@@ -22424,7 +22586,7 @@ window._wrTick = function() {
       el.innerHTML = '<span style="font-size:10px;font-weight:700;color:#c0392b;margin-right:8px;display:inline-block;min-width:28px">L'+ev.lap+'</span><span style="font-size:9px;font-weight:700;letter-spacing:.3px;color:#c0392b;margin-right:8px">NOTE</span>🔧 '+ev.driverName+' reaches the pit window. Replay is using the recorded outcome from this save.';
       feed.appendChild(el);
       feed.scrollTop = feed.scrollHeight;
-      if(eventPositions) WR.lastPos = eventPositions;
+      if(eventPositions) { WR.lastPos = eventPositions; window._wrApplyPositionSwaps(); }
       window._wrRenderPositions();
       WR.timer = setTimeout(window._wrTick, speed);
       return;
@@ -22501,7 +22663,7 @@ window._wrTick = function() {
       el.innerHTML = '<span style="font-size:10px;font-weight:700;color:#2563eb;margin-right:8px;display:inline-block;min-width:28px">L'+ev.lap+'</span><span style="font-size:9px;font-weight:700;letter-spacing:.3px;color:#2563eb;margin-right:8px">NOTE</span>'+(ev.returnToSlick?'☀️ ':'🌧 ')+ev.driverName+' hits the weather crossover for '+tireLabel+'. Replay is using the recorded outcome from this save.';
       feed.appendChild(el);
       feed.scrollTop = feed.scrollHeight;
-      if(eventPositions) WR.lastPos = eventPositions;
+      if(eventPositions) { WR.lastPos = eventPositions; window._wrApplyPositionSwaps(); }
       window._wrRenderPositions();
       WR.timer = setTimeout(window._wrTick, speed);
       return;
@@ -22590,12 +22752,46 @@ window._wrTick = function() {
     const feed = document.getElementById('wr-feed');
     const penEl = document.createElement('div');
     penEl.style.cssText = 'background:rgba(251,191,36,.10);border:2px solid rgba(251,191,36,.6);border-radius:8px;padding:9px 12px;font-size:12px;flex-shrink:0;margin-bottom:4px;line-height:1.4;color:var(--tx)';
+    // Apply penalty position drop to the penalised driver in resultState
+    // A 5s penalty costs ~1 position, 10s costs ~2 positions
+    var penDriver = ev.penaltyOnPlayer ? ev.driverId : null;
+    var penDrop = (ev.penaltySeconds||5) >= 10 ? 2 : 1;
+    if(penDriver && Array.isArray(WR.resultState)) {
+      var penRs = WR.resultState.find(function(r){ return r.driverId === penDriver && !r.dnf; });
+      if(penRs) {
+        var oldPenPos = penRs.position;
+        var newPenPos = Math.min(WR.resultState.filter(function(r){return !r.dnf;}).length, oldPenPos + penDrop);
+        if(newPenPos > oldPenPos) {
+          // Shift drivers between old and new position up by 1
+          WR.resultState.forEach(function(r) {
+            if(!r.dnf && r.driverId !== penDriver && r.position > oldPenPos && r.position <= newPenPos) {
+              r.position--;
+              var _ptsT = (State.game&&State.game.customPoints)||DATA.points;
+              r.points = _ptsT[r.position-1]||0;
+            }
+          });
+          penRs.position = newPenPos;
+          var _ptsT2 = (State.game&&State.game.customPoints)||DATA.points;
+          penRs.points = _ptsT2[newPenPos-1]||0;
+          // Update lastPos to show the drop
+          WR.resultState.forEach(function(r) {
+            if(!r.dnf && r.position) WR.lastPos[r.driverId] = r.position;
+          });
+          // Also update game state race result
+          var _penRace = State.game.calendar[WR.raceIdx];
+          var _penResultKey = WR.isSprint ? 'sprintResult' : 'raceResult';
+          if(_penRace && Array.isArray(_penRace[_penResultKey])) {
+            _penRace[_penResultKey] = WR.resultState.map(function(r){ return Object.assign({},r); });
+          }
+        }
+      }
+    }
     penEl.innerHTML = '<span style="font-size:10px;font-weight:700;color:#92400e;margin-right:8px;display:inline-block;min-width:28px">L'+ev.lap+'</span>'
       + '<span style="font-size:9px;font-weight:800;letter-spacing:.4px;color:#92400e;margin-right:8px">PENALTY</span>'
       + ev.text;
     feed.appendChild(penEl);
     feed.scrollTop = feed.scrollHeight;
-    if(eventPositions) WR.lastPos = eventPositions;
+    if(eventPositions) { WR.lastPos = eventPositions; window._wrApplyPositionSwaps(); }
     window._wrRenderPositions();
     WR.timer = setTimeout(window._wrTick, speed);
     return;
@@ -22618,7 +22814,7 @@ window._wrTick = function() {
       return dec.ev && dec.ev.driverId === ev.driverId && Math.abs((dec.ev.lap||0) - (ev.lap||0)) <= 2;
     });
     if(covered) {
-      if(eventPositions) WR.lastPos = eventPositions;
+      if(eventPositions) { WR.lastPos = eventPositions; window._wrApplyPositionSwaps(); }
       window._wrRenderPositions();
       WR.timer = setTimeout(window._wrTick, 16);
       return;
