@@ -745,16 +745,11 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
         </div>
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:18px;max-width:320px;padding:14px 16px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
-          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v2.4.2.1 — What's New</div>
-          <div style="font-size:13px;font-weight:900;color:#111;margin-bottom:8px">Bug fixes, balance & editor</div>
+          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v2.4.3 — What's New</div>
+          <div style="font-size:13px;font-weight:900;color:#111;margin-bottom:8px">Custom sprint points & objective fixes</div>
           <div style="display:flex;flex-direction:column;gap:5px">
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">⚖️</span><span><strong>Dynasty prevention</strong> -- field catches up after consecutive titles, scales with difficulty</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">✨</span><span><strong>Custom sponsors in editor</strong> -- rename, add, remove starting sponsors per team</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>Pit stop spam</strong> -- drivers no longer pit on consecutive laps during safety cars</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>Scouting accuracy locked</strong> -- changing scout tier no longer changes existing reports</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>Long-term save sponsor fix</strong> -- malformed sponsors rebuilt on load</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">✨</span><span><strong>Pre-sign deadlock</strong> -- blocked options shown disabled with clear reasons</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>+6 more fixes</strong> -- standings, objectives, achievements, contract tab, aero knowledge</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">✨</span><span><strong>Custom sprint points</strong> — override sprint race points per position in the editor</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>Season objectives</strong> — position targets show "On track" mid-season instead of "Done"</span></div>
           </div>
           <button onclick="UI.showChangelog()" style="margin-top:10px;width:100%;padding:7px;background:none;border:1.5px solid rgba(192,57,43,.3);border-radius:7px;font-size:11px;font-weight:700;color:var(--red);cursor:pointer">Full release notes →</button>
         </div>
@@ -869,7 +864,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </div>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.4.2.1</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.4.3</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -2770,6 +2765,7 @@ const Editor = {
       prospectClasses: [...DATA.prospectSeries],
       deletedTeamIds: [],
       customPoints: null, // null = use default 25-18-15-... system
+      customSprintPoints: null, // null = use default 8-7-6-5-4-3-2-1 system
       engineManufacturers: JSON.parse(JSON.stringify(DATA.engineManufacturers))
     };
   },
@@ -2899,6 +2895,10 @@ const Editor = {
     // Custom points system
     out.customPoints = (Array.isArray(data?.customPoints) && data.customPoints.length >= 10)
       ? data.customPoints.map(p=>Math.max(0,parseInt(p)||0))
+      : null;
+    // Custom sprint points system
+    out.customSprintPoints = (Array.isArray(data?.customSprintPoints) && data.customSprintPoints.length >= 1)
+      ? data.customSprintPoints.map(p=>Math.max(0,parseInt(p)||0))
       : null;
     // Engine manufacturers — editable stats
     if(Array.isArray(data?.engineManufacturers) && data.engineManufacturers.length > 0) {
@@ -3185,6 +3185,37 @@ const Editor = {
     this._state.customPoints = null;
     this.persist();
     if(typeof UI !== 'undefined') { UI.renderEditor(); UI.toast('Points reset to default', 'success'); }
+  },
+  // ── Custom Sprint Points ──
+  getCustomSprintPoints() {
+    return this._state?.customSprintPoints || null;
+  },
+  setCustomSprintPoints(pts) {
+    if(!this._state) return;
+    if(!pts || pts.length < 1) { this._state.customSprintPoints = null; }
+    else { this._state.customSprintPoints = pts.map(p=>Math.max(0,parseInt(p)||0)); }
+    this.setSectionOpen('sprintPoints', true);
+    this.persist();
+    if(typeof UI !== 'undefined') UI.renderEditor();
+  },
+  updateCustomSprintPoint(index, value) {
+    if(!this._state) return;
+    if(!this._state.customSprintPoints) this._state.customSprintPoints = [8,7,6,5,4,3,2,1];
+    while(this._state.customSprintPoints.length <= index) this._state.customSprintPoints.push(0);
+    this._state.customSprintPoints[index] = Math.max(0, parseInt(value)||0);
+    this.persist();
+  },
+  applyCustomSprintPointsFromInputs() {
+    const inputs = [...document.querySelectorAll('[data-editor-sprint-point-input]')]
+      .sort((a,b)=>(parseInt(a.dataset.editorSprintPointInput)||0)-(parseInt(b.dataset.editorSprintPointInput)||0));
+    this.setCustomSprintPoints(inputs.map(el=>parseInt(el.value)||0));
+    if(typeof UI !== 'undefined') UI.toast('Custom sprint points applied', 'success');
+  },
+  resetCustomSprintPoints() {
+    if(!this._state) return;
+    this._state.customSprintPoints = null;
+    this.persist();
+    if(typeof UI !== 'undefined') { UI.renderEditor(); UI.toast('Sprint points reset to default', 'success'); }
   },
   updateTeamField(teamId, field, value) {
     const team = this.getTeam(teamId);
@@ -3620,6 +3651,7 @@ nextRegsYear: startYear + randInt(3,5), regsHistory: [],
       careerStats: {seasons:[], totalWins:0, totalPodiums:0, totalPoles:0, championships:0, constructorChampionships:0},
       prospectClasses: template.prospectClasses && template.prospectClasses.length > 0 ? [...template.prospectClasses] : [...DATA.prospectSeries],
       customPoints: (template.customPoints && template.customPoints.length >= 10) ? [...template.customPoints] : null,
+      customSprintPoints: (template.customSprintPoints && template.customSprintPoints.length >= 1) ? [...template.customSprintPoints] : null,
     };
     this._generatingNames = null;
     // Apply difficulty budget penalty to player team starting revenue
@@ -4452,7 +4484,7 @@ return {id,name:`${fn} ${ln}`,age:baseAge,nationality:nat,teamId:teamId||null,tr
 // =============================================
 const Sim = {
   simSprint(race) {
-    const sprintPts=[8,7,6,5,4,3,2,1];
+    const sprintPts=(State.game&&State.game.customSprintPoints)||[8,7,6,5,4,3,2,1];
     if(!race.sprintQualiDone) this.simSprintQualifying(race);
     // Use sprint quali grid for sprint race
     const sprintGrid = race.sprintQualiResult || race.qualiResult || [];
@@ -6207,12 +6239,10 @@ const Sim = {
                     : penRivals[Math.floor(Math.random()*penRivals.length)];
                   const penRecipient = onDriverOrRival ? rr.driverName : (rivalResult ? rivalResult.driverName : 'a rival');
                   const isPlayerHit = onDriverOrRival;
-                  const penalisedDriverId = onDriverOrRival ? o.driverId : (rivalId || o.driverId);
                   events.push({
                     lap,
                     type: 'penalty',
                     driverId: o.driverId,
-                    penalisedDriverId,
                     text: `🟨 ${penRecipient} — ${penSecs}s TIME PENALTY · ${reason}.${isPlayerHit ? ' Position at risk in the final standings.' : ''}`,
                     driverPositions: snap,
                     penaltySeconds: penSecs,
@@ -10790,13 +10820,8 @@ const Storage = {
     }
     const seasonStarted = (g.calendar||[]).some(r=>r.qualiDone||r.raceDone||r.sprintQualiDone||r.sprintDone);
     if(g.raceIndex===0 && !seasonStarted){
-      // Only reset to offseason if we haven't already confirmed and applied winter dev
-      if(g._seasonStartConfirmedFor===g.season) {
-        // Season was already started — do NOT reset to offseason (prevents winter dev re-application exploit)
-        g.offseasonPending = false;
-      } else {
-        g.offseasonPending = true;
-      }
+      if(g._seasonStartConfirmedFor===g.season) delete g._seasonStartConfirmedFor;
+      g.offseasonPending = true;
     }
     if(g._offseasonProcessedForSeason===undefined) g._offseasonProcessedForSeason = null;
     if(g.raceIndex >= (g.calendar||[]).length && g._offseasonProcessedForSeason === g.season){
@@ -11446,6 +11471,34 @@ const UI = {
           </div>`;
         })()}
       </details>
+
+      <details class="panel" style="margin-bottom:12px" ${Editor._openSections?.sprintPoints?'open':''} ontoggle="Editor.setSectionOpen('sprintPoints',this.open)">
+        <summary style="cursor:pointer;font-weight:800;color:var(--tx);list-style:none">🏃 Sprint Points System</summary>
+        <div style="font-size:12px;color:var(--tx3);margin-top:8px;margin-bottom:12px">Customise how many points are awarded per finishing position in sprint races. The default F1 sprint system awards points to the top 8 (8-7-6-5-4-3-2-1).</div>
+        ${(()=>{
+          const defaultSprint = [8,7,6,5,4,3,2,1];
+          const currentSp = Editor.getCustomSprintPoints() || defaultSprint;
+          const isCustomSp = !!Editor.getCustomSprintPoints();
+          const gridPositions = Math.max(20, (Editor.getTeams().length || 10) * 2);
+          const spPositions = Math.max(gridPositions, currentSp.length);
+          const spPosLabels = Array.from({length:spPositions},(_,i)=>`P${i+1}`);
+          return `
+          ${isCustomSp ? '<div style="font-size:11px;color:var(--amber);font-weight:700;margin-bottom:8px">⚠️ Custom sprint points active — will apply to new careers</div>' : '<div style="font-size:11px;color:var(--tx3);margin-bottom:8px">Currently using the default F1 sprint points system (8-7-6-5-4-3-2-1).</div>'}
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:6px;margin-bottom:12px">
+            ${spPosLabels.slice(0,spPositions).map((lbl,i)=>`
+              <label style="display:flex;flex-direction:column;gap:2px;align-items:center">
+                <span style="font-size:9px;font-weight:700;color:${i<3?'var(--amber)':i<8?'var(--grn)':'var(--tx3)'};text-transform:uppercase">${lbl}</span>
+                <input type="number" min="0" max="99" value="${currentSp[i]||0}" data-editor-sprint-point-input="${i}"
+                  onchange="Editor.updateCustomSprintPoint(${i},this.value)"
+                  style="font-size:12px;font-weight:700;padding:5px 6px;border:1px solid ${isCustomSp?'var(--amber)':'var(--bd)'};border-radius:6px;background:var(--bg2);text-align:center;width:100%">
+              </label>`).join('')}
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn btn-outline btn-sm" onclick="Editor.applyCustomSprintPointsFromInputs()" style="border-color:var(--amber);color:var(--amber)">Apply Custom Sprint Points</button>
+            ${isCustomSp ? '<button class="btn btn-ghost btn-sm" onclick="Editor.resetCustomSprintPoints()">Reset to Default</button>' : ''}
+          </div>`;
+        })()}
+      </details>
     `;
   },
   renderEditorJsonModal(text, isImport){
@@ -11840,21 +11893,24 @@ const UI = {
           const seasonPl = playerDs.reduce((s,d)=>s+(d.poles||0),0);
           const cPos = State.getConstructorSeasonPos(team.id)||99;
           const racesRun = (g.calendar||[]).filter(r=>r.raceDone).length;
-          let current=0, done=false;
+          const totalRacesObj = (g.calendar||[]).length;
+          const seasonOver = racesRun >= totalRacesObj && totalRacesObj > 0;
+          let current=0, done=false, onTrack=false;
           switch(obj.type){
-            case 'position': current=cPos; done=racesRun>0&&cPos<=obj.target; break;
+            case 'position': current=cPos; onTrack=racesRun>0&&cPos<=obj.target; done=seasonOver&&onTrack; break;
             case 'wins':     current=seasonW; done=seasonW>=obj.target; break;
             case 'podiums':  current=seasonP; done=seasonP>=obj.target; break;
             case 'poles':    current=seasonPl; done=seasonPl>=obj.target; break;
             case 'points':   current=team.seasonPoints||0; done=current>=obj.target; break;
             case 'legacy':   current=0; done=false; break;
           }
-          const pct = obj.type==='position' ? (done?100:0) : Math.min(100,Math.round(current/obj.target*100));
-          const col = done ? 'var(--grn)' : pct>=60 ? 'var(--amber)' : 'var(--tx3)';
+          const pct = obj.type==='position' ? ((done||onTrack)?100:0) : Math.min(100,Math.round(current/obj.target*100));
+          const col = (done||onTrack) ? 'var(--grn)' : pct>=60 ? 'var(--amber)' : 'var(--tx3)';
+          const statusLabel = done ? '✓ Done' : onTrack ? '✓ On track' : obj.type==='position' ? 'P'+current : current+'/'+obj.target;
           return `<div style="padding:6px 0;border-bottom:1px solid var(--bd)">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">
               <span style="font-size:12px;font-weight:600">${obj.icon} ${obj.label}</span>
-              <span style="font-size:10px;font-weight:700;color:${col}">${done?'✓ Done':obj.type==='position'?'P'+current:current+'/'+obj.target}</span>
+              <span style="font-size:10px;font-weight:700;color:${col}">${statusLabel}</span>
             </div>
             <div style="display:flex;align-items:center;gap:6px">
               <div style="flex:1;height:3px;background:var(--bd);border-radius:2px"><div style="width:${pct}%;height:100%;background:${col};border-radius:2px;transition:width .3s"></div></div>
@@ -18621,13 +18677,11 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.4.2.1 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.4.3 · Release Notes</div>
         ${[
-    ['v2.4.2.1','May 2026',[
-            '🐛 AI time penalties now applied: penalties issued to AI drivers during Watch Race now correctly drop their finishing position and update wins, podiums, and points for all affected drivers. Previously only player-driver penalties caused position changes (reported by IronicGerman).',
-            '🐛 Driver wins tracking: penalty-induced position changes in Watch Race now properly update driver and team win/podium/points counts. Fixes the bug where wins could be misattributed between drivers after Watch Race penalties (reported by Cesnna465).',
-            '🐛 Engine Market values: the Engine Market modal now shows dynamically generated descriptions based on current power rankings instead of stale flavor text from the start of the game (reported by IronicGerman).',
-            '🐛 Winter development exploit fixed: saving and reloading after clicking "Begin Season" but before the first race no longer loops back to the offseason, preventing infinite winter development stacking. The game now tracks whether winter dev was already applied and skips the offseason on reload (reported by IronicGerman).',
+    ['v2.4.3','May 2026',[
+            '✨ Custom sprint points: the Roster Editor now includes a Sprint Points System section where you can override points awarded per finishing position in sprint races. Defaults to the standard 8-7-6-5-4-3-2-1 system. Custom sprint points carry through to new careers and are used in both simulated and watched sprint races (requested by moorbre).',
+            '🐛 Season objectives — "On track" vs "Done": position-based objectives (e.g. "Win the Constructors Championship") now correctly show "✓ On track" when you are currently meeting the target mid-season, instead of prematurely showing "✓ Done". The objective only shows "Done" once every race in the calendar is complete. Cumulative objectives (wins, podiums, poles, points) are unaffected — they still show "Done" as soon as the target is hit (reported by Interesting_Dot_1168).',
     ]],
     ['v2.4.2','May 2026',[
             '🐛 Pit stop spam fix: drivers can no longer pit on consecutive laps. A weather-triggered pit stop that coincides with a planned stop now correctly consumes the planned stop, and a guard prevents any planned/forced pit if the driver pitted on the previous lap (reported by Interesting_Dot_1168).',
@@ -20275,18 +20329,7 @@ const GameActions = {
             <div style="font-size:15px;font-weight:900;color:#16a34a">${eng.devRate}/10</div>
           </div>
         </div>
-        <div style="font-size:11px;color:var(--tx3);margin-bottom:8px">${(()=>{
-          const allEngs = manufacturers;
-          const sortedByPower = allEngs.slice().sort((a,b)=>b.powerRating-a.powerRating);
-          const sortedByERS = allEngs.slice().sort((a,b)=>b.ersRating-a.ersRating);
-          const powerRank = sortedByPower.findIndex(e=>e.id===eng.id)+1;
-          const ersRank = sortedByERS.findIndex(e=>e.id===eng.id)+1;
-          const powerLeader = sortedByPower[0];
-          const isLeader = powerRank===1;
-          const gap = isLeader ? 0 : (eng.powerRating - powerLeader.powerRating).toFixed(1);
-          if(isLeader) return 'Raw power leader among all suppliers. '+(ersRank===1?'Also leads on ERS refinement.':ersRank<=2?'ERS is competitive but not the benchmark.':'ERS needs development to match the top.');
-          return 'P'+powerRank+' in power, '+Math.abs(gap)+' behind '+powerLeader.shortName+'. '+(ersRank===1?'ERS is the standout strength.':ersRank<=2?'Strong ERS deployment.':'Development programme targeting both power and ERS recovery.');
-        })()}${isCurrent?'':switchPenalty}</div>
+        <div style="font-size:11px;color:var(--tx3);margin-bottom:8px">${eng.desc}${isCurrent?'':switchPenalty}</div>
         <div style="font-size:11px;color:var(--tx3);margin-bottom:6px">${usersCount} team${usersCount!==1?'s':''} using · max ${effectiveMax}</div>
         ${canSwitch
           ? `<button onclick="GameActions.switchEngine('${eng.id}')" class="btn btn-outline btn-sm" style="width:100%">🔄 Switch to ${eng.shortName} (3yr deal · ${dealCost?formatMoney(dealCost)+'/yr':'works rate'})</button>`
@@ -22898,7 +22941,7 @@ window._wrTick = function() {
     penEl.style.cssText = 'background:rgba(251,191,36,.10);border:2px solid rgba(251,191,36,.6);border-radius:8px;padding:9px 12px;font-size:12px;flex-shrink:0;margin-bottom:4px;line-height:1.4;color:var(--tx)';
     // Apply penalty position drop to the penalised driver in resultState
     // A 5s penalty costs ~1 position, 10s costs ~2 positions
-    var penDriver = ev.penalisedDriverId || (ev.penaltyOnPlayer ? ev.driverId : null);
+    var penDriver = ev.penaltyOnPlayer ? ev.driverId : null;
     var penDrop = (ev.penaltySeconds||5) >= 10 ? 2 : 1;
     if(penDriver && Array.isArray(WR.resultState)) {
       var penRs = WR.resultState.find(function(r){ return r.driverId === penDriver && !r.dnf; });
@@ -22906,44 +22949,17 @@ window._wrTick = function() {
         var oldPenPos = penRs.position;
         var newPenPos = Math.min(WR.resultState.filter(function(r){return !r.dnf;}).length, oldPenPos + penDrop);
         if(newPenPos > oldPenPos) {
-          // Shift drivers between old and new position up by 1, updating their stats
+          // Shift drivers between old and new position up by 1
           WR.resultState.forEach(function(r) {
             if(!r.dnf && r.driverId !== penDriver && r.position > oldPenPos && r.position <= newPenPos) {
-              var _oldShiftPos = r.position;
               r.position--;
               var _ptsT = (State.game&&State.game.customPoints)||DATA.points;
-              var _oldShiftPts = r.points || 0;
               r.points = _ptsT[r.position-1]||0;
-              // Update driver and team stats for the shifted driver
-              var _shiftD = State.getDriver(r.driverId), _shiftT = State.getTeam(r.teamId);
-              var _shiftPtsDelta = (r.points||0) - _oldShiftPts;
-              if(_shiftD) {
-                _shiftD.seasonPoints = Math.max(0, (_shiftD.seasonPoints||0) + _shiftPtsDelta);
-                if(_oldShiftPos > 1 && r.position === 1) _shiftD.wins = (_shiftD.wins||0) + 1;
-                if(_oldShiftPos > 3 && r.position <= 3) _shiftD.podiums = (_shiftD.podiums||0) + 1;
-              }
-              if(_shiftT) {
-                _shiftT.seasonPoints = Math.max(0, (_shiftT.seasonPoints||0) + _shiftPtsDelta);
-                if(_oldShiftPos > 1 && r.position === 1) _shiftT.wins = (_shiftT.wins||0) + 1;
-              }
             }
           });
-          var _oldPenPts = penRs.points || 0;
           penRs.position = newPenPos;
           var _ptsT2 = (State.game&&State.game.customPoints)||DATA.points;
           penRs.points = _ptsT2[newPenPos-1]||0;
-          // Update penalised driver's stats
-          var _penD = State.getDriver(penRs.driverId), _penT = State.getTeam(penRs.teamId);
-          var _penPtsDelta = (penRs.points||0) - _oldPenPts;
-          if(_penD) {
-            _penD.seasonPoints = Math.max(0, (_penD.seasonPoints||0) + _penPtsDelta);
-            if(oldPenPos === 1 && newPenPos !== 1) _penD.wins = Math.max(0, (_penD.wins||0) - 1);
-            if(oldPenPos <= 3 && newPenPos > 3) _penD.podiums = Math.max(0, (_penD.podiums||0) - 1);
-          }
-          if(_penT) {
-            _penT.seasonPoints = Math.max(0, (_penT.seasonPoints||0) + _penPtsDelta);
-            if(oldPenPos === 1 && newPenPos !== 1) _penT.wins = Math.max(0, (_penT.wins||0) - 1);
-          }
           // Update lastPos to show the drop
           WR.resultState.forEach(function(r) {
             if(!r.dnf && r.position) WR.lastPos[r.driverId] = r.position;
@@ -23141,7 +23157,7 @@ window._wrApplyBonusNow = function(driverId, decisionMeta) {
   const race = WR && WR.race;
   if(!WR || !race || driverId == null) return;
   const resultKey = WR.isSprint ? 'sprintResult' : 'raceResult';
-  const ptsTable = WR.isSprint ? [8,7,6,5,4,3,2,1] : ((State.game&&State.game.customPoints) || (window.DATA && DATA.points ? DATA.points : [25,18,15,12,10,8,6,4,2,1]));
+  const ptsTable = WR.isSprint ? ((State.game&&State.game.customSprintPoints) || [8,7,6,5,4,3,2,1]) : ((State.game&&State.game.customPoints) || (window.DATA && DATA.points ? DATA.points : [25,18,15,12,10,8,6,4,2,1]));
   if(!Array.isArray(WR.resultState)) {
     WR.resultState = (race[resultKey] || []).map(function(r){ return Object.assign({}, r); });
   }
