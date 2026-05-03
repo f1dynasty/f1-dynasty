@@ -745,11 +745,13 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
         </div>
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:18px;max-width:320px;padding:14px 16px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
-          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v2.4.3 — What's New</div>
-          <div style="font-size:13px;font-weight:900;color:#111;margin-bottom:8px">Custom sprint points & objective fixes</div>
+          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v2.4.3.1 — What's New</div>
+          <div style="font-size:13px;font-weight:900;color:#111;margin-bottom:8px">Custom sprint points, PU fix & more</div>
           <div style="display:flex;flex-direction:column;gap:5px">
             <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">✨</span><span><strong>Custom sprint points</strong> — override sprint race points per position in the editor</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>PU recovery in long saves</strong> — engines that grew beyond base stats can now recover properly</span></div>
             <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>Season objectives</strong> — position targets show "On track" mid-season instead of "Done"</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>Watch Race points</strong> — standings now always match the actual race result</span></div>
           </div>
           <button onclick="UI.showChangelog()" style="margin-top:10px;width:100%;padding:7px;background:none;border:1.5px solid rgba(192,57,43,.3);border-radius:7px;font-size:11px;font-weight:700;color:var(--red);cursor:pointer">Full release notes →</button>
         </div>
@@ -864,7 +866,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </div>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.4.3</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.4.3.1</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -14318,6 +14320,97 @@ const personalSlots = getPersonalSponsorSlots(d);
       (WR.weatherDecisions||[]).forEach(d=>{ if(d.autoTimer) clearInterval(d.autoTimer); d.autoTimer=null; });
       WR.tyreState={};
       WR.teamOrders={}; WR._positionSwaps=[];
+      // ── Points reconciliation ──────────────────────────────────────────────
+      // The watch race bonus/swap system can apply point deltas that desync
+      // driver/team seasonPoints and totalPoints from the actual race results.
+      // Fix by recomputing seasonPoints from every completed race result, then
+      // deriving totalPoints = (pre-recon totalPoints) - (pre-recon seasonPoints)
+      // + (recomputed seasonPoints). This preserves career history while
+      // correcting any current-season drift.
+      const g = State.game;
+      if(g && Array.isArray(g.calendar)) {
+        const allDrivers = g.drivers || [];
+        const allTeams = g.teams || [];
+        // Snapshot current values before reset
+        const driverSnap = {};
+        allDrivers.forEach(function(d){
+          driverSnap[d.id] = { sp: d.seasonPoints||0, tp: d.totalPoints||0, w: d.wins||0, p: d.podiums||0, pl: d.poles||0, sw: d.sprintWins||0 };
+        });
+        const teamSnap = {};
+        allTeams.forEach(function(t){
+          teamSnap[t.id] = { sp: t.seasonPoints||0, tp: t.totalPoints||0, w: t.wins||0, p: t.podiums||0, pl: t.poles||0, sw: t.sprintWins||0 };
+        });
+        // Reset season stats
+        allDrivers.forEach(function(d){
+          d.seasonPoints = 0; d.wins = 0; d.podiums = 0; d.poles = 0; d.sprintWins = 0;
+        });
+        allTeams.forEach(function(t){
+          t.seasonPoints = 0; t.wins = 0; t.podiums = 0; t.poles = 0; t.sprintWins = 0;
+        });
+        // Recompute from every completed race
+        g.calendar.forEach(function(cal){
+          // Sprint results
+          if(cal.sprintDone && Array.isArray(cal.sprintResult)) {
+            cal.sprintResult.forEach(function(r){
+              if(r.dnf) return;
+              var d = allDrivers.find(function(x){ return x.id === r.driverId; });
+              var t = allTeams.find(function(x){ return x.id === r.teamId; });
+              if(d) {
+                d.seasonPoints += (r.points || 0);
+                if(r.position === 1) d.sprintWins = (d.sprintWins || 0) + 1;
+              }
+              if(t) {
+                t.seasonPoints += (r.points || 0);
+                if(r.position === 1) t.sprintWins = (t.sprintWins || 0) + 1;
+              }
+            });
+          }
+          // Race results
+          if(cal.raceDone && Array.isArray(cal.raceResult)) {
+            cal.raceResult.forEach(function(r){
+              if(r.dnf) return;
+              var d = allDrivers.find(function(x){ return x.id === r.driverId; });
+              var t = allTeams.find(function(x){ return x.id === r.teamId; });
+              if(d) {
+                d.seasonPoints += (r.points || 0);
+                if(r.position === 1) d.wins = (d.wins || 0) + 1;
+                if(r.position <= 3) d.podiums = (d.podiums || 0) + 1;
+              }
+              if(t) {
+                t.seasonPoints += (r.points || 0);
+                if(r.position === 1) t.wins = (t.wins || 0) + 1;
+                if(r.position <= 3) t.podiums = (t.podiums || 0) + 1;
+              }
+            });
+            // Poles from qualifying
+            if(Array.isArray(cal.qualiResult) && cal.qualiResult.length > 0) {
+              var poleDriver = cal.qualiResult[0];
+              if(poleDriver) {
+                var pd = allDrivers.find(function(x){ return x.id === poleDriver.driverId; });
+                if(pd) pd.poles = (pd.poles || 0) + 1;
+                var pt = allTeams.find(function(x){ return x.id === poleDriver.teamId; });
+                if(pt) pt.poles = (pt.poles || 0) + 1;
+              }
+            }
+          }
+        });
+        // Derive totalPoints: preserve career history, correct current-season drift
+        allDrivers.forEach(function(d){
+          var snap = driverSnap[d.id];
+          if(snap) {
+            var careerBase = snap.tp - snap.sp; // total minus old season = career before this season
+            d.totalPoints = Math.max(0, careerBase + d.seasonPoints);
+          }
+        });
+        allTeams.forEach(function(t){
+          var snap = teamSnap[t.id];
+          if(snap) {
+            var careerBase = snap.tp - snap.sp;
+            t.totalPoints = Math.max(0, careerBase + t.seasonPoints);
+          }
+        });
+      }
+      // ── End reconciliation ─────────────────────────────────────────────────
     }
     document.getElementById('watch-race-modal').style.display='none';
     UI.renderDashboard(); UI.renderSchedule();
@@ -18677,11 +18770,13 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.4.3 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.4.3.1 · Release Notes</div>
         ${[
-    ['v2.4.3','May 2026',[
+    ['v2.4.3.1','May 2026',[
             '✨ Custom sprint points: the Roster Editor now includes a Sprint Points System section where you can override points awarded per finishing position in sprint races. Defaults to the standard 8-7-6-5-4-3-2-1 system. Custom sprint points carry through to new careers and are used in both simulated and watched sprint races (requested by moorbre).',
             '🐛 Season objectives — "On track" vs "Done": position-based objectives (e.g. "Win the Constructors Championship") now correctly show "✓ On track" when you are currently meeting the target mid-season, instead of prematurely showing "✓ Done". The objective only shows "Done" once every race in the calendar is complete. Cumulative objectives (wins, podiums, poles, points) are unaffected — they still show "Done" as soon as the target is hit (reported by Interesting_Dot_1168).',
+            '🐛 Power Unit recovery in long saves: investing winter budget in Power Unit now correctly recovers degraded PU stats in long-running saves where engines have grown beyond their original base values through breakthroughs. Previously the recovery ceiling was locked to the static starting values from Season 1, so engines that had grown to e.g. 97.5 power through breakthroughs could never recover back above 95.0. Recovery now targets the previous season-start values as its ceiling (reported by IronicGerman).',
+            '🐛 Watch Race points desync: the pit decision bonus system could cause championship standings to diverge from the actual race result — a driver shown as P2 in the race result would appear as P3 in the standings with wrong points. Watch Race now reconciles all driver and team season points, wins, and podiums against the actual race result when the modal closes (reported by IronicGerman).',
     ]],
     ['v2.4.2','May 2026',[
             '🐛 Pit stop spam fix: drivers can no longer pit on consecutive laps. A weather-triggered pit stop that coincides with a planned stop now correctly consumes the planned stop, and a guard prevents any planned/forced pit if the driver pitted on the previous lap (reported by Interesting_Dot_1168).',
@@ -20116,16 +20211,20 @@ const GameActions = {
       if(playerEng) {
         const engBudgetFactor = Math.min(1, ((bw2.engine||0) / 60)); // 0→1 over $60M spend
         const relBudgetFactor = Math.min(1, ((bw2.reliability||0) / 40));
+        // Use the previous season-start snapshot as recovery ceiling (captures breakthrough growth),
+        // falling back to DATA base values for saves without a snapshot
+        const prevSnap = g._engineStatsSnapshot && g._engineStatsSnapshot[playerEng.id] ? g._engineStatsSnapshot[playerEng.id] : null;
         const baseEngDef = DATA.engineManufacturers.find(e=>e.id===playerEng.id);
-        // Recover up to 60% of gap between current and base values, scaled by budget
-        if(baseEngDef) {
-          const pwrGap = Math.max(0, baseEngDef.powerRating - playerEng.powerRating);
-          const ersGap = Math.max(0, baseEngDef.ersRating - playerEng.ersRating);
-          const relGap = Math.max(0, baseEngDef.reliability - playerEng.reliability);
-          playerEng.powerRating = Math.min(99, playerEng.powerRating + pwrGap * 0.6 * engBudgetFactor * rdMult_bs);
-          playerEng.ersRating   = Math.min(99, playerEng.ersRating   + ersGap * 0.6 * engBudgetFactor * rdMult_bs);
-          playerEng.reliability = Math.min(98, playerEng.reliability + relGap * 0.7 * relBudgetFactor * rdMult_bs);
-        }
+        const ceilPower = Math.max(prevSnap?.powerRating || 0, baseEngDef?.powerRating || 88);
+        const ceilERS   = Math.max(prevSnap?.ersRating   || 0, baseEngDef?.ersRating   || 86);
+        const ceilRel   = Math.max(prevSnap?.reliability || 0, baseEngDef?.reliability  || 88);
+        // Recover up to 60% of gap between current and ceiling, scaled by budget
+        const pwrGap = Math.max(0, ceilPower - playerEng.powerRating);
+        const ersGap = Math.max(0, ceilERS   - playerEng.ersRating);
+        const relGap = Math.max(0, ceilRel   - playerEng.reliability);
+        playerEng.powerRating = Math.min(99, playerEng.powerRating + pwrGap * 0.6 * engBudgetFactor * rdMult_bs);
+        playerEng.ersRating   = Math.min(99, playerEng.ersRating   + ersGap * 0.6 * engBudgetFactor * rdMult_bs);
+        playerEng.reliability = Math.min(98, playerEng.reliability + relGap * 0.7 * relBudgetFactor * rdMult_bs);
       }
     }
 
