@@ -745,13 +745,13 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
         </div>
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:18px;max-width:320px;padding:14px 16px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
-          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v2.4.3.1 — What's New</div>
-          <div style="font-size:13px;font-weight:900;color:#111;margin-bottom:8px">Custom sprint points, PU fix & more</div>
+          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v2.4.4 — What's New</div>
+          <div style="font-size:13px;font-weight:900;color:#111;margin-bottom:8px">AI driver market, PU fix & more</div>
           <div style="display:flex;flex-direction:column;gap:5px">
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">✨</span><span><strong>Custom sprint points</strong> — override sprint race points per position in the editor</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>PU recovery in long saves</strong> — engines that grew beyond base stats can now recover properly</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>Season objectives</strong> — position targets show "On track" mid-season instead of "Done"</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>Watch Race points</strong> — standings now always match the actual race result</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">⚖️</span><span><strong>AI driver market overhaul</strong> — top teams now sign top drivers in long saves</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>PU breakthrough display</strong> — engine stats now correctly reflect breakthrough gains</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🆕</span><span><strong>Pre-sign free agents</strong> — lock in a free agent for next season without releasing a driver now</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>Records, reserves, academy</strong> — youngest/oldest champ overlap, reserve visibility, junior contract fixes</span></div>
           </div>
           <button onclick="UI.showChangelog()" style="margin-top:10px;width:100%;padding:7px;background:none;border:1.5px solid rgba(192,57,43,.3);border-radius:7px;font-size:11px;font-weight:700;color:var(--red);cursor:pointer">Full release notes →</button>
         </div>
@@ -866,7 +866,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </div>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.4.3.1</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.4.4</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -8598,6 +8598,7 @@ const spons=sumSponsorIncome(g.sponsors||[]);
       return move.fromTeamId!==protectedPlayerTeamId && move.toTeamId!==protectedPlayerTeamId;
     });
     const executedMoves=new Set();
+    const _playerInboundPreSigns=new Set(); // track drivers arriving via player-initiated pre-season moves
     const committedMoveDrivers=new Set((g.preSeasonMoves||[]).map(m=>m.driverId));
     // Deduplicate preSeasonMoves — player-initiated moves always win over AI moves for the same driver
     // Sort player-initiated first so dedup keeps them when there is a conflict
@@ -8646,6 +8647,7 @@ const spons=sumSponsorIncome(g.sponsors||[]);
       }
       if(!toTeam.driverIds.includes(d.id)) toTeam.driverIds.push(d.id);
       executedMoves.add(d.id);
+      if(move.playerInitiated && move.toTeamId===g.playerTeamId) _playerInboundPreSigns.add(d.id);
       transfers.push({driverName:d.name,from:move.fromTeamName,to:move.toTeamName,teamId:move.toTeamId,preSigned:true,reason:move.reason||'pre-season agreement',rating:Math.round(d.rating||0)});
     });
     g.preSeasonMoves=[];
@@ -8662,9 +8664,9 @@ const spons=sumSponsorIncome(g.sponsors||[]);
       if(executedMoves.has(d.id)) return;
       const team = State.getTeam(d.teamId);
       if(!team) return;
-      // Renew if driver is good enough for the team
+      // Renew if driver is good enough for the team — scaled thresholds
       const teamCarRank = [...(g.teams||[])].sort((a,b)=>getTeamOverallCar(b)-getTeamOverallCar(a)).findIndex(t=>t.id===team.id) + 1;
-      const minRenew = teamCarRank <= 3 ? 80 : teamCarRank <= 6 ? 72 : 66;
+      const minRenew = teamCarRank <= 3 ? 75 : teamCarRank <= 5 ? 72 : teamCarRank <= 7 ? 68 : 64;
       const shouldRenew = (d.rating||0) >= minRenew && d.morale >= 45 && d.age <= 37;
       if(shouldRenew) {
         d.contract = randInt(1,3);
@@ -8715,7 +8717,7 @@ const spons=sumSponsorIncome(g.sponsors||[]);
         });
         sorted.slice(2).forEach(id=>{
           const d=State.getDriver(id);
-          if(d){d.teamId=null;d.isFreeAgent=true;}
+          if(d){d.teamId=null;d.isFreeAgent=true;d.contract=0;}
           team.driverIds=team.driverIds.filter(x=>x!==id);
         });
       }
@@ -8731,14 +8733,18 @@ const spons=sumSponsorIncome(g.sponsors||[]);
     g.teams.forEach(team=>{
       if(team.id===g.playerTeamId) return; // player controls their own roster
       const teamCarRank = [...(g.teams||[])].sort((a,b)=>getTeamOverallCar(b)-getTeamOverallCar(a)).findIndex(t=>t.id===team.id) + 1;
-      // Minimum acceptable rating scales with team car rank
-      const minAcceptable = teamCarRank <= 3 ? 75 : teamCarRank <= 6 ? 70 : 65;
+      // Minimum acceptable rating scales with team car rank — higher bar for top teams
+      const minAcceptable = teamCarRank <= 2 ? 78 : teamCarRank <= 4 ? 74 : teamCarRank <= 7 ? 69 : 64;
       State.getTeamDrivers(team.id).forEach(d=>{
-        const protectedContractedDriver = (d.contract||0)>0;
-        if(protectedContractedDriver) return;
-        if(d.morale<40){d.teamId=null;d.contract=0;d._departReason='low morale';}
-        else if(d.age>36&&d.rating<70){d.teamId=null;d.contract=0;d._departReason='released (declining performance)';}
-        else if(d.rating < minAcceptable && d.age > 30){d.teamId=null;d.contract=0;d._departReason='released (not meeting team standards)';}
+        const contractYrs = d.contract||0;
+        // Multi-year contracts are fully protected; 1yr contracts can be broken by top teams for severe underperformance
+        if(contractYrs > 1) return;
+        const hasContract = contractYrs > 0;
+        if(d.morale<40){d.teamId=null;d.contract=0;d.isFreeAgent=true;d._departReason='low morale';}
+        else if(d.age>36&&d.rating<70){d.teamId=null;d.contract=0;d.isFreeAgent=true;d._departReason='released (declining performance)';}
+        else if(!hasContract && d.rating < minAcceptable && d.age > 28){d.teamId=null;d.contract=0;d.isFreeAgent=true;d._departReason='released (not meeting team standards)';}
+        // Top teams (rank 1-3) will terminate 1yr contracts if driver is well below standard
+        else if(hasContract && teamCarRank <= 3 && d.rating < minAcceptable - 5){d.teamId=null;d.contract=0;d.isFreeAgent=true;d._departReason='contract terminated (performance clause)';}
       });
     });
 
@@ -8872,19 +8878,24 @@ const spons=sumSponsorIncome(g.sponsors||[]);
       const current=State.getTeamDrivers(team.id);
       const worstCurrent=current.length>0?current.reduce((w,d)=>d.rating<w.rating?d:w,current[0]):null;
       if(!worstCurrent) return;
-      if((worstCurrent.contract||0)>0) return;
-      // Top teams (prestige>80) actively poach — look for drivers 3+ points better
-      const threshold=team.prestige>80?3:6;
+      // Allow poaching even when worst driver has 1yr contract left for top teams with a big upgrade available
+      const hasContract = (worstCurrent.contract||0)>0;
+      if(hasContract && (worstCurrent.contract||0)>1) return; // multi-year contracts are protected
+      if(hasContract && team.prestige<=75) return; // only top teams buy out 1yr contracts
+      // Top teams (prestige>80) actively poach with lower threshold; mid-table teams need bigger gap
+      const threshold=team.prestige>80?2:team.prestige>65?4:7;
+      // For contract buyout, need a bigger gap to justify the move
+      const effectiveThreshold = hasContract ? threshold + 4 : threshold;
       const candidates=State.getFreeAgents()
         .filter(fa=>!carriedNegotiationDriverIds.has(fa.id))
         .filter(fa=>!(g.committedProspects||[]).some(c=>c.driverId===fa.id))
-        .filter(fa=>fa.rating>worstCurrent.rating+threshold&&fa.salary<=team.revenue/12)
+        .filter(fa=>fa.rating>worstCurrent.rating+effectiveThreshold&&fa.salary<=team.revenue/12)
         .sort((a,b)=>b.rating-a.rating);
       if(candidates.length>0){
         const target=candidates[0];
         // Release the weaker driver
-        transfers.push({driverName:worstCurrent.name,from:team.name,to:'Free Agent',teamId:team.id,left:true,poached:true,reason:'replaced by upgrade signing'});
-        worstCurrent.teamId=null; worstCurrent.contract=0;
+        transfers.push({driverName:worstCurrent.name,from:team.name,to:'Free Agent',teamId:team.id,left:true,poached:true,reason:hasContract?'contract terminated — replaced by upgrade':'replaced by upgrade signing'});
+        worstCurrent.teamId=null; worstCurrent.contract=0; worstCurrent.isFreeAgent=true;
         // Sign the upgrade — show where they came from
         const prevTeam=preDriverTeam[target.id];
         const fromLabel=prevTeam?prevTeam.teamName:'Free Agent';
@@ -8947,6 +8958,7 @@ const spons=sumSponsorIncome(g.sponsors||[]);
       }
     });
     // ── Fill empty seats — record departures then sign ──
+    // First pass: record departures for ALL teams
     g.teams.forEach(team=>{
       const remaining=State.getTeamDrivers(team.id);
       const remainingIds=new Set(remaining.map(d=>d.id));
@@ -8957,8 +8969,13 @@ const spons=sumSponsorIncome(g.sponsors||[]);
           transfers.push({driverName:pre.name,from:pre.teamName,to:'Free Agent',teamId:team.id,left:true,reason});
         }
       });
+    });
+    // Second pass: sign drivers — sorted by prestige so top teams get first pick
+    const _seatFillOrder = [...g.teams].sort((a,b)=>(b.prestige||50)-(a.prestige||50));
+    _seatFillOrder.forEach(team=>{
       // Player fills their own seats — skip AI auto-fill for player team
       if(team.id===g.playerTeamId) return;
+      const remaining=State.getTeamDrivers(team.id);
       const slotsNeeded=2-remaining.length;
       if(slotsNeeded<=0) return;
       // Don't sign ex-reserves back as race drivers at the team they just left as a reserve
@@ -9131,8 +9148,14 @@ const spons=sumSponsorIncome(g.sponsors||[]);
         d.prospectSeries = null;
       });
       const uniqueById = arr => arr.filter((d, idx)=>arr.findIndex(x=>x.id===d.id)===idx);
+      // Drivers arriving via player-initiated pre-sign get priority in the roster rebuild
+      // so they aren't sliced off by the 2-seat cap and pushed back to free agency.
+      const _inboundDrivers = [..._playerInboundPreSigns]
+        .map(id=>State.getDriver(id))
+        .filter(d=>d && !d.retired && d.teamId===protectedPlayerTeamId && !d.isReserve);
       const raceKeep = uniqueById(
-        protectedDrivers.filter(d=>!d._protectedWasReserve)
+        _inboundDrivers
+          .concat(protectedDrivers.filter(d=>!d._protectedWasReserve))
           .concat(State.getPlayerDrivers())
       )
         .slice(0,2);
@@ -9786,7 +9809,13 @@ const spons=sumSponsorIncome(g.sponsors||[]);
           driverRef.yearsInAcademy = j.yearsInAcademy;
           driverRef.promotionEligible = j.promotionEligible;
           driverRef.series = j.series;
+          // Ensure active juniors always have a valid contract so they don't appear as expired
+          driverRef.isJunior = true;
+          if((driverRef.contract||0) <= 0) driverRef.contract = 1;
         }
+        // Also keep academy object in sync
+        if((j.contract||0) <= 0) j.contract = 1;
+        j.isJunior = true;
       });
 
       // Release over-age academy drivers who should have retired — cover both
@@ -9817,8 +9846,8 @@ const spons=sumSponsorIncome(g.sponsors||[]);
         eng.powerRating = Math.min(99, eng.powerRating + boost);
         eng.ersRating   = Math.min(99, eng.ersRating   + boost * 0.8);
         const playerUsesEng = g.teams.some(t=>t.engineManufacturer===eng.id&&t.id===g.playerTeamId);
-        const gainStr = `+${(eng.powerRating - prevPow2).toFixed(1)} power`;
-        if(playerUsesEng) g._engineBreakthroughMsg = `⚡ ${eng.shortName} power unit breakthrough — significant step forward heading into ${g.season+1}. (${gainStr}, now ${eng.powerRating.toFixed(1)} power / ${eng.ersRating.toFixed(1)} ERS)`;
+        const totalGainStr = `+${(eng.powerRating - prevPower).toFixed(1)} power`;
+        if(playerUsesEng) g._engineBreakthroughMsg = `⚡ ${eng.shortName} power unit breakthrough — significant step forward heading into ${g.season+1}. (${totalGainStr} this offseason, now ${eng.powerRating.toFixed(1)} power / ${eng.ersRating.toFixed(1)} ERS)`;
       }
       // Occasional reliability setback
       if(Math.random() < 0.08) eng.reliability = Math.max(70, eng.reliability - randFloat(1,3));
@@ -9829,6 +9858,13 @@ const spons=sumSponsorIncome(g.sponsors||[]);
         // At the top: gains slow to near-zero, slight reliability erosion keeps things interesting
         eng.powerRating = Math.max(eng.powerRating - randFloat(0, 0.15), eng.powerRating - 0.15);
       }
+    });
+    // Refresh engine stats snapshot after development so the Car page shows
+    // accurate post-dev values and trend badges during the offseason.
+    // beginSeason() will take a fresh snapshot when the player starts the new year.
+    g._engineStatsSnapshot = {};
+    g.engineManufacturers.forEach(eng => {
+      g._engineStatsSnapshot[eng.id] = {powerRating:eng.powerRating, ersRating:eng.ersRating, reliability:eng.reliability};
     });
     // Tick engine contracts; auto-renew AI teams, flag player
     if(g.teams) g.teams.forEach(t => {
@@ -10879,6 +10915,22 @@ const Storage = {
           const rd=g.drivers.find(d=>d.id===rid);
           return rd&&rd.teamId===t.id&&rd.isReserve&&!rd.retired;
         });
+      });
+    }
+    // ── Migration: fix academy juniors with broken contracts ──
+    // Ensure all active academy juniors have contract >= 1 so they don't appear as expired
+    if(g.academy && g.academy.juniors) {
+      const juniorIds = new Set((g.academy.juniors||[]).map(j=>j.id));
+      const loanedIds = new Set((g.academy.loans||[]).map(l=>l.driverId));
+      juniorIds.forEach(jid => loanedIds.add(jid)); // both active juniors and loaned juniors
+      (g.drivers||[]).forEach(d => {
+        if((juniorIds.has(d.id) || loanedIds.has(d.id)) && !d.retired) {
+          d.isJunior = true;
+          if((d.contract||0) <= 0) d.contract = 1;
+        }
+      });
+      g.academy.juniors.forEach(j => {
+        if((j.contract||0) <= 0) j.contract = 1;
       });
     }
     if((!g.boardObjectives || !g.boardObjectives.length) && g.raceIndex===0 && !seasonStarted) {
@@ -13409,7 +13461,7 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
       document.getElementById('drivers-content').innerHTML='<p style="font-size:11px;color:var(--tx3);margin-bottom:8px">Season-by-season history for all drivers. Click a driver to view full profile.</p>'+rows;
       return;
     } else {
-      drivers = State.game.drivers.filter(d=>!d.retired&&!d.isProspect&&!d.isReserve);
+      drivers = State.game.drivers.filter(d=>!d.retired&&!d.isProspect);
       title = 'All F1 Drivers';
     }
 
@@ -13449,14 +13501,14 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
       const team = d.teamId ? State.getTeam(d.teamId) : null;
       const isMyDriver = myIds.includes(d.id)||myResIds.includes(d.id);
       const seriesBadge = d.prospectSeries ? `<span class="prospect-badge badge-${d.prospectSeries.toLowerCase().replace('indycar','ic').replace('wec','ic')}">${d.prospectSeries}</span>` : '';
-      const reserveBadge = d.isReserve&&!isMyDriver ? `<span class="prospect-badge badge-reserve">RSV</span>` : '';
+      const reserveBadge = d.isReserve ? `<span class="prospect-badge badge-reserve">RSV</span>` : '';
       const contractYears = d.contract>0 ? `${d.contract}yr` : 'Expired';
       const contractBadge = `<span class="prospect-badge" style="background:${d.contract>1?'rgba(37,99,235,.12)':d.contract===1?'rgba(245,158,11,.16)':'rgba(220,38,38,.12)'};color:${d.contract>1?'#1d4ed8':d.contract===1?'#b45309':'#dc2626'}">${contractYears}</span>`;
       return `<div class="driver-list-row${isMyDriver?' my-drv':''}" onclick="UI.showDriverModal(${d.id})">
         <span class="dl-pos">${i+1}</span>
         <div class="dl-name-block">
           <div class="dl-name">${d.name}${traitBadge(d)}${seriesBadge}${reserveBadge} ${contractBadge}</div>
-          <div class="dl-team">${team?team.name:d.isProspect?'Prospect':'Free Agent'} · Age ${d.age} · Contract: ${contractYears}</div>
+          <div class="dl-team">${team?team.name+(d.isReserve?' (Reserve)':''):d.isProspect?'Prospect':d.isFreeAgent?'Free Agent':'—'} · Age ${d.age} · Contract: ${contractYears}</div>
         </div>
         <span class="dl-ovr"><span class="ovr-pill ${ratingClass(Math.round(d.rating))}">${Math.round(d.rating)}</span></span>
         <span class="dl-attr">${Math.round(d.racePace)}</span>
@@ -13702,7 +13754,14 @@ const personalSlots = getPersonalSponsorSlots(d);
             if(isFinalYear) return lockedBtn + `<button class="btn btn-outline btn-sm" style="border-color:var(--amber);color:var(--amber)" onclick="GameActions.commitProspect(${d.id})" title="Secure ${d.name} now — they join your team at the start of next season before the free agent market opens">📋 Pre-sign for ${availYear}</button>`;
             return lockedBtn;
           }
-          return `<button class="btn btn-success btn-sm" onclick="${g.offseasonPending?`GameActions.signDriverOffseason(${d.id})`:`GameActions.signDriver(${d.id})`}">Sign as Race Driver</button>`;
+          return `<button class="btn btn-success btn-sm" onclick="${g.offseasonPending?`GameActions.signDriverOffseason(${d.id})`:`GameActions.signDriver(${d.id})`}">Sign as Race Driver</button>${(()=>{
+            if(!fa || g.offseasonPending || d.isProspect) return '';
+            const raceDrivers = State.getPlayerDrivers();
+            if(raceDrivers.length < 2) return '';
+            const alreadyQueued = (g.preSeasonMoves||[]).some(m=>m.driverId===d.id);
+            if(alreadyQueued) return '<button class="btn btn-ghost btn-sm" disabled style="opacity:.5">✅ Pre-signed for next season</button>';
+            return ' <button class="btn btn-outline btn-sm" style="border-color:var(--grn);color:var(--grn)" onclick="GameActions.preSignFreeAgent('+d.id+')">📋 Pre-sign for Next Season</button>';
+          })()}`;
         })()}
         ${(()=>{
           if(!(fa||d.isProspect)) return '';
@@ -17489,7 +17548,7 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       ${rc('Title Streak',maxStreak||0,streakTeam||'—',maxStreak>1?'Consecutive titles':'')}
       ${bestSeasonDriver?rc('Best Win Season',bestSeasonWins,bestSeasonDriver?.name,'Most wins in one year'):''}
       ${youngestChamp?rc('Youngest Champ',youngestChamp.age+'yrs',youngestChamp.name,youngestChamp.season):''}
-      ${oldestChamp&&oldestChamp.name!==youngestChamp?.name?rc('Oldest Champ',oldestChamp.age+'yrs',oldestChamp.name,oldestChamp.season):''}
+      ${oldestChamp?rc('Oldest Champ',oldestChamp.age+'yrs',oldestChamp.name,oldestChamp.season):''}
       ${rc('Seasons',recH.champions.length,'In the books')}
       ${rc('Total Races',State.game.totalRaces||0,'All time')}
     </div>${hofHTML}`;
@@ -18770,8 +18829,18 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.4.3.1 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.4.4 · Release Notes</div>
         ${[
+    ['v2.4.4','May 2026',[
+            '🐛 Power unit values not reflecting breakthroughs: the engine stats snapshot on the Car page is now refreshed immediately after offseason engine development, so breakthrough gains are visible during the offseason instead of showing stale season-start values. Breakthrough messages now show total offseason gain (base dev + breakthrough) for clearer reporting (reported by ScotOfTheDay).',
+            '⚖️ AI driver market realism: top teams now sign top drivers more aggressively in long saves. Seat-fill pass now runs in prestige order so the best teams get first pick of free agents. AI poaching thresholds lowered — top teams (prestige 80+) now upgrade with only a 2-point gap instead of 3, and can buy out 1-year contracts for significant upgrades. Force-release thresholds raised so top teams clear underperforming drivers earlier. Renewal thresholds adjusted (75 for top 3 teams, down from 80) to prevent unnecessarily releasing decent drivers into a weak free agent pool (reported by OddResponsibility909).',
+            '🐛 Pre-sign free agents now correctly join your team: player-initiated pre-contract signings were being overwritten by the protected-roster rebuild during offseason processing — the new arrival was discarded and the original lineup preserved. Inbound player-signed drivers are now prioritised in the roster rebuild so they take their seat as intended.',
+            '🐛 Hard-cap trim no longer leaves invalid driver state: when excess race drivers were trimmed from a team, the released driver was marked as a free agent but their contract was not zeroed, creating an inconsistent state (teamless driver with an active contract). Contract is now correctly cleared on trim.',
+            '🐛 Records tab: youngest and oldest champion overlap fixed — if the same driver holds both records, both cards now appear instead of hiding the oldest champion card (reported by puchunz).',
+            '🐛 Reserve drivers now appear in the All Drivers tab with a RSV badge, instead of being filtered out. Reserve team assignments also show correctly (reported by puchunz).',
+            '🐛 Academy drivers with expired contracts: active academy juniors now always maintain a valid contract, preventing them from appearing with an \"Expired\" badge or showing incorrect sign buttons. Existing saves are patched on load (reported by gsx512).',
+            '🆕 Pre-sign free agents for next season: during the season when your roster is full, free agent driver profiles now show a \"Pre-sign for Next Season\" button. The driver commits to joining your team at the next offseason, similar to approach-for-next-season for expiring-contract drivers (requested by EmiliusReturns).',
+    ]],
     ['v2.4.3.1','May 2026',[
             '✨ Custom sprint points: the Roster Editor now includes a Sprint Points System section where you can override points awarded per finishing position in sprint races. Defaults to the standard 8-7-6-5-4-3-2-1 system. Custom sprint points carry through to new careers and are used in both simulated and watched sprint races (requested by moorbre).',
             '🐛 Season objectives — "On track" vs "Done": position-based objectives (e.g. "Win the Constructors Championship") now correctly show "✓ On track" when you are currently meeting the target mid-season, instead of prematurely showing "✓ Done". The objective only shows "Done" once every race in the calendar is complete. Cumulative objectives (wins, podiums, poles, points) are unaffected — they still show "Done" as soon as the target is hit (reported by Interesting_Dot_1168).',
@@ -21421,6 +21490,28 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     if((d.age||0) < 18){UI.toast(`${d.name} is only ${d.age} — FIA regulations require a driver to be at least 18 to hold an F1 race seat. Sign as reserve or junior instead.`,'warning');return;}
     // Open negotiation modal instead of instant sign
     UI.showSigningNegotiation(driverId, false);
+  },
+  preSignFreeAgent(driverId){
+    const g=State.game; const d=State.getDriver(driverId); if(!d) return;
+    if(d.retired){UI.toast(`${d.name} has retired.`,'warning');return;}
+    if(!d.isFreeAgent && d.teamId){UI.toast(`${d.name} is already on a team.`,'warning');return;}
+    if((d.age||0) < 17){UI.toast(`${d.name} is too young for a pre-contract agreement.`,'warning');return;}
+    const team=State.getPlayerTeam(); if(!team) return;
+    const alreadyQueued=(g.preSeasonMoves||[]).some(m=>m.driverId===driverId);
+    if(alreadyQueued){UI.toast(`Already have a pre-contract agreement with ${d.name}.`,'warning');return;}
+    const salary=State.getDriverDemandSalary?State.getDriverDemandSalary(d,'signing'):Math.floor((d.rating||70)/15);
+    if(!g.preSeasonMoves) g.preSeasonMoves=[];
+    g.preSeasonMoves.push({
+      driverId:d.id, toTeamId:team.id, fromTeamName:'Free Agent',
+      toTeamName:team.name, years:2, salary:salary,
+      playerInitiated:true, reason:'pre-contract agreement'
+    });
+    if(!g.newsFeed) g.newsFeed=[];
+    g.newsFeed.unshift({msg:`📋 <strong>${d.name}</strong> has agreed to join <strong>${team.name}</strong> next season on a pre-contract basis.`,type:'success',icon:'📋',race:g.raceIndex,ts:Date.now()});
+    UI.closeModal();
+    Storage.autosave();
+    UI.toast(`${d.name} pre-signed for next season · 2yr at ${formatMoney(salary)}/yr`,'success');
+    UI.renderDrivers();
   },
   confirmSigningOffseason(driverId, years, salary, asReserve){
     const d=State.getDriver(driverId); if(!d) return;
