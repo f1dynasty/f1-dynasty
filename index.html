@@ -745,13 +745,14 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
         </div>
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:18px;max-width:320px;padding:14px 16px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
-          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v2.4.4 — What's New</div>
-          <div style="font-size:13px;font-weight:900;color:#111;margin-bottom:8px">AI driver market, PU fix & more</div>
+          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v2.4.5 — What's New</div>
+          <div style="font-size:13px;font-weight:900;color:#111;margin-bottom:8px">Academy, staff & penalties fixed</div>
           <div style="display:flex;flex-direction:column;gap:5px">
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">⚖️</span><span><strong>AI driver market overhaul</strong> — top teams now sign top drivers in long saves</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>PU breakthrough display</strong> — engine stats now correctly reflect breakthrough gains</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🆕</span><span><strong>Pre-sign free agents</strong> — lock in a free agent for next season without releasing a driver now</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>Records, reserves, academy</strong> — youngest/oldest champ overlap, reserve visibility, junior contract fixes</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>Released juniors enter free agency</strong> — no longer deleted from the game on release</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>Loaned juniors</strong> — ON LOAN badge added everywhere, with a recall-from-loan button</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>Free agent contract badge</strong> — no longer shows "1yr / AT RISK" for drivers without a team</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>Staff market refresh</strong> — candidates now properly cycle each offseason</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">⚖️</span><span><strong>Track-limits penalty</strong> — now 5s by default per real F1 stewards' guidelines</span></div>
           </div>
           <button onclick="UI.showChangelog()" style="margin-top:10px;width:100%;padding:7px;background:none;border:1.5px solid rgba(192,57,43,.3);border-radius:7px;font-size:11px;font-weight:700;color:var(--red);cursor:pointer">Full release notes →</button>
         </div>
@@ -866,7 +867,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </div>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.4.4</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.4.5</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -6232,13 +6233,20 @@ const Sim = {
                 if(wasCloseLastLap) penChance += 0.015;
                 if(Math.random() < penChance) {
                   battleLogged[penKey] = true;
-                  const penSecs = Math.random() < 0.65 ? 5 : 10;
                   const onDriverOrRival = Math.random() < 0.5; // player driver is the one penalised
                   const penRivals = ['forcing another driver wide','unsafe rejoin after an overtake','cutting the chicane','exceeding track limits three times','blocking under braking'];
                   const penOnDriver = ['forcing another driver wide','rejoining unsafely','track limits — cumulative warnings','blocking under braking'];
                   const reason = onDriverOrRival
                     ? penOnDriver[Math.floor(Math.random()*penOnDriver.length)]
                     : penRivals[Math.floor(Math.random()*penRivals.length)];
+                  // Penalty severity follows real F1 stewards' guidelines: track-limits and
+                  // minor infractions are 5s; serious driving offences can escalate to 10s
+                  // but 5s is still the default. Reported by IronicGerman.
+                  const _isTrackLimit = /track limits|cutting the chicane/i.test(reason);
+                  const _isSevere = /forcing|blocking|unsafe rejoin|rejoining unsafely/i.test(reason);
+                  let penSecs = 5; // default
+                  if(_isTrackLimit) penSecs = 5; // always 5s — only ever escalates with repeated cumulative offences
+                  else if(_isSevere) penSecs = Math.random() < 0.25 ? 10 : 5; // mostly 5s, occasionally 10s for the worst
                   const penRecipient = onDriverOrRival ? rr.driverName : (rivalResult ? rivalResult.driverName : 'a rival');
                   const isPlayerHit = onDriverOrRival;
                   events.push({
@@ -9700,16 +9708,29 @@ const spons=sumSponsorIncome(g.sponsors||[]);
         }
       });
     }
-    // Refresh staff market at offseason — remove filled roles, add new candidates
+    // Refresh staff market at offseason — stale candidates leave the market and fresh ones arrive
     g.staffMarket = g.staffMarket || [];
-    // Trim old market entries that are no longer relevant
+    // Track how long each candidate has been in the market. Anyone who's been there
+    // 2+ seasons without being hired drops off (signed elsewhere or retired from F1 search).
+    g.staffMarket.forEach(s => { s._seasonsInMarket = (s._seasonsInMarket || 0) + 1; });
+    g.staffMarket = g.staffMarket.filter(s => (s._seasonsInMarket || 0) < 2);
+    // Hard cap any leftover bloat
     if(g.staffMarket.length > 12) g.staffMarket = g.staffMarket.slice(-9);
-    // Top up market with 1-2 new people per role
+    // Top up the market to a healthy size each offseason (2-4 per role, with rating variance)
     DATA.staffRoles.forEach(role => {
       const inMarket = g.staffMarket.filter(s=>s.roleId===role.id).length;
-      if(inMarket < 2) {
-        const newS = State._generateStaffMember(role.id, 46, 84, false);
-        if(newS) g.staffMarket.push(newS);
+      const targetCount = 2 + Math.floor(Math.random()*3); // 2-4 candidates per role
+      const needed = Math.max(0, targetCount - inMarket);
+      for(let i=0;i<needed;i++){
+        // Mix of quality tiers — occasionally surface a high-rated free agent to keep the market interesting
+        const eliteRoll = Math.random();
+        const ratingMin = eliteRoll < 0.15 ? 70 : eliteRoll < 0.45 ? 55 : 46;
+        const ratingMax = eliteRoll < 0.15 ? 88 : eliteRoll < 0.45 ? 78 : 70;
+        const newS = State._generateStaffMember(role.id, ratingMin, ratingMax, false);
+        if(newS) {
+          newS._seasonsInMarket = 0;
+          g.staffMarket.push(newS);
+        }
       }
     });
     // Snapshot WDC winner BEFORE the loop resets any seasonPoints
@@ -11671,11 +11692,16 @@ const UI = {
     } else if(devCardEl && g.offseasonPending){
       const bw=g.offseasonBudget||{};
       const spent=(bw.aero||0)+(bw.engine||0)+(bw.reliability||0)+(bw.facilities||0);
-      const budget=Math.round(team.revenue*0.35);
+      // Use the same exact formula as the offseason allocator (rounded to nearest $5M)
+      // so the dashboard cap always matches what the player sees on the Car page.
+      const budget=Math.round(team.revenue*0.35/5)*5;
+      const overBudget = spent > budget;
+      const pctVal = budget > 0 ? Math.min(100, (spent/budget)*100) : 0;
+      const barColor = overBudget ? 'var(--red)' : 'var(--grn)';
       devCardEl.innerHTML=`<div style="font-size:11px;font-weight:700;color:var(--tx2);margin-bottom:4px">Winter Budget</div>
-        <div style="font-size:20px;font-weight:900;font-family:var(--fm)">${formatMoney(spent)} <span style="font-size:11px;font-weight:400;color:var(--tx3)">of ${formatMoney(budget)}</span></div>
-        <div style="height:3px;background:var(--bd);border-radius:2px;margin-top:4px"><div style="width:${Math.min(100,spent/budget*100).toFixed(0)}%;height:100%;background:var(--grn);border-radius:2px"></div></div>
-        ${spent===0?'<div style="font-size:10px;color:var(--red);margin-top:4px">⚠️ No budget allocated yet</div>':''}`;
+        <div style="font-size:20px;font-weight:900;font-family:var(--fm);color:${overBudget?'var(--red)':'var(--tx)'}">${formatMoney(spent)} <span style="font-size:11px;font-weight:400;color:var(--tx3)">of ${formatMoney(budget)}</span></div>
+        <div style="height:3px;background:var(--bd);border-radius:2px;margin-top:4px"><div style="width:${pctVal.toFixed(0)}%;height:100%;background:${barColor};border-radius:2px"></div></div>
+        ${spent===0?'<div style="font-size:10px;color:var(--red);margin-top:4px">⚠️ No budget allocated yet</div>':overBudget?'<div style="font-size:10px;color:var(--red);margin-top:4px">⚠️ Over budget — adjust on Car page</div>':''}`;
     }
 
     // Legacy Score bar
@@ -12638,7 +12664,7 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
     const totalRaces = g.calendar.length;
     const seasonProgress = racesDone/totalRaces; // 0-1
     const inSeasonBudget = Math.round(team.revenue * 0.15); // 15% for in-season
-    const offseasonBudget = Math.round(team.revenue * 0.35); // 35% for offseason
+    const offseasonBudget = Math.round(team.revenue * 0.35 / 5) * 5; // 35% for offseason — match allocator (rounded to nearest $5M)
     // Pre-seed the true ideal offset so the setup quality label is correct before qualifying
     const _currentRaceForSetup = State.getCurrentRace();
     if(_currentRaceForSetup) State.ensureTrueIdealOffset(_currentRaceForSetup);
@@ -12991,7 +13017,7 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
     val = parseInt(val);
     const team=State.getPlayerTeam();
     const qBudget = Math.round(team.revenue*0.15); // matches 2-window budget
-    const offseasonBudget = Math.round(team.revenue*0.35);
+    const offseasonBudget = Math.round(team.revenue*0.35/5)*5; // match allocator
 
     if(section.startsWith('q')){
       const qi=parseInt(section[1]);
@@ -13502,13 +13528,32 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
       const isMyDriver = myIds.includes(d.id)||myResIds.includes(d.id);
       const seriesBadge = d.prospectSeries ? `<span class="prospect-badge badge-${d.prospectSeries.toLowerCase().replace('indycar','ic').replace('wec','ic')}">${d.prospectSeries}</span>` : '';
       const reserveBadge = d.isReserve ? `<span class="prospect-badge badge-reserve">RSV</span>` : '';
-      const contractYears = d.contract>0 ? `${d.contract}yr` : 'Expired';
-      const contractBadge = `<span class="prospect-badge" style="background:${d.contract>1?'rgba(37,99,235,.12)':d.contract===1?'rgba(245,158,11,.16)':'rgba(220,38,38,.12)'};color:${d.contract>1?'#1d4ed8':d.contract===1?'#b45309':'#dc2626'}">${contractYears}</span>`;
+      // Loan detection: a junior with a teamId that is not the player's team is on loan from the player's academy
+      const _onLoan = !!(d.isJunior && d.teamId && d.teamId !== State.game.playerTeamId);
+      const _loanInfo = _onLoan ? ((State.game.academy && State.game.academy.loans) || []).find(l=>l.driverId===d.id) : null;
+      const loanBadge = _onLoan ? `<span class="prospect-badge" style="background:rgba(124,58,237,.14);color:#7c3aed">🎓 ON LOAN</span>` : '';
+      // Contract badge — free agents/prospects/retired drivers have no meaningful contract years to show.
+      // Drivers with a team show their contract years; everyone else shows their availability status.
+      const _hasTeam = !!d.teamId;
+      let contractYears, contractBadge;
+      if(_hasTeam) {
+        contractYears = d.contract>0 ? `${d.contract}yr` : 'Expired';
+        contractBadge = `<span class="prospect-badge" style="background:${d.contract>1?'rgba(37,99,235,.12)':d.contract===1?'rgba(245,158,11,.16)':'rgba(220,38,38,.12)'};color:${d.contract>1?'#1d4ed8':d.contract===1?'#b45309':'#dc2626'}">${contractYears}</span>`;
+      } else if(d.isProspect) {
+        contractYears = (d.feederContract||0)>0 ? `Feeder` : 'Available';
+        contractBadge = `<span class="prospect-badge" style="background:rgba(124,58,237,.10);color:#6d28d9">${contractYears}</span>`;
+      } else if(d.retired) {
+        contractYears = 'Retired';
+        contractBadge = `<span class="prospect-badge" style="background:rgba(100,116,139,.12);color:#475569">Retired</span>`;
+      } else {
+        contractYears = 'Free Agent';
+        contractBadge = `<span class="prospect-badge" style="background:rgba(16,185,129,.10);color:#047857">Available</span>`;
+      }
       return `<div class="driver-list-row${isMyDriver?' my-drv':''}" onclick="UI.showDriverModal(${d.id})">
         <span class="dl-pos">${i+1}</span>
         <div class="dl-name-block">
-          <div class="dl-name">${d.name}${traitBadge(d)}${seriesBadge}${reserveBadge} ${contractBadge}</div>
-          <div class="dl-team">${team?team.name+(d.isReserve?' (Reserve)':''):d.isProspect?'Prospect':d.isFreeAgent?'Free Agent':'—'} · Age ${d.age} · Contract: ${contractYears}</div>
+          <div class="dl-name">${d.name}${traitBadge(d)}${seriesBadge}${reserveBadge}${loanBadge} ${contractBadge}</div>
+          <div class="dl-team">${team?team.name+(d.isReserve?' (Reserve)':_onLoan?' (on loan from your academy)':''):d.isProspect?'Prospect':d.isFreeAgent?'Free Agent':'—'} · Age ${d.age} · ${_hasTeam?'Contract: '+contractYears:contractYears}</div>
         </div>
         <span class="dl-ovr"><span class="ovr-pill ${ratingClass(Math.round(d.rating))}">${Math.round(d.rating)}</span></span>
         <span class="dl-attr">${Math.round(d.racePace)}</span>
@@ -13531,11 +13576,26 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
     const activeInjury = State.getActiveInjury ? State.getActiveInjury(d.id) : null;
     const racesOut = activeInjury ? Math.max(0, activeInjury.returnsAfterRace - State.game.raceIndex) : 0;
     const reserveCover = activeInjury && State.game._injurySubs ? State.getDriver(State.game._injurySubs[d.id]) : null;
-    const contractRiskBadge = d.contract<=0
-      ? '<span style="font-size:10px;background:rgba(220,38,38,.12);color:#b91c1c;padding:2px 6px;border-radius:5px;font-weight:800">EXPIRED</span>'
-      : d.contract===1
-        ? '<span style="font-size:10px;background:rgba(245,158,11,.15);color:#b45309;padding:2px 6px;border-radius:5px;font-weight:800">AT RISK</span>'
-        : '';
+    const teamlessStatus = !d.teamId
+      ? d.isProspect
+        ? ((d.feederContract||0) > 0 ? 'Feeder' : 'Available')
+        : d.retired
+          ? 'Retired'
+          : 'Free Agent'
+      : null;
+    const contractRiskBadge = teamlessStatus
+      ? teamlessStatus === 'Feeder'
+        ? '<span style="font-size:10px;background:rgba(124,58,237,.10);color:#6d28d9;padding:2px 6px;border-radius:5px;font-weight:800">FEEDER</span>'
+        : teamlessStatus === 'Retired'
+          ? '<span style="font-size:10px;background:rgba(100,116,139,.12);color:#475569;padding:2px 6px;border-radius:5px;font-weight:800">RETIRED</span>'
+          : `<span style="font-size:10px;background:${d.isProspect?'rgba(124,58,237,.10)':'rgba(16,185,129,.10)'};color:${d.isProspect?'#6d28d9':'#047857'};padding:2px 6px;border-radius:5px;font-weight:800">${teamlessStatus.toUpperCase()}</span>`
+      : d.contract<=0
+        ? '<span style="font-size:10px;background:rgba(220,38,38,.12);color:#b91c1c;padding:2px 6px;border-radius:5px;font-weight:800">EXPIRED</span>'
+        : d.contract===1
+          ? '<span style="font-size:10px;background:rgba(245,158,11,.15);color:#b45309;padding:2px 6px;border-radius:5px;font-weight:800">AT RISK</span>'
+          : '';
+    const contractSectionLabel = teamlessStatus ? 'Availability:' : 'Contract:';
+    const contractSectionValue = teamlessStatus || (d.contract>0 ? d.contract+'yr' : 'Expired');
     const tyreMgmt = State.getTyreManagement(d);
     const arow=(label,val)=>{const c=attrColor(val);return`<div class="modal-attr-row"><span class="modal-attr-name">${label}</span><div class="modal-attr-track"><div class="modal-attr-fill" style="width:${val}%;background:${c}"></div></div><span class="modal-attr-val" style="color:${c}">${Math.round(val)}</span></div>`;};
     const mstat=(lbl,val)=>`<div style="text-align:center;padding:6px 4px"><div style="font-size:9px;font-weight:700;color:var(--tx3);letter-spacing:.4px;text-transform:uppercase;margin-bottom:1px">${lbl}</div><div style="font-size:16px;font-weight:900;color:var(--tx)">${val}</div></div>`;
@@ -13573,7 +13633,7 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
         </div>
       </div>` : ''}
       <div class="modal-name" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">${d.name}${contractRiskBadge}</div>
-      <div class="modal-meta">Age ${d.age} · ${getNationalityFlag(d.nationality)} ${d.nationality} · ${team?team.name:'Free Agent'}${potDisplay}${d.isProspect?(d.feederContract>0?` · <span style="color:var(--amber);font-weight:700">⏳ In feeder series · free ${(g.season||2026)+d.feederContract}</span>`:` · <span style="color:var(--grn);font-weight:700">✅ Free to sign now</span>`):''}</div>
+      <div class="modal-meta">Age ${d.age} · ${getNationalityFlag(d.nationality)} ${d.nationality} · ${team?team.name:'Free Agent'}${(d.isJunior&&d.teamId&&d.teamId!==g.playerTeamId)?` <span style="font-size:10px;background:rgba(124,58,237,.14);color:#7c3aed;padding:2px 7px;border-radius:5px;font-weight:800;margin-left:4px">🎓 ON LOAN FROM YOUR ACADEMY</span>`:''}${potDisplay}${d.isProspect?(d.feederContract>0?` · <span style="color:var(--amber);font-weight:700">⏳ In feeder series · free ${(g.season||2026)+d.feederContract}</span>`:` · <span style="color:var(--grn);font-weight:700">✅ Free to sign now</span>`):''}</div>
       ${activeInjury ? `<div style="margin:10px 0 12px;padding:10px 12px;background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;color:#991b1b;font-size:12px">
         <div style="font-weight:900;margin-bottom:2px">🚑 Injured</div>
         <div>${activeInjury.type} · out for ${racesOut} more race${racesOut===1?'':'s'}${reserveCover?` · reserve stepping in: ${reserveCover.name}`:''}</div>
@@ -13732,10 +13792,10 @@ const personalSlots = getPersonalSponsorSlots(d);
       </div>` : ''}
       <div class="modal-section">
         <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
-          <span style="font-size:11px;color:var(--tx3)">Contract:</span>
+          <span style="font-size:11px;color:var(--tx3)">${contractSectionLabel}</span>
           <span style="font-size:12px;font-weight:700;color:var(--amber)">${formatMoney(d.salary)}/yr</span>
           <span style="font-size:11px;color:var(--tx3)">·</span>
-          <span style="font-size:12px;font-weight:700">${d.contract>0?d.contract+'yr':'Expired'}</span>
+          <span style="font-size:12px;font-weight:700">${contractSectionValue}</span>
           <span style="font-size:11px;color:var(--tx3)">·</span>
           <span style="font-size:12px;font-weight:700;color:${d.morale>70?'var(--grn)':d.morale>50?'var(--amber)':'var(--red)'}">Morale ${d.morale}</span>
         </div>
@@ -13797,6 +13857,12 @@ const personalSlots = getPersonalSponsorSlots(d);
           const inQueue = (g.gridScoutQueue||[]).some(s=>s.driverId===d.id);
           if(inQueue) return `<button class="btn btn-ghost btn-sm" disabled style="opacity:.6">⏳ Scouting...</button>`;
           return `<button class="btn btn-ghost btn-sm" style="border-color:var(--blu);color:var(--blu)" onclick="GameActions.scoutGridDriver(${d.id})">🔭 Scout Driver</button>`;
+        })()}
+        ${(()=>{
+          // Recall an academy driver from loan early (player owns the academy)
+          if(!d.isJunior || !d.teamId || d.teamId === g.playerTeamId) return '';
+          if(!g.academy || !((g.academy.loans||[]).some(l=>l.driverId===d.id))) return '';
+          return `<button class="btn btn-outline btn-sm" style="border-color:#7c3aed;color:#7c3aed" onclick="GameActions.recallFromLoan(${d.id})">🎓 Recall from Loan</button>`;
         })()}
         <button class="btn btn-ghost btn-sm" onclick="UI.closeModal()">Close</button>
       </div>`;
@@ -18829,8 +18895,17 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.4.4 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.4.5 · Release Notes</div>
         ${[
+    ['v2.4.5','May 2026',[
+            '🐛 Released academy juniors no longer disappear from the game: when a junior was released from the academy via the Release button, they were marked as a free agent and then immediately deleted from the driver pool, so they never appeared in free agency or on rivals\' rosters again. Released juniors now properly enter the free agent pool — the player or rivals can sign them, and they continue to develop and age normally (reported by gsx512).',
+            '🐛 Loaned academy drivers now show a clear ON LOAN badge: previously, an academy driver out on loan appeared in the All Drivers list as a normal driver of the borrowing team, with no academy reference and no loan indicator anywhere — they were effectively invisible as a player asset. Loaned juniors now show a 🎓 ON LOAN badge in the driver list, an ON LOAN FROM YOUR ACADEMY tag in the driver modal, and a (on loan from your academy) note in the team line (reported by gsx512).',
+            '🆕 Recall academy drivers from loan early: a new Recall from Loan button on the driver modal lets the player pull a loaned junior back to the academy mid-season. The borrowing team pays a 50% kill-fee that is credited to your loan income for the season. Use this when you need the driver back for an injury sub or to promote them straight to a race seat (reported by gsx512).',
+            '🐛 Free-agent drivers no longer show misleading contract badges: drivers with no team were displaying contract-year badges (e.g. "1yr", "AT RISK") in the All Drivers list and modal, even though their team was correctly shown as Free Agent. The contract badge now reflects actual availability — Free Agent / Available, Prospect, Feeder, or Retired — for any driver without a team (reported by gsx512).',
+            '🐛 Staff hire pool now properly refreshes each offseason: the staff market only topped up to 2 candidates per role, with no expiry on existing entries — so the same unhired candidates stayed there forever and the market felt static. Candidates now drop off after 2 seasons in the market and the pool is topped up to 2-4 fresh candidates per role each offseason, with a chance of a high-rated free agent appearing to keep the market interesting (reported by Historical-Trouble16).',
+            '⚖️ Track-limits time penalties default to 5 seconds, not 10: race penalties were rolling 5s vs 10s severity randomly, ignoring the actual infraction. Per real F1 stewards\' guidelines, track-limits violations and minor infractions are 5s; only severe driving offences (forcing another driver wide, blocking under braking, unsafe rejoin) can escalate to 10s, and even then 5s is the more common outcome. Track-limits is now always 5s — the 10s penalty appears only in ~25% of severe-infraction cases (reported by IronicGerman).',
+            '🐛 Winter dev budget cap on the dashboard now matches the Car-page allocator exactly: the dashboard widget calculated its cap as `revenue × 0.35` while the actual offseason allocator uses `round(revenue × 0.35 / 5) × 5` (rounded to nearest $5M). For non-multiple-of-5 revenue values these could disagree by a few million, leading to over-budget appearance. The dashboard widget and renderCar offseasonBudget reference now use the allocator\'s exact formula. Over-budget state is also now handled gracefully with a red bar and warning text (reported by gsx512).',
+    ]],
     ['v2.4.4','May 2026',[
             '🐛 Power unit values not reflecting breakthroughs: the engine stats snapshot on the Car page is now refreshed immediately after offseason engine development, so breakthrough gains are visible during the offseason instead of showing stale season-start values. Breakthrough messages now show total offseason gain (base dev + breakthrough) for clearer reporting (reported by ScotOfTheDay).',
             '⚖️ AI driver market realism: top teams now sign top drivers more aggressively in long saves. Seat-fill pass now runs in prestige order so the best teams get first pick of free agents. AI poaching thresholds lowered — top teams (prestige 80+) now upgrade with only a 2-point gap instead of 3, and can buy out 1-year contracts for significant upgrades. Force-release thresholds raised so top teams clear underperforming drivers earlier. Renewal thresholds adjusted (75 for top 3 teams, down from 80) to prevent unnecessarily releasing decent drivers into a weak free agent pool (reported by OddResponsibility909).',
@@ -21843,10 +21918,15 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       t.driverIds = (t.driverIds||[]).filter(id=>id!==driverId);
       t.reserveIds = (t.reserveIds||[]).filter(id=>id!==driverId);
     });
-    d.isJunior = false; d.isReserve = false; d.isFreeAgent = true; d.teamId = null; d.contract = 0;
-    g.drivers = g.drivers.filter(dr=>dr.id!==driverId);
+    // Released juniors enter free agency — keep them in g.drivers so they show in the
+    // free agent pool, can be signed by the player or rivals, and have a normal career.
+    // Below-threshold juniors (rating < 65) tend to drift out of F1 the next offseason
+    // via normal AI churn; this stops them being deleted entirely.
+    d.isJunior = false; d.isReserve = false; d.isProspect = false; d.prospectSeries = null;
+    d.isFreeAgent = true; d.teamId = null; d.contract = 0;
+    if(typeof d.salary !== 'number' || d.salary < 1) d.salary = Math.max(1, Math.floor((d.rating||60)/15));
     Storage.autosave();
-    UI.toast(`${d.name} released from the academy.`, 'info');
+    UI.toast(`${d.name} released from the academy — now a free agent.`, 'info');
     UI.renderAcademy();
   },
 
@@ -21927,6 +22007,54 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     Storage.autosave();
     UI.toast(`${d.name} loaned to ${toTeam.name} for 1 season. +${formatMoney(loanFee)} loan fee received.`, 'success');
     UI.renderAcademy();
+  },
+
+  recallFromLoan(driverId){
+    const g = State.game; if(!g || !g.academy) return;
+    const d = State.getDriver(driverId); if(!d) return;
+    const loan = (g.academy.loans||[]).find(l=>l.driverId===driverId);
+    if(!loan) { UI.toast('No active loan found for this driver.', 'warning'); return; }
+    if(!d._recallConfirm){
+      d._recallConfirm = true;
+      setTimeout(()=>{ delete d._recallConfirm; }, 3000);
+      UI.toast(`Tap Recall again to confirm pulling ${d.name} back early. Half the loan fee will be refunded.`, 'warning');
+      return;
+    }
+    delete d._recallConfirm;
+    const refund = Math.round((loan.loanFee||0) / 2);
+    const fromTeam = State.getTeam(loan.teamId);
+    // Remove from borrowing team's roster
+    if(fromTeam) {
+      fromTeam.driverIds = (fromTeam.driverIds||[]).filter(id=>id!==driverId);
+      // Restore the bench-replaced driver if there was one
+      if(loan.replacedDriverId) {
+        const replaced = State.getDriver(loan.replacedDriverId);
+        if(replaced && !replaced.retired) {
+          if(!fromTeam.driverIds.includes(loan.replacedDriverId)) fromTeam.driverIds.push(loan.replacedDriverId);
+          replaced.isReserve = false;
+        }
+      }
+    }
+    // Send back to academy
+    d.teamId = null; d.isReserve = false; d.isJunior = true; d.isFreeAgent = false;
+    if((d.contract||0) <= 0) d.contract = 1;
+    g.academy.juniors = g.academy.juniors || [];
+    if(!g.academy.juniors.some(j=>j.id===driverId)) g.academy.juniors.push(d);
+    g.academy.loans = g.academy.loans.filter(l=>l.driverId!==driverId);
+    // Refund half the loan fee — borrowing team effectively pays a kill-fee to player
+    const playerTeam = State.getPlayerTeam();
+    if(playerTeam && refund > 0) {
+      if(!playerTeam._loanIncomeThisSeason) playerTeam._loanIncomeThisSeason = 0;
+      playerTeam._loanIncomeThisSeason += refund;
+      if(!g._loanIncome) g._loanIncome = 0;
+      g._loanIncome += refund;
+    }
+    if(State.reconcileTeamRosters) State.reconcileTeamRosters();
+    UI.closeModal();
+    Storage.autosave();
+    UI.toast(`${d.name} recalled from ${fromTeam?fromTeam.name:'loan'}.${refund>0?' +'+formatMoney(refund)+' early-termination fee.':''}`, 'success');
+    UI.renderAcademy();
+    UI.renderDrivers();
   },
 
   toggleUsedTyreQuali(driverId){
