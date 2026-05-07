@@ -745,14 +745,14 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
         </div>
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:18px;max-width:320px;padding:14px 16px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
-          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v2.4.6 — What's New</div>
-          <div style="font-size:13px;font-weight:900;color:#111;margin-bottom:8px">Reserve loans, team history & balance fixes</div>
+          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v2.4.7 — What's New</div>
+          <div style="font-size:13px;font-weight:900;color:#111;margin-bottom:8px">Contract extensions, reserve loan fixes & long-career saves</div>
           <div style="display:flex;flex-direction:column;gap:5px">
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🆕</span><span><strong>Reserve driver loans</strong> — send reserves on 1-season loans to gain race experience</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🆕</span><span><strong>Team history</strong> — click any team to see their full season-by-season results</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🆕</span><span><strong>AI in-season development</strong> — AI teams now upgrade at mid-season windows too</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">⚖️</span><span><strong>Facilities rebalanced</strong> — faster gains, lower decay at low levels</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">⚖️</span><span><strong>Backmarker engine catch-up</strong> — Audi PU now realistically closes the gap</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">✨</span><span><strong>Contract extension rework</strong> — renewals now add years (+1/+2/+3) with loyalty discounts and a 5yr cap</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>Reserve loan contracts</strong> — returning drivers keep their remaining years instead of resetting to 1yr</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🆕</span><span><strong>Sign rival reserves</strong> — poach reserve drivers from other teams when their contract expires</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>Generational talent fix</strong> — wonderkids no longer lose potential ceiling while in feeder series</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>Long career saves</strong> — 50+ season careers no longer hit the storage limit at year ~70</span></div>
           </div>
           <button onclick="UI.showChangelog()" style="margin-top:10px;width:100%;padding:7px;background:none;border:1.5px solid rgba(192,57,43,.3);border-radius:7px;font-size:11px;font-weight:700;color:var(--red);cursor:pointer">Full release notes →</button>
         </div>
@@ -867,7 +867,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </div>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.4.6</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.4.7</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -8559,7 +8559,10 @@ const spons=sumSponsorIncome(g.sponsors||[]);
         d.isReserve = true;
         d._onReserveLoan = false;
         delete d._loanFromTeamId;
-        d.contract = 1;
+        // Preserve remaining contract years — decrement by 1 for the loan season spent away.
+        // If they had >1 year left, subtract 1. If 1 or less, they return with 1yr remaining.
+        const _preLoanContract = l._originalContract || d.contract || 1;
+        d.contract = Math.max(1, _preLoanContract - 1);
         d.salary = Math.max(1, Math.floor((d.rating||60)/30));
         const playerTeam = State.getPlayerTeam();
         if(playerTeam) {
@@ -8806,14 +8809,17 @@ const spons=sumSponsorIncome(g.sponsors||[]);
       // Develop prospects — wonderkids in the pool use variance too (potential not guaranteed)
       const gap=d.potential-d.rating;
       if(d.isWonderkid) {
-        // Same luck/variance system as signed drivers — potential is not guaranteed even before signing
+        // Wonderkids in the pool still have variance, but generational talents are more resilient
+        // than average prospects — lower chance of stagnation years, potential has a high floor
         const luckRoll = Math.random();
-        const luckMod = luckRoll<0.05?0.0:luckRoll<0.15?0.4:luckRoll<0.70?1.0:luckRoll<0.90?1.4:2.0;
+        // Wonderkids: only 2% zero-growth (vs 5% for signed), 5% bad year (vs 10%), more good years
+        const luckMod = luckRoll<0.02?0.2:luckRoll<0.07?0.5:luckRoll<0.60?1.0:luckRoll<0.85?1.4:2.0;
         // Faster prospect development — wonderkids in the pool grow quicker to create competition
         const growth = luckMod * (gap*0.18 + Math.random()*1.2);
         d.rating = clamp(d.rating + Math.max(0, growth), 40, 99);
-        // Poor luck while unscouted erodes potential slightly
-        if(luckMod < 0.4 && gap > 5) d.potential = clamp(d.potential - (Math.random()*1.0), d.rating+2, 99);
+        // Poor luck while unscouted erodes potential slightly — but generational talents
+        // have a protected floor (never drops below 92) so they always feel elite at peak
+        if(luckMod < 0.5 && gap > 5) d.potential = clamp(d.potential - (Math.random()*0.6), Math.max(d.rating+2, 92), 99);
       } else {
         d.rating=clamp(d.rating+Math.max(0,gap*0.2+Math.random()),40,99);
       }
@@ -10303,6 +10309,30 @@ const Storage = {
     UI.toast(message, 'error');
   },
 
+  _compactHistoryForSave(history, currentSeason) {
+    if(!history) return history;
+    const compact = { ...history };
+    if(Array.isArray(compact.seasonStandings)) {
+      compact.seasonStandings = compact.seasonStandings.map(ss => {
+        const age = (currentSeason || 2026) - (ss.season || 2026);
+        if(age > 30) {
+          // Very old: strip raceGrid and h2h, keep only top 10 drivers and top 5 constructors
+          const { raceGrid, h2h, ...rest } = ss;
+          return { ...rest,
+            drivers: (rest.drivers||[]).slice(0, 10),
+            constructors: (rest.constructors||[]).slice(0, 5),
+          };
+        } else if(age > 10) {
+          // Old: strip raceGrid (biggest data) and h2h details, keep full standings
+          const { raceGrid, h2h, ...rest } = ss;
+          return rest;
+        }
+        return ss;
+      });
+    }
+    return compact;
+  },
+
   _compactRaceForSave(r, raceIndex, currentRaceIndex){
     if(!r) return r;
     const compactEvent = ev => {
@@ -10374,10 +10404,7 @@ const Storage = {
       const currentRaceIndex = State.game.raceIndex || 0;
       const strippedCal = (State.game.calendar||[]).map((r,i)=>this._compactRaceForSave(r, i, currentRaceIndex));
       const saveNews = (State.game.newsFeed||[]).slice(-50);
-      const saveHistory = State.game.history ? {
-        ...State.game.history,
-        seasonStandings: Array.isArray(State.game.history.seasonStandings) ? State.game.history.seasonStandings : [],
-      } : State.game.history;
+      const saveHistory = this._compactHistoryForSave(State.game.history, State.game.season);
       const saveGame = Object.assign({}, State.game, {calendar: strippedCal});
       if(saveHistory) saveGame.history = saveHistory;
       saveGame.newsFeed = saveNews;
@@ -10400,10 +10427,7 @@ const Storage = {
       const currentRaceIndex = State.game.raceIndex || 0;
       const strippedCalendar = (State.game.calendar||[]).map((r,i)=>this._compactRaceForSave(r, i, currentRaceIndex));
       const saveNews = (State.game.newsFeed||[]).slice(-50);
-      const saveHistory = State.game.history ? {
-        ...State.game.history,
-        seasonStandings: Array.isArray(State.game.history.seasonStandings) ? State.game.history.seasonStandings : [],
-      } : State.game.history;
+      const saveHistory = this._compactHistoryForSave(State.game.history, State.game.season);
       const saveGame = Object.assign({}, State.game, {calendar: strippedCalendar});
       if(saveHistory) saveGame.history = saveHistory;
       saveGame.newsFeed = saveNews;
@@ -13348,7 +13372,7 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
         <div class="race-detail-meta">Round ${raceIdx+1} of ${g.calendar.length} · ${race.location}, ${race.country} · ${race.laps} laps</div>
         ${race.circuitType?`<div style="margin:6px 0;display:flex;gap:6px;flex-wrap:wrap">
           <span style="font-size:11px;background:var(--bg3);border-radius:20px;padding:2px 8px;font-weight:600">${race.circuitType==='power'?'⚡ Power':race.circuitType==='technical'?'⚙️ Technical':race.circuitType==='street'?'🏙️ Street':'⚖️ Balanced'}</span>
-          <span style="font-size:11px;color:var(--tx3)">Ideal downforce: ${race.idealDownforce}</span>
+          <span style="font-size:11px;color:var(--tx3)">${race.idealDownforce>=75?'High downforce circuit':race.idealDownforce>=55?'Medium downforce':race.idealDownforce>=35?'Low-medium downforce':'Low drag circuit'}</span>
         </div>`:''}
         <div class="race-detail-badges">${statusBadge}</div>
       </div>
@@ -13921,6 +13945,15 @@ const personalSlots = getPersonalSponsorSlots(d);
         ${mine&&!fa&&!d.isReserve?`<button class="btn btn-outline btn-sm" onclick="GameActions.demoteToReserve(${d.id})">⬇️ Move to Reserve</button>`:''}
         ${mine&&!fa?`<button class="btn btn-danger btn-sm" onclick="GameActions.releaseDriver(${d.id})">Release</button>`:''}
         ${(()=>{if(mine||fa||d.isReserve||d.isProspect||g.offseasonPending) return '';const inTalks=(g.pendingNegotiations||[]).some(n=>n.driverId===d.id);const alreadyAgreed=(g.preSeasonMoves||[]).some(m=>m.driverId===d.id)||((g.pendingNegotiations||[]).some(n=>n.driverId===d.id&&n.toTeamId!==g.playerTeamId));if(d.contract>1) return '';const tooEarly=g.raceIndex<6;if(tooEarly) return '<button class="btn btn-ghost btn-sm" disabled style="opacity:.5" title="Transfer window opens from race 6">📋 Approach (available race 6+)</button>';if(alreadyAgreed) return '<button class="btn btn-ghost btn-sm" disabled style="opacity:.5">✅ Deal agreed</button>';if(inTalks) return '<button class="btn btn-ghost btn-sm" disabled style="opacity:.6">⏳ In talks — check Paddock News</button>';return `<button class="btn btn-outline btn-sm" style="border-color:var(--grn);color:var(--grn)" onclick="UI.showApproachPicker(${d.id})">📋 Approach for Next Season</button>`})()}
+        ${(()=>{
+          // Sign reserve drivers from other teams — available when contract is expiring (<=1yr)
+          if(mine||fa||d.isProspect||!d.isReserve||!d.teamId||d.teamId===g.playerTeamId) return '';
+          if(d.contract>1) return '<span style="font-size:10px;color:var(--tx3);padding:4px 8px">Under contract ('+d.contract+'yr)</span>';
+          const onLoanCount = (g.reserveLoans||[]).filter(l=>l.driverId).length;
+          const currentRes = State.getTeamReserves(g.playerTeamId);
+          if(currentRes.length + onLoanCount >= 2) return '<span style="font-size:10px;color:var(--tx3);padding:4px 8px">Reserve slots full</span>';
+          return `<button class="btn btn-outline btn-sm" style="border-color:var(--grn);color:var(--grn)" onclick="GameActions.signReserve(${d.id})">📋 Sign as Reserve</button>`;
+        })()}
         ${(()=>{
           // Scout a grid driver — adds them to a watchlist with scouted rating reveal
           if(mine||d.isProspect||d.isFreeAgent||d.isReserve||!d.teamId) return '';
@@ -19005,7 +19038,7 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.4.6 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.4.7 · Release Notes</div>
         ${[
     ['v2.4.6','May 2026',[
             '🐛 Engine dev rate 11/10: Audi power unit was initialized with a dev rate of 11 on a 0-10 scale, causing the stat display to show 11/10. Clamped to 10. Save normalization fixes existing saves. Editor range updated to 1-10 (reported by gsx512).',
@@ -19182,6 +19215,15 @@ const sponsorInc=sumSponsorIncome(sponsors2);
             '🐛 Watch Race reserve-sub pit prompts: replay decision recalculations now preserve the watched race lineup, so forced reserve replacements continue to receive pit and weather prompts correctly instead of dropping back to the next weekend\'s driver set mid-replay.',
             '🐛 Sponsor target scaling: renewal and replacement sponsor offers now rebase their position targets against your current team strength instead of preserving outdated expectations forever. Dominant teams should no longer keep getting recycled low-pressure targets from an old backmarker era.',
             '⚖️ Fired job offers: post-sacking rescue offers now draw from a broader pool of struggling teams instead of repeatedly defaulting to the exact same bottom two constructors in long saves.',
+    ]],
+    ['v2.4.7','May 2026',[
+            '🐛 Reserve loan contract reset: reserve drivers returning from loan no longer have their contract reset to 1 year. The original contract is now stored at loan creation and correctly decremented by 1 on return — e.g. a driver with 3yr left goes on a 1-season loan and returns with 2yr remaining (reported by This_is_so_not_right, gsx512).',
+            '🐛 Loaned reserve replaced by prospect: signing a new reserve while another is out on loan no longer causes the returning driver to be displaced. Reserve slot checks now count on-loan reserves toward the 2-slot cap, preventing the overflow (reported by gsx512).',
+            '✨ Contract extension rework: renewal is now a proper extension system. Buttons show "+1 Year", "+2 Years", "+3 Years" with the resulting total clearly labelled. Longer extensions get a loyalty discount. Maximum contract length is 5 years — if already at 4yr, only +1 is offered. Selecting "+1" and "+2" no longer produce the same result (reported by moorbre, gsx512, Alsh_phoenix).',
+            '🐛 Sign reserves from other teams: reserve drivers at rival teams with 1 year or less on their contract can now be signed as reserves from their driver profile. Previously all other-team reserves had no action buttons regardless of contract status (reported by Standard-Poem7823, This_is_so_not_right).',
+            '🐛 Ideal downforce leak: the exact ideal downforce number is no longer shown on the race detail screen. It now shows a vague descriptor ("High downforce circuit", "Low drag circuit", etc.) so the setup guessing game remains meaningful (reported by Standard-Poem7823).',
+            '🐛 Generational talent stat ceiling: wonderkids left in the feeder series now have a protected potential floor of 92, reduced stagnation chance (2% vs 5%), and slower potential erosion. Signing a generational talent one year later no longer results in noticeably weaker peak stats vs signing immediately (reported by puchunz).',
+            '🐛 Long career save failures: saves now compact older season history data. Seasons 10+ years old have race grids stripped, and 30+ year-old seasons keep only top-10 standings. This dramatically reduces save size for 50+ season careers and should prevent the localStorage quota error at year ~70 (reported by puchunz).',
     ]],
     ['v2.3.5','Apr 2026',[
             '🐛 Academy driver free agent bug: academy juniors returning from loan no longer appear as free agents. The return function previously set contract=0, which caused the offseason release loop to flag them as free agents. Contract is now preserved correctly on loan return, and the release loop explicitly skips isJunior drivers (reported by OzzyVibes1612).',
@@ -20723,28 +20765,36 @@ const GameActions = {
 const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     const _rEffectiveIncome=Math.max(team.revenue, _rSponsorInc+40);
     const demand = State.getDriverDemandSalary(d, (d.isReserve && !d._wasRaceDriver) ? 'reserve' : 'renewal');
+    const currentYrs = d.contract || 0;
+    // Extension options: +1, +2, +3 — capped at 5yr total
+    const maxExtend = Math.max(0, 5 - currentYrs);
+    const extendOptions = [1,2,3].filter(yr => yr <= maxExtend);
     const html=`<div style="color:var(--tx)">
       <div style="font-size:16px;font-weight:900;margin-bottom:2px;color:var(--tx)">${d.name}</div>
-      <div style="font-size:11px;color:var(--tx3);margin-bottom:${d.academyName?'6':'16'}px">${Math.round(d.rating)} OVR · Age ${d.age} · Morale ${d.morale}</div>
+      <div style="font-size:11px;color:var(--tx3);margin-bottom:${d.academyName?'6':'16'}px">${Math.round(d.rating)} OVR · Age ${d.age} · Morale ${d.morale}${currentYrs>0?' · <strong>'+currentYrs+'yr</strong> remaining':' · <strong style="color:var(--red)">Expired</strong>'}</div>
       ${d.academyName?`<div style="font-size:10px;font-weight:700;color:#7c3aed;background:rgba(124,58,237,.08);border-radius:12px;padding:3px 10px;display:inline-block;margin-bottom:12px">🎓 ${d.academyName} graduate</div>`:''}
       <div style="background:var(--bg3);border-radius:8px;padding:12px;margin-bottom:16px">
         <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--tx3);margin-bottom:6px">Driver's Demand</div>
         <div style="font-size:22px;font-weight:900;font-family:var(--fm)">${formatMoney(demand)}<span style="font-size:13px;font-weight:400;color:var(--tx3)">/yr</span></div>
         ${d.isReserve?'<div style="font-size:11px;color:var(--tx3);margin-top:4px">Reserve contract — bench and test role uses a lower salary track than a race seat.</div>':d._teammatePressure>=2?'<div style="font-size:11px;color:var(--amber);margin-top:4px">⚠️ Teammate pressure — expects stronger terms after a difficult comparison year</div>':d._retentionLeverage>=1?'<div style="font-size:11px;color:var(--amber);margin-top:4px">⭐ Strong leverage — coming off a big season and asking for championship-level terms</div>':d.age<25&&d.potential>85?'<div style="font-size:11px;color:var(--amber);margin-top:4px">⭐ High-potential — wants a pay rise</div>':d.rating>88?'<div style="font-size:11px;color:var(--amber);margin-top:4px">⭐ Top driver — commanding premium</div>':''}
       </div>
-      <div style="font-size:12px;font-weight:700;color:var(--tx2);margin-bottom:8px">Choose contract length:</div>
+      <div style="font-size:12px;font-weight:700;color:var(--tx2);margin-bottom:8px">Extend contract:</div>
       <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
-        ${[1,2,3].map(yr=>{
-          const sal=yr===1?Math.ceil(demand*0.95):yr===2?demand:Math.ceil(demand*1.1);
+        ${extendOptions.length === 0 ? '<div style="font-size:12px;color:var(--tx3);padding:10px;text-align:center">Contract is already at the maximum length (5 years). Extensions can only be offered when there is room to add years.</div>' : extendOptions.map(yr=>{
+          const totalYrs = currentYrs + yr;
+          // Loyalty bonus: longer extensions get a discount per year
+          const loyaltyMult = yr===1?1.0:yr===2?0.97:0.94;
+          const sal=yr===1?Math.ceil(demand*0.95*loyaltyMult):yr===2?Math.ceil(demand*loyaltyMult):Math.ceil(demand*1.05*loyaltyMult);
           const ok=_rEffectiveIncome>=sal*3;
+          const loyaltyTag = yr>=2?'<span style="font-size:9px;background:rgba(37,99,235,.1);color:#1d4ed8;padding:1px 5px;border-radius:4px;margin-left:6px">Loyalty bonus</span>':'';
           return `<button ${ok?`onclick="GameActions.confirmRenew(${driverId},${yr},${sal})"`:''} ${!ok?'disabled':''} 
             style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border:2px solid var(--bd);border-radius:8px;background:${ok?'var(--bg2)':'var(--bg3)'};color:var(--tx);cursor:${ok?'pointer':'not-allowed'};opacity:${ok?1:0.5}">
-            <span style="font-weight:700">${yr} Year${yr>1?'s':''}</span>
+            <div style="display:flex;align-items:center"><span style="font-weight:700">+${yr} Year${yr>1?'s':''}</span><span style="font-size:11px;color:var(--tx3);margin-left:8px">(→ ${totalYrs}yr total)</span>${loyaltyTag}</div>
             <span style="font-family:var(--fm);font-size:13px;font-weight:700;color:${ok?'var(--grn)':'var(--red)'}">${formatMoney(sal)}/yr${!ok?' (over budget)':''}</span>
           </button>`;
         }).join('')}
       </div>
-      <div style="border-top:1px solid var(--bd);margin-top:4px;padding-top:12px"><button onclick="UI.closeModal();GameActions.autoRenewDriver(${driverId})" class="btn btn-ghost" style="width:100%;font-size:11px;color:var(--tx3)">⚡ Auto-sign (2yr · demand +15% penalty)</button></div>
+      <div style="border-top:1px solid var(--bd);margin-top:4px;padding-top:12px"><button onclick="UI.closeModal();GameActions.autoRenewDriver(${driverId})" class="btn btn-ghost" style="width:100%;font-size:11px;color:var(--tx3)">⚡ Auto-sign (+2yr · demand +15% penalty)</button></div>
       <button onclick="UI.closeModal()" class="btn btn-ghost" style="width:100%;margin-top:6px">Cancel</button>
     </div>`;
     document.getElementById('modal-body').innerHTML=html;
@@ -20752,26 +20802,12 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
   },
   confirmRenew(driverId,years,salary){
     const d=State.getDriver(driverId); if(!d)return;
-    // Prevent genuine downgrades: reject only if BOTH shorter AND cheaper than current deal.
-    // A longer-term cheaper contract (e.g. 2yr at $16M vs 1yr left at $17M) is valid — driver
-    // prefers security. A same-length pay cut is also rejected. But never block longer deals.
-    const isShorter = years < d.contract;
-    const isCheaper = salary < d.salary;
-    if(isShorter && isCheaper){
-      UI.toast(`${d.name} won't accept a downgrade — offer at least ${d.contract}yr at ${formatMoney(d.salary)}/yr.`,'warning');
-      return;
-    }
-    if(isShorter && !isCheaper){
-      UI.toast(`${d.name} wants at least ${d.contract}yr remaining on their deal.`,'warning');
-      return;
-    }
-    // Extension logic: if offered years would not actually extend the contract, add on top
-    // e.g. offering "1 Year" to a driver with 1yr left = 2yr total (1 remaining + 1 new)
-    const newContract = years <= d.contract ? d.contract + years : years;
+    // Extension system: years is always additive (+1, +2, +3)
+    const newContract = Math.min(5, (d.contract || 0) + years);
     d.contract=newContract; d.salary=salary; d.morale=clamp(d.morale+15,50,98);
     UI.closeModal();
     if(typeof gtag!=='undefined') gtag('event','driver_signed',{driver_name:d.name,rating:Math.round(d.rating||0),years:newContract,salary:salary,role:'renewal',season:State.game.season,race_number:State.game.raceIndex});
-    UI.toast(`${d.name} signed ${newContract}yr at ${formatMoney(salary)}/yr`,'success');
+    UI.toast(`${d.name} extended to ${newContract}yr at ${formatMoney(salary)}/yr`,'success');
     Storage.autosave();
     UI.renderDashboard();
     UI.renderOffseasonPlanning();
@@ -21738,6 +21774,12 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     if(asReserve){
       const current=State.getTeamReserves(team.id);
       if(current.length>=2){UI.toast('Already have 2 reserve drivers.','warning');return;}
+      // Remove from previous team if applicable
+      const prevTeam = d.teamId ? State.getTeam(d.teamId) : null;
+      if(prevTeam && prevTeam.id !== team.id) {
+        prevTeam.reserveIds = (prevTeam.reserveIds||[]).filter(id=>id!==d.id);
+        prevTeam.driverIds = (prevTeam.driverIds||[]).filter(id=>id!==d.id);
+      }
       d.teamId=team.id; d.contract=years; d.salary=salary;
       d.morale=clamp(d.morale+10,50,90);
       d.isReserve=true; d.isProspect=false; d.isFreeAgent=false; d.isJunior=false;
@@ -22224,6 +22266,7 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       loanSeason: g.season,
       returnSeason: g.season + 1,
       loanFee,
+      _originalContract: d.contract || 1,
     };
     g.reserveLoans.push(loan);
     // Move driver to borrowing team as a race driver
@@ -22233,7 +22276,7 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     d.isReserve = false;
     d._onReserveLoan = true;
     d._loanFromTeamId = g.playerTeamId;
-    d.contract = 1;
+    // Keep original contract intact — it will be decremented on return
     toTeam.driverIds = (toTeam.driverIds||[]).filter(id=>id!==driverId && id!==(replacedDriver&&replacedDriver.id));
     toTeam.driverIds.push(driverId);
     // Credit loan fee
@@ -22781,7 +22824,9 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     if(d.retired){UI.toast(`${d.name} has retired and cannot be signed.`,'warning');return;}
     const team=State.getPlayerTeam();
     const current=State.getTeamReserves(team.id);
-    if(current.length>=2){UI.toast('Already have 2 reserve drivers.','warning');return;}
+    // Count reserves currently out on loan — they'll return and need a slot
+    const onLoanCount = (State.game.reserveLoans||[]).filter(l=>l.driverId).length;
+    if(current.length + onLoanCount >= 2){UI.toast('Already have 2 reserve drivers'+(onLoanCount>0?' (including '+onLoanCount+' on loan)':'')+'.','warning');return;}
     UI.showSigningNegotiation(driverId, true);
   },
   releaseDriver(driverId){
