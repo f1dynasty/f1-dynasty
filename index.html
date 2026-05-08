@@ -745,14 +745,14 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
         </div>
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:18px;max-width:320px;padding:14px 16px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
-          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v2.4.7 — What's New</div>
-          <div style="font-size:13px;font-weight:900;color:#111;margin-bottom:8px">Contract extensions, reserve loan fixes & long-career saves</div>
+          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v2.4.8 — What's New</div>
+          <div style="font-size:13px;font-weight:900;color:#111;margin-bottom:8px">Bug fixes, driver market movement & negotiation fixes</div>
           <div style="display:flex;flex-direction:column;gap:5px">
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">✨</span><span><strong>Contract extension rework</strong> — renewals now add years (+1/+2/+3) with loyalty discounts and a 5yr cap</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>Reserve loan contracts</strong> — returning drivers keep their remaining years instead of resetting to 1yr</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🆕</span><span><strong>Sign rival reserves</strong> — poach reserve drivers from other teams when their contract expires</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>Generational talent fix</strong> — wonderkids no longer lose potential ceiling while in feeder series</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>Long career saves</strong> — 50+ season careers no longer hit the storage limit at year ~70</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>Championship lead display</strong> — tied teams no longer incorrectly show "Championship lead"</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>Watch Race negotiations</strong> — driver talks now resolve properly when using Watch Race</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>PU trend badges</strong> — Car page no longer shows false negative deltas on engine stats</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">⚖️</span><span><strong>AI reserve promotion</strong> — AI teams now promote reserves who outrate their race drivers</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">⚖️</span><span><strong>Driver market refresh</strong> — AI teams cycle aging drivers after 6+ seasons, ending grid stagnation</span></div>
           </div>
           <button onclick="UI.showChangelog()" style="margin-top:10px;width:100%;padding:7px;background:none;border:1.5px solid rgba(192,57,43,.3);border-radius:7px;font-size:11px;font-weight:700;color:var(--red);cursor:pointer">Full release notes →</button>
         </div>
@@ -867,7 +867,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </div>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.4.7</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.4.8</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -9013,6 +9013,79 @@ const spons=sumSponsorIncome(g.sponsors||[]);
         }
       }
     });
+    // ── AI RESERVE PROMOTION — promote reserves who significantly outrate race drivers ──
+    // This prevents market stagnation where a 90-rated reserve sits behind a 84-rated race driver for years
+    g.teams.forEach(team=>{
+      if(team.id===g.playerTeamId) return;
+      const raceDrivers=State.getTeamDrivers(team.id).filter(d=>!d.isReserve&&!d.isProspect&&!d.isJunior);
+      const reserves=State.getTeamReserves(team.id).filter(d=>!d.retired);
+      if(!reserves.length||!raceDrivers.length) return;
+      const bestReserve=reserves.reduce((a,b)=>(b.rating||0)>(a.rating||0)?b:a,reserves[0]);
+      const worstRace=raceDrivers.reduce((a,b)=>(a.rating||0)<(b.rating||0)?a:b,raceDrivers[0]);
+      if(!bestReserve||!worstRace) return;
+      // Promote if reserve is 4+ OVR better (top teams) or 6+ (midfield/backmarkers)
+      const teamCarRank=[...g.teams].sort((a,b)=>getTeamOverallCar(b)-getTeamOverallCar(a)).findIndex(t=>t.id===team.id)+1;
+      const promoteThreshold=teamCarRank<=3?4:teamCarRank<=6?5:6;
+      if((bestReserve.rating||0)>=(worstRace.rating||0)+promoteThreshold){
+        // Promote reserve to race seat
+        bestReserve.isReserve=false;
+        bestReserve.contract=Math.max(bestReserve.contract||1,2);
+        bestReserve.salary=State.getDriverDemandSalary?State.getDriverDemandSalary(bestReserve,'signing'):Math.floor((bestReserve.rating||70)/15);
+        bestReserve.morale=clamp((bestReserve.morale||70)+10,50,95);
+        if(!team.driverIds) team.driverIds=[];
+        if(!team.driverIds.includes(bestReserve.id)) team.driverIds.push(bestReserve.id);
+        team.reserveIds=(team.reserveIds||[]).filter(id=>id!==bestReserve.id);
+        // Release the worst race driver
+        worstRace.teamId=null;worstRace.contract=0;worstRace.isFreeAgent=true;worstRace.isReserve=false;
+        team.driverIds=(team.driverIds||[]).filter(id=>id!==worstRace.id);
+        transfers.push({driverName:worstRace.name,from:team.name,to:'Free Agent',teamId:team.id,left:true,reason:'replaced by promoted reserve'});
+        transfers.push({driverName:bestReserve.name,from:team.name+' (reserve)',to:team.name,teamId:team.id,reason:'promoted from reserve'});
+      }
+    });
+
+    // ── AI DRIVER REFRESH — prevent long-term roster stagnation ──
+    // After 6+ seasons, AI teams have a chance to replace aging or stagnating drivers
+    // even if they technically meet the renewal threshold, creating more market movement
+    const getSeasonsAtCurrentTeam = (driver, teamName) => {
+      const history = Array.isArray(driver?.careerHistory) ? driver.careerHistory : [];
+      if(!teamName || !history.length) return 0;
+      let seasons = 0;
+      for(let i=history.length-1;i>=0;i--){
+        const row = history[i];
+        const endedSeasonAtTeam = row && (row.endTeamName ? row.endTeamName===teamName : row.teamName===teamName);
+        if(!endedSeasonAtTeam) break;
+        seasons++;
+        // Mid-season transfers should count as one season at the new team, then stop.
+        if(row.endTeamName && row.teamName !== teamName) break;
+      }
+      return seasons;
+    };
+    if((g.season||2026) >= (g.startSeason||2026) + 6) {
+      g.teams.forEach(team=>{
+        if(team.id===g.playerTeamId) return;
+        const raceDrivers=State.getTeamDrivers(team.id).filter(d=>!d.isReserve&&!d.isProspect&&!d.isJunior);
+        raceDrivers.forEach(d=>{
+          if(executedMoves.has(d.id)) return;
+          if((d.contract||0) > 1) return; // multi-year contracts protected
+          // Chance to release aging drivers (30+) who have been at the same team a long time
+          const seasonsAtTeam = getSeasonsAtCurrentTeam(d, team.name);
+          const isVeteran = d.age >= 30 && seasonsAtTeam >= 4;
+          const isDeclinePeak = d.age >= 33;
+          // Top teams are more ruthless; backmarkers hold longer
+          const teamCarRank=[...g.teams].sort((a,b)=>getTeamOverallCar(b)-getTeamOverallCar(a)).findIndex(t=>t.id===team.id)+1;
+          const refreshChance = isDeclinePeak ? (teamCarRank<=3?0.35:teamCarRank<=6?0.20:0.10) : (isVeteran ? (teamCarRank<=3?0.15:teamCarRank<=6?0.08:0.04) : 0);
+          if(Math.random() < refreshChance) {
+            // Check there's actually someone better available
+            const bestFA = State.getFreeAgents().filter(fa=>!carriedNegotiationDriverIds.has(fa.id)&&!(g.committedProspects||[]).some(c=>c.driverId===fa.id)&&fa.rating>d.rating).sort((a,b)=>b.rating-a.rating)[0];
+            if(bestFA || isDeclinePeak) {
+              d.teamId=null;d.contract=0;d.isFreeAgent=true;d._departReason='not renewed (squad refresh)';
+              executedMoves.add(d.id);
+            }
+          }
+        });
+      });
+    }
+
     // ── Fill empty seats — record departures then sign ──
     // First pass: record departures for ALL teams
     g.teams.forEach(team=>{
@@ -11125,7 +11198,12 @@ const UI = {
       Editor.init();
       const selYear = parseInt(document.getElementById('landing-start-year')?.value) || parseInt(document.getElementById('input-start-year')?.value) || 2026;
       const editorEngines = Editor.getEditorEngines() || [];
-      tg.innerHTML = [...Editor.getTeams()].sort((a,b)=>b.carPerformance-a.carPerformance).map(t=>{
+      const landingTeams = [...Editor.getTeams()].sort((a,b)=>b.carPerformance-a.carPerformance);
+      const preferredLandingTeamId = landingTeams.some(t=>t.id===this._landingSelectedTeamId)
+        ? this._landingSelectedTeamId
+        : (landingTeams[0]?.id || null);
+      this._landingSelectedTeamId = preferredLandingTeamId;
+      tg.innerHTML = landingTeams.map(t=>{
         const lineup = (Editor.getState().seasonDrivers[selYear]||{})[t.id] || t.baseDrivers;
         const drivers = lineup.map(d=>escapeHtml(String(d.name||'').split(' ').pop())).join(' & ');
         const eng = editorEngines.find(e=>e.id===t.engineManufacturer);
@@ -11147,9 +11225,10 @@ const UI = {
           </div>
         </div>`;
       }).join('');
-      // Auto-select first
-      const first = tg.querySelector('.land-tcard');
-      if(first) first.classList.add('selected');
+      const selectedCard = preferredLandingTeamId
+        ? tg.querySelector(`.land-tcard[data-team-id="${preferredLandingTeamId}"]`)
+        : tg.querySelector('.land-tcard');
+      if(selectedCard) selectedCard.classList.add('selected');
     }
     // Save slots
     const savesSection = document.getElementById('land-saves-section');
@@ -11265,7 +11344,9 @@ const UI = {
     if(section==='teams') setTimeout(()=>{ const el=document.getElementById('landing-guide-teams'); if(el) el.scrollIntoView({behavior:'smooth',block:'center'}); }, 150);
   },
 
+  _landingSelectedTeamId: null,
   selectLandTeam(id){
+    this._landingSelectedTeamId = id;
     document.querySelectorAll('.land-tcard').forEach(c=>c.classList.toggle('selected',c.dataset.teamId===id));
   },
 
@@ -11305,6 +11386,7 @@ const UI = {
     const sd = Editor.getState().seasonDrivers;
     Object.keys(sd).forEach(yr => { sd[yr][id] = JSON.parse(JSON.stringify(baseDrivers)); });
     Editor._selectedTeamId = id;
+    this._landingSelectedTeamId = id;
     Editor.persist();
     UI.renderLanding();
     UI.renderTeamSelect();
@@ -11869,7 +11951,7 @@ const UI = {
     const posChange=g.lastSeasonPos&&cpos?g.lastSeasonPos-cpos:0;
     const trendBadge=g.lastSeasonPos?(posChange>0?`<br><span style="font-size:10px;color:var(--grn)">▲${posChange} vs last season</span>`:posChange<0?`<br><span style="font-size:10px;color:var(--red)">▼${Math.abs(posChange)} vs last season</span>`:``):` `;
     document.getElementById('dash-points').innerHTML=
-      `<strong>${team.seasonPoints}</strong> pts${teamAbove&&ptsGap>0?`<br><span style="font-size:10px;color:var(--tx3)">${ptsGap}pts off P${myStIdx}</span>`:'<br><span style="font-size:10px;color:var(--grn)">Championship lead</span>'}${trendBadge}`;
+      `<strong>${team.seasonPoints}</strong> pts${myStIdx===0?'<br><span style="font-size:10px;color:var(--grn)">Championship lead</span>':(teamAbove&&ptsGap>0?`<br><span style="font-size:10px;color:var(--tx3)">${ptsGap}pts off P${myStIdx}</span>`:`<br><span style="font-size:10px;color:var(--tx3)">Tied P${myStIdx+1}</span>`)}${trendBadge}`;
 
     const academyCard = document.getElementById('dash-academy-card');
     const academyValue = document.getElementById('dash-academy-value');
@@ -13573,7 +13655,7 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
       document.getElementById('drivers-content').innerHTML='<p style="font-size:11px;color:var(--tx3);margin-bottom:8px">Season-by-season history for all drivers. Click a driver to view full profile.</p>'+rows;
       return;
     } else {
-      drivers = State.game.drivers.filter(d=>!d.retired&&!d.isProspect);
+      drivers = State.game.drivers.filter(d=>!d.retired&&!d.isProspect&&!d.isJunior);
       title = 'All F1 Drivers';
     }
 
@@ -19038,8 +19120,16 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.4.7 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.4.8 · Release Notes</div>
         ${[
+    ['v2.4.8','May 2026',[
+            '🐛 Championship lead display: teams tied on points but not in first place no longer incorrectly show "Championship lead". Now correctly shows "Tied P4" (or equivalent) when points are equal to the team above (reported by IllustriousHorror743).',
+            '🐛 Power Unit trend badges showing wrong deltas: the Car page could show large negative deltas (e.g. -7.2 power) on PU stats because a stale pre-development snapshot from the previous offseason survived into the new season. The snapshot is now cleared at season start so trend badges accurately reflect changes since the current season began (reported by JDoyle47).',
+            '🐛 Watch Race negotiations never resolving: driver negotiations only resolved after Simulate Race but NOT after Watch Race or Skip Race, meaning players who exclusively used Watch Race would see "0 races left" indefinitely with no resolution. All three race paths now trigger negotiation resolution (reported by Much_Many_4615).',
+            '🐛 Academy loan return drivers appearing in All Drivers tab: juniors returning from loan showed up in the "All" drivers list as teamless drivers (looking like free agents) while still being in the academy panel. The All tab now correctly filters out academy juniors (reported by gsx512).',
+            '⚖️ AI reserve promotion: AI teams now evaluate their reserve bench during the offseason and promote reserves who significantly outrate their worst race driver (4-6 OVR gap depending on team prestige). This prevents the scenario where a 90-rated reserve sits behind an 84-rated race driver for years (reported by TomatoeOnion).',
+            '⚖️ Driver market refresh: after 6+ seasons, AI teams have a chance to not renew aging or long-tenured drivers even if they technically meet the renewal threshold. Top teams are more aggressive about refreshing their lineup. This prevents the grid from becoming completely static in long saves where the same 9 drivers stay at the same teams for 12+ seasons (reported by Storm-Few).',
+    ]],
     ['v2.4.6','May 2026',[
             '🐛 Engine dev rate 11/10: Audi power unit was initialized with a dev rate of 11 on a 0-10 scale, causing the stat display to show 11/10. Clamped to 10. Save normalization fixes existing saves. Editor range updated to 1-10 (reported by gsx512).',
             '🐛 Prospect list sorting: the prospect pool was sorted by hidden potential (the stat that requires scouting to see), making it trivial to sign the best prospects without a scout. Now sorts by OVR rating (reported by ImBuckAndWeGonFuck).',
@@ -20541,6 +20631,9 @@ const GameActions = {
     g.offseasonPending=false;
     g._seasonStartConfirmedFor=g.season;
     g._lastOffseasonDevResult = null;
+    // Clear stale pre-dev snapshot — it belongs to last offseason and would show
+    // misleading negative deltas on the Car page if the engine was developed then snapshot overwritten.
+    g._enginePreDevSnapshot = null;
     // Snapshot engine stats at season start so Car page can show growth trend
     g._engineStatsSnapshot = {};
     (g.engineManufacturers||[]).forEach(eng=>{
@@ -21100,6 +21193,7 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     if(!race.qualiDone) Sim.simQualifying(race);
     Sim.simRace(race);
     if(raceIdx===g.raceIndex) g.raceIndex++;
+    try { GameActions.resolveNegotiations(); } catch(e){ console.warn('Negotiation resolve error:',e); }
     GameActions.processScoutingQueue();
     Storage.autosave();
     UI.openWatchRace(raceIdx);
@@ -21117,6 +21211,7 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     }
     Sim.simRace(race);
     g.raceIndex++;
+    try { GameActions.resolveNegotiations(); } catch(e){ console.warn('Negotiation resolve error:',e); }
     GameActions.processScoutingQueue();
     Storage.autosave();
     UI.openWatchRace(raceIdx);
