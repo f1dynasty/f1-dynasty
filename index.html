@@ -745,14 +745,16 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
         </div>
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:18px;max-width:320px;padding:14px 16px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
-          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v2.4.8 — What's New</div>
-          <div style="font-size:13px;font-weight:900;color:#111;margin-bottom:8px">Bug fixes, driver market movement & negotiation fixes</div>
+          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v2.4.9 — What's New</div>
+          <div style="font-size:13px;font-weight:900;color:#111;margin-bottom:8px">Engine rework, season narratives & major bug fixes</div>
           <div style="display:flex;flex-direction:column;gap:5px">
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>Championship lead display</strong> — tied teams no longer incorrectly show "Championship lead"</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>Watch Race negotiations</strong> — driver talks now resolve properly when using Watch Race</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>PU trend badges</strong> — Car page no longer shows false negative deltas on engine stats</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">⚖️</span><span><strong>AI reserve promotion</strong> — AI teams now promote reserves who outrate their race drivers</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">⚖️</span><span><strong>Driver market refresh</strong> — AI teams cycle aging drivers after 6+ seasons, ending grid stagnation</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🆕</span><span><strong>PU Component Wear</strong> — ICE, Turbo & ERS degrade each race. 3 free PUs per season, extras cost grid penalties</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🆕</span><span><strong>Engine Modes</strong> — Push/Normal/Conserve in Watch Race. Push wears your PU faster and risks engine blowout</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🆕</span><span><strong>Season Review</strong> — wiki-style narrative summaries auto-generated in Dynasty tab after each season</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>Team orders fixed</strong> — "Give Position" and "Hold" now work correctly in Watch Race</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>Pnull fix</strong> — drivers no longer show "Pnull · 0pts" after winning a race</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">⚖️</span><span><strong>Objectives & variance</strong> — backmarker objectives rebalanced, race positions now swing realistically</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>Engine stats & position swaps</strong> — PU values no longer revert on long saves, results match replay</span></div>
           </div>
           <button onclick="UI.showChangelog()" style="margin-top:10px;width:100%;padding:7px;background:none;border:1.5px solid rgba(192,57,43,.3);border-radius:7px;font-size:11px;font-weight:700;color:var(--red);cursor:pointer">Full release notes →</button>
         </div>
@@ -867,7 +869,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </div>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.4.8</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.4.9</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -2020,7 +2022,15 @@ function getTeamCarScore(team, circuitType) {
   const w = (DATA.circuitWeights[circuitType] || DATA.circuitWeights.balanced);
   const eng = _findEngine(team);
   const engPower = eng ? eng.powerRating : 88;
-  const topSpeedEff = (team.topSpeed||team.carPerformance||70) * 0.60 + engPower * 0.40;
+  // PU wear penalty: only applies to player team (AI teams don't track individual PU wear)
+  let _puWearPenalty = 0;
+  const _g = State.game;
+  if(_g && _g.puWear && team.id === _g.playerTeamId) {
+    const _pw = _g.puWear;
+    const _wearLoss = (w) => w < 40 ? 0 : w < 65 ? (w-40)*0.04 : w < 85 ? 1.0+(w-65)*0.06 : 2.2+(w-85)*0.12;
+    _puWearPenalty = _wearLoss(_pw.ice||0) + _wearLoss(_pw.turbo||0) + _wearLoss(_pw.ers||0);
+  }
+  const topSpeedEff = (team.topSpeed||team.carPerformance||70) * 0.60 + engPower * 0.40 - _puWearPenalty * 0.4;
   const cornering    = team.cornering    || team.carPerformance || 70;
   const tyreMgmt     = team.tyreManagement || team.carPerformance || 70;
   const dirtyAir     = team.dirtyAir     || team.carPerformance || 70;
@@ -2034,7 +2044,14 @@ function getTeamCarScore(team, circuitType) {
 function getTeamOverallCar(team) {
   const eng = _findEngine(team);
   const engPower = eng ? eng.powerRating : 88;
-  const topSpeedEff = (team.topSpeed||team.carPerformance||70) * 0.60 + engPower * 0.40;
+  let _puWearPenOvr = 0;
+  const _g2 = State.game;
+  if(_g2 && _g2.puWear && team.id === _g2.playerTeamId) {
+    const _pw2 = _g2.puWear;
+    const _wL2 = (w) => w < 40 ? 0 : w < 65 ? (w-40)*0.04 : w < 85 ? 1.0+(w-65)*0.06 : 2.2+(w-85)*0.12;
+    _puWearPenOvr = _wL2(_pw2.ice||0) + _wL2(_pw2.turbo||0) + _wL2(_pw2.ers||0);
+  }
+  const topSpeedEff = (team.topSpeed||team.carPerformance||70) * 0.60 + engPower * 0.40 - _puWearPenOvr * 0.4;
   return (topSpeedEff
         + (team.cornering    || team.carPerformance || 70)
         + (team.tyreManagement || team.carPerformance || 70)
@@ -2160,6 +2177,51 @@ function getTeamStaffSalaryCost(team) {
 function getTeamStaffBudgetCap(team) {
   if(!team) return 45;
   return Math.max(45, Math.round((team.revenue || 100) * 0.20));
+}
+const TEAM_ID_ALIASES = Object.freeze({
+  rb: 'racingbulls',
+  sauber: 'audi'
+});
+function normalizeTeamId(teamId){
+  if(teamId === undefined || teamId === null || teamId === '') return teamId;
+  const key = String(teamId);
+  return TEAM_ID_ALIASES[key] || key;
+}
+function teamIdsEqual(a, b){
+  if(a === undefined || a === null || b === undefined || b === null) return a === b;
+  return normalizeTeamId(a) === normalizeTeamId(b);
+}
+function normalizeGameTeamAliases(game){
+  if(!game || typeof game !== 'object') return game;
+  const refKeys = new Set(['teamId','fromTeamId','toTeamId','playerTeamId','_lastTeamId','_loanFromTeamId']);
+  const seen = new WeakSet();
+  if(Array.isArray(game.teams)){
+    game.teams.forEach(team=>{
+      if(team && team.id != null) team.id = normalizeTeamId(team.id);
+    });
+  }
+  if(game.playerTeamId != null) game.playerTeamId = normalizeTeamId(game.playerTeamId);
+  if(game.finances && !Array.isArray(game.finances)){
+    const nextFinances = {};
+    Object.keys(game.finances).forEach(key=>{
+      nextFinances[normalizeTeamId(key)] = game.finances[key];
+    });
+    game.finances = nextFinances;
+  }
+  const visit = node => {
+    if(!node || typeof node !== 'object' || seen.has(node)) return;
+    seen.add(node);
+    if(Array.isArray(node)){
+      node.forEach(visit);
+      return;
+    }
+    Object.keys(node).forEach(key=>{
+      if(refKeys.has(key) && node[key] != null) node[key] = normalizeTeamId(node[key]);
+      visit(node[key]);
+    });
+  };
+  visit(game);
+  return game;
 }
 function sumSponsorIncome(list){
   return (list||[]).reduce((s,sp)=>s+getSponsorEffectiveValue(sp),0);
@@ -3537,6 +3599,9 @@ const State = {
     Editor.init();
     const template = Editor.getState();
     const teams = template.teams.map(t => this._buildTeam(t));
+    const requestedTeamId = normalizeTeamId(teamId);
+    const playerTeam = teams.find(t => teamIdsEqual(t.id, requestedTeamId)) || teams[0];
+    const playerTeamId = playerTeam?.id || requestedTeamId;
     const allDrivers = [];
     let nextDriverId = 1;
     this._generatingNames = [];
@@ -3636,16 +3701,16 @@ const State = {
     const allStaff = teams.flatMap(t=>Object.values(t.staff||{})).filter(Boolean);
     const staffMarket = this._generateStaffMarket(allStaff);
     this.game = {
-      version:1, managerName, playerTeamId:teamId, season:startYear, raceIndex:0, gameDifficulty: this._pendingDifficulty || 'normal',
+      version:1, managerName, playerTeamId, season:startYear, raceIndex:0, gameDifficulty: this._pendingDifficulty || 'normal',
       teams, drivers:allDrivers, nextDriverId, calendar,
       engineManufacturers: (template.engineManufacturers && template.engineManufacturers.length > 0)
         ? JSON.parse(JSON.stringify(template.engineManufacturers))
         : JSON.parse(JSON.stringify(DATA.engineManufacturers)),
       academy: null, // null = not founded yet
       history:{champions:[],constructorChampions:[],seasonStandings:[],raceWins:{},records:{}},
-      finances:{[teamId]:{revenue:teams.find(t=>t.id===teamId).revenue,income:60,expenses:40}},
+      finances:{[playerTeamId]:{revenue:playerTeam?.revenue ?? 100,income:60,expenses:40}},
       scoutingTier:'none',
-      sponsors: buildStarterSponsorsForTeam(teamId, teams.find(t=>t.id===teamId), (template.teams.find(t=>t.id===teamId)||{}).sponsors),
+      sponsors: buildStarterSponsorsForTeam(playerTeamId, playerTeam, (template.teams.find(t=>teamIdsEqual(t.id, playerTeamId))||{}).sponsors),
       staffMarket,
 pendingDev:null, lastRaceResult:null, lastSprintResult:null, totalRaces:0, pendingUpgrades:[], newsFeed:[], offseasonBudget:{aero:0,engine:0,reliability:0,facilities:0}, inSeasonDev:{aero:0,reliability:0,engine:0}, inSeasonDevApplied:false, quarterDev:[{aero:0,reliability:0,engine:0,applied:false},{aero:0,reliability:0,engine:0,applied:false}], quarterDevDiversion:{}, reserveLoans:[], retirements:[], preSeasonMoves:[], pendingNegotiations:[], created:Date.now(), lastSaved:null,
 nextRegsYear: startYear + randInt(3,5), regsHistory: [],
@@ -3660,10 +3725,10 @@ nextRegsYear: startYear + randInt(3,5), regsHistory: [],
     // Apply difficulty budget penalty to player team starting revenue
     const _diff = getDiff(this.game);
     if(_diff.budgetMult < 1.0) {
-      const _pt = this.game.teams.find(t=>t.id===teamId);
+      const _pt = this.game.teams.find(t=>t.id===playerTeamId);
       if(_pt) {
         _pt.revenue = Math.round(_pt.revenue * _diff.budgetMult);
-        if(this.game.finances && this.game.finances[teamId]) this.game.finances[teamId].revenue = _pt.revenue;
+        if(this.game.finances && this.game.finances[playerTeamId]) this.game.finances[playerTeamId].revenue = _pt.revenue;
       }
     }
     this.generateBoardObjectives();
@@ -3858,7 +3923,7 @@ return {id,name:def.name,age:def.age,nationality:def.nationality||DATA.nationali
       'Swiss':['Nico','Sebastian','Marc','Dominic','Rolf','Peter','Hans','Beat','Fabian','Patrick','Rene','Stefan','Michael','Christoph','Tobias','Simon','David','Marco','Luca','Noel'],
       'Estonian':['Jan','Raul','Martin','Karl','Tanel','Janek','Marek','Silver','Tarmo','Erik','Hans','Markus','Marten','Robin','Joonas','Tonis','Urmas','Risto','Ander','Aigar'],
       'New Zealand':['Callum','Nick','Marcus','Shane','Brendon','Mitch','Jono','Scott','Dave','Josh','Matt','Jamie','Craig','Alex','Sam','Will','Ben','Mike','Liam','Dylan'],
-      'Chinese':['Ryo','Guanyu','Ye','Wei','Yifei','Zhenwei','Pengyu','Rui','Hao','Cheng','Ming','Lei','Jian','Bo','Yang','Xiao','Fang','Long','Tao','Quan'],
+      'Chinese':['Guanyu','Ye','Wei','Yifei','Zhenwei','Pengyu','Rui','Hao','Cheng','Ming','Lei','Jian','Bo','Yang','Xiao','Fang','Long','Tao','Quan','Jun'],
       'Thai':['Arjun','Alex','Sean','Niko','Pietro','Lance','Ryan','Jack','Ben','Tom'],
       'Monegasque':['Luca','Charles','Louis','Pierre','Henri','Antoine','Victor','Arthur','Fabio','Hugo'],
     };
@@ -3913,7 +3978,10 @@ const _genTrait = _traitPool[Math.floor(Math.random()*_traitPool.length)];
     this._generatingNames.push(`${fn} ${ln}`);
 return {id,name:`${fn} ${ln}`,age:baseAge,nationality:nat,teamId:teamId||null,trait:_genTrait,rating:baseRating,potential,qualifying:clamp(baseRating+randInt(-5,5),45,99),racePace:clamp(baseRating+randInt(-5,5),45,99),consistency:_genConsistency,wet:clamp(baseRating+randInt(-10,10),40,99),aggression:_genAggression,energyMgmt:_genEnergyMgmt,marketability:clamp(baseRating+randInt(-15,15),30,99),morale:randInt(60,90),salary:isProspect?1:isFreeAgent?Math.floor(baseRating/12):isReserve?1:Math.floor(baseRating/15),contract:randInt(1,3),seasonPoints:0,totalPoints:0,wins:0,sprintWins:0,poles:0,podiums:0,fastestLaps:0,championships:0,retired:false,rookie:isRookie,isReserve:isReserve||false,isProspect:isProspect||false,isFreeAgent:isFreeAgent||false,_isGenerated:true,careerStart:season};
   },
-  getTeam(id){return this.game.teams.find(t=>t.id===id);},
+  getTeam(id){
+    const teamKey = normalizeTeamId(id);
+    return this.game.teams.find(t=>teamIdsEqual(t.id, teamKey));
+  },
   getDriver(id){return this.game.drivers.find(d=>d.id===id);},
   getActiveAcademyLoans(){ return ((this.game && this.game.academy && this.game.academy.loans) || []); },
   getLoanedJuniorIds(){ return new Set(this.getActiveAcademyLoans().map(l=>l.driverId)); },
@@ -4010,9 +4078,10 @@ return {id,name:`${fn} ${ln}`,age:baseAge,nationality:nat,teamId:teamId||null,tr
     const loanedIds = this.getLoanedJuniorIds();
     const benchedIds = this.getLoanBenchedDriverIds();
     const team = this.getTeam(teamId);
+    const teamKey = normalizeTeamId(team?.id ?? teamId);
     const rosterOrder = new Map((team?.driverIds||[]).map((id,idx)=>[id,idx]));
     return this.game.drivers.filter(d=>
-      d.teamId===teamId &&
+      teamIdsEqual(d.teamId, teamKey) &&
       !d.retired &&
       !d.isReserve &&
       !d.isProspect &&
@@ -4030,9 +4099,10 @@ return {id,name:`${fn} ${ln}`,age:baseAge,nationality:nat,teamId:teamId||null,tr
   },
   getTeamReserves(teamId){
     const team = this.getTeam(teamId);
+    const teamKey = normalizeTeamId(team?.id ?? teamId);
     const rosterOrder = new Map((team?.reserveIds||[]).map((id,idx)=>[id,idx]));
     return this.game.drivers
-      .filter(d=>d.teamId===teamId&&!d.retired&&d.isReserve&&!d.isProspect&&!d.isFreeAgent&&!d.isJunior)
+      .filter(d=>teamIdsEqual(d.teamId, teamKey)&&!d.retired&&d.isReserve&&!d.isProspect&&!d.isFreeAgent&&!d.isJunior)
       .sort((a,b)=>{
         const aListed = rosterOrder.has(a.id), bListed = rosterOrder.has(b.id);
         if(aListed !== bListed) return aListed ? -1 : 1;
@@ -4358,20 +4428,40 @@ return {id,name:`${fn} ${ln}`,age:baseAge,nationality:nat,teamId:teamId||null,tr
     } else if(lastPos <= 6 || carRank <= 6) {
       objPool.push({id:'pos_top3',label:'Finish top 3 in Constructors',type:'position',target:3,reward:45,difficulty:'hard',icon:'🏆'});
       objPool.push({id:'pos_top5',label:'Finish top 5 in Constructors',type:'position',target:5,reward:28,difficulty:'medium',icon:'📈'});
-    } else {
+    } else if(carRank <= 8) {
       objPool.push({id:'pos_top5',label:'Finish top 5 in Constructors',type:'position',target:5,reward:28,difficulty:'hard',icon:'🏆'});
       objPool.push({id:'pos_top8',label:'Finish top 8 in Constructors',type:'position',target:8,reward:18,difficulty:'medium',icon:'📈'});
+    } else {
+      // True backmarkers (rank 9+): achievable position targets only
+      const posTarget = Math.min(teamCount - 1, carRank - 1);
+      objPool.push({id:'pos_top8',label:`Finish top ${Math.min(8, posTarget)} in Constructors`,type:'position',target:Math.min(8, posTarget),reward:18,difficulty:'hard',icon:'🏆'});
+      // Softer medium: improve by at least 1 place from current rank
+      const _improvTarget = Math.max(Math.min(8, posTarget) + 1, Math.min(teamCount - 1, carRank));
+      if(_improvTarget !== Math.min(8, posTarget)) {
+        objPool.push({id:'improve_rank',label:`Finish top ${_improvTarget} in Constructors`,type:'position',target:_improvTarget,reward:14,difficulty:'medium',icon:'📈'});
+      }
     }
     const winTarget = lastWins >= 5 ? 8 : lastWins >= 2 ? 5 : lastWins >= 1 ? 3 : carRank <= 5 ? 1 : 0;
     if(winTarget > 0) objPool.push({id:'wins',label:`Achieve ${winTarget} race win${winTarget>1?'s':''}`,type:'wins',target:winTarget,reward:winTarget*6+12,difficulty:winTarget>=5?'hard':'medium',icon:'🏁'});
-    const podTarget = Math.max(2, lastPos <= 5 ? 10 : lastPos <= 8 ? 5 : 3);
-    objPool.push({id:'podiums',label:`Earn ${podTarget} podiums this season`,type:'podiums',target:podTarget,reward:podTarget*3+8,difficulty:'medium',icon:'🥉'});
-    const poleTarget = carRank <= 3 ? 5 : carRank <= 6 ? 3 : 1;
-    objPool.push({id:'poles',label:`Secure at least ${poleTarget} pole position${poleTarget>1?'s':''}`,type:'poles',target:poleTarget,reward:poleTarget*5+5,difficulty:'easy',icon:'⚡'});
-    // Points-based objective for backmarker teams who aren't expected to win
-    if(carRank > 6) {
-      const ptsTarget = Math.max(20, Math.round((teamCount - carRank + 1) * 12));
-      objPool.push({id:'points',label:`Score at least ${ptsTarget} constructor points`,type:'points',target:ptsTarget,reward:20,difficulty:'medium',icon:'📊'});
+    // Podium target scales with car rank — backmarkers should never be asked for podiums
+    const podTarget = carRank <= 3 ? 10 : carRank <= 5 ? 5 : carRank <= 7 ? 2 : 0;
+    if(podTarget > 0) objPool.push({id:'podiums',label:`Earn ${podTarget} podium${podTarget>1?'s':''} this season`,type:'podiums',target:podTarget,reward:podTarget*3+8,difficulty:'medium',icon:'🥉'});
+    // Pole target scales with car rank — only realistic for competitive cars
+    const poleTarget = carRank <= 3 ? 5 : carRank <= 5 ? 3 : carRank <= 7 ? 1 : 0;
+    if(poleTarget > 0) objPool.push({id:'poles',label:`Secure at least ${poleTarget} pole position${poleTarget>1?'s':''}`,type:'poles',target:poleTarget,reward:poleTarget*5+5,difficulty:'easy',icon:'⚡'});
+    // Points-based objectives for midfield and backmarker teams
+    if(carRank > 5) {
+      const ptsTarget = carRank > 8
+        ? Math.max(5, Math.round((teamCount - carRank + 1) * 5))
+        : carRank > 6
+        ? Math.max(20, Math.round((teamCount - carRank + 1) * 12))
+        : Math.max(40, Math.round((teamCount - carRank + 2) * 15));
+      objPool.push({id:'points',label:`Score at least ${ptsTarget} constructor points`,type:'points',target:ptsTarget,reward:20,difficulty:carRank > 8 ? 'easy' : 'medium',icon:'📊'});
+    }
+    // Top-10 race finishes objective for backmarkers — achievable and motivating
+    if(carRank > 7) {
+      const top10Target = carRank > 9 ? 3 : 5;
+      objPool.push({id:'top10s',label:`Achieve ${top10Target} top-10 finishes`,type:'top10s',target:top10Target,reward:15,difficulty:'easy',icon:'🎯'});
     }
     if(seasons.length === 0 && carRank <= 6) objPool.push({id:'first_win',label:'Win your first race',type:'wins',target:1,reward:40,difficulty:'medium',icon:'🎯'});
     const easy = objPool.filter(o=>o.difficulty==='easy');
@@ -4388,7 +4478,7 @@ return {id,name:`${fn} ${ln}`,age:baseAge,nationality:nat,teamId:teamId||null,tr
       const scaled = Object.assign({}, o);
       // Soften strictness for weaker teams — backmarkers shouldn't get nightmare-level targets
       const effectiveStrictness = carRank > 6 ? Math.min(1.15, diffCfg.boardStrictness) : carRank > 3 ? Math.min(1.35, diffCfg.boardStrictness) : diffCfg.boardStrictness;
-      if(o.type === 'wins' || o.type === 'podiums' || o.type === 'poles' || o.type === 'points') {
+      if(o.type === 'wins' || o.type === 'podiums' || o.type === 'poles' || o.type === 'points' || o.type === 'top10s') {
         scaled.target = Math.max(1, Math.round(o.target * effectiveStrictness));
         scaled.label = scaled.label.replace(/\d+/, scaled.target);
       } else if(o.type === 'position') {
@@ -4452,7 +4542,7 @@ return {id,name:`${fn} ${ln}`,age:baseAge,nationality:nat,teamId:teamId||null,tr
       canClinchNext: !!upcomingRace && (leader.team.seasonPoints + weekendMax > runnerUp.team.seasonPoints + remainingAfterWeekend)
     };
   },
-  getTeamName(teamId,teams){if(!teamId||!teams)return'';const t=teams.find(t=>t.id===teamId);return t?t.name:teamId;},
+  getTeamName(teamId,teams){if(!teamId||!teams)return'';const teamKey=normalizeTeamId(teamId);const t=teams.find(t=>teamIdsEqual(t.id,teamKey));return t?t.name:teamKey;},
   getSetupKnowledge(teamId){
     const t=this.getTeam(teamId); if(!t) return 60;
     if(t.setupKnowledge===undefined) t.setupKnowledge=t.facilities||60;
@@ -4762,6 +4852,31 @@ const Sim = {
     });
     entries.sort((a,b)=>{if(a.dnf&&!b.dnf)return 1;if(!a.dnf&&b.dnf)return -1;return b.score-a.score;});
     entries.forEach((e,i)=>{ e.position=i+1; });
+    // Apply pending PU grid penalties to player drivers
+    if(g.pendingGridPenalty && g.pendingGridPenalty > 0) {
+      const _pDriverIds = new Set(State.getPlayerDrivers().map(d=>d.id));
+      const _penAmount = g.pendingGridPenalty;
+      // Apply to each player driver
+      entries.forEach(e => {
+        if(_pDriverIds.has(e.driverId) && !e.dnf) {
+          const _oldPos = e.position;
+          const _newPos = Math.min(entries.filter(x=>!x.dnf).length, _oldPos + _penAmount);
+          if(_newPos > _oldPos) {
+            // Shift everyone between old and new position up by 1
+            entries.forEach(other => {
+              if(!other.dnf && other.driverId !== e.driverId && other.position > _oldPos && other.position <= _newPos) {
+                other.position--;
+              }
+            });
+            e.position = _newPos;
+            e._gridPenalty = _penAmount;
+          }
+        }
+      });
+      // Re-sort by position
+      entries.sort((a,b) => a.position - b.position);
+      g.pendingGridPenalty = 0; // consumed
+    }
     race.qualiDone=true; race.qualiResult=entries;
     // If player has persistent auto strategy enabled, pre-apply it
     if(State.game.autoStrategy && !race._chosenStrategy) race._chosenStrategy = 'auto';
@@ -4897,6 +5012,11 @@ const Sim = {
         + setupBonus
         - ((team.developmentRate || 75) - 70) * 0.01;
       const tyreMgmt = State.getTyreManagement(driver);
+      // Weekend form: each driver gets a random weekend offset that persists across the race.
+      // This creates race-to-race variance — some weekends a driver just "has it", others they struggle.
+      // Scaled so midfield is more variable than the top (elite teams are more consistent weekend-to-weekend).
+      const _weekendFormRange = _circuitCarScore >= 85 ? 0.8 : _circuitCarScore >= 75 ? 1.4 : 2.0;
+      const _weekendForm = randNorm(0, _weekendFormRange);
       // Used tyre quali: saved a fresh set for the race-start compound, whatever the chosen opening stint is.
       const _tyreSaveBonus = (race?._usedTyreQuali?.[driver.id]) ? 1.18 : 1.0;
       const _openingCompound = strategy.opt?.stints?.[0]?.compound || 'medium';
@@ -4935,6 +5055,7 @@ const Sim = {
         strategyLabel: strategy.opt?.label || strategy.chosenId || 'Strategy',
         strategyOpt: strategy.opt,
         baseLap,
+        weekendForm: _weekendForm,
         tyreLife,
         weatherSkill,
         trait,
@@ -5091,10 +5212,12 @@ const Sim = {
         const scPacePenalty = scActive ? randFloat(18, 23) : 0;
         if(scActive) state.notes.safetyCar += 0.08;
         const setupLapPenalty = state.setupPenalty * 0.55;
-        const formNoise = randNorm(clamp(state.notes.form * 0.25, -0.15, 0.15), Math.max(0.08, (96 - state.consistency) / 110));
+        const formNoise = randNorm(clamp(state.notes.form * 0.25, -0.15, 0.15), Math.max(0.14, (96 - state.consistency) / 75));
         const launchLap = lap === 1 ? randNorm(0, 0.65) - ((state.aggression - 65) / 80) : 0;
         // Dominance drag — shared per team per lap to prevent artificial teammate gaps
         const dominanceDrag = _teamDragCache[state.teamId] || 0;
+        // Weekend form: persistent offset that creates race-to-race variance
+        const weekendFormEffect = (state.weekendForm || 0) * 0.035;
         const lapTime = state.baseLap
           + newTireBonus
           + warmupPenalty
@@ -5108,6 +5231,7 @@ const Sim = {
           + cleanAirBonus
           + _ersEffect
           + formNoise
+          + weekendFormEffect
           + scPacePenalty;
         state.cumulativeTime += lapTime;
         state.bestLap = Math.min(state.bestLap, lapTime);
@@ -5248,6 +5372,24 @@ const Sim = {
     const lapEvents = Sim._generateLapEvents(race, results, weather, hadSafetyCar, rainStartLap);
     race.raceDone = true;
     race.raceResult = results;
+    // PU Wear: accumulate component wear after each race
+    if(State.game.puWear) {
+      const _pw = State.game.puWear;
+      const _eng = _findEngine(State.getPlayerTeam());
+      const _engRel = _eng ? (_eng.reliability || 80) : 80;
+      // Base wear per race: 3-5% per component, reduced by engine reliability
+      // Reliable engines (95+) wear at ~60% rate, fragile engines (70-) at ~120%
+      const _relMult = 1.4 - (_engRel / 100);
+      const _baseWear = (2.8 + Math.random() * 2.2) * _relMult;
+      // Circuit type affects which components wear more
+      const _cType = race.circuitType || 'balanced';
+      const _iceWear = _baseWear * (_cType === 'power' ? 1.3 : _cType === 'street' ? 0.8 : 1.0);
+      const _turboWear = _baseWear * (_cType === 'power' ? 1.2 : _cType === 'technical' ? 0.9 : 1.0);
+      const _ersWear = _baseWear * (_cType === 'street' ? 1.3 : _cType === 'technical' ? 1.1 : 1.0);
+      _pw.ice = Math.min(100, (_pw.ice || 0) + _iceWear);
+      _pw.turbo = Math.min(100, (_pw.turbo || 0) + _turboWear);
+      _pw.ers = Math.min(100, (_pw.ers || 0) + _ersWear);
+    }
     race.weather = weather;
     race.hadSafetyCar = hadSafetyCar;
     race.rainStartLap = rainStartLap || null;
@@ -8032,6 +8174,81 @@ events.push({lap:r.dnfLap||laps-5, type:'dnf', driverId:r.driverId, text:`⭐ ${
         recentSprintRace: seasonH2H.recentSprintRace||[]
       } : null
     };
+    // ── Procedural Season Narrative ──────────────────────────────────────────
+    try {
+      const _narr = [];
+      const _snap = seasonStandingsSnapshot;
+      const _driverChamp = (_snap.drivers||[])[0];
+      const _constrChamp = (_snap.constructors||[])[0];
+      const _playerTeam = State.getPlayerTeam();
+      const _calendar = g.calendar || [];
+      const _totalRaces = _calendar.filter(r=>r.raceDone).length;
+      if(_driverChamp) {
+        const _dcMargin = (_snap.drivers||[])[1] ? _driverChamp.points - _snap.drivers[1].points : 0;
+        const _dcDominant = _driverChamp.wins >= Math.max(5, Math.floor(_totalRaces * 0.35));
+        if(_dcMargin <= 15) {
+          _narr.push(`The ${g.season} season will be remembered for one of the closest championship battles in recent memory. ${_driverChamp.driverName} clinched the Drivers' Championship by just ${_dcMargin} point${_dcMargin!==1?'s':''} over ${_snap.drivers[1].driverName}, with the title only decided at the final rounds.`);
+        } else if(_dcDominant) {
+          _narr.push(`${_driverChamp.driverName} dominated the ${g.season} season, winning ${_driverChamp.wins} of ${_totalRaces} races en route to a commanding championship victory with ${_driverChamp.points} points.`);
+        } else {
+          _narr.push(`${_driverChamp.driverName} secured the ${g.season} Drivers' Championship with ${_driverChamp.points} points and ${_driverChamp.wins} win${_driverChamp.wins!==1?'s':''}, finishing ${_dcMargin} points clear of ${(_snap.drivers||[])[1]?.driverName||'the field'}.`);
+        }
+      }
+      if(_constrChamp) {
+        const _ccMargin = (_snap.constructors||[])[1] ? _constrChamp.points - _snap.constructors[1].points : 0;
+        if(_constrChamp.teamId === _playerTeam?.id) {
+          _narr.push(`${_constrChamp.teamName} took the Constructors' Championship — a landmark achievement for the team under your leadership.`);
+        } else if(_ccMargin < 20) {
+          _narr.push(`The Constructors' battle went down to the wire, with ${_constrChamp.teamName} edging out ${(_snap.constructors||[])[1]?.teamName||'the competition'} by ${_ccMargin} points.`);
+        } else {
+          _narr.push(`${_constrChamp.teamName} comfortably won the Constructors' Championship with ${_constrChamp.points} points.`);
+        }
+      }
+      const _raceGrid = _snap.raceGrid || [];
+      const _driverById = {};
+      (_snap.drivers||[]).forEach(d=>{ _driverById[d.driverId] = d; });
+      const _shockWins = [], _maidenWins = {}, _criticalDnfs = [];
+      _raceGrid.forEach((race, rIdx) => {
+        const result = race.raceResult || [];
+        const winner = result.find(r=>r.position===1 && !r.dnf);
+        if(winner) {
+          const wd = _driverById[winner.driverId];
+          if(wd && wd.position > 5) _shockWins.push({driver:wd.driverName, race:race.name, rank:wd.position});
+          if(wd && !_maidenWins[winner.driverId]) {
+            const priorWins = _raceGrid.slice(0,rIdx).some(pr=>(pr.raceResult||[]).some(r=>r.driverId===winner.driverId&&r.position===1&&!r.dnf));
+            if(!priorWins) _maidenWins[winner.driverId] = {driver:wd.driverName, race:race.name, team:wd.teamName};
+          }
+        }
+        if(rIdx >= _totalRaces - 5) {
+          result.filter(r=>r.dnf).forEach(r => {
+            const dd = _driverById[r.driverId];
+            if(dd && dd.position <= 3) _criticalDnfs.push({driver:dd.driverName, race:race.name});
+          });
+        }
+      });
+      if(_shockWins.length > 0) {
+        const sw = _shockWins[0];
+        _narr.push(`The season produced surprises — ${sw.driver}, who finished the year P${sw.rank}, took a shock victory at the ${sw.race}${_shockWins.length>1?`, one of ${_shockWins.length} unexpected wins`:''}.`);
+      }
+      const _mList = Object.values(_maidenWins);
+      if(_mList.length === 1) _narr.push(`${_mList[0].driver} scored a maiden victory at the ${_mList[0].race}, a breakthrough for ${_mList[0].team}.`);
+      else if(_mList.length > 1) _narr.push(`${_mList.length} drivers celebrated maiden victories, including ${_mList.slice(0,2).map(m=>m.driver).join(' and ')}.`);
+      if(_criticalDnfs.length > 0) {
+        _narr.push(`Late drama struck when ${_criticalDnfs[0].driver} suffered a DNF at the ${_criticalDnfs[0].race}${_criticalDnfs.length>1?`, among ${_criticalDnfs.length} title-contender retirements in the closing rounds`:''}.`);
+      }
+      if(_playerTeam) {
+        const _pConstr = (_snap.constructors||[]).find(c=>c.teamId===_playerTeam.id);
+        const _prevSeason = (g.careerStats?.seasons?.slice(-1)[0]);
+        if(_pConstr && _prevSeason) {
+          const improvement = (_prevSeason.position||99) - _pConstr.position;
+          if(improvement >= 3) _narr.push(`Your team made a stunning leap of ${improvement} places in the constructors' standings.`);
+          else if(improvement <= -3) _narr.push(`A difficult season — your team dropped ${Math.abs(improvement)} places in the constructors' standings.`);
+        }
+      }
+      const _regs = (g.regsHistory||[]).filter(r=>r.season===g.season+1);
+      if(_regs.length > 0) _narr.push(`Looking ahead, ${_regs.map(r=>r.type.toLowerCase()).join(' and ')} regulation changes are set to reshape the order for ${g.season+1}.`);
+      seasonStandingsSnapshot.narrative = _narr.join('\n\n');
+    } catch(e) { seasonStandingsSnapshot.narrative = ''; }
     g.history.seasonStandings = (g.history.seasonStandings||[]).filter(ss=>ss.season!==g.season);
     g.history.seasonStandings.push(seasonStandingsSnapshot);
     // ── Career stats ──
@@ -8110,6 +8327,12 @@ events.push({lap:r.dnfLap||laps-5, type:'dnf', driverId:r.driverId, text:`⭐ ${
         case 'podiums':  achieved = seasonPodiums >= obj.target; break;
         case 'poles':    achieved = seasonPoles >= obj.target; break;
         case 'points':   achieved = (playerTeam.seasonPoints||0) >= obj.target; break;
+        case 'top10s': {
+          const _pIds10 = new Set(playerDrivers.map(d=>d.id));
+          const _top10count = (g.calendar||[]).filter(r=>r.raceDone&&r.raceResult&&r.raceResult.some(x=>_pIds10.has(x.driverId)&&!x.dnf&&x.position<=10)).length;
+          achieved = _top10count >= obj.target;
+          break;
+        }
         case 'legacy':   achieved = false; break; // legacy score removed
         default:         achieved = false;
       }
@@ -10109,6 +10332,9 @@ const spons=sumSponsorIncome(g.sponsors||[]);
     const nextCal=g.season<=2026?DATA.calendar:DATA.calendarFull;
     g.calendar=nextCal.map((race,i)=>({...race,id:i,season:g.season,qualiDone:false,raceDone:false,qualiResult:null,raceResult:null,sprintQualiDone:false,sprintDone:false,sprintQualiResult:null,sprintResult:null}));
     g.lastRaceResult=null; g.lastSprintResult=null;
+    // Reset PU wear for new season — fresh allocation of components
+    g.puWear = { ice:0, turbo:0, ers:0, components:1, penalties:0 };
+    g.pendingGridPenalty = 0;
 
     // ── BOARD OBJECTIVES ────────────────────────────────────────────────────────
     // 3 goals per season. Mix of easy/medium/hard. Rewards only — no punishment
@@ -10598,6 +10824,7 @@ const Storage = {
   restoreGame(data) {
     State.game=data.game;
     const g=State.game;
+    normalizeGameTeamAliases(g);
     // Season-end processing is transient UI state and should never survive a load.
     g._seasonEndProcessing = false;
     if(!g.history)    g.history={champions:[],constructorChampions:[],seasonStandings:[],raceWins:{},records:{}};
@@ -10810,24 +11037,39 @@ const Storage = {
     g.engineManufacturers = _engineDefsForRestore.map(def=>{
       const saved = _savedEnginesById.get(def.id) || {};
       const snap = g._engineStatsSnapshot && g._engineStatsSnapshot[def.id] ? g._engineStatsSnapshot[def.id] : null;
+      const preDevSnap = g._enginePreDevSnapshot && g._enginePreDevSnapshot[def.id] ? g._enginePreDevSnapshot[def.id] : null;
+      // Explicitly resolve numeric stats: prefer saved value > snapshot > preDevSnapshot > default
+      // This prevents undefined/NaN from creeping in through spread operator edge cases
+      const resolveStat = (key, min, max) => {
+        const s = parseFloat(saved[key]);
+        if(isFinite(s)) return clamp(s, min, max);
+        if(snap && isFinite(parseFloat(snap[key]))) return clamp(parseFloat(snap[key]), min, max);
+        if(preDevSnap && isFinite(parseFloat(preDevSnap[key]))) return clamp(parseFloat(preDevSnap[key]), min, max);
+        return def[key];
+      };
       const merged = {
         ...def,
         ...saved,
         id: def.id,
         name: saved.name || def.name || 'Engine Supplier',
         shortName: saved.shortName || def.shortName || saved.name || def.name || 'Engine',
+        powerRating: resolveStat('powerRating', 50, 99),
+        ersRating: resolveStat('ersRating', 50, 99),
+        reliability: resolveStat('reliability', 50, 98),
+        devRate: clamp(parseInt(saved.devRate ?? def.devRate) || def.devRate || 8, 1, 10),
         maxCustomers: clamp(parseInt(saved.maxCustomers ?? def.maxCustomers) || def.maxCustomers || 4, 1, 16),
         annualCost: clamp(parseFloat(saved.annualCost ?? def.annualCost) || def.annualCost || 15, 0, 100),
         worksTeams: Array.isArray(saved.worksTeams) ? saved.worksTeams.map(String) : (def.worksTeams || [])
       };
+      // Snapshot safety: engine stats should never be below the season-start snapshot
       if(snap){
-        if((merged.powerRating ?? def.powerRating) + 0.25 < (snap.powerRating ?? -Infinity)) {
+        if(merged.powerRating + 0.25 < (snap.powerRating ?? -Infinity)) {
           merged.powerRating = snap.powerRating;
         }
-        if((merged.ersRating ?? def.ersRating) + 0.25 < (snap.ersRating ?? -Infinity)) {
+        if(merged.ersRating + 0.25 < (snap.ersRating ?? -Infinity)) {
           merged.ersRating = snap.ersRating;
         }
-        if((merged.reliability ?? def.reliability) + 0.5 < (snap.reliability ?? -Infinity)) {
+        if(merged.reliability + 0.5 < (snap.reliability ?? -Infinity)) {
           merged.reliability = snap.reliability;
         }
       }
@@ -12150,6 +12392,12 @@ const UI = {
             case 'podiums':  current=seasonP; done=seasonP>=obj.target; break;
             case 'poles':    current=seasonPl; done=seasonPl>=obj.target; break;
             case 'points':   current=team.seasonPoints||0; done=current>=obj.target; break;
+            case 'top10s': {
+              const _playerIdSet = new Set(playerDs.map(d=>d.id));
+              current=(g.calendar||[]).filter(r=>r.raceDone&&r.raceResult&&r.raceResult.some(x=>_playerIdSet.has(x.driverId)&&!x.dnf&&x.position<=10)).length;
+              done=current>=obj.target;
+              break;
+            }
             case 'legacy':   current=0; done=false; break;
           }
           const pct = obj.type==='position' ? ((done||onTrack)?100:0) : Math.min(100,Math.round(current/obj.target*100));
@@ -12553,8 +12801,8 @@ const UI = {
             if(a.dnf) return 1; if(b.dnf) return -1;
             return a.position-b.position;
           });
-          const posLabel = r => r.dnf ? `<span style="color:var(--red);font-weight:700">DNF</span>` : `P${r.position}`;
-          const ptsLabel = r => r.dnf ? `<span style="color:var(--tx3)">—</span>` : `<strong style="color:var(--amber)">${r.points}pts</strong>`;
+          const posLabel = r => r.dnf ? `<span style="color:var(--red);font-weight:700">DNF</span>` : `P${r.position||'?'}`;
+          const ptsLabel = r => r.dnf ? `<span style="color:var(--tx3)">—</span>` : `<strong style="color:var(--amber)">${r.points||0}pts</strong>`;
           return `
             <div style="font-size:11px;color:var(--tx3);margin-bottom:8px">${resultObj.race.name}${resultObj.race.isSprint ? ' · <span style="color:var(--amber);font-weight:700">Sprint Race</span>' : ''}</div>
             ${myRes.length ? `<div style="margin-bottom:10px;padding:8px 10px;background:rgba(192,57,43,.06);border-radius:7px;border-left:3px solid var(--red)">
@@ -13036,6 +13284,33 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
             const col = delta > 0 ? '#16a34a' : '#dc2626';
             return `<span style="font-size:9px;color:${col};font-weight:700;display:block">${delta>0?'+':''}${delta.toFixed(1)}</span>`;
           };
+          // PU Component Wear System
+          if(!g.puWear) g.puWear = { ice:0, turbo:0, ers:0, components:1, penalties:0 };
+          const pw = g.puWear;
+          const _maxWear = 100;
+          const _wearColor = (w) => w < 40 ? '#16a34a' : w < 65 ? '#f59e0b' : w < 85 ? '#ea580c' : '#dc2626';
+          const _wearLabel = (w) => w < 30 ? 'Fresh' : w < 55 ? 'Worn' : w < 75 ? 'Heavy wear' : w < 90 ? 'Critical' : 'Failing';
+          const _wearPerfLoss = (w) => w < 40 ? 0 : w < 65 ? (w-40)*0.04 : w < 85 ? 1.0+(w-65)*0.06 : 2.2+(w-85)*0.12;
+          const _iceLoss = _wearPerfLoss(pw.ice);
+          const _turboLoss = _wearPerfLoss(pw.turbo);
+          const _ersLoss = _wearPerfLoss(pw.ers);
+          const _totalPerfLoss = (_iceLoss + _turboLoss + _ersLoss).toFixed(1);
+          const _componentBar = (label, wear, icon) => `
+            <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:6px;padding:8px 10px">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">
+                <span style="font-size:10px;font-weight:700;color:var(--tx3)">${icon} ${label}</span>
+                <span style="font-size:9px;font-weight:700;color:${_wearColor(wear)}">${_wearLabel(wear)}</span>
+              </div>
+              <div style="height:4px;background:var(--bg3);border-radius:2px;overflow:hidden">
+                <div style="width:${Math.min(100,wear)}%;height:100%;background:${_wearColor(wear)};border-radius:2px;transition:width .3s"></div>
+              </div>
+              <div style="display:flex;justify-content:space-between;margin-top:2px">
+                <span style="font-size:8px;color:var(--tx3)">${Math.round(wear)}% worn</span>
+                ${_wearPerfLoss(wear) > 0 ? `<span style="font-size:8px;color:#dc2626">−${_wearPerfLoss(wear).toFixed(1)} perf</span>` : ''}
+              </div>
+            </div>`;
+          const _canTakeNewPU = pw.ice >= 60 || pw.turbo >= 60 || pw.ers >= 60;
+          const _penaltyPositions = pw.components > 3 ? (pw.components - 3) * 5 : 0;
           return `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px">
           <div style="background:var(--bg3);border-radius:7px;padding:9px 10px;text-align:center">
             <div style="font-size:10px;color:var(--tx3);font-weight:700;text-transform:uppercase;letter-spacing:.5px">Power</div>
@@ -13052,6 +13327,22 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
             <div style="font-size:18px;font-weight:900;font-family:var(--fm);color:#16a34a">${(_engData?.reliability||88).toFixed(1)}</div>
             ${_trendBadge(_engData?.reliability||88, _snap?.reliability)}
           </div>
+        </div>
+        <div style="margin-top:10px;padding:10px 12px;background:var(--bg2);border:1px solid var(--bd);border-radius:8px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--tx3)">PU Component Health</div>
+            <div style="font-size:10px;color:var(--tx3)">Unit #${pw.components} this season${pw.penalties>0?` · <span style="color:#dc2626">${pw.penalties} grid pen${pw.penalties!==1?'s':''}</span>`:''}</div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+            ${_componentBar('ICE', pw.ice, '🔥')}
+            ${_componentBar('Turbo', pw.turbo, '💨')}
+            ${_componentBar('ERS', pw.ers, '⚡')}
+          </div>
+          ${parseFloat(_totalPerfLoss) > 0 ? `<div style="margin-top:6px;font-size:10px;color:#dc2626;text-align:center;font-weight:700">⚠️ Wear penalty: −${_totalPerfLoss} effective car performance</div>` : ''}
+          <div style="display:flex;gap:6px;margin-top:8px">
+            ${_canTakeNewPU ? `<button class="btn btn-outline btn-sm" style="flex:1;border-color:var(--amber);color:var(--amber)" onclick="GameActions.takeNewPU()">🔄 Take New PU${_penaltyPositions > 0 ? ` (−${5+(_penaltyPositions)} grid)` : pw.components >= 3 ? ' (−5 grid)' : ''}</button>` : `<div style="flex:1;font-size:10px;color:var(--tx3);text-align:center;padding:4px">Components healthy — no need to replace${pw.components < 3 ? ` · ${3-pw.components} free change${3-pw.components!==1?'s':''} left` : ''}</div>`}
+          </div>
+          <div style="font-size:9px;color:var(--tx3);margin-top:4px;text-align:center">Each driver gets 3 PU allocations per season. Taking more incurs grid penalties. Push mode in races accelerates wear.</div>
         </div>`;
         })()}
         <div style="font-size:11px;color:var(--tx3);margin-top:8px">${(()=>{
@@ -14891,7 +15182,7 @@ const personalSlots = getPersonalSponsorSlots(d);
           <div class="finance-card-title">Expenses</div>
           <div class="finance-row"><span class="finance-row-label">Driver Salaries <span style="font-size:10px;color:var(--tx3)">(choose in market)</span></span><span class="finance-row-val neg">-${formatMoney(driverSalaries)}</span></div>
           <div class="finance-row"><span class="finance-row-label">Reserve Drivers</span><span class="finance-row-val neg">-${formatMoney(reserveSalaries)}</span></div>
-          <div class="finance-row"><span class="finance-row-label">Staff & Factory <span style="font-size:10px;color:var(--tx3)">(infra + ${staffMemberCost>0?formatMoney(staffMemberCost)+' staff wages':'no named staff'}</span></span><span class="finance-row-val neg">-${formatMoney(staffCost)}</span></div>
+          <div class="finance-row"><span class="finance-row-label">Staff & Factory <span style="font-size:10px;color:var(--tx3)">(infra + ${staffMemberCost>0?formatMoney(staffMemberCost)+' staff wages':'no named staff'})</span></span><span class="finance-row-val neg">-${formatMoney(staffCost)}</span></div>
           <div class="finance-row"><span class="finance-row-label">Car Development <span style="font-size:10px;color:var(--tx3)">(in-season upgrades)</span></span><span class="finance-row-val neg">${carDevCost>0?'-'+formatMoney(carDevCost):'$0M (none this season)'}</span></div>
           ${(()=>{
             const lastSpend = offseasonSpend;
@@ -17345,6 +17636,13 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
             </div>
           </div>
         </div>
+        ${snap.narrative ? `<div style="background:var(--bg2);border:1px solid var(--bd);border-radius:12px;padding:16px 18px;margin-bottom:14px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+            <span style="font-size:16px">📜</span>
+            <span style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--tx3)">Season Review</span>
+          </div>
+          <div style="font-size:13px;color:var(--tx);line-height:1.7;white-space:pre-line">${escapeHtml(snap.narrative)}</div>
+        </div>` : ''}
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:14px">
           <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:12px;padding:14px">
             <div style="font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.7px;margin-bottom:4px">Drivers</div>
@@ -19120,8 +19418,21 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const html=`
       <div style="max-height:70vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.4.8 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.4.9 · Release Notes</div>
         ${[
+    ['v2.4.9','May 2026',[
+            '🐛 Team orders fix: "Give Position" in Watch Race no longer oscillates — the position swap now persists correctly for the rest of the race instead of flipping back and forth every event tick. The swap enforces relative order (the yielding driver stays behind) rather than blindly swapping every tick (reported by Standard-Poem7823).',
+            '🐛 Team orders: "Hold Position" now correctly prevents the behind driver from overtaking their teammate. Previously the hold check used relative positions that shifted every tick, causing it to never enforce. Hold now tracks the specific driver who was given the hold order (reported by Standard-Poem7823).',
+            '🐛 Points not awarded / Pnull fix: a rare bug where a driver who finished P1 could show "Pnull · 0pts" on the dashboard has been fixed. Watch Race now validates all finishing positions and re-assigns points when the race ends, ensuring no non-DNF driver has a null position (reported by Zealousideal-Sir754).',
+            '⚖️ Season objectives rebalanced for backmarkers: teams ranked 8th or lower in car performance no longer receive impossible podium or pole objectives. Backmarker teams now get achievable targets like "Score X constructor points" or "Achieve X top-10 finishes" instead. Podium objectives only appear for teams ranked 7th or better; pole objectives only for 7th or better. A new "top-10 finishes" objective type has been added for low-ranked teams (reported by Zealousideal-Sir754).',
+            '⚖️ Race variance increased: race results now vary more realistically from weekend to weekend. Each driver gets a per-race "weekend form" swing that persists across all laps — some weekends a driver extracts more from the car, others they struggle. Per-lap noise has also been increased, especially for lower-consistency drivers. This means finishing positions will fluctuate by 3-5+ places between races rather than the previous 1-2, matching real F1 unpredictability (reported by Significant-Care-135).',
+            '🐛 Engine stats restore hardened: power unit stats can no longer silently revert to Season 1 default values when loading a save. The restore logic now explicitly resolves each numeric stat through a priority chain (saved value → season-start snapshot → pre-dev snapshot → default), preventing undefined/NaN values from corrupting engine development progress across long saves (reported by Competitive_Care8189).',
+            '🆕 Engine market rankings: the Engine Market now shows each supplier\'s power and ERS ranking (P1, P2, etc.) alongside their stats, plus the gap to the leader. This makes it easier to compare suppliers when your contract expires (reported by Zealousideal-Sir754).',
+            '🆕 PU Component Wear System: power units now degrade across the season through three trackable components — ICE 🔥, Turbo 💨, and ERS ⚡. Each race wears components at rates that vary by circuit type (power tracks stress ICE/Turbo, street circuits stress ERS). As wear increases, effective car performance drops. At 60%+ wear, you can take a new PU — first 3 are free, additional PUs incur escalating grid penalties (5+ places), just like real F1. Manage your PU allocation across the season or risk losing grid positions in the title fight. Component health is visible on the Car page (requested by Significant-Care-135).',
+            '🆕 Engine Modes in Watch Race: Conserve 🛡 / Normal ⚡ / Push 🔥 modes with real consequences. Push mode boosts pace but accelerates PU component wear and accumulates race stress — push too hard on a worn or fragile PU and the engine can blow. Conserve mode protects the PU and reduces stress. A real-time stress bar shows risk level, factoring in your PU reliability rating and component wear. Worn engines on Push have a lower failure threshold than fresh ones. Engine failure retires one of your drivers and auto-switches to Conserve (requested by Significant-Care-135).',
+            '🐛 Position swap fix: Watch Race final results now match the position tower seen during the race. Previously, bonus-adjusted result data could disagree with event-driven positions (reported by Realgoldenboy1).',
+            '🐛 Chinese name pool: removed a misplaced Japanese first name from the Chinese name generation pool (reported by DustyAM42).',
+    ]],
     ['v2.4.8','May 2026',[
             '🐛 Championship lead display: teams tied on points but not in first place no longer incorrectly show "Championship lead". Now correctly shows "Tied P4" (or equivalent) when points are equal to the team above (reported by IllustriousHorror743).',
             '🐛 Power Unit trend badges showing wrong deltas: the Car page could show large negative deltas (e.g. -7.2 power) on PU stats because a stale pre-development snapshot from the previous offseason survived into the new season. The snapshot is now cleared at season start so trend badges accurately reflect changes since the current season began (reported by JDoyle47).',
@@ -20122,6 +20433,45 @@ const matchBadge = race.qualiDone || race.raceDone || race.sprintQualiDone
 // GAME ACTIONS
 // =============================================
 const GameActions = {
+  takeNewPU(){
+    const g = State.game; if(!g) return;
+    if(!g.puWear) g.puWear = { ice:0, turbo:0, ers:0, components:1, penalties:0 };
+    const pw = g.puWear;
+    // Confirm if this will incur a grid penalty
+    const willPenalize = pw.components >= 3;
+    const penaltyAmount = willPenalize ? 5 + Math.max(0, (pw.components - 3) * 5) : 0;
+    if(willPenalize && !pw._confirmPending) {
+      pw._confirmPending = true;
+      setTimeout(()=>{ if(pw) delete pw._confirmPending; }, 4000);
+      UI.toast(`Taking a ${pw.components >= 3 ? (pw.components+1)+'th' : 'new'} PU will cost ${penaltyAmount} grid places at the next race. Tap again to confirm.`, 'warning');
+      return;
+    }
+    delete pw._confirmPending;
+    // Reset all components to fresh
+    pw.ice = 0;
+    pw.turbo = 0;
+    pw.ers = 0;
+    pw.components++;
+    // Apply grid penalty if over the 3-PU allocation
+    if(willPenalize) {
+      pw.penalties++;
+      if(!g.pendingGridPenalty) g.pendingGridPenalty = 0;
+      g.pendingGridPenalty += penaltyAmount;
+      UI.toast(`New PU installed. ${penaltyAmount}-place grid penalty applied to next race.`, 'warning');
+      // Add to news feed
+      if(!g.newsFeed) g.newsFeed = [];
+      g.newsFeed.unshift({
+        text: `🔧 New power unit (#${pw.components}) installed — ${penaltyAmount}-place grid penalty at the next race.`,
+        race: g.raceIndex,
+        type: 'strategy'
+      });
+    } else {
+      UI.toast(`New PU installed (${pw.components} of 3 free allocations used). Components reset to fresh.`, 'success');
+    }
+    Storage.autosave();
+    UI.renderCar();
+  },
+
   setScoutTier(tierId){
     State.game.scoutingTier=tierId;
     State.game.scoutingChosen=true;
@@ -20798,6 +21148,8 @@ const GameActions = {
     const team=State.getPlayerTeam(); if(!team)return;
     const manufacturers = _liveEngines();
     const current = manufacturers.find(e=>e.id===team.engineManufacturer)||manufacturers[0];
+    const _sortedPower = manufacturers.slice().sort((a,b)=>b.powerRating-a.powerRating);
+    const _sortedErs = manufacturers.slice().sort((a,b)=>b.ersRating-a.ersRating);
     const rows = manufacturers.map(eng=>{
       const isCurrent = eng.id===team.engineManufacturer;
       const dealCost = isCurrent ? (team.engineContractCost||0) : getEngineContractCost(team.id, eng.id);
@@ -20807,6 +21159,10 @@ const GameActions = {
       const atCapacity = usersCount >= effectiveMax && !isCurrent;
       const switchPenalty = isCurrent ? '' : ' · <span style="color:var(--amber)">Year 1 integration dip: −3 topSpeed</span>';
       const canSwitch = !isCurrent && !atCapacity && (team.engineContractYears||0)===0;
+      const _pRank = _sortedPower.findIndex(e=>e.id===eng.id)+1;
+      const _eRank = _sortedErs.findIndex(e=>e.id===eng.id)+1;
+      const _pDelta = _pRank===1?'':` <span style="font-size:8px;color:#dc2626">${(eng.powerRating-_sortedPower[0].powerRating).toFixed(1)}</span>`;
+      const _eDelta = _eRank===1?'':` <span style="font-size:8px;color:#dc2626">${(eng.ersRating-_sortedErs[0].ersRating).toFixed(1)}</span>`;
       return `<div style="background:var(--bg${isCurrent?'3':'2'});border:2px solid ${isCurrent?'var(--grn)':'var(--bd)'};border-radius:10px;padding:12px 14px;margin-bottom:8px">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
           <div>
@@ -20818,12 +21174,12 @@ const GameActions = {
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px">
           <div style="text-align:center;background:var(--bg2);border-radius:6px;padding:6px">
-            <div style="font-size:9px;color:var(--tx3);font-weight:700;letter-spacing:.5px">POWER</div>
-            <div style="font-size:15px;font-weight:900;color:#f97316">${eng.powerRating.toFixed(1)}</div>
+            <div style="font-size:9px;color:var(--tx3);font-weight:700;letter-spacing:.5px">POWER <span style="font-size:8px;color:var(--tx3)">P${_pRank}</span></div>
+            <div style="font-size:15px;font-weight:900;color:#f97316">${eng.powerRating.toFixed(1)}${_pDelta}</div>
           </div>
           <div style="text-align:center;background:var(--bg2);border-radius:6px;padding:6px">
-            <div style="font-size:9px;color:var(--tx3);font-weight:700;letter-spacing:.5px">ERS</div>
-            <div style="font-size:15px;font-weight:900;color:#8b5cf6">${eng.ersRating.toFixed(1)}</div>
+            <div style="font-size:9px;color:var(--tx3);font-weight:700;letter-spacing:.5px">ERS <span style="font-size:8px;color:var(--tx3)">P${_eRank}</span></div>
+            <div style="font-size:15px;font-weight:900;color:#8b5cf6">${eng.ersRating.toFixed(1)}${_eDelta}</div>
           </div>
           <div style="text-align:center;background:var(--bg2);border-radius:6px;padding:6px">
             <div style="font-size:9px;color:var(--tx3);font-weight:700;letter-spacing:.5px">DEV RATE</div>
@@ -23002,8 +23358,11 @@ window._wrSetTeamOrder = function(driverId, order) {
   if(!WR) return;
   if(!WR.teamOrders) WR.teamOrders = {};
   WR.teamOrders[driverId] = order;
-  // Clear any pending swap if manually overriding
+  // Clear any pending swap if manually overriding — prevents hold+swap conflicts
   if(WR.teamOrders['_swap']) WR.teamOrders['_swap'] = false;
+  if(WR._positionSwaps && WR._positionSwaps.length) {
+    WR._positionSwaps = WR._positionSwaps.filter(function(s){ return s.a !== driverId && s.b !== driverId; });
+  }
   // Log to feed
   const race = State.game.calendar[WR.raceIdx];
   const driver = State.getDriver(driverId);
@@ -23104,10 +23463,14 @@ window._wrGivePosition = function(aheadId, behindId) {
 window._wrApplyPositionSwaps = function() {
   var WR = window._WR;
   if(!WR || !WR._positionSwaps || !WR._positionSwaps.length) return;
+  // Each swap record means: driver b (originally behind) should be AHEAD of driver a (originally ahead).
+  // Instead of blindly swapping every tick (which oscillates), enforce the correct relative order.
   WR._positionSwaps.forEach(function(s) {
-    var posA = WR.lastPos[s.a];
-    var posB = WR.lastPos[s.b];
-    if(posA != null && posB != null) {
+    var posA = WR.lastPos[s.a]; // originally-ahead driver (should now be behind)
+    var posB = WR.lastPos[s.b]; // originally-behind driver (should now be ahead)
+    if(posA == null || posB == null) return;
+    // Only intervene if the swap hasn't stuck — i.e. driver a is still ahead of driver b
+    if(posA < posB) {
       WR.lastPos[s.a] = posB;
       WR.lastPos[s.b] = posA;
     }
@@ -23310,6 +23673,182 @@ window._wrRenderPositions = function() {
   } else {
     toPanel.style.display = 'none';
   }
+
+  // Engine Mode panel
+  var emPanel = document.getElementById('wr-engine-mode');
+  if(!emPanel) {
+    emPanel = document.createElement('div');
+    emPanel.id = 'wr-engine-mode';
+    emPanel.style.cssText = 'margin-top:8px;padding:8px 10px;background:var(--bg2);border:1px solid var(--bd);border-radius:8px';
+    if(toPanel && toPanel.parentNode) toPanel.parentNode.insertBefore(emPanel, toPanel.nextSibling);
+  }
+  if(emPanel) {
+    var currentMode = (WR && WR.engineMode) || 'normal';
+    var modeDesc = currentMode === 'push' ? '<span style="color:#dc2626">+pace, +PU wear, +DNF risk</span>'
+      : currentMode === 'conserve' ? '<span style="color:#16a34a">−pace, preserves PU, −DNF risk</span>'
+      : '<span style="color:var(--tx3)">Balanced pace and reliability</span>';
+    var _stress = (WR && WR._engineStress) || 0;
+    var _engRel = 80;
+    try {
+      var _ptE2 = State.getPlayerTeam();
+      if(_ptE2 && _ptE2.engineManufacturer) {
+        var _engsE2 = State._liveEngines ? State._liveEngines() : (State.game.engineManufacturers || []);
+        var _engE2 = _engsE2.find(function(e){ return e.id === _ptE2.engineManufacturer; });
+        if(_engE2) _engRel = _engE2.reliability || 80;
+      }
+    } catch(e) {}
+    var _relF2 = 0.7 + (_engRel - 65) * (0.6 / 33);
+    var _dnfT = 0.85 + (_relF2 * 0.35);
+    var _avgWr = 0;
+    if(State.game && State.game.puWear) _avgWr = ((State.game.puWear.ice||0)+(State.game.puWear.turbo||0)+(State.game.puWear.ers||0))/3;
+    var _wearF = 1.0 + Math.max(0, _avgWr - 50) * 0.015;
+    var _effThresh = _dnfT / _wearF;
+    var _stressPercent = Math.min(100, Math.round(_stress / (_effThresh * 1.15) * 100));
+    var _stressColor = _stressPercent < 45 ? '#16a34a' : _stressPercent < 75 ? '#f59e0b' : '#dc2626';
+    var _relLabel = _engRel >= 90 ? 'Bulletproof' : _engRel >= 80 ? 'Reliable' : _engRel >= 72 ? 'Fragile' : 'Glass cannon';
+    var _wearLabel = _avgWr < 30 ? '' : _avgWr < 60 ? ' · PU worn' : ' · <span style="color:#dc2626">PU critical</span>';
+    emPanel.innerHTML = '<div style="font-size:9px;font-weight:700;letter-spacing:.5px;color:var(--tx3);text-transform:uppercase;margin-bottom:5px">Engine Mode</div>'
+      + '<div style="display:flex;gap:3px;margin-bottom:4px">'
+      + '<button onclick="window._wrSetEngineMode(\'conserve\')" style="flex:1;font-size:10px;font-weight:700;padding:5px 0;border-radius:5px;cursor:pointer;border:1.5px solid '+(currentMode==='conserve'?'#16a34a':'var(--bd)')+';background:'+(currentMode==='conserve'?'rgba(22,163,74,.12)':'var(--bg)')+';color:'+(currentMode==='conserve'?'#16a34a':'var(--tx3)')+'">🛡 Conserve</button>'
+      + '<button onclick="window._wrSetEngineMode(\'normal\')" style="flex:1;font-size:10px;font-weight:700;padding:5px 0;border-radius:5px;cursor:pointer;border:1.5px solid '+(currentMode==='normal'?'#2563eb':'var(--bd)')+';background:'+(currentMode==='normal'?'rgba(37,99,235,.12)':'var(--bg)')+';color:'+(currentMode==='normal'?'#2563eb':'var(--tx3)')+'">⚡ Normal</button>'
+      + '<button onclick="window._wrSetEngineMode(\'push\')" style="flex:1;font-size:10px;font-weight:700;padding:5px 0;border-radius:5px;cursor:pointer;border:1.5px solid '+(currentMode==='push'?'#dc2626':'var(--bd)')+';background:'+(currentMode==='push'?'rgba(220,38,38,.12)':'var(--bg)')+';color:'+(currentMode==='push'?'#dc2626':'var(--tx3)')+'">🔥 Push</button>'
+      + '</div>'
+      + '<div style="font-size:9px;text-align:center;margin-top:2px">'+modeDesc+'</div>'
+      + '<div style="margin-top:5px"><div style="display:flex;justify-content:space-between;font-size:8px;color:var(--tx3);margin-bottom:2px"><span>Race Stress · <span style="color:'+(_engRel>=85?'#16a34a':_engRel>=75?'#f59e0b':'#dc2626')+'">'+_relLabel+'</span>'+_wearLabel+'</span><span style="color:'+_stressColor+'">'+_stressPercent+'%</span></div><div style="height:3px;background:var(--bg3);border-radius:2px;overflow:hidden"><div style="height:100%;width:'+_stressPercent+'%;background:'+_stressColor+';border-radius:2px;transition:width .3s"></div></div></div>';
+    emPanel.style.display = 'block';
+  }
+};
+
+// ── Engine Mode System ────────────────────────────────────────────────────
+// Push/Normal/Conserve modes during Watch Race.
+// Push: boosts pace (+decision score) but accelerates PU wear and risks engine failure.
+// Conserve: slight pace penalty, reduces per-race wear, lowers DNF risk.
+// Engine reliability stat affects stress threshold and accumulation rate.
+window._wrSetEngineMode = function(mode) {
+  var WR = window._WR;
+  if(!WR) return;
+  WR.engineMode = mode || 'normal';
+  if(WR._engineStress == null) WR._engineStress = 0;
+  window._wrRenderPositions();
+};
+
+window._wrProcessEngineMode = function(race, evLap) {
+  var WR = window._WR;
+  if(!WR || !race) return;
+  var mode = WR.engineMode || 'normal';
+  if(WR._lastEngineModeLap === evLap) return;
+  WR._lastEngineModeLap = evLap;
+  var playerIds = window._wrGetPlayerIds(race);
+  if(!playerIds || !playerIds.length) return;
+  if(!WR.driverDecisionScores) WR.driverDecisionScores = {};
+
+  // Engine reliability factor from team's PU
+  var _engReliability = 80;
+  try {
+    var _pt = State.getPlayerTeam();
+    if(_pt && _pt.engineManufacturer) {
+      var _engs = State._liveEngines ? State._liveEngines() : (State.game.engineManufacturers || []);
+      var _eng = _engs.find(function(e){ return e.id === _pt.engineManufacturer; });
+      if(_eng) _engReliability = _eng.reliability || 80;
+    }
+  } catch(e) {}
+  var _relFactor = 0.7 + (_engReliability - 65) * (0.6 / 33);
+
+  // PU wear factor: worn PU is more fragile when pushed
+  var _puWearFactor = 1.0;
+  var _g = State.game;
+  if(_g && _g.puWear) {
+    var _avgWear = ((_g.puWear.ice||0) + (_g.puWear.turbo||0) + (_g.puWear.ers||0)) / 3;
+    _puWearFactor = 1.0 + Math.max(0, _avgWear - 50) * 0.015; // worn PU stress builds faster
+  }
+
+  if(mode === 'normal') {
+    if((WR._engineStress || 0) > 0) {
+      WR._engineStress = Math.max(0, WR._engineStress - 0.008);
+    }
+    if((WR._pushScoreTotal || 0) > 0) WR._pushScoreTotal = Math.max(0, WR._pushScoreTotal - 0.005);
+    if((WR._conservePenaltyTotal || 0) > 0) WR._conservePenaltyTotal = Math.max(0, WR._conservePenaltyTotal - 0.004);
+    return;
+  }
+
+  if(mode === 'push') {
+    // Stress: base 0.025-0.045/lap, scales with PU wear and inversely with reliability
+    var _stressGain = (0.025 + Math.random() * 0.020) * _puWearFactor / _relFactor;
+    if(Math.random() < 0.12) _stressGain += 0.015 + Math.random() * 0.02;
+    WR._engineStress = (WR._engineStress || 0) + _stressGain;
+
+    // PU component wear: push mode adds ~0.15-0.25% extra wear per lap on top of normal race wear
+    if(_g && _g.puWear) {
+      var _pushWear = 0.15 + Math.random() * 0.10;
+      _g.puWear.ice = Math.min(100, (_g.puWear.ice||0) + _pushWear * 1.2);
+      _g.puWear.turbo = Math.min(100, (_g.puWear.turbo||0) + _pushWear * 1.1);
+      _g.puWear.ers = Math.min(100, (_g.puWear.ers||0) + _pushWear * 0.8);
+    }
+
+    // Decision score boost (capped)
+    var _pushScoreTotal = WR._pushScoreTotal || 0;
+    var _maxPushBonus = 0.35;
+    if(_pushScoreTotal < _maxPushBonus) {
+      var _increment = Math.min(0.012, _maxPushBonus - _pushScoreTotal);
+      playerIds.forEach(function(pid) {
+        if(WR.driverDecisionScores[pid] == null) WR.driverDecisionScores[pid] = 0;
+        WR.driverDecisionScores[pid] += _increment;
+      });
+      WR._pushScoreTotal = _pushScoreTotal + _increment;
+    }
+
+    // DNF risk: threshold varies by PU reliability and current wear
+    var _dnfThreshold = (0.85 + (_relFactor * 0.35)) / _puWearFactor;
+    if(WR._engineStress > _dnfThreshold) {
+      var _overThreshold = WR._engineStress - _dnfThreshold;
+      var dnfChance = Math.min(0.08, _overThreshold * 0.035);
+      var _checkId = playerIds[Math.floor(Math.random() * playerIds.length)];
+      if(Math.random() < dnfChance && !(WR.retiredIds||{})[_checkId]) {
+        if(!WR.retiredIds) WR.retiredIds = {};
+        WR.retiredIds[_checkId] = true;
+        if(WR.lastPos) WR.lastPos[_checkId] = null;
+        if(Array.isArray(WR.resultState)) {
+          var rs = WR.resultState.find(function(r){ return r.driverId === _checkId; });
+          if(rs) { rs.dnf = true; rs.dnfLap = evLap; rs.position = null; rs.points = 0; }
+        }
+        var _rKey = WR.isSprint ? 'sprintResult' : 'raceResult';
+        if(race[_rKey]) {
+          var _rrs = race[_rKey].find(function(r){ return r.driverId === _checkId; });
+          if(_rrs) { _rrs.dnf = true; _rrs.dnfLap = evLap; _rrs.position = null; _rrs.points = 0; }
+        }
+        var drv = State.getDriver(_checkId);
+        var feed = document.getElementById('wr-feed');
+        if(feed && drv) {
+          var el = document.createElement('div');
+          el.style.cssText = 'background:rgba(192,57,43,.10);border:2px solid rgba(192,57,43,.4);border-radius:8px;padding:9px 12px;font-size:12px;margin-bottom:4px;color:var(--tx)';
+          el.innerHTML = '<span style="font-size:10px;font-weight:700;color:#dc2626;margin-right:8px">L'+evLap+'</span> 💥 ENGINE FAILURE — '+drv.name+' retires with a blown power unit after sustained push mode stress.';
+          feed.appendChild(el);
+          feed.scrollTop = feed.scrollHeight;
+        }
+        WR.engineMode = 'conserve';
+      }
+    }
+  } else if(mode === 'conserve') {
+    WR._engineStress = Math.max(0, (WR._engineStress || 0) - 0.025);
+    if((WR._pushScoreTotal || 0) > 0) WR._pushScoreTotal = Math.max(0, WR._pushScoreTotal - 0.008);
+    // Conserve reduces per-race wear slightly (negative wear = slower degradation)
+    if(_g && _g.puWear) {
+      var _saveWear = 0.03;
+      _g.puWear.ice = Math.max(0, (_g.puWear.ice||0) - _saveWear);
+      _g.puWear.turbo = Math.max(0, (_g.puWear.turbo||0) - _saveWear);
+      _g.puWear.ers = Math.max(0, (_g.puWear.ers||0) - _saveWear);
+    }
+    var _conservePenaltyTotal = WR._conservePenaltyTotal || 0;
+    var _maxConservePenalty = 0.2;
+    if(_conservePenaltyTotal < _maxConservePenalty) {
+      var _decrement = Math.min(0.006, _maxConservePenalty - _conservePenaltyTotal);
+      playerIds.forEach(function(pid) {
+        if(WR.driverDecisionScores[pid] == null) WR.driverDecisionScores[pid] = 0;
+        WR.driverDecisionScores[pid] -= _decrement;
+      });
+      WR._conservePenaltyTotal = _conservePenaltyTotal + _decrement;
+    }
+  }
 };
 
 window._wrTick = function() {
@@ -23326,6 +23865,46 @@ window._wrTick = function() {
     // Done — render results inside modal footer
     const isSprint=!!WR.isSprint;
     const finalResultArr = Array.isArray(WR.resultState) ? WR.resultState : (race[isSprint ? 'sprintResult' : 'raceResult'] || []);
+    // Position swap fix: sync final event positions (WR.lastPos) into resultState.
+    // The position tower is what the user saw, so it should be authoritative.
+    if(WR.lastPos) {
+      var _lpFinishers = finalResultArr.filter(function(r){ return !r.dnf; });
+      var _lpHasPositions = _lpFinishers.some(function(r){ return WR.lastPos[r.driverId] != null; });
+      if(_lpHasPositions) {
+        _lpFinishers.sort(function(a,b){
+          var pa = WR.lastPos[a.driverId], pb = WR.lastPos[b.driverId];
+          if(pa == null && pb == null) return (a.position||999)-(b.position||999);
+          if(pa == null) return 1;
+          if(pb == null) return -1;
+          return pa - pb;
+        });
+        _lpFinishers.forEach(function(r, i){ r.position = i + 1; });
+      }
+    }
+    // Safety: ensure all non-DNF drivers have valid positions — fixes rare Pnull bug
+    var _vrPos = 1;
+    var _vrSorted = finalResultArr.slice().sort(function(a,b){
+      if(a.dnf && !b.dnf) return 1; if(!a.dnf && b.dnf) return -1;
+      if(a.dnf && b.dnf) return (b.dnfLap||0)-(a.dnfLap||0);
+      return (a.position||999)-(b.position||999);
+    });
+    _vrSorted.forEach(function(r){
+      if(!r.dnf) { r.position = _vrPos++; }
+    });
+    // Re-assign points based on validated positions (preserve fastest lap bonus)
+    var _vrPtsTable = isSprint
+      ? ((State.game&&State.game.customSprintPoints)||[8,7,6,5,4,3,2,1])
+      : ((State.game&&State.game.customPoints)||DATA.points);
+    _vrSorted.forEach(function(r){
+      if(!r.dnf && r.position) {
+        var _basePoints = _vrPtsTable[r.position-1]||0;
+        var _flBonus = (!isSprint && r.fastestLap && r.position <= 10) ? 1 : 0;
+        r.points = _basePoints + _flBonus;
+      }
+    });
+    // Sync validated results back to canonical race data so reconciliation works correctly
+    var _vrResultKey = isSprint ? 'sprintResult' : 'raceResult';
+    if(race) race[_vrResultKey] = finalResultArr.map(function(r){ return Object.assign({}, r); });
     document.getElementById('wr-lap-counter').textContent = 'Finished · ' + (isSprint ? (race.laps ? Math.round(race.laps*0.30) : 17) : race.laps) + ' laps';
     const tb = document.getElementById('wr-toggle'); if(tb) tb.disabled=true;
     finalResultArr.forEach(function(r){
@@ -23785,25 +24364,25 @@ window._wrTick = function() {
       var p1id = playerIds[0], p2id = playerIds[1];
       var p1pos = newPos[p1id], p2pos = newPos[p2id];
       if(p1pos != null && p2pos != null) {
-        var aheadId = p1pos <= p2pos ? p1id : p2id;
-        var behindId = p1pos <= p2pos ? p2id : p1id;
-        var aheadPos = Math.min(p1pos, p2pos);
-        var behindPos = Math.max(p1pos, p2pos);
-        // "hold" on ahead driver: don't let behind teammate past
-        // "pass" on behind driver: swap if within 1 position
-        var holdOrder = teamOrders[aheadId] === 'hold';
-        var passOrder = teamOrders[behindId] === 'pass';
-        if(holdOrder && newPos[aheadId] > newPos[behindId]) {
-          // Ahead driver ended up behind — revert swap
-          newPos[aheadId] = aheadPos;
-          newPos[behindId] = behindPos;
+        // "hold" enforcement: the driver with 'hold' order should stay ahead of their teammate.
+        // Check each driver — if driver X has 'hold' and their teammate Y is now ahead, force X back ahead.
+        var holdDriverId = teamOrders[p1id] === 'hold' ? p1id : (teamOrders[p2id] === 'hold' ? p2id : null);
+        var otherDriverId = holdDriverId === p1id ? p2id : (holdDriverId === p2id ? p1id : null);
+        if(holdDriverId && otherDriverId) {
+          var holdPos = newPos[holdDriverId];
+          var otherPos = newPos[otherDriverId];
+          if(holdPos > otherPos) {
+            // Hold driver fell behind — swap them back so hold driver stays ahead
+            newPos[holdDriverId] = otherPos;
+            newPos[otherDriverId] = holdPos;
+          }
         }
-        if(passOrder && newPos[behindId] < newPos[aheadId] - 1 && Math.abs(newPos[behindId]-newPos[aheadId])<=2) {
-          // Close enough — let pass happen naturally (no block)
-        }
+        // "pass" enforcement: no active blocking needed — the pass swap is handled by _wrApplyPositionSwaps
       }
     }
     WR.lastPos = newPos;
+    // Apply persistent position swaps from "Give Position" team orders
+    window._wrApplyPositionSwaps();
   }
   if(ev.type==='dnf') {
     const dnfId = ev.driverId;
@@ -23813,9 +24392,9 @@ window._wrTick = function() {
       if(WR.lastPos) WR.lastPos[dnfId] = null;
     }
   }
+  // Process engine mode effects (push/conserve) once per lap
+  if(ev.lap) window._wrProcessEngineMode(race, ev.lap);
   window._wrRenderPositions();
-
-  // Update my drivers status bar in header
   const myBar = document.getElementById('wr-my-drivers');
   if(myBar) {
     const myDrivers = window._wrGetPlayerDrivers(race);
