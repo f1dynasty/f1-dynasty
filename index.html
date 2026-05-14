@@ -871,7 +871,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </div>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.5.0</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.5.0.1</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -2360,6 +2360,79 @@ function inferDriverTrait(d){
   if(racePace >= qualifying + 4) return 'overtaker';
   if(consistency >= rating + 5) return 'consistent';
   return 'technical';
+}
+function ensureDriverCoreStats(d){
+  if(!d) return;
+  const rating = Number(d?.rating) || 70;
+  if(!Number.isFinite(Number(d.racePace))) d.racePace = rating;
+  if(!Number.isFinite(Number(d.qualifying))) d.qualifying = rating;
+  if(!Number.isFinite(Number(d.consistency))) d.consistency = rating;
+  if(!Number.isFinite(Number(d.wet))) d.wet = rating;
+  if(!Number.isFinite(Number(d.aggression))) d.aggression = 65;
+  if(!Number.isFinite(Number(d.energyMgmt))) d.energyMgmt = clamp((Number(d.consistency) || rating) + randInt(-8,8), 38, 94);
+}
+function getDriverCalculatedRating(d){
+  const rating = Number(d?.rating) || 70;
+  const racePace = Number(d?.racePace) || rating;
+  const qualifying = Number(d?.qualifying) || rating;
+  const consistency = Number(d?.consistency) || rating;
+  const wet = Number(d?.wet) || rating;
+  return clamp(Math.round((racePace*0.35 + qualifying*0.30 + consistency*0.25 + wet*0.10) * 10) / 10, 40, 99);
+}
+function syncDriverRatingFromAttributes(d){
+  if(!d) return 70;
+  ensureDriverCoreStats(d);
+  d.rating = getDriverCalculatedRating(d);
+  return d.rating;
+}
+function applyProspectGrowthToTargetRating(d, targetRating){
+  if(!d) return 70;
+  ensureDriverCoreStats(d);
+  const currentRating = getDriverCalculatedRating(d);
+  const targetCap = Math.max(currentRating, Number.isFinite(Number(d.potential)) ? Number(d.potential) : 99);
+  const target = clamp(Math.min(Number.isFinite(Number(targetRating)) ? Number(targetRating) : currentRating, targetCap), 40, 99);
+  const growth = Math.max(0, target - currentRating);
+  d.rating = currentRating;
+  if(growth <= 0.05) return d.rating;
+
+  const trait = d.trait || inferDriverTrait(d);
+  let paceBias = 1.0, qualiBias = 1.0, consBias = 0.82, wetBias = 0.70;
+  if(trait === 'qualifier') qualiBias += 0.18;
+  else if(trait === 'overtaker') paceBias += 0.18;
+  else if(trait === 'consistent') consBias += 0.22;
+  else if(trait === 'rainy') wetBias += 0.28;
+  else if(trait === 'technical') { paceBias += 0.08; consBias += 0.10; }
+  else if(trait === 'aggressive') { paceBias += 0.12; wetBias -= 0.05; consBias -= 0.03; }
+
+  const age = Number(d.age) || 18;
+  const polish = age <= 18 ? 0.74 : age <= 20 ? 0.86 : age <= 22 ? 0.97 : 1.04;
+  d.racePace   = clamp(d.racePace   + growth * randFloat(0.85, 1.15) * paceBias * polish, 40, 99);
+  d.qualifying = clamp(d.qualifying + growth * randFloat(0.82, 1.12) * qualiBias * polish, 40, 99);
+  d.consistency= clamp(d.consistency+ growth * randFloat(0.45, 0.95) * consBias * polish, 40, 99);
+  d.wet        = clamp(d.wet        + growth * randFloat(0.35, 0.85) * wetBias  * polish, 40, 99);
+  d.energyMgmt = clamp((Number(d.energyMgmt) || Math.max(d.consistency, 40)) + growth * randFloat(0.20, 0.55) * ((paceBias + consBias) / 2), 38, 97);
+
+  let calc = syncDriverRatingFromAttributes(d);
+  const correction = target - calc;
+  if(correction > 0.05){
+    d.racePace   = clamp(d.racePace   + correction * 1.00, 40, 99);
+    d.qualifying = clamp(d.qualifying + correction * 0.95, 40, 99);
+    d.consistency= clamp(d.consistency+ correction * 0.85, 40, 99);
+    d.wet        = clamp(d.wet        + correction * 0.75, 40, 99);
+    calc = syncDriverRatingFromAttributes(d);
+  }
+  return calc;
+}
+function repairProspectRatingDrift(d){
+  if(!d || !d.isProspect || d.retired) return;
+  ensureDriverCoreStats(d);
+  const derived = getDriverCalculatedRating(d);
+  const stored = Number(d.rating);
+  if(Number.isFinite(stored) && stored > derived + 0.25) {
+    applyProspectGrowthToTargetRating(d, stored);
+  } else {
+    d.rating = derived;
+  }
 }
 function getKnownDriverNameSeed(extraNames=[]){
   const names = new Set((extraNames||[]).filter(Boolean));
@@ -9365,6 +9438,7 @@ const spons=sumSponsorIncome(g.sponsors||[]);
     // Top prospects (rating>=74 or age>=22) get promoted to free agent pool
     g.drivers.forEach(d=>{
       if(!d.isProspect||d.retired) return;
+      repairProspectRatingDrift(d);
       d.age = (d.age||18)+1;
       // Develop prospects — wonderkids in the pool use variance too (potential not guaranteed)
       const gap=d.potential-d.rating;
@@ -9376,12 +9450,12 @@ const spons=sumSponsorIncome(g.sponsors||[]);
         const luckMod = luckRoll<0.02?0.2:luckRoll<0.07?0.5:luckRoll<0.60?1.0:luckRoll<0.85?1.4:2.0;
         // Faster prospect development — wonderkids in the pool grow quicker to create competition
         const growth = luckMod * (gap*0.18 + Math.random()*1.2);
-        d.rating = clamp(d.rating + Math.max(0, growth), 40, 99);
+        applyProspectGrowthToTargetRating(d, d.rating + Math.max(0, growth));
         // Poor luck while unscouted erodes potential slightly — but generational talents
         // have a protected floor (never drops below 92) so they always feel elite at peak
         if(luckMod < 0.5 && gap > 5) d.potential = clamp(d.potential - (Math.random()*0.6), Math.max(d.rating+2, 92), 99);
       } else {
-        d.rating=clamp(d.rating+Math.max(0,gap*0.2+Math.random()),40,99);
+        applyProspectGrowthToTargetRating(d, d.rating + Math.max(0, gap*0.2 + Math.random()));
       }
       // Graduate if feeder contract has expired
       if(d.feederContract===undefined) d.feederContract = 1; // patch for any missed init
@@ -11580,6 +11654,7 @@ const Storage = {
       // Patch feederContract for existing prospects that don't have one yet
       // Set to 0 for existing saves so current prospects remain signable — new prospects will get contracts from now on
       if(d.isProspect && d.feederContract===undefined) d.feederContract = 0;
+      if(d.isProspect && !d.retired) repairProspectRatingDrift(d);
     });
     // Ensure quarterDev has exactly 2 entries (Car page uses 2 windows)
     if(!g.quarterDev) g.quarterDev=[];
@@ -20075,8 +20150,12 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const html=`
       <div style="max-height:85vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.5.0 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.5.0.1 · Hotfix + Release Notes</div>
         ${[
+    ['v2.5.0.1','May 2026',[
+            '🐛 Prospect feeder contract growth hotfix: prospects still under multi-year feeder series contracts could gain OVR in the offseason without their underlying attributes increasing to match. This made the prospect list show rating growth while the driver card stayed effectively frozen. Prospect offseason development now improves real attributes first and then re-derives OVR from them, so list rating and underlying stats stay in sync.',
+            '🛠️ Save repair on load: existing saves affected by the feeder-contract prospect bug are now repaired automatically. If a prospect already had stored OVR growth that never reached their core attributes, those attributes are brought up to the saved OVR on load so current careers keep their progression instead of losing it.'
+    ]],
     ['v2.5.0','May 2026',[
             '🆕 Calendar Editor: the Roster Editor now includes a full Calendar Editor section — add, remove, reorder races and customise every track characteristic including name, location, country, circuit type, laps, ideal downforce, tyre degradation, overtaking difficulty, safety car probability, and sprint weekend status. A built-in library of 12 historic and extra circuits (Istanbul, Sepang, Hockenheim, Portimão, Imola, Kyalami, and more) lets you add classic tracks with one click. Custom calendars carry through to all seasons in new careers (requested by aspro_mavro, Due_Woodpecker_7547, scuderiaferrarifan, JTanJJ17).',
             '🐛 Championship clinching with custom points: the clinching calculation for both Drivers and Constructors championships now correctly uses your custom points system when one is active. Previously the maximum weekend points were hardcoded to 25/33 (driver) and 43/58 (constructor), which meant clinching was incorrectly triggered far too early with high custom points values like 1000 for a win (reported by Commercial_Acadia673).',
