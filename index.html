@@ -746,17 +746,15 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
         </div>
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:16px;max-width:540px;padding:16px 18px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
-          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v2.5.1 — What's New</div>
-          <div style="font-size:14px;font-weight:900;color:#111;margin-bottom:10px">Bug fixes, nationality flags & smarter AI</div>
+          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v2.5.2 — What's New</div>
+          <div style="font-size:14px;font-weight:900;color:#111;margin-bottom:10px">Community bug fixes: numbers, subs, PU, wet calls</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 16px">
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>Points Fixed</strong> — constructor standings no longer drift out of sync after Watch Race validation</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>Team Switch Fix</strong> — switching constructor no longer blocks season start with an engine contract error</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>PU Button</strong> — Take New PU is now always available. Notifications alert you at 50% and 75% wear</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>Engine Mode Reset</strong> — Push/Conserve no longer carries over between races</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">✨</span><span><strong>Nationality Flags</strong> — flags now show in standings, dashboard, and Watch Race tower</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">✨</span><span><strong>Smarter AI</strong> — vacant seats filled by promoted prospects first, with young rookies as fallback</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">⚖️</span><span><strong>FL Default</strong> — new 2026 careers correctly default to no fastest lap bonus point</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>WR Positions</strong> — fixed duplicate position numbers during pit windows in Watch Race</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>2026 Race Numbers</strong> — Norris #1, Verstappen #3, Lindblad #41 (was duplicating Hadjar's #6)</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>Sub Drivers Visible</strong> — reserves who DNF'd or finished outside the points no longer vanish from standings or the race grid</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>PU Stats Reconciled</strong> — Audi (and any engine) no longer displays default numbers with red deltas while the breakthrough message claims higher values</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">✨</span><span><strong>Focus Always Visible</strong> — component focus buttons now show upfront in upgrade windows (greyed out until you allocate)</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">✨</span><span><strong>Wet Stay-Out to Flag</strong> — late-race weather calls now let skilled wet drivers actually gamble on staying out for the rest of the race</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🛠️</span><span><strong>Engine Self-Heal</strong> — Car page now repairs any drift between live engine stats and the season-start snapshot on load and on render</span></div>
           </div>
           <button onclick="UI.showChangelog()" style="margin-top:10px;width:100%;padding:7px;background:none;border:1.5px solid rgba(192,57,43,.3);border-radius:7px;font-size:11px;font-weight:700;color:var(--red);cursor:pointer">Full release notes →</button>
         </div>
@@ -871,7 +869,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </div>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.5.1</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.5.2</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -1765,12 +1763,14 @@ const DATA = {
   points: [25,18,15,12,10,8,6,4,2,1,0,0,0,0,0,0,0,0,0,0],
 
   // ── Driver Numbers (2026 grid) ────────────────────────────────────────────
+  // Per FIA 2026 entry list: Norris takes #1 as defending champion, Verstappen switches
+  // to #3 (not his old #33), Lindblad debuts as #41. Hadjar keeps #6 from 2025.
   driverNumbers: {
-    'Max Verstappen':1,'Lewis Hamilton':44,'Charles Leclerc':16,'Lando Norris':4,
+    'Max Verstappen':3,'Lewis Hamilton':44,'Charles Leclerc':16,'Lando Norris':1,
     'Carlos Sainz':55,'George Russell':63,'Fernando Alonso':14,'Lance Stroll':18,
     'Oscar Piastri':81,'Esteban Ocon':31,'Pierre Gasly':10,'Jack Doohan':7,
     'Alex Albon':23,'Nico Hulkenberg':27,'Oliver Bearman':87,'Liam Lawson':30,
-    'Arvid Lindblad':6,'Gabriel Bortoleto':5,'Sergio Perez':11,'Valtteri Bottas':77,
+    'Arvid Lindblad':41,'Gabriel Bortoleto':5,'Sergio Perez':11,'Valtteri Bottas':77,
     'Yuki Tsunoda':22,'Andrea Kimi Antonelli':12,'Isack Hadjar':6,'Franco Colapinto':43,
     'Kimi Antonelli':12,'Paul Aron':15,
   },
@@ -4504,14 +4504,27 @@ return {id,name:`${fn} ${ln}`,age:baseAge,nationality:nat,teamId:teamId||null,tr
     const g = this.game;
     const loanedIds = this.getLoanedJuniorIds();
     const benchedIds = this.getLoanBenchedDriverIds();
+    // Build set of driver IDs who actually appeared in a race result this season —
+    // this ensures sub drivers (reserves filling in for injuries) appear in the
+    // standings even if they DNF'd or finished outside points in all their starts.
+    // Previously the filter only kept reserves with >0 season points, so subs that
+    // crashed out or finished P11+ silently vanished from the table (reported by
+    // RuleImpossible3362).
+    const racedThisSeasonIds = new Set();
+    (g.calendar||[]).forEach(r=>{
+      if(r.raceDone){
+        (r.raceResult||[]).forEach(x=>racedThisSeasonIds.add(String(x.driverId)));
+        (r.sprintResult||[]).forEach(x=>racedThisSeasonIds.add(String(x.driverId)));
+      }
+    });
     const drivers = g.drivers.filter(d=>
       !d.retired &&
       d.teamId &&
-      (!d.isReserve||d.seasonPoints>0||d._wasRaceDriver) &&
+      (!d.isReserve||d.seasonPoints>0||d._wasRaceDriver||racedThisSeasonIds.has(String(d.id))) &&
       !d.isProspect &&
       !d.isFreeAgent &&
       !benchedIds.has(d.id) &&
-      (!d.isJunior || loanedIds.has(d.id))
+      (!d.isJunior || loanedIds.has(d.id) || racedThisSeasonIds.has(String(d.id)))
     );
     // Build countback arrays from calendar results for tied drivers
     const countbackCache = {};
@@ -5693,6 +5706,10 @@ const Sim = {
       if(flCandidates[0]) flCandidates[0].fastestLap = true;
     }
     results.forEach(r=>{
+      // Mark any reserve who actually appeared in this race (including DNF) so the
+      // standings filter keeps them — they raced, they belong in the table.
+      const _resDriver = State.getDriver(r.driverId);
+      if(_resDriver && _resDriver.isReserve) _resDriver._wasRaceDriver = true;
       if(r.dnf) return;
       const _ptsTable = (State.game&&State.game.customPoints)||DATA.points; let pts = _ptsTable[r.position-1] || 0;
       const _rules = State.getScoringRules();
@@ -5706,6 +5723,10 @@ const Sim = {
         if(r.position===1){driver.wins++;const wt=State.getTeam(driver.teamId);if(wt)wt.wins++;}
         if(r.position<=3){driver.podiums++;const pt=State.getTeam(driver.teamId);if(pt)pt.podiums++;}
         if(r.fastestLap)driver.fastestLaps++;
+        // Mark reserves who actually drove in a race so they persist in standings,
+        // demand-salary calculations and other filters even if they DNF'd or scored
+        // zero points (reported by RuleImpossible3362).
+        if(driver.isReserve) driver._wasRaceDriver = true;
       }
     });
     race.lapStates = lapStates;
@@ -5996,6 +6017,9 @@ const Sim = {
       flWinner.fastestLap=true;
     }
     results.forEach(r=>{
+      // Mark reserves who appeared in the sprint result so they persist in standings
+      const _spResDriver = State.getDriver(r.driverId);
+      if(_spResDriver && _spResDriver.isReserve) _spResDriver._wasRaceDriver = true;
       const _ptsTable2=(State.game&&State.game.customPoints)||DATA.points;
       if(r.dnf){
         // DNF drivers get custom points based on classified position (if custom points cover that position)
@@ -11569,15 +11593,17 @@ const Storage = {
         annualCost: clamp(parseFloat(saved.annualCost ?? def.annualCost) || def.annualCost || 15, 0, 100),
         worksTeams: Array.isArray(saved.worksTeams) ? saved.worksTeams.map(String) : (def.worksTeams || [])
       };
-      // Snapshot safety: engine stats should never be below the season-start snapshot
+      // Snapshot safety: engine stats should never be below the season-start snapshot.
+      // Tightened threshold (0.05) matches the renderCar self-heal so legacy saves
+      // that exhibit the Audi PU display bug are repaired on load, not just on view.
       if(snap){
-        if(merged.powerRating + 0.25 < (snap.powerRating ?? -Infinity)) {
+        if(merged.powerRating + 0.05 < (snap.powerRating ?? -Infinity)) {
           merged.powerRating = snap.powerRating;
         }
-        if(merged.ersRating + 0.25 < (snap.ersRating ?? -Infinity)) {
+        if(merged.ersRating + 0.05 < (snap.ersRating ?? -Infinity)) {
           merged.ersRating = snap.ersRating;
         }
-        if(merged.reliability + 0.5 < (snap.reliability ?? -Infinity)) {
+        if(merged.reliability + 0.05 < (snap.reliability ?? -Infinity)) {
           merged.reliability = snap.reliability;
         }
       }
@@ -13723,6 +13749,22 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
 
   renderCar(){
     const team=State.getPlayerTeam(), g=State.game;
+    // ── Engine snapshot self-heal ──────────────────────────────────────────
+    // Some long-running saves can end up with live engine values that drift below the
+    // captured _engineStatsSnapshot, producing the visible bug where the breakthrough
+    // message claims "now 86 power" but the stats display 82 with a red -4 delta
+    // (reported by GCN_09 for Audi). Whenever we render the Car page, if live engine
+    // values are below the snapshot, raise them back up — the snapshot is the source
+    // of truth because beginSeason() captured it from live values at season start.
+    if(g._engineStatsSnapshot && Array.isArray(g.engineManufacturers)) {
+      g.engineManufacturers.forEach(eng => {
+        const snap = g._engineStatsSnapshot[eng.id];
+        if(!snap) return;
+        if(isFinite(snap.powerRating) && eng.powerRating + 0.05 < snap.powerRating) eng.powerRating = snap.powerRating;
+        if(isFinite(snap.ersRating)   && eng.ersRating   + 0.05 < snap.ersRating)   eng.ersRating   = snap.ersRating;
+        if(isFinite(snap.reliability) && eng.reliability + 0.05 < snap.reliability) eng.reliability = snap.reliability;
+      });
+    }
     const racesDone = g.calendar.filter(r=>r.raceDone).length;
     const totalRaces = g.calendar.length;
     const seasonProgress = racesDone/totalRaces; // 0-1
@@ -13814,12 +13856,16 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
           const _eMax=Math.max(1,Math.floor(qBudget/10));
           // Component focus UI
           const _compFocus = (g.quarterDev[qi] && g.quarterDev[qi].componentFocus) || {};
-          const _compFocusUI = (group, groupLabel) => {
+          const _compFocusUI = (group, groupLabel, inactive) => {
             const comps = COMP_GROUPS[group];
             if(!comps || comps.length === 0) return '';
             const current = _compFocus[group] || 'balanced';
-            let html = '<div style="margin-top:6px;margin-bottom:8px;padding:8px 10px;background:var(--bg2);border:1px solid var(--bd);border-radius:6px">';
-            html += '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--tx3);margin-bottom:4px">'+groupLabel+' Focus</div>';
+            const dimStyle = inactive ? 'opacity:0.45;pointer-events:none;' : '';
+            const helperText = inactive
+              ? '<span style="font-weight:500;color:var(--tx3);text-transform:none;letter-spacing:0;margin-left:6px;font-size:9px">— allocate budget above to direct focus</span>'
+              : '';
+            let html = '<div style="margin-top:6px;margin-bottom:8px;padding:8px 10px;background:var(--bg2);border:1px solid var(--bd);border-radius:6px;'+dimStyle+'">';
+            html += '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--tx3);margin-bottom:4px">'+groupLabel+' Focus'+helperText+'</div>';
             html += '<div style="display:flex;gap:4px;flex-wrap:wrap">';
             // Balanced option
             html += '<button class="btn btn-sm" style="font-size:10px;padding:3px 8px;'+(current==='balanced'?'background:var(--acc);color:#fff;border-color:var(--acc)':'background:var(--bg);border:1px solid var(--bd)')+'" onclick="GameActions.setComponentFocus('+qi+',\''+group+'\',\'balanced\')">Balanced</button>';
@@ -13829,7 +13875,7 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
               html += '<button class="btn btn-sm" style="font-size:10px;padding:3px 8px;'+(current===ck?'background:var(--acc);color:#fff;border-color:var(--acc)':'background:var(--bg);border:1px solid var(--bd)')+'" onclick="GameActions.setComponentFocus('+qi+',\''+group+'\',\''+ck+'\')">'+(cd.icon||'')+' '+cd.label+' <span style="font-weight:400;color:'+(current===ck?'rgba(255,255,255,.7)':'var(--tx3)')+'">'+Math.round(rating)+'</span></button>';
             });
             html += '</div>';
-            if(current !== 'balanced') {
+            if(current !== 'balanced' && !inactive) {
               const focusComp = CAR_COMPONENTS[current];
               if(focusComp) {
                 const statNames = {topSpeed:'Top Speed',cornering:'Cornering',tyreManagement:'Tyre Mgmt',dirtyAir:'Dirty Air',aeroEfficiency:'Aero Efficiency'};
@@ -13841,9 +13887,9 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
             return html;
           };
           return slider('aero','Aerodynamic Package',Math.min(qd.aero,_aMax),_aMax,'q'+qi,6,'Aero updates — front/rear wing, floor, diffuser.','→ +'+(Math.min(qd.aero,_aMax)*0.9).toFixed(1)+' Car Perf')
-            + (qd.aero > 0 ? _compFocusUI('aero','Aero Component') : '')
+            + _compFocusUI('aero','Aero Component', qd.aero <= 0)
             +slider('reliability','Mechanical & Reliability',Math.min(qd.reliability,_rMax),_rMax,'q'+qi,4,'Chassis, suspension and reliability work.','→ +'+(Math.min(qd.reliability,_rMax)*0.6).toFixed(1)+' Reliability')
-            + (qd.reliability > 0 ? _compFocusUI('mechanical','Mechanical Component') : '')
+            + _compFocusUI('mechanical','Mechanical Component', qd.reliability <= 0)
             +slider('engine','Engine Mode',Math.min(qd.engine,_eMax),_eMax,'q'+qi,10,'Power unit mapping push — expensive but fast.','→ +'+(Math.min(qd.engine,_eMax)*1.4).toFixed(1)+' Car Perf');
         })()}
         <div style="margin-top:12px">
@@ -20193,8 +20239,16 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const html=`
       <div style="max-height:85vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.5.1 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.5.2 · Release Notes</div>
         ${[
+    ['v2.5.2','May 2026',[
+            '🐛 2026 driver numbers corrected: Lando Norris now correctly carries #1 as defending champion (was #4), Max Verstappen switches to #3 per FIA entry list (was #1), and Arvid Lindblad takes his real #41 rookie number (was incorrectly sharing Hadjar\'s #6, causing a duplicate). Existing Hadjar (#6) and the rest of the grid unchanged (reported by RuleImpossible3362).',
+            '🐛 Sub drivers disappearing from standings: when a reserve driver subbed in for an injured race driver but DNF\'d or finished outside the points in every appearance, they were silently filtered out of the season standings table AND the History race-by-race grid — making it look like nobody actually drove the car. The standings filter now keeps any driver who appeared in a race result this season, and reserves who race are now flagged so they persist in salary negotiations and other downstream filters too (reported by RuleImpossible3362).',
+            '🐛 Audi/engine PU stats showing default values with red deltas: the Car page could display an engine at its DATA default values (e.g. Audi 82.0/80.0/76.0) with a negative trend badge, while the breakthrough message announced the post-development numbers (e.g. "now 86.0 power / 83.1 ERS"). The render path now self-heals — whenever the live engine value drifts below the season-start snapshot, it is raised back up. The save-restore safety check was also tightened (0.25 → 0.05 threshold) so legacy saves exhibiting this bug are repaired on load (reported by GCN_09, plus earlier mentions from Leo3409 and ScotOfTheDay).',
+            '✨ Component focus controls always visible in upgrade windows: previously the Aero Component Focus and Mechanical Component Focus controls only appeared after you moved the corresponding budget slider above zero, leaving desktop players staring at sliders with no obvious focus controls. The controls now render upfront, greyed out, with a helper line that says "allocate budget above to direct focus" — players can see what the options will be before committing to a spend (reported by gsx512).',
+            '✨ Wet-weather stay-out to the flag: when a weather call popped late in the race, choosing "Stay Out" still triggered an engineer-forced pit 2-3 laps later regardless of how many laps remained or how skilled the driver was in the wet. The Stay Out button now genuinely lets you ride out the rest of the race when wet skill ≥ 75 and ≤ 6 laps remain (≤ 8 for excellent wet drivers, 88+). The button is relabelled to "Stay Out (to flag)" when this is offered so you know the call is the real deal (reported by Frequent-Lead-112, with context from Kuski007).',
+            '🛠️ Engine snapshot safety check tightened from 0.25 to 0.05 — any noticeable drift between live engine stats and the season-start snapshot is now reconciled on load instead of being tolerated as "close enough".',
+    ]],
     ['v2.5.1','May 2026',[
             '🐛 Constructor points desync fixed: the Watch Race finish validation could recalculate driver positions and points (via normalization, penalty drops, or position swaps) without syncing the delta back to driver/team seasonPoints. This caused constructor standings to drift out of sync, especially visible after season 1 when save/load rebuilds from stored race results. Points are now correctly synced after WR finish validation (reported by Decent-Woodpecker-59).',
             '🐛 Team switch engine contract stuck: switching to a new constructor via Team Offers left the _engineContractExpiring flag from the old team, blocking season start even when the new team had a valid engine contract. Flag is now cleared on team switch (reported by SpecialistTrick4074).',
@@ -25113,6 +25167,14 @@ window._wrTick = function() {
     const isFullWet = ev.isFullWet || false;
     const returnToSlick = !!ev.returnToSlick;
     const tireLabel = returnToSlick ? (ev.wetTireName || 'Slicks') : (isFullWet ? 'Full Wets' : 'Intermediates');
+    // Late-race stay-out viability: if the call comes with few laps remaining and the
+    // driver has the skill, the player can genuinely gamble on staying out instead of
+    // having engineers force a stop 2-3 laps later regardless. The threshold is wet
+    // skill 75+ and ≤6 laps remaining (≤8 for excellent drivers).
+    const _wrTotalLaps = (WR.race && WR.race.laps) || 58;
+    const _lapsRemaining = Math.max(0, _wrTotalLaps - ev.lap);
+    const _staySkillCap = wetSkill >= 88 ? 8 : wetSkill >= 75 ? 6 : 0;
+    const _stayToEndViable = !returnToSlick && _staySkillCap > 0 && _lapsRemaining <= _staySkillCap;
     const situation = returnToSlick
       ? 'The circuit is drying and slicks are back in play.'
       : isFullWet
@@ -25120,9 +25182,12 @@ window._wrTick = function() {
         : 'Track is getting wet fast.';
     const skillNote = returnToSlick
       ? '☀️ Staying out risks cooking the wet tyres as the track dries.'
-      : wetSkill >= 88 ? `🌧 Excellent wet weather driver — could hold on a lap or two longer.` :
-                        wetSkill >= 78 ? `🌦 Decent in the wet — switch recommended.` :
-                                         `⚠️ Struggles in these conditions — switch immediately.`;
+      : _stayToEndViable
+        ? `🌧 Only ${_lapsRemaining} lap${_lapsRemaining!==1?'s':''} left — ${ev.driverName.split(' ')[0]}'s wet skill is good enough to gamble on staying out to the flag.`
+        : wetSkill >= 88 ? `🌧 Excellent wet weather driver — could hold on a lap or two longer.` :
+                          wetSkill >= 78 ? `🌦 Decent in the wet — switch recommended.` :
+                                           `⚠️ Struggles in these conditions — switch immediately.`;
+    const stayLabel = _stayToEndViable ? '⏩ Stay Out (to flag)' : '⏩ Stay Out';
     const autoBoxSecsW = (State.game.autoBoxSecs !== undefined ? State.game.autoBoxSecs : 8);
     card.innerHTML =
       '<div style="font-size:10px;font-weight:700;letter-spacing:1px;color:#2563eb;margin-bottom:6px">L'+ev.lap+' · WEATHER CALL — '+(returnToSlick?'Track drying!':(isFullWet?'Wets needed!':'Rain arriving!'))+'</div>'
@@ -25131,7 +25196,7 @@ window._wrTick = function() {
       +'<div style="font-size:11px;color:var(--tx3);margin-bottom:10px;font-style:italic">'+skillNote+'</div>'
       +'<div style="display:flex;gap:8px">'
         +'<button onclick="window._wrWeatherDecision('+wdId+',true)" style="flex:1;padding:9px 0;background:#2563eb;color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:800;cursor:pointer">'+(returnToSlick?'☀️ ':'🌧 ')+'Pit for '+tireLabel+'</button>'
-        +'<button onclick="window._wrWeatherDecision('+wdId+',false)" style="flex:1;padding:9px 0;background:var(--bg3);color:var(--tx);border:1px solid var(--bd);border-radius:7px;font-size:13px;font-weight:700;cursor:pointer">⏩ Stay Out</button>'
+        +'<button onclick="window._wrWeatherDecision('+wdId+',false,false,'+(_stayToEndViable?'true':'false')+')" style="flex:1;padding:9px 0;background:var(--bg3);color:var(--tx);border:1px solid var(--bd);border-radius:7px;font-size:13px;font-weight:700;cursor:pointer">'+stayLabel+'</button>'
       +'</div>'
       +'<div id="wd-timer-'+wdId+'" style="font-size:10px;color:var(--tx3);text-align:center;margin-top:6px">Auto-switching in <span id="wd-countdown-'+wdId+'">'+autoBoxSecsW+'</span>s…</div>';
     feed.appendChild(card);
@@ -25814,7 +25879,7 @@ window._wrPitDecision = function(decisionId, pitNow, auto) {
   WR.timer = setTimeout(window._wrTick, speed);
 };
 
-window._wrWeatherDecision = function(wdId, switchNow, auto) {
+window._wrWeatherDecision = function(wdId, switchNow, auto, stayToEnd) {
   const WR = window._WR;
   const dec = WR.weatherDecisions && WR.weatherDecisions[wdId];
   if(!dec || dec.resolved) return;
@@ -25871,34 +25936,46 @@ window._wrWeatherDecision = function(wdId, switchNow, auto) {
   } else {
     // ── STAY ON SLICKS / STAY ON WETS ──────────────────────
     const bold = wetSkill >= 88 && !_effectiveReturnToSlick;
-    const outcomeText = _effectiveReturnToSlick
-      ? `⚠️ ⭐ ${ev.driverName} stays on the wet tyre too long as the circuit dries.`
-      : bold
-        ? `⚡ ⭐ ${ev.driverName} stays on slicks — gamble! Track position priority.`
-        : `⚠️ ⭐ ${ev.driverName} stays on slicks — dangerous in these conditions!`;
-    const noteText = _effectiveReturnToSlick
-      ? 'Tyre temperature and pace will start dropping away until the stop.'
-      : bold
-        ? 'Wet-weather skill could pay off here. Engineers nervous.'
-        : 'Pace will suffer badly until the box.';
+    // Stay-to-end: when the player explicitly chose to ride out the rest of the race
+    // (only offered when wet skill is sufficient and few laps remain), the forceLap is
+    // pushed beyond the race so engineers don't drag them in. Otherwise the original
+    // 2-3 lap force still applies as a hard "engineers won't accept this risk longer".
+    const _wrTotalLapsStay = (WR.race && WR.race.laps) || 58;
+    const _forceLap = stayToEnd
+      ? _wrTotalLapsStay + 5  // beyond race end — they truly stay out
+      : ev.lap + 2 + (bold ? 1 : 0);
+    const outcomeText = stayToEnd
+      ? `🎲 ⭐ ${ev.driverName} gambles — staying out to the flag!`
+      : _effectiveReturnToSlick
+        ? `⚠️ ⭐ ${ev.driverName} stays on the wet tyre too long as the circuit dries.`
+        : bold
+          ? `⚡ ⭐ ${ev.driverName} stays on slicks — gamble! Track position priority.`
+          : `⚠️ ⭐ ${ev.driverName} stays on slicks — dangerous in these conditions!`;
+    const noteText = stayToEnd
+      ? `Engineers acknowledge the call — riding the gamble to the chequered flag.`
+      : _effectiveReturnToSlick
+        ? 'Tyre temperature and pace will start dropping away until the stop.'
+        : bold
+          ? 'Wet-weather skill could pay off here. Engineers nervous.'
+          : 'Pace will suffer badly until the box.';
     if(card) {
-      card.style.border = bold ? '2px solid #d97706' : '2px solid #dc2626';
+      card.style.border = stayToEnd ? '2px solid #d97706' : (bold ? '2px solid #d97706' : '2px solid #dc2626');
       card.innerHTML =
-        '<div style="font-size:10px;font-weight:700;letter-spacing:1px;color:'+((bold && !_effectiveReturnToSlick)?'#d97706':'#dc2626')+';margin-bottom:4px">L'+ev.lap+' · '+(_effectiveReturnToSlick?'STAYING OUT ON WETS':'STAYING ON SLICKS')+'</div>'
+        '<div style="font-size:10px;font-weight:700;letter-spacing:1px;color:'+((bold && !_effectiveReturnToSlick) || stayToEnd ?'#d97706':'#dc2626')+';margin-bottom:4px">L'+ev.lap+' · '+(stayToEnd?'STAYING OUT TO THE FLAG':(_effectiveReturnToSlick?'STAYING OUT ON WETS':'STAYING ON SLICKS'))+'</div>'
         +'<div style="font-size:13px;font-weight:700">'+outcomeText+'</div>'
         +'<div style="font-size:10px;color:#888;margin-top:4px;font-style:italic">'+noteText+'</div>'
-        +'<div style="font-size:10px;color:#888;margin-top:3px">Engineers will call them in shortly.</div>';
+        +(stayToEnd ? '' : '<div style="font-size:10px;color:#888;margin-top:3px">Engineers will call them in shortly.</div>');
     }
     if(!WR.weatherCallBonus) WR.weatherCallBonus = 0;
-    const delta = _effectiveReturnToSlick ? -0.4 : (bold ? 0.2 : -0.5);
+    const delta = stayToEnd ? (wetSkill >= 88 ? 0.4 : 0.1) : (_effectiveReturnToSlick ? -0.4 : (bold ? 0.2 : -0.5));
     WR.weatherCallBonus += delta;
     WR.driverDecisionScores[ev.driverId] += delta;
     window._wrApplyBonusNow(ev.driverId, {
       type:'weather',
-      choice:'stay',
+      choice: stayToEnd ? 'stayToEnd' : 'stay',
       lap: ev.lap,
       nextCompound: ev.wetTire || 'inter',
-      forceLap: ev.lap + 2 + (bold ? 1 : 0)
+      forceLap: _forceLap
     });
   }
 
