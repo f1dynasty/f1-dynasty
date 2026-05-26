@@ -746,15 +746,15 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
         </div>
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:16px;max-width:540px;padding:16px 18px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
-          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v2.5.2 — What's New</div>
-          <div style="font-size:14px;font-weight:900;color:#111;margin-bottom:10px">Community bug fixes: numbers, subs, PU, wet calls</div>
+          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v2.5.3 — What's New</div>
+          <div style="font-size:14px;font-weight:900;color:#111;margin-bottom:10px">Big fixes: upgrade gains, PU investment, FL points</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 16px">
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>2026 Race Numbers</strong> — Norris #1, Verstappen #3, Lindblad #41 (was duplicating Hadjar's #6)</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>Sub Drivers Visible</strong> — reserves who DNF'd or finished outside the points no longer vanish from standings or the race grid</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>PU Stats Reconciled</strong> — Audi (and any engine) no longer displays default numbers with red deltas while the breakthrough message claims higher values</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">✨</span><span><strong>Focus Always Visible</strong> — component focus buttons now show upfront in upgrade windows (greyed out until you allocate)</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">✨</span><span><strong>Wet Stay-Out to Flag</strong> — late-race weather calls now let skilled wet drivers actually gamble on staying out for the rest of the race</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🛠️</span><span><strong>Engine Self-Heal</strong> — Car page now repairs any drift between live engine stats and the season-start snapshot on load and on render</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>Upgrades Land Properly</strong> — a "+1.4 Car Perf" package no longer evaporates to +0.3. Realized gains now match the advertised value (was lost in component averaging)</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>PU Investment Pays Off</strong> — pouring winter budget into the Power Unit now gives a visible power/ERS gain instead of doing nothing while stats drift down</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>Fastest Lap Off Means Off</strong> — FL points are no longer added to standings when the bonus is toggled off</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>Component Focus Unlocks Live</strong> — focus buttons enable the moment you move the slider, no need to leave the screen and come back</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>Reset Defaults Keeps Sponsors</strong> · <strong>Loan Contracts Expire</strong> · <strong>Custom Year Loads</strong></span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">⚖️</span><span><strong>Williams / Haas / Cadillac</strong> — starting budgets rebalanced so backmarkers are tight but no longer doomed to a debt spiral</span></div>
           </div>
           <button onclick="UI.showChangelog()" style="margin-top:10px;width:100%;padding:7px;background:none;border:1.5px solid rgba(192,57,43,.3);border-radius:7px;font-size:11px;font-weight:700;color:var(--red);cursor:pointer">Full release notes →</button>
         </div>
@@ -869,7 +869,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </div>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.5.2</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.5.3</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -1424,7 +1424,7 @@ const DATA = {
         {name:"Pierre Gasly",    nationality:"French",    trait:"technical",  age:30, rating:84, potential:85, qualifying:84, racePace:83, consistency:82, wet:80, aggression:74, marketability:78, morale:80, salary:7,  contract:3},
         {name:"Franco Colapinto",nationality:"Argentine", trait:"aggressive", age:22, rating:79, potential:90, qualifying:79, racePace:78, consistency:74, wet:74, aggression:76, marketability:82, morale:85, salary:3,  contract:2}
       ]},
-    { id:"williams",  name:"Williams Racing",    nation:"British",  prestige:62, carPerformance:64, topSpeed:65, cornering:62, tyreManagement:64, dirtyAir:60, aeroEfficiency:63, engineManufacturer:"mercedes", downforce:45, reliability:73, developmentRate:69, facilities:66, revenue:112, color:"#005AFF", difficulty:"hard",
+    { id:"williams",  name:"Williams Racing",    nation:"British",  prestige:62, carPerformance:64, topSpeed:65, cornering:62, tyreManagement:64, dirtyAir:60, aeroEfficiency:63, engineManufacturer:"mercedes", downforce:45, reliability:73, developmentRate:69, facilities:66, revenue:135, color:"#005AFF", difficulty:"hard",
       baseDrivers:[
         {name:"Alex Albon",  nationality:"Thai",    trait:"consistent", age:30, rating:82, potential:84, qualifying:81, racePace:83, consistency:83, wet:79, aggression:62, marketability:76, morale:80, salary:6,  contract:2},
         {name:"Carlos Sainz",nationality:"Spanish", trait:"technical",  age:31, rating:89, potential:89, qualifying:90, racePace:89, consistency:88, wet:85, aggression:68, marketability:84, morale:80, salary:10, contract:2}
@@ -1434,7 +1434,7 @@ const DATA = {
         {name:"Liam Lawson",    nationality:"New Zealand", trait:"aggressive", age:23, rating:82, potential:88, qualifying:82, racePace:83, consistency:78, wet:79, aggression:76, marketability:74, morale:82, salary:4,  contract:2},
         {name:"Arvid Lindblad", nationality:"British",     trait:"qualifier",  age:18, rating:72, potential:94, qualifying:73, racePace:71, consistency:68, wet:68, aggression:66, marketability:69, morale:88, salary:2,  contract:2}
       ]},
-    { id:"haas",      name:"Haas F1 Team",       nation:"American", prestige:56, carPerformance:73, topSpeed:74, cornering:72, tyreManagement:72, dirtyAir:70, aeroEfficiency:71, engineManufacturer:"ferrari", downforce:50, reliability:79, developmentRate:71, facilities:67, revenue:120, color:"#E8002D", difficulty:"medium",
+    { id:"haas",      name:"Haas F1 Team",       nation:"American", prestige:56, carPerformance:73, topSpeed:74, cornering:72, tyreManagement:72, dirtyAir:70, aeroEfficiency:71, engineManufacturer:"ferrari", downforce:50, reliability:79, developmentRate:71, facilities:67, revenue:132, color:"#E8002D", difficulty:"medium",
       baseDrivers:[
         {name:"Esteban Ocon",   nationality:"French",  trait:"consistent", age:29, rating:80, potential:82, qualifying:80, racePace:80, consistency:79, wet:78, aggression:72, marketability:73, morale:78, salary:6,  contract:2},
         {name:"Oliver Bearman", nationality:"British", trait:"aggressive", age:20, rating:79, potential:91, qualifying:78, racePace:79, consistency:75, wet:74, aggression:74, marketability:78, morale:88, salary:3,  contract:2}
@@ -1444,7 +1444,7 @@ const DATA = {
         {name:"Nico Hulkenberg",   nationality:"German",    trait:"consistent", age:38, rating:80, potential:78, qualifying:81, racePace:80, consistency:84, wet:80, aggression:62, marketability:68, morale:76, salary:5,  contract:3},
         {name:"Gabriel Bortoleto", nationality:"Brazilian", trait:"overtaker",  age:21, rating:77, potential:92, qualifying:78, racePace:76, consistency:73, wet:72, aggression:68, marketability:75, morale:87, salary:3,  contract:3}
       ]},
-    { id:"cadillac",  name:"Cadillac F1 Team",   nation:"American", prestige:38, carPerformance:62, topSpeed:61, cornering:61, tyreManagement:62, dirtyAir:58, aeroEfficiency:60, engineManufacturer:"ferrari", downforce:50, reliability:70, developmentRate:66, facilities:60, revenue:112, color:"#C8102E", difficulty:"hard",
+    { id:"cadillac",  name:"Cadillac F1 Team",   nation:"American", prestige:38, carPerformance:62, topSpeed:61, cornering:61, tyreManagement:62, dirtyAir:58, aeroEfficiency:60, engineManufacturer:"ferrari", downforce:50, reliability:70, developmentRate:66, facilities:60, revenue:125, color:"#C8102E", difficulty:"hard",
       baseDrivers:[
         {name:"Sergio Perez",    nationality:"Mexican",  trait:"rainy",     age:36, rating:82, potential:80, qualifying:81, racePace:83, consistency:78, wet:82, aggression:65, marketability:85, morale:72, salary:7,  contract:2},
         {name:"Valtteri Bottas", nationality:"Finnish",  trait:"qualifier", age:36, rating:79, potential:76, qualifying:79, racePace:79, consistency:84, wet:82, aggression:58, marketability:68, morale:68, salary:5,  contract:2}
@@ -2996,6 +2996,12 @@ const Editor = {
   resetToDefault() {
     this._base = this._captureDefaults(); // always re-capture from DATA, never use stale cache
     this._state = JSON.parse(JSON.stringify(this._base));
+    // (v2.5.3 fix, reported by Polkiu4863: Reset Defaults wiped every team's sponsors.
+    // Root cause: DATA.teams entries carry no `sponsors` array — sponsors live in the
+    // separate DATA.sponsors map and are normally backfilled by _normalizeImported/_normalizeTeam.
+    // resetToDefault assigned raw captured defaults straight to _state without normalizing,
+    // so the backfill never ran. Normalizing here restores the starter sponsors.)
+    this._normalizeState();
     try { localStorage.removeItem(this.STORAGE_KEY); } catch(e) {}
     if(typeof UI !== 'undefined') {
       UI.renderLanding();
@@ -3293,7 +3299,20 @@ const Editor = {
   setSelectedSeason(year) {
     this.init();
     this._selectedSeason = parseInt(year) || 2026;
+    // (v2.5.3 fix, reported by Frequent-Lead-112: selecting a custom year in the editor did
+    // not change which grid a new career started with — newGame always read the default 2026
+    // from the hidden landing-start-year input, so custom-year drivers never loaded. The
+    // editor's selected season is now the career start year too.)
+    this._syncStartYearInput();
     if(typeof UI !== 'undefined') UI.renderEditor();
+  },
+  _syncStartYearInput() {
+    const y = this._selectedSeason || 2026;
+    if(typeof document === 'undefined') return;
+    ['landing-start-year','newgame-start-year','input-start-year'].forEach(id => {
+      const el = document.getElementById(id);
+      if(el) el.value = y;
+    });
   },
   setCardOpen(pool, index, teamId, year, isOpen) {
     const key = [pool, teamId || '', year || '', index].join(':');
@@ -3760,6 +3779,7 @@ const Editor = {
     const sd = this.getState().seasonDrivers;
     if(sd[year]) {
       this._selectedSeason = year;
+      this._syncStartYearInput();
       if(typeof UI !== 'undefined') { UI.renderEditor(); UI.toast(`${year} already exists — switched to it.`, 'info'); }
       return;
     }
@@ -3771,6 +3791,7 @@ const Editor = {
       sd[year][team.id] = JSON.parse(JSON.stringify(fallback)).slice(0,2);
     });
     this._selectedSeason = year;
+    this._syncStartYearInput();
     this.persist();
     if(typeof UI !== 'undefined') { UI.renderEditor(); UI.toast(`${year} season created — edit each team's drivers for this year.`, 'success'); }
   },
@@ -3787,6 +3808,7 @@ const Editor = {
     const sd = this.getState().seasonDrivers;
     delete sd[year];
     this._selectedSeason = 2026;
+    this._syncStartYearInput();
     this.persist();
     if(typeof UI !== 'undefined') { UI.renderEditor(); UI.toast(`${year} season removed.`, 'success'); }
   },
@@ -3885,6 +3907,15 @@ const State = {
   newGame(managerName, teamId, startYear) {
     Editor.init();
     const template = Editor.getState();
+    // (v2.5.3 fix) Resolve the start year robustly. If the requested year has no lineup data
+    // defined in the editor but the editor has a selected season that does, prefer that — this
+    // is what the player was looking at when they chose a custom year. Falls back to 2026.
+    startYear = parseInt(startYear) || Editor._selectedSeason || 2026;
+    const _hasLineup = (yr) => template.seasonDrivers && template.seasonDrivers[yr] && Object.keys(template.seasonDrivers[yr]).length > 0;
+    if(!_hasLineup(startYear)) {
+      if(Editor._selectedSeason && _hasLineup(Editor._selectedSeason)) startYear = Editor._selectedSeason;
+      else if(_hasLineup(2026)) startYear = 2026;
+    }
     const teams = template.teams.map(t => this._buildTeam(t));
     const requestedTeamId = normalizeTeamId(teamId);
     const playerTeam = teams.find(t => teamIdsEqual(t.id, requestedTeamId)) || teams[0];
@@ -4690,9 +4721,16 @@ return {id,name:`${fn} ${ln}`,age:baseAge,nationality:nat,teamId:teamId||null,tr
   getConstructorSeasonPos(teamId){const idx=this.getConstructorStandings().findIndex(s=>s.team.id===teamId);return idx>=0?idx+1:null;},
   getScoringRules() {
     const g = this.game;
-    const defaults = { fastestLap: true, fastestLapPoints: 1, fastestLapTopN: 10, polePoints: 0, doublePointsFinale: false };
+    // Default FL bonus OFF — matches real F1 from 2025 and every other default in the file.
+    // (v2.5.3 fix, reported by Turbulent_Standard61: FL points were still being added with
+    // the bonus toggled off. Root cause was this fallback default being `true`, so any save
+    // whose scoringRules object lacked an explicit `fastestLap` key had FL silently re-enabled
+    // via Object.assign. The explicit-false coercion below makes a missing key behave as off.)
+    const defaults = { fastestLap: false, fastestLapPoints: 1, fastestLapTopN: 10, polePoints: 0, doublePointsFinale: false };
     if(!g || !g.scoringRules) return defaults;
-    return Object.assign({}, defaults, g.scoringRules);
+    const merged = Object.assign({}, defaults, g.scoringRules);
+    merged.fastestLap = g.scoringRules.fastestLap === true; // treat undefined/null as off
+    return merged;
   },
   isDoublePointsRace(race) {
     const g = this.game;
@@ -9205,6 +9243,7 @@ const spons=sumSponsorIncome(g.sponsors||[]);
     const protectedPlayerRoster = (g.drivers||[])
       .filter(d=>d && d.teamId===protectedPlayerTeamId && !d.retired && (d.contract||0)>0)
       .map(d=>({id:d.id, wasReserve:!!d.isReserve}));
+    const returnedReserveLoanIds = new Set();
 
     State.returnExpiredAcademyLoans(nextSeason);
 
@@ -9228,9 +9267,14 @@ const spons=sumSponsorIncome(g.sponsors||[]);
         d._onReserveLoan = false;
         delete d._loanFromTeamId;
         // Preserve remaining contract years — decrement by 1 for the loan season spent away.
-        // If they had >1 year left, subtract 1. If 1 or less, they return with 1yr remaining.
-        const _preLoanContract = l._originalContract || d.contract || 1;
-        d.contract = Math.max(1, _preLoanContract - 1);
+        // (v2.5.3 fix, reported by TYMS22: loan drivers' contracts never expired when loaned
+        // year after year. Root cause: the old Math.max(1, …) floor meant the contract could
+        // never reach 0, and _originalContract was re-snapshotted each loan, so a perpetually
+        // loaned driver was contract-immortal. We now decrement toward 0 — when it hits 0 the
+        // driver returns out of contract and must be re-signed or released like anyone else.)
+        const _preLoanContract = l._originalContract != null ? l._originalContract : (d.contract || 1);
+        d.contract = Math.max(0, _preLoanContract - 1);
+        returnedReserveLoanIds.add(d.id);
         d.salary = Math.max(1, Math.floor((d.rating||60)/30));
         const playerTeam = State.getPlayerTeam();
         if(playerTeam) {
@@ -9397,7 +9441,7 @@ const spons=sumSponsorIncome(g.sponsors||[]);
 
     // ── Release expired contracts ──
     g.drivers.forEach(d=>{
-      if(!d.retired&&!d.isJunior&&d.contract<=0&&!executedMoves.has(d.id)){
+      if(!d.retired&&!d.isJunior&&d.contract<=0&&!executedMoves.has(d.id)&&!returnedReserveLoanIds.has(d.id)){
         // Remember prev team for UI
         if(d.teamId){ const t=State.getTeam(d.teamId); d._prevTeamName=t?t.name:''; }
         d.teamId=null;
@@ -9980,7 +10024,11 @@ const spons=sumSponsorIncome(g.sponsors||[]);
       )
         .slice(0,2);
       const reserveKeep = uniqueById(
-        protectedDrivers.filter(d=>!raceKeep.some(r=>r.id===d.id)).map(d=>{ d.isReserve=true; return d; })
+        [...returnedReserveLoanIds]
+          .map(id=>State.getDriver(id))
+          .filter(d=>d && !d.retired && d.teamId===protectedPlayerTeamId)
+          .map(d=>{ d.isReserve=true; d.isFreeAgent=false; return d; })
+          .concat(protectedDrivers.filter(d=>!raceKeep.some(r=>r.id===d.id)).map(d=>{ d.isReserve=true; return d; }))
           .concat(State.getPlayerReserves().filter(d=>!raceKeep.some(r=>r.id===d.id)))
       ).slice(0,2);
       raceKeep.forEach(d=>{ d.isReserve=false; d.teamId=protectedPlayerTeamId; d.isFreeAgent=false; d.isProspect=false; d.isJunior=false; d.prospectSeries=null; });
@@ -13862,9 +13910,13 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
             const current = _compFocus[group] || 'balanced';
             const dimStyle = inactive ? 'opacity:0.45;pointer-events:none;' : '';
             const helperText = inactive
-              ? '<span style="font-weight:500;color:var(--tx3);text-transform:none;letter-spacing:0;margin-left:6px;font-size:9px">— allocate budget above to direct focus</span>'
+              ? '<span style="font-weight:500;color:var(--tx3);text-transform:none;letter-spacing:0;margin-left:6px;font-size:9px" data-focus-helper="1">— allocate budget above to direct focus</span>'
               : '';
-            let html = '<div style="margin-top:6px;margin-bottom:8px;padding:8px 10px;background:var(--bg2);border:1px solid var(--bd);border-radius:6px;'+dimStyle+'">';
+            // id lets updateDevSlider toggle the disabled state live as the slider crosses zero
+            // (v2.5.3 fix, reported by Historical-Trouble16 + Turbulent_Standard61: focus controls
+            // stayed greyed out until you navigated away and back, because the slider's inline
+            // update never re-rendered this block).
+            let html = '<div id="compfocus-q'+qi+'-'+group+'" data-focus-group="'+group+'" style="margin-top:6px;margin-bottom:8px;padding:8px 10px;background:var(--bg2);border:1px solid var(--bd);border-radius:6px;'+dimStyle+'">';
             html += '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--tx3);margin-bottom:4px">'+groupLabel+' Focus'+helperText+'</div>';
             html += '<div style="display:flex;gap:4px;flex-wrap:wrap">';
             // Balanced option
@@ -14241,6 +14293,19 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
       if(!g.quarterDev[qi]) g.quarterDev[qi]={aero:0,reliability:0,engine:0,applied:false};
       g.quarterDev[qi][key]=val;
       const qd=g.quarterDev[qi];
+      // Live-toggle the component-focus block for this slider (v2.5.3 fix). aero→aero group,
+      // reliability→mechanical group. No effect for the engine slider (no focus block).
+      const _focusGroup = key==='aero' ? 'aero' : key==='reliability' ? 'mechanical' : null;
+      if(_focusGroup){
+        const _fb = document.getElementById('compfocus-q'+qi+'-'+_focusGroup);
+        if(_fb){
+          const _active = val > 0;
+          _fb.style.opacity = _active ? '' : '0.45';
+          _fb.style.pointerEvents = _active ? '' : 'none';
+          const _helper = _fb.querySelector('[data-focus-helper]');
+          if(_helper) _helper.style.display = _active ? 'none' : '';
+        }
+      }
       const cost=qd.aero*6+qd.reliability*4+qd.engine*10;
       const lbl=document.getElementById(`slv-${section}-${key}`);
       const impacts={aero:`+${(val*0.9).toFixed(1)} Car Perf`,reliability:`+${(val*0.6).toFixed(1)} Reliability`,engine:`+${(val*1.4).toFixed(1)} Car Perf`};
@@ -15905,8 +15970,14 @@ const personalSlots = getPersonalSponsorSlots(d);
     const totalIncomeWithExtras=totalIncome+extraIncome;
 
     // ── EXPENSES ────────────────────────────────────────────
-    // Fixed base ops (travel, hospitality, HQ) — same for everyone
-    const opsBase=35;
+    // Fixed base ops (travel, hospitality, HQ). (v2.5.3 balance fix, reported by GCN_09:
+    // Williams/Haas/Cadillac started in structural debt on Normal because every team paid
+    // the same flat ops base against a small revenue. Lower-budget teams genuinely run leaner
+    // operations, so the base now scales down modestly for low-revenue teams — they stay tight
+    // but are no longer forced into a debt spiral that ends in being fired.)
+    const opsBase = team.revenue < 130 ? 24
+      : team.revenue < 160 ? 30
+      : 35;
     // Engine supply — customer teams pay, works teams don't
     const engineCost = isWorksTeam ? 0 : (team.engineContractCost||12);
     // Staff & factory scales with facilities — but THIS is something you invest in via car dev
@@ -20239,8 +20310,19 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const html=`
       <div style="max-height:85vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.5.2 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.5.3 · Release Notes</div>
         ${[
+    ['v2.5.3','May 2026',[
+            '🐛 Mid-season & winter upgrades landing far below their advertised value: a package previewed as "+1.4 Car Perf" was arriving as roughly +0.3 even on a Breakthrough roll, with the popup confusingly showing "Breakthrough result · +0.3". Root cause: an upgrade only touched 3 of the 6 car components, but Car Performance is the average of five sub-stats that are each a weighted blend of all six components — so 60-65% of every upgrade evaporated into the averaging, and a small cross-group decay made it worse. Upgrade gains are now compensated: the game measures how each car responds and scales the component input so the realized Car Performance change matches the package value (modulated by the R&D roll, exactly as the preview implies). Applies to both in-season windows and the winter development budget (reported by username_must_be_be).',
+            '🐛 Power Unit winter investment doing nothing: pouring the full winter budget into the Power Unit could leave Power and ERS unchanged or even drifting down, because the only effect was "recover the gap to your engine\'s historical peak" — and an engine already at its peak has no gap to recover. PU and reliability spend now also delivers a direct, guaranteed power/ERS/reliability gain on top of any gap recovery, with elite diminishing returns so a 99-rated engine still gains a little while a midfield engine gains more. The Car page engine trend now reflects the investment as a gain instead of showing stale pre-spend values (reported by GCN_09).',
+            '🐛 Fastest lap points still counted with the bonus turned off: drivers were receiving the FL point in the standings even when Fastest Lap scoring was disabled. Root cause was a fallback default that treated a missing rule as "on". The scoring rule now treats anything other than an explicit "on" as off, so disabling FL is fully respected across simulated races, sprints, and Watch Race reconciliation (reported by Turbulent_Standard61).',
+            '🐛 Component focus controls greyed out until you left the screen: moving an upgrade slider above zero did not unlock the matching Aero/Mechanical focus buttons until you navigated away and back. The focus block now enables (and disables) live the instant the slider crosses zero (reported by Historical-Trouble16, confirmed by Turbulent_Standard61).',
+            '🐛 Reset Defaults wiping all team sponsors: resetting the roster editor cleared every team\'s starting sponsors because the reset path skipped the normalization step that backfills sponsors from the sponsor table. Reset now restores the default sponsors for every team (reported by Polkiu4863).',
+            '🐛 Loan-driver contracts never expiring: a reserve loaned out to AI teams year after year was contract-immortal — the return logic floored the contract at 1 year and re-snapshotted it each loan, so it could never reach zero. Loaned drivers now genuinely tick down and return out of contract when their deal ends, to be re-signed or released like anyone else (reported by TYMS22).',
+            '🐛 Custom season year not loading into a career: selecting a custom year (e.g. 2020) in the editor\'s Driver Lineup Season selector did not set which grid a new career started with — career mode always read the default 2026, so the custom-year drivers never loaded. The editor\'s selected season is now the career start year, and New Game falls back to the selected season if the requested year has no lineup data (reported by Frequent-Lead-112).',
+            '⚖️ Williams, Haas and Cadillac starting budgets rebalanced: these three teams began in a structural deficit on Normal difficulty, forcing players to gut their staff and drivers just to survive. Starting revenue was raised to a viable floor (Williams 135, Haas 132, Cadillac 125) and lower-budget teams now run a leaner fixed operations cost. They remain tight backmarker operations — Cadillac as a brand-new entry is still the hardest economic challenge — but are no longer doomed to a debt spiral and an inevitable firing. Season objectives for backmarkers were already position/points-based and were left unchanged (reported by GCN_09).',
+            '📋 On the in-save roster editor request (Neither-Barnacle1347): realistic mid-save driver transfers are already supported through the in-game transfer market, Team Offers, and reserve/race-seat swaps. A full live editor was intentionally not added this release because rewriting team stats, contracts and components mid-save carries a high risk of corrupting economy and progression state — the existing systems serve the underlying need without that risk.',
+    ]],
     ['v2.5.2','May 2026',[
             '🐛 2026 driver numbers corrected: Lando Norris now correctly carries #1 as defending champion (was #4), Max Verstappen switches to #3 per FIA entry list (was #1), and Arvid Lindblad takes his real #41 rookie number (was incorrectly sharing Hadjar\'s #6, causing a duplicate). Existing Hadjar (#6) and the rest of the grid unchanged (reported by RuleImpossible3362).',
             '🐛 Sub drivers disappearing from standings: when a reserve driver subbed in for an injured race driver but DNF\'d or finished outside the points in every appearance, they were silently filtered out of the season standings table AND the History race-by-race grid — making it look like nobody actually drove the car. The standings filter now keeps any driver who appeared in a race result this season, and reserves who race are now flagged so they persist in salary negotiations and other downstream filters too (reported by RuleImpossible3362).',
@@ -21561,23 +21643,45 @@ const GameActions = {
         const _baseCp = team.carPerformance;
         // Distribute gains to components if the team has them
         if(team.components && u.componentGroup) {
+          // ── Compensated component distribution (v2.5.3 fix) ──────────────────
+          // BUG (reported by username_must_be_be): a "+1.4 Car Perf" package that rolled
+          // a Breakthrough multiplier was landing as only ~+0.3 Car Perf. Root cause: the
+          // gain was added to just 3 of 6 components, then deriveSubStats re-averaged ALL
+          // sub-stats (each a weighted blend of all 6 components) back into carPerformance,
+          // so ~60-65% of every upgrade evaporated into the averaging. The package value
+          // (u.value) is authored as an intended *carPerformance* delta, so we now measure
+          // the marginal CP response and scale the per-component input to actually hit it.
           const comps = COMP_GROUPS[u.componentGroup] || [];
           const focus = u.componentFocus || 'balanced';
-          if(focus === 'balanced') {
-            // Even split across group components
-            const perComp = actualVal / comps.length;
-            comps.forEach(ck => { team.components[ck] = clamp((team.components[ck]||70) + perComp, 40, 99); });
-          } else if(comps.includes(focus)) {
-            // Focused: 70% to chosen, 15% each to the other two
-            const others = comps.filter(ck => ck !== focus);
-            team.components[focus] = clamp((team.components[focus]||70) + actualVal * 0.70, 40, 99);
-            others.forEach(ck => { team.components[ck] = clamp((team.components[ck]||70) + actualVal * (0.30 / others.length), 40, 99); });
-          }
-          // Slight decay on unfocused group (the other group's components stagnate slightly)
           const otherGroup = u.componentGroup === 'aero' ? 'mechanical' : 'aero';
-          (COMP_GROUPS[otherGroup]||[]).forEach(ck => {
-            team.components[ck] = clamp((team.components[ck]||70) - actualVal * 0.06, 40, 99);
-          });
+          // Probe: how much does CP rise if we add +1 to each component in this group?
+          const _probe = { components: Object.assign({}, team.components) };
+          comps.forEach(ck => { _probe.components[ck] = clamp((_probe.components[ck]||70) + 1, 40, 99); });
+          deriveSubStats(_probe);
+          const _cpPerUnit = _probe.carPerformance - team.carPerformance;
+          // scale so realized CP delta ≈ actualVal (guard against zero/clamped response)
+          const _scale = (actualVal !== 0 && Math.abs(_cpPerUnit) > 0.001) ? (actualVal / _cpPerUnit) : actualVal;
+          if(focus === 'balanced') {
+            comps.forEach(ck => { team.components[ck] = clamp((team.components[ck]||70) + _scale, 40, 99); });
+          } else if(comps.includes(focus)) {
+            // Focused: bias toward the chosen component but keep the same total component-points
+            // as a balanced spread so the realized CP gain is unchanged — focus shapes the
+            // sub-stat profile, it does not inflate or shrink the headline gain.
+            const others = comps.filter(ck => ck !== focus);
+            const _total = _scale * comps.length;
+            team.components[focus] = clamp((team.components[focus]||70) + _total * 0.55, 40, 99);
+            others.forEach(ck => { team.components[ck] = clamp((team.components[ck]||70) + _total * (0.45 / others.length), 40, 99); });
+          } else {
+            comps.forEach(ck => { team.components[ck] = clamp((team.components[ck]||70) + _scale, 40, 99); });
+          }
+          // Slight relative decay on the unfocused group — keeps an upgrade direction meaningful
+          // without eating the headline gain (decay is on the OTHER group's components only,
+          // and is small relative to the scaled input).
+          if(actualVal > 0) {
+            (COMP_GROUPS[otherGroup]||[]).forEach(ck => {
+              team.components[ck] = clamp((team.components[ck]||70) - actualVal * 0.05, 40, 99);
+            });
+          }
           deriveSubStats(team);
         } else {
           // Legacy path: no components, apply directly to sub-stats
@@ -21808,36 +21912,42 @@ const GameActions = {
     const _baseRelWinter = team_bs.reliability;
     const _baseDevWinter = team_bs.developmentRate;
     const _baseFacWinter = team_bs.facilities;
-    team_bs.carPerformance  = clamp(team_bs.carPerformance  + actualAero_bs,    40, 100);
+    // For component teams, carPerformance is derived from components, so we apply the aero
+    // gain through the components (below) rather than setting CP directly. For legacy teams
+    // we set CP directly. Provisional set only applies when there are no components.
+    if(!team_bs.components) {
+      team_bs.carPerformance  = clamp(team_bs.carPerformance  + actualAero_bs,    40, 100);
+    }
     // CM (Chief Mechanic) applies a direct reliability bonus each offseason
     const _cmRelBonus = State.getStaffBonus(team_bs.id, 'reliability') * 0.35;
     team_bs.reliability     = clamp(team_bs.reliability     + actualRel_bs + _cmRelBonus,  40, 99);
     team_bs.developmentRate = clamp(team_bs.developmentRate + actualDevRate_bs, 40, 99);
     team_bs.facilities      = clamp(team_bs.facilities      + actualFac_bs,     40, 99);
-    // Track what actually applied after the cap — used in debrief display
-    const _actualAppliedAero = team_bs.carPerformance - _baseCpWinter;
-    const _actualAppliedRel = team_bs.reliability - _baseRelWinter;
-    const _actualAppliedDevRate = team_bs.developmentRate - _baseDevWinter;
-    const _actualAppliedFacilities = team_bs.facilities - _baseFacWinter;
     // Distribute winter dev gains across car components then derive sub-stats
     if(actualAero_bs > 0) {
       if(team_bs.components) {
+        // ── Compensated winter distribution (v2.5.3 fix) ────────────────────
+        // Same averaging-loss fix as the in-season upgrade path: scale the per-component
+        // input so the realized carPerformance delta matches actualAero_bs, then bias the
+        // split between aero and mechanical components by where the budget was spent.
         const _bw = bw2 || {};
         const _aeroSpend = (_bw.aero||0);
         const _engSpend = (_bw.engine||0);
         const _totalSpend = Math.max(1, _aeroSpend + _engSpend);
-        const _aeroFrac = _aeroSpend / _totalSpend;
-        const _mechFrac = 1 - _aeroFrac;
-        // Distribute to aero components based on aero spend fraction (normalized to 1.0x total)
-        const aeroGain = actualAero_bs * Math.max(0.3, _aeroFrac);
-        COMP_GROUPS.aero.forEach(ck => {
-          team_bs.components[ck] = clamp((team_bs.components[ck]||70) + aeroGain / 3, 40, 99);
-        });
-        // Distribute to mechanical components based on remaining fraction
-        const mechGain = actualAero_bs * Math.max(0.3, _mechFrac);
-        COMP_GROUPS.mechanical.forEach(ck => {
-          team_bs.components[ck] = clamp((team_bs.components[ck]||70) + mechGain / 3, 40, 99);
-        });
+        const _aeroFrac = Math.max(0.3, _aeroSpend / _totalSpend);
+        const _mechFrac = Math.max(0.3, 1 - (_aeroSpend / _totalSpend));
+        const _fracSum = _aeroFrac + _mechFrac;
+        // Probe combined response from the TRUE component-derived base (_baseCpWinter)
+        const _wProbe = { components: Object.assign({}, team_bs.components) };
+        COMP_KEYS.forEach(ck => { _wProbe.components[ck] = clamp((_wProbe.components[ck]||70) + 1, 40, 99); });
+        deriveSubStats(_wProbe);
+        const _wCpPerUnit = _wProbe.carPerformance - _baseCpWinter;
+        const _wScale = Math.abs(_wCpPerUnit) > 0.001 ? (actualAero_bs / _wCpPerUnit) : actualAero_bs;
+        // Split the scaled total between the two groups by spend fraction
+        const _aeroPer = _wScale * (_aeroFrac / _fracSum) * 2;   // ×2 because only ~half the comps
+        const _mechPer = _wScale * (_mechFrac / _fracSum) * 2;
+        COMP_GROUPS.aero.forEach(ck => { team_bs.components[ck] = clamp((team_bs.components[ck]||70) + _aeroPer, 40, 99); });
+        COMP_GROUPS.mechanical.forEach(ck => { team_bs.components[ck] = clamp((team_bs.components[ck]||70) + _mechPer, 40, 99); });
         deriveSubStats(team_bs);
       } else {
         // Legacy path for saves without components
@@ -21857,6 +21967,12 @@ const GameActions = {
         });
       }
     }
+    // Track what actually applied — captured AFTER component derivation so the debrief
+    // numbers match the real carPerformance change the player will see on the Car page.
+    const _actualAppliedAero = team_bs.carPerformance - _baseCpWinter;
+    const _actualAppliedRel = team_bs.reliability - _baseRelWinter;
+    const _actualAppliedDevRate = team_bs.developmentRate - _baseDevWinter;
+    const _actualAppliedFacilities = team_bs.facilities - _baseFacWinter;
     if(expectedDfRange_bs > 0){
       const currentDf_bs = team_bs.downforce||50;
       const targetDf_bs = g.aeroTarget!==undefined?g.aeroTarget:currentDf_bs;
@@ -21871,31 +21987,54 @@ const GameActions = {
       actual:   {aero:_actualAppliedAero, rel:_actualAppliedRel, devRate:_actualAppliedDevRate, facilities:_actualAppliedFacilities},
       label: rdMult_bs<0?'difficult winter':rdMult_bs>=1.6?'breakthrough':rdMult_bs>=1.25?'ahead of schedule':rdMult_bs>=0.85?'as planned':rdMult_bs>=0.35?'below expectations':'setback',
     };
-    // PU recovery: engine and reliability investment restores degraded power unit stats
+    // PU recovery + investment: engine/reliability spend restores degraded PU stats AND
+    // delivers a direct power gain. (v2.5.3 fix — reported by GCN_09: pouring the full
+    // winter budget into the Power Unit showed power/ERS going DOWN. Root cause: the only
+    // effect was gap-recovery toward a ceiling, and for an engine already at/near its
+    // ceiling the gap was ~0, so a full-budget PU spend did literally nothing while normal
+    // convergence drift still nudged the stats down. PU spend now also pushes the ceiling
+    // and the live rating upward, with elite diminishing returns.)
     if((bw2.engine||0) > 0 || (bw2.reliability||0) > 0) {
       const playerEng = (g.engineManufacturers||[]).find(e=>e.id===(team_bs.engineManufacturer));
       if(playerEng) {
         const engBudgetFactor = Math.min(1, ((bw2.engine||0) / 60)); // 0→1 over $60M spend
         const relBudgetFactor = Math.min(1, ((bw2.reliability||0) / 40));
-        // Use the recovery ceiling (highest values reached) as the target,
-        // falling back to DATA base values for saves without a ceiling
         const recoveryCeil = g._engineRecoveryCeiling && g._engineRecoveryCeiling[playerEng.id] ? g._engineRecoveryCeiling[playerEng.id] : null;
         const baseEngDef = DATA.engineManufacturers.find(e=>e.id===playerEng.id);
         const ceilPower = Math.max(recoveryCeil?.powerRating || 0, baseEngDef?.powerRating || 88);
         const ceilERS   = Math.max(recoveryCeil?.ersRating   || 0, baseEngDef?.ersRating   || 86);
         const ceilRel   = Math.max(recoveryCeil?.reliability || 0, baseEngDef?.reliability  || 88);
-        // Recover up to 60% of gap between current and ceiling, scaled by budget
+        // (a) Gap recovery — restore power lost to convergence/regs, scaled by budget & luck
         const pwrGap = Math.max(0, ceilPower - playerEng.powerRating);
         const ersGap = Math.max(0, ceilERS   - playerEng.ersRating);
         const relGap = Math.max(0, ceilRel   - playerEng.reliability);
-        const pwrRecovered = pwrGap * 0.6 * engBudgetFactor * rdMult_bs;
-        const ersRecovered = ersGap * 0.6 * engBudgetFactor * rdMult_bs;
-        const relRecovered = relGap * 0.7 * relBudgetFactor * rdMult_bs;
-        playerEng.powerRating = Math.min(99, playerEng.powerRating + pwrRecovered);
-        playerEng.ersRating   = Math.min(99, playerEng.ersRating   + ersRecovered);
-        playerEng.reliability = Math.min(98, playerEng.reliability + relRecovered);
-        // Store recovery amounts for the dev result popup
-        devResult._puRecovery = {power: pwrRecovered, ers: ersRecovered, rel: relRecovered};
+        const pwrRecovered = pwrGap * 0.6 * engBudgetFactor * Math.max(0.2, rdMult_bs);
+        const ersRecovered = ersGap * 0.6 * engBudgetFactor * Math.max(0.2, rdMult_bs);
+        const relRecovered = relGap * 0.7 * relBudgetFactor * Math.max(0.2, rdMult_bs);
+        // (b) Direct investment gain — guaranteed forward step from spending, with elite
+        // diminishing returns (a 99-power engine gains little, an 88-power engine gains more).
+        const _eliteTaper = (r) => r >= 97 ? 0.30 : r >= 94 ? 0.55 : r >= 90 ? 0.80 : 1.0;
+        const pwrDirect = engBudgetFactor * 1.6 * _eliteTaper(playerEng.powerRating) * Math.max(0.4, rdMult_bs);
+        const ersDirect = engBudgetFactor * 1.4 * _eliteTaper(playerEng.ersRating)   * Math.max(0.4, rdMult_bs);
+        const relDirect = relBudgetFactor * 1.2 * _eliteTaper(playerEng.reliability)  * Math.max(0.4, rdMult_bs);
+        const pwrTotal = pwrRecovered + pwrDirect;
+        const ersTotal = ersRecovered + ersDirect;
+        const relTotal = relRecovered + relDirect;
+        playerEng.powerRating = Math.min(99, playerEng.powerRating + pwrTotal);
+        playerEng.ersRating   = Math.min(99, playerEng.ersRating   + ersTotal);
+        playerEng.reliability = Math.min(98, playerEng.reliability + relTotal);
+        // Lift the recovery ceiling so investment compounds across seasons
+        if(g._engineRecoveryCeiling && g._engineRecoveryCeiling[playerEng.id]) {
+          const _c = g._engineRecoveryCeiling[playerEng.id];
+          _c.powerRating = Math.max(_c.powerRating, playerEng.powerRating);
+          _c.ersRating   = Math.max(_c.ersRating,   playerEng.ersRating);
+          _c.reliability = Math.max(_c.reliability,  playerEng.reliability);
+        }
+        // Refresh the season-start snapshot for THIS engine so the Car page trend badge
+        // reflects the investment as a gain rather than showing stale pre-spend values.
+        if(!g._engineStatsSnapshot) g._engineStatsSnapshot = {};
+        g._engineStatsSnapshot[playerEng.id] = {powerRating:playerEng.powerRating, ersRating:playerEng.ersRating, reliability:playerEng.reliability};
+        devResult._puRecovery = {power: pwrTotal, ers: ersTotal, rel: relTotal};
       }
     }
 
