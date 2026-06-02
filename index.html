@@ -19670,6 +19670,8 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       <p>The <strong>Mid-Season window</strong> opens after race 7 and the <strong>Summer window</strong> opens after race 14. When a window opens, go to the Car page, allocate budget across Aero, Reliability, and Engine using the sliders, then click Apply. Packages take 2–4 races to arrive from the factory — you'll get a popup with the outcome (Breakthrough / As Planned / Below Expectations / Integration Problems). The dashboard Car Development card tracks this in real time.</p>
       <h4>Winter development</h4>
       <p>The largest lever. Allocate up to 35% of revenue across Aero, Engine, Reliability, and Facilities before each season. On the Car page, the <strong>Facilities (Factory & Tools)</strong> row is the one that increases your Facilities score. The outcome has a luck component — the same spend can yield a breakthrough or a setback. Facilities investment improves your <em>development rate</em>, making future R&D more effective rather than adding pace directly.</p>
+      <h4>Aero vs mechanical development</h4>
+      <p>Your investment splits across two component groups. <strong>Aero</strong> spend develops the aerodynamic parts (front wing, rear wing, floor). <strong>Reliability</strong> spend is what develops the <strong>mechanical</strong> parts — chassis, sidepods, and suspension — alongside raising your reliability rating. If you want to improve a specific mechanical component, focus your reliability investment on it; the focused part gets the bulk of the gain. Engine power and ERS come from your power unit supplier, developed separately (see the Engine manufacturers section).</p>
       <h4>Diminishing returns and regression</h4>
       <p>Every car — including yours — regresses slightly each offseason as rivals copy your concepts. Higher-rated cars regress more (a 95-rated car loses ~2–3 points; a 70-rated car loses ~0.5). Winter development spending must therefore cover <em>maintenance</em> as well as improvement. Additionally, the higher your car rating, the less value each dollar buys — a 95-rated car gets roughly 20% of the gain a 60-rated car gets for the same investment. The Car page shows your current <strong>development efficiency %</strong>.</p>
       ${warn('A maxed-out car still needs investment every offseason just to stay in place. If you spend nothing, rivals will close the gap within 1–2 seasons.')}
@@ -19790,7 +19792,7 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       <p>Each season the board sets 3 objectives: one hard, one medium, one easy. Meeting them pays bonus revenue directly into your budget.</p>
       <p>The objectives are generated based on your realistic performance level — they're not random. A bottom-half team won't be asked to win the championship. They scale with your situation.</p>
       <h4>Objective types</h4>
-      <p>Position targets, win targets, podium targets, and pole targets. Each has a revenue bonus proportional to difficulty.</p>
+      <p>Objectives are tuned to what your car can realistically achieve. A front-running car gets win, pole, podium, and championship-position targets. A midfield or backmarker car instead gets goals it can actually hit — finishing a place or two above where the car ranks, scoring points in a set number of races, and season points totals. You won't be asked to win a race or take poles in a car that can't get near the front. Each objective carries a revenue bonus proportional to its difficulty.</p>
       ${tip('Check them early', 'Board objectives are shown on the dashboard above the news feed. Read them at the start of the season — some objectives (like "score 3 poles") require you to actively prioritise qualifying in your strategy decisions.')}
       ${warn('Missing all 3 objectives two seasons in a row damages owner mood. Sustained poor owner mood gets you fired. Even if results are poor, meeting at least 1–2 objectives per season keeps the board onside. If you are fired from a mid-grid or top team, struggling teams will offer you a second chance. If you are fired from a bottom team (last or second-to-last), your career is over — no team will hire a manager who ran the worst team into the ground.')}
     `)}
@@ -19875,6 +19877,9 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       <p>From mid-season onward, drivers with expiring contracts start generating rumour items. These are real — the named driver's contract genuinely expires at season end and they may leave if you don't act in the offseason.</p>
       <h4>Sponsor pressure</h4>
       <p>If your team strings together several poor results, your sponsors will flag concerns in the feed. Very unhappy sponsors with a sustained poor moodScore can pull out mid-contract — you'll see a 💥 news item with a morale hit to your drivers. This is a warning sign — continued poor results also damage the owner confidence score and can eventually cost you the job.</p>
+      <h4>Paddock events</h4>
+      <p>Every so often a <strong>paddock event</strong> fires mid-season — a story moment that breaks up the routine. Most appear straight in the feed with a small effect: a wind-tunnel breakthrough, a commercial windfall, a supplier quality issue, a rival protest against a dominant car. They're deliberately uncommon — roughly one every few races, capped per season — so they stay special, and every effect is bounded so nothing is ever save-breaking.</p>
+      <p>A few events are <strong>decisions</strong>: a pop-up presents a situation with two choices and a genuine trade-off — back an unhappy star driver publicly (morale up, development nudged back) versus telling them to focus on driving; gamble the mid-season budget on an unproven aero concept versus playing it safe; match a rival's offer to keep poached staff versus letting them walk. Your choice is applied immediately and recorded in the feed. During batch sims (Sim Quarter / Half / Rest of Season) these resolve automatically with a sensible default so a long sim is never interrupted.</p>
       <h4>Pre-season approaches</h4>
       <p>During the season, if a driver is in their final contract year, a <strong>📋 Approach for Next Season</strong> button appears on their profile. Tap it to make a pre-contract offer — if the driver is interested (based on your car, salary offer, and their morale) they will commit to joining you when the season ends. AI teams do the same, so the best expiring drivers get snapped up mid-season.</p>
       <p>Watch the Transfers tab in Paddock News for confirmed moves and rumours. Pre-contract announcements appear there as they happen.</p>
@@ -19892,6 +19897,7 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       <p>Drivers who are already free agents — no current team — bypass the car comparison gate entirely. They have no car to compare to, so any offer is evaluated purely on salary, contract length, your team prestige, and their morale. Elite free agents are rare but genuinely available to any team that can pay them.</p>
       <h4>AI silly season</h4>
       <p>AI teams also approach expiring-contract drivers from race 6 — one confirmed approach every 3 races. Transfer window opens simultaneously for everyone. Watch the Transfers tab in Paddock News for confirmed moves, counter-bids, and rejections.</p>
+      <p>Beyond free agents, stronger AI teams will actively poach drivers from weaker rivals during the offseason — an out-of-contract or final-year driver at a slow team can be tempted up the grid by a quicker one, which displaces a weaker driver and sets off a chain of seat changes. This keeps the grid churning year to year, including on custom grids that start with no free agents.</p>
       <h4>Offseason free agency</h4>
       <p>Drivers without a pre-contract enter free agency at offseason. The transfer market section shows top available drivers — tap any to open a negotiation modal with contract length options and salary. High-rated free agents (85+) are expensive but teams pay up to match their value.</p>
       <h4>Contract renewal</h4>
@@ -19949,6 +19955,22 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       ${tip('Next button', 'The red Next button (bottom centre on mobile, visible on dashboard) is your main progression button. It advances to the next pending action — next race, or next offseason — so you never have to hunt for what to do.')}
       ${tip('Contract warning', 'In the final 3 races of the season, an amber warning panel appears on the dashboard if any of your race or reserve drivers are in their last year of contract. Reserve drivers are labelled (Reserve) in the panel. Use the Renew button directly from that panel — don\'t wait for the offseason if a rival could poach them.')}
       ${tip('Sprint weekends', 'Sprint weekends have two separate results. The dashboard Last Race panel shows both a Last Race and a Sprint tab. A Race Recap pops after both the sprint and the GP so you always get the full picture for each session.')}
+    `)}
+
+    ${sec('🏛️','Dynasty Rating — Your Long-Term Legacy',`
+      <p>The <strong>Dynasty Rating</strong> on the History → Dynasty tab is a single legacy score that grows across your entire save — a long-term measure of everything you've built, sitting above the season-by-season record.</p>
+      <h4>How it's built</h4>
+      <p>The breakdown panel shows exactly where every point comes from, so it's never a mystery number. Championships are the core currency — constructor titles are worth the most, then drivers' titles. On top of that:</p>
+      <ul style="margin:6px 0 6px 16px;line-height:1.8">
+        <li><strong>Dynasty streak</strong> — consecutive constructor titles compound, so a true era of dominance is worth far more than the same number of scattered one-off titles.</li>
+        <li><strong>Against the odds</strong> — titles won with a team that started as a backmarker earn a bonus. Building a champion from nothing is the most valuable thing you can do.</li>
+        <li><strong>Race craft</strong> — wins, podiums, and poles add texture, but deliberately in small amounts so you can't grind a high tier without winning titles.</li>
+        <li><strong>Longevity</strong> — seasons of commitment count for a little, but can't substitute for success.</li>
+      </ul>
+      <h4>Prestige tiers and the leaderboard</h4>
+      <p>Your score maps to a named tier — Privateer, Established Outfit, Race Winners, Title Contenders, Champions, Dynasty Builders, Dynasty Architects, Immortals, and finally Legend of the Sport. A progress bar shows how far you are from the next rung. You're also ranked against all-time benchmark dynasties, so there's always a higher target to chase even after you've won everything in the short term.</p>
+      <p>At the end of each season the recap shows your rating ticking up, and flags it whenever you climb to a new tier.</p>
+      ${tip('It works on every save', 'The rating is calculated from your existing career stats, so it appears retroactively on saves started before this feature — you don\'t need a new game to see your legacy scored.')}
     `)}
 
     ${sec('🎨','Roster Editor — Custom Grid Setup',`
