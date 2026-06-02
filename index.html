@@ -108,6 +108,9 @@ input:focus,select:focus{border-color:var(--red)}
   #page-landing{overflow-y:hidden}
   .land-wrap{grid-template-columns:1fr 1fr;min-height:100dvh;flex:1}
 }
+@media(min-width:680px){
+  .dynasty-rating-cols{grid-template-columns:1fr 1fr !important}
+}
 /* Left — branding */
 .land-left{
   display:flex;flex-direction:column;justify-content:center;
@@ -746,15 +749,15 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
         </div>
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:16px;max-width:540px;padding:16px 18px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
-          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v2.5.3 — What's New</div>
-          <div style="font-size:14px;font-weight:900;color:#111;margin-bottom:10px">Big fixes: upgrade gains, PU investment, FL points</div>
+          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v2.5.4 — What's New</div>
+          <div style="font-size:14px;font-weight:900;color:#111;margin-bottom:10px">New: Dynasty Rating &amp; paddock events · plus major fixes</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 16px">
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>Upgrades Land Properly</strong> — a "+1.4 Car Perf" package no longer evaporates to +0.3. Realized gains now match the advertised value (was lost in component averaging)</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>PU Investment Pays Off</strong> — pouring winter budget into the Power Unit now gives a visible power/ERS gain instead of doing nothing while stats drift down</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>Fastest Lap Off Means Off</strong> — FL points are no longer added to standings when the bonus is toggled off</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>Component Focus Unlocks Live</strong> — focus buttons enable the moment you move the slider, no need to leave the screen and come back</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>Reset Defaults Keeps Sponsors</strong> · <strong>Loan Contracts Expire</strong> · <strong>Custom Year Loads</strong></span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">⚖️</span><span><strong>Williams / Haas / Cadillac</strong> — starting budgets rebalanced so backmarkers are tight but no longer doomed to a debt spiral</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">✨</span><span><strong>Dynasty Rating</strong> — a legacy score that grows across your whole save, with prestige tiers to climb and all-time benchmarks to chase. On the History → Dynasty tab</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">✨</span><span><strong>Random Paddock Events</strong> — mid-season story moments, including decision events with real tradeoffs (back a star, gamble on an aero concept, keep poached staff)</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>Power Units Actually Develop</strong> — the long-standing Audi-never-improves bug is fixed at the root; existing saves self-repair</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>AI Drivers Move Between Teams</strong> — the market no longer freezes on custom grids; the grid churns season to season</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>Mechanical Development Shows Up</strong> — reliability investment now visibly develops chassis / sidepods / suspension</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">⚖️</span><span><strong>Sensible Backmarker Goals + Less Predictable Races</strong> — objectives scale to your car, and outlier weekends widen race-to-race spread</span></div>
           </div>
           <button onclick="UI.showChangelog()" style="margin-top:10px;width:100%;padding:7px;background:none;border:1.5px solid rgba(192,57,43,.3);border-radius:7px;font-size:11px;font-weight:700;color:var(--red);cursor:pointer">Full release notes →</button>
         </div>
@@ -869,7 +872,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </div>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.5.3</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.5.4</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -2024,8 +2027,68 @@ function randFloat(min,max){return Math.random()*(max-min)+min;}
 function randNorm(mean,sd){const u=1-Math.random(),v=Math.random();return mean+sd*Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
 // ── Car sub-stat helpers ─────────────────────────────────────────────────────
 // Returns a weighted circuit performance score from a team's sub-stats + engine
+// ── Authoritative engine value floor (root-cause fix for the long-standing
+// "Audi PU never improving" bug, reported across many versions) ──────────────
+// Engine power/ERS only ever climb across a save (offseason dev + catch-up +
+// winter investment); the sole downward movement anywhere in the engine model
+// is a ≤0.10 wobble once an engine is past 97 overall. Regulation changes touch
+// team cars, never manufacturer PU ratings. So a per-engine high-water mark is a
+// SAFE, monotonic source of truth for power/ERS. Previous fixes tried to repair
+// the symptom in three separate places (restoreGame, renderCar, beginSeason) by
+// reconciling against the mutable season-start snapshot — but that snapshot could
+// itself be overwritten with a reverted value (e.g. a custom-grid rebuild or a
+// stale restore), so the live array, the sim, AND the display would all silently
+// fall back to the DATA defaults (Audi 82/80/76) while the breakthrough message
+// still quoted the developed numbers. Enforcing the high-water mark at the single
+// read chokepoint that BOTH the UI and the race simulation use means no reset path
+// can ever revert an engine below where it has genuinely developed.
+function _engineHighWater() {
+  if(!(typeof State !== 'undefined' && State.game)) return null;
+  const g = State.game;
+  if(!g._engineHighWater) g._engineHighWater = {};
+  return g._engineHighWater;
+}
+function _recordEngineHighWater(engines) {
+  const hw = _engineHighWater();
+  if(!hw || !Array.isArray(engines)) return;
+  const g = State.game;
+  const ceil = (g && g._engineRecoveryCeiling) || {};
+  const snap = (g && g._engineStatsSnapshot) || {};
+  engines.forEach(eng => {
+    if(!eng || eng.id == null) return;
+    const prev = hw[eng.id] || {};
+    const ceilEng = ceil[eng.id] || {};
+    const snapEng = snap[eng.id] || {};
+    hw[eng.id] = {
+      powerRating: Math.max(eng.powerRating || 0, prev.powerRating || 0, ceilEng.powerRating || 0, snapEng.powerRating || 0),
+      ersRating:   Math.max(eng.ersRating   || 0, prev.ersRating   || 0, ceilEng.ersRating   || 0, snapEng.ersRating   || 0)
+    };
+  });
+}
+function _applyEngineFloor(engines) {
+  const hw = _engineHighWater();
+  if(!hw || !Array.isArray(engines)) return engines;
+  // Seed the high-water on first contact, then enforce it. Reliability is left to
+  // its existing season-start-snapshot heal because reliability has legitimate
+  // setbacks (≤3pts) that are part of the design — only power/ERS are monotonic.
+  engines.forEach(eng => {
+    if(!eng || eng.id == null) return;
+    const mark = hw[eng.id];
+    if(!mark) {
+      hw[eng.id] = { powerRating: eng.powerRating || 0, ersRating: eng.ersRating || 0 };
+      return;
+    }
+    // Tolerance of 0.5 catches the bug (a multi-point revert to DATA defaults) while
+    // leaving the intended ≤0.10 top-end convergence wobble at 97+ intact.
+    if(isFinite(mark.powerRating) && (eng.powerRating || 0) + 0.5 < mark.powerRating) eng.powerRating = mark.powerRating;
+    else if((eng.powerRating || 0) > (mark.powerRating || 0)) mark.powerRating = eng.powerRating;
+    if(isFinite(mark.ersRating) && (eng.ersRating || 0) + 0.5 < mark.ersRating) eng.ersRating = mark.ersRating;
+    else if((eng.ersRating || 0) > (mark.ersRating || 0)) mark.ersRating = eng.ersRating;
+  });
+  return engines;
+}
 function _liveEngines() {
-  if(window.State && State.game && State.game.engineManufacturers) return State.game.engineManufacturers;
+  if(typeof State !== 'undefined' && State.game && State.game.engineManufacturers) return _applyEngineFloor(State.game.engineManufacturers);
   try {
     if(typeof Editor !== 'undefined' && Editor._state && Editor._state.engineManufacturers) return Editor._state.engineManufacturers;
   } catch(e) {}
@@ -2078,11 +2141,359 @@ function getTeamErsRating(team) {
   const eng = _findEngine(team);
   return eng ? eng.ersRating : 86;
 }
+
+// ── DYNASTY RATING ───────────────────────────────────────────────────────────
+// A cumulative legacy score that grows across a save, giving long careers a legible
+// forever-progression arc and a permanent target to chase (the all-time tiers and the
+// historical leaderboard below). A "Legacy Score" was tried and pulled in v1.7 for being
+// "too complex and not adding to the experience" — that version was an opaque number with
+// nothing to read or chase. This rebuild is deliberately legible: every point is broken
+// down by source, it maps to a NAMED prestige tier, and it is ranked against fictional
+// historical dynasties so there is always a next rung. It is computed purely from
+// careerStats on demand (no new persisted state), so it is fully save-compatible and can
+// never desync.
+//
+// Design intent:
+//   • Championships are the core currency — you cannot grind a high tier on volume alone.
+//   • Consecutive constructor titles compound (dynasty multiplier) — sustained dominance is
+//     the whole point of the genre and is worth far more than scattered one-off titles.
+//   • Titles won from a backmarker start ("hard") carry an adversity bonus — the best stories.
+//   • Wins/podiums/poles add texture but are small.
+//   • Longevity contributes a little so commitment is recognised, but can't substitute for success.
+const DYNASTY_TIERS = [
+  {min:0,      name:'Privateer',          icon:'🔧', blurb:'Every dynasty starts somewhere. Make your mark.'},
+  {min:150,    name:'Established Outfit',  icon:'🏎️', blurb:'A respected name in the paddock.'},
+  {min:400,    name:'Race Winners',        icon:'🏁', blurb:'A team that knows how to win on its day.'},
+  {min:900,    name:'Title Contenders',    icon:'📈', blurb:'Genuine championship pedigree.'},
+  {min:1800,   name:'Champions',           icon:'🏆', blurb:'A championship-winning organisation.'},
+  {min:3200,   name:'Dynasty Builders',    icon:'👑', blurb:'Sustained success that rivals fear.'},
+  {min:5500,   name:'Dynasty Architects',  icon:'🏛️', blurb:'An era defined by your name.'},
+  {min:9000,   name:'Immortals',           icon:'⭐', blurb:'Among the greatest to ever run a team.'},
+  {min:14000,  name:'Legend of the Sport', icon:'🌟', blurb:'A legacy that will never be matched.'}
+];
+// Fictional all-time benchmarks to chase. These are flavour reference points, not real teams.
+const DYNASTY_LEADERBOARD = [
+  {name:'The Scuderia Era',     score:12400, note:'9 constructor titles across a golden generation'},
+  {name:'Silver Arrows Dynasty',score:9600,  note:'8 straight constructor crowns'},
+  {name:'The Woking Resurgence',score:6100,  note:'rebuilt from the midfield to dominance'},
+  {name:'Maranello Revival',    score:4200,  note:'back-to-back doubles'},
+  {name:'The Enstone Project',  score:2300,  note:'two titles against the odds'},
+  {name:'Grove Underdogs',      score:950,   note:'a fairytale championship run'}
+];
+function computeDynastyRating(careerStats) {
+  const cs = careerStats || {};
+  const seasons = cs.seasons || [];
+  const breakdown = [];
+  let score = 0;
+
+  // Championships — core currency
+  const constrTitles = cs.constructorChampionships || 0;
+  const driverTitles = cs.championships || 0;
+  const constrPts = constrTitles * 350;
+  const driverPts = driverTitles * 180;
+  if(constrPts) breakdown.push({label:`${constrTitles} Constructor Title${constrTitles>1?'s':''}`, pts:constrPts, icon:'🏆'});
+  if(driverPts) breakdown.push({label:`${driverTitles} Drivers' Title${driverTitles>1?'s':''}`, pts:driverPts, icon:'🥇'});
+  score += constrPts + driverPts;
+
+  // Dynasty multiplier — longest streak of consecutive constructor titles compounds.
+  let longestStreak = 0, cur = 0;
+  seasons.forEach(s => { if(s.constructorChamp){ cur++; longestStreak = Math.max(longestStreak, cur); } else cur = 0; });
+  if(longestStreak >= 2){
+    // 2 in a row = +1 streak bonus unit, scaling up. Quadratic-ish so true dynasties stand out.
+    const streakBonus = Math.round(longestStreak * (longestStreak - 1) * 90);
+    breakdown.push({label:`Dynasty streak — ${longestStreak} titles in a row`, pts:streakBonus, icon:'🔥'});
+    score += streakBonus;
+  }
+
+  // Adversity — constructor titles won from a "hard"/backmarker start.
+  const adversityTitles = seasons.filter(s => s.constructorChamp && s.startDifficulty === 'hard').length;
+  if(adversityTitles){
+    const advBonus = adversityTitles * 220;
+    breakdown.push({label:`${adversityTitles} title${adversityTitles>1?'s':''} won against the odds`, pts:advBonus, icon:'🚀'});
+    score += advBonus;
+  }
+
+  // Race craft texture — small per-result so it can't substitute for titles.
+  const winPts = (cs.totalWins || 0) * 8;
+  const podPts = (cs.totalPodiums || 0) * 3;
+  const polePts = (cs.totalPoles || 0) * 2;
+  if(winPts) breakdown.push({label:`${cs.totalWins} race wins`, pts:winPts, icon:'🏁'});
+  if(podPts) breakdown.push({label:`${cs.totalPodiums} podiums`, pts:podPts, icon:'🥉'});
+  if(polePts) breakdown.push({label:`${cs.totalPoles} poles`, pts:polePts, icon:'⚡'});
+  score += winPts + podPts + polePts;
+
+  // Consistency — seasons finishing top 3 in the constructors.
+  const podiumSeasons = seasons.filter(s => (s.position || 99) <= 3).length;
+  if(podiumSeasons){
+    const consPts = podiumSeasons * 40;
+    breakdown.push({label:`${podiumSeasons} top-3 championship finish${podiumSeasons>1?'es':''}`, pts:consPts, icon:'📊'});
+    score += consPts;
+  }
+
+  // Longevity — recognised, but deliberately modest.
+  const longPts = seasons.length * 15;
+  if(longPts) breakdown.push({label:`${seasons.length} seasons of commitment`, pts:longPts, icon:'📅'});
+  score += longPts;
+
+  score = Math.round(score);
+  // Resolve tier + next tier.
+  let tierIdx = 0;
+  for(let i = 0; i < DYNASTY_TIERS.length; i++){ if(score >= DYNASTY_TIERS[i].min) tierIdx = i; }
+  const tier = DYNASTY_TIERS[tierIdx];
+  const nextTier = DYNASTY_TIERS[tierIdx + 1] || null;
+  const tierFloor = tier.min;
+  const tierCeil = nextTier ? nextTier.min : tier.min;
+  const tierProgress = nextTier ? Math.min(100, Math.round(((score - tierFloor) / (tierCeil - tierFloor)) * 100)) : 100;
+
+  breakdown.sort((a,b) => b.pts - a.pts);
+  return { score, tier, tierIdx, nextTier, tierProgress, pointsToNext: nextTier ? (nextTier.min - score) : 0, breakdown, longestStreak };
+}
 function getTeamCombinedReliability(team) {
   const eng = _findEngine(team);
   const engRel = eng ? eng.reliability : 88;
   return (team.reliability || 75) * 0.65 + engRel * 0.35;
 }
+
+// ── RANDOM EVENTS ────────────────────────────────────────────────────────────
+// Mid-season "story moments" that break the predictable race→race→race loop and give
+// long saves the kind of memorable, shareable beats that pure simulation doesn't produce
+// (a factory setback, a sponsor windfall, a driver feud, a rival's protest). Design rules:
+//   • Rare and capped, so they stay special — ~18% per race, never two within 2 races,
+//     and a per-season cap. They are flavour, not a primary mechanic.
+//   • Effects are BOUNDED and route through existing systems (morale, facilities, revenue,
+//     reliability, car) — never save- or economy-breaking, never an instant title-ender.
+//   • Most events are automatic (a news item + a small effect). A few are CHOICE events with
+//     a genuine tradeoff — these are the memorable ones. In batch sim, choice events resolve
+//     automatically (sensible default) so a long sim is never blocked by a modal.
+//   • Context-gated: a dominant team gets different events from a backmarker, so they land.
+//   • All state lives under g._eventState (seeded on demand) — fully save-compatible, no migration.
+const RandomEvents = {
+  CONFIG: { perRaceChance: 0.18, cooldownRaces: 2, perSeasonCap: 4, minRaceIndex: 1 },
+
+  _state(g){
+    if(!g._eventState) g._eventState = { lastRaceIndex: -10, firedThisSeason: 0, lastSeason: g.season, history: [] };
+    if(!Array.isArray(g._eventState.history)) g._eventState.history = [];
+    if(!Number.isFinite(g._eventState.lastRaceIndex)) g._eventState.lastRaceIndex = -10;
+    if(!Number.isFinite(g._eventState.firedThisSeason)) g._eventState.firedThisSeason = 0;
+    if(!Number.isFinite(g._eventState.lastSeason)) g._eventState.lastSeason = g.season;
+    if(g._eventState.lastSeason !== g.season){ g._eventState.lastSeason = g.season; g._eventState.firedThisSeason = 0; }
+    return g._eventState;
+  },
+
+  // Helper effect appliers — all bounded.
+  _adjMorale(g, delta){
+    State.getPlayerDrivers().forEach(d=>{ if(d) d.morale = clamp((d.morale||70)+delta, 25, 99); });
+  },
+  _adjFacilities(g, team, delta){ team.facilities = clamp((team.facilities||70)+delta, 40, 99); },
+  _adjRevenue(g, team, delta){ team.revenue = Math.max(40, (team.revenue||100)+delta); },
+  _adjReliability(g, team, delta){ team.reliability = clamp((team.reliability||75)+delta, 40, 97); },
+  _adjCar(g, team, delta){
+    if(team.components){ COMP_KEYS.forEach(ck=>{ team.components[ck] = clamp((team.components[ck]||70)+delta, 40, 97); }); deriveSubStats(team); }
+    else { team.carPerformance = clamp((team.carPerformance||70)+delta, 40, 97); }
+  },
+
+  // ── EVENT POOL ──────────────────────────────────────────────────────────────
+  // Each: id, weight, condition(ctx)->bool, build(ctx)-> {icon,type,headline,body,
+  //   effect()|choice:{prompt, options:[{label,desc,resolve()->resultNews}]}}
+  POOL: [
+    {
+      id:'wind_tunnel_breakthrough', weight:10,
+      condition:({team})=> (team.facilities||70) < 92,
+      build:({g,team})=>({
+        icon:'🌀', type:'success',
+        auto:()=>{ const amt=randInt(2,4); RandomEvents._adjFacilities(g,team,amt);
+          return `🌀 <strong>Wind tunnel breakthrough.</strong> Your aero department cracked a correlation problem that had been costing development time. Facilities +${amt}.`; }
+      })
+    },
+    {
+      id:'sponsor_windfall', weight:10,
+      condition:({team})=> true,
+      build:({g,team})=>({
+        icon:'💰', type:'success',
+        auto:()=>{ const amt=randInt(8,18); RandomEvents._adjRevenue(g,team,amt);
+          return `💰 <strong>Commercial windfall.</strong> A mid-season activation deal landed better than forecast. Revenue +${formatMoney(amt)} this season.`; }
+      })
+    },
+    {
+      id:'driver_morale_boost', weight:8,
+      condition:()=> true,
+      build:({g})=>({
+        icon:'🎉', type:'success',
+        auto:()=>{ RandomEvents._adjMorale(g,randInt(4,8));
+          return `🎉 <strong>Team morale lifts.</strong> A strong run of operational weekends has the garage buzzing. Driver morale up across the board.`; }
+      })
+    },
+    {
+      id:'supplier_quality_issue', weight:9,
+      condition:({team})=> (team.reliability||75) > 55,
+      build:({g,team})=>({
+        icon:'🔩', type:'warning',
+        auto:()=>{ const amt=randInt(2,4); RandomEvents._adjReliability(g,team,-amt);
+          return `🔩 <strong>Supplier quality issue.</strong> A batch of faulty components slipped through QC. Reliability −${amt} until the parts are replaced.`; }
+      })
+    },
+    {
+      id:'factory_setback', weight:6,
+      condition:({team})=> (team.facilities||70) > 55,
+      build:({g,team})=>({
+        icon:'🏭', type:'warning',
+        auto:()=>{ const amt=randInt(2,3); RandomEvents._adjFacilities(g,team,-amt);
+          return `🏭 <strong>Factory setback.</strong> A flooded sub-basement took key machinery offline for a fortnight. Facilities −${amt} while repairs are made.`; }
+      })
+    },
+    {
+      id:'rival_protest_dominant', weight:8,
+      condition:({g,team,carRank})=> carRank<=2,
+      build:({g,team})=>({
+        icon:'⚖️', type:'info',
+        auto:()=>{ RandomEvents._adjMorale(g,3);
+          return `⚖️ <strong>Rivals protest your car.</strong> Three teams lodged a formal protest over your floor design. The stewards inspected and cleared it — the garage took it as a badge of honour.`; }
+      })
+    },
+    {
+      id:'breakthrough_upgrade', weight:6,
+      condition:({team})=> (team.carPerformance||getTeamOverallCar(team)) < 90,
+      build:({g,team})=>({
+        icon:'📈', type:'success',
+        auto:()=>{ const amt=randFloat(0.8,1.6); RandomEvents._adjCar(g,team,amt);
+          return `📈 <strong>Upgrade overdelivers.</strong> A speculative development package worked even better than the simulations promised. Car performance +${amt.toFixed(1)}.`; }
+      })
+    },
+    {
+      id:'weather_chaos_news', weight:7,
+      condition:()=> true,
+      build:({g})=>({
+        icon:'🌧️', type:'info',
+        auto:()=>`🌧️ <strong>Freak weather strikes the paddock.</strong> A sudden storm flooded the support paddock and forced a schedule reshuffle. No lasting damage — but a weekend nobody will forget.`
+      })
+    },
+
+    // ── CHOICE EVENTS (the memorable ones) ───────────────────────────────────
+    {
+      id:'star_driver_unrest', weight:9, choice:true,
+      condition:({g,drivers})=> drivers.length>0 && drivers.some(d=>(d.rating||0)>=82),
+      build:({g,drivers})=>{
+        const star = drivers.filter(d=>(d.rating||0)>=82).sort((a,b)=>b.rating-a.rating)[0] || drivers[0];
+        return {
+          icon:'😤', type:'warning',
+          choice:{
+            prompt:`<strong>${star.name}</strong> is unhappy with the car's direction and has aired it to the media. The garage is watching how you respond.`,
+            options:[
+              { label:'Back your driver publicly', desc:'Morale recovers, but it costs you — redirecting the programme to their feedback sets development back slightly.',
+                resolve:()=>{ star.morale = clamp((star.morale||70)+12, 25, 99); RandomEvents._adjCar(g, State.getPlayerTeam(), -0.6);
+                  return `🤝 You publicly backed ${star.name}. Morale restored, but reprioritising the programme cost a little car performance.`; } },
+              { label:'Tell them to focus on driving', desc:'Holds your development line, but the driver takes it badly and morale drops.',
+                resolve:()=>{ star.morale = clamp((star.morale||70)-12, 25, 99);
+                  return `🧊 You told ${star.name} to let the engineers work. Development stays on course, but the relationship cooled.`; } }
+            ],
+            // batch-sim default: back the driver (the safer, relationship-preserving choice)
+            autoIndex:0
+          }
+        };
+      }
+    },
+    {
+      id:'risky_innovation', weight:8, choice:true,
+      condition:({team})=> true,
+      build:({g,team})=>({
+        icon:'🧪', type:'info',
+        choice:{
+          prompt:`Your technical director wants to gamble the mid-season budget on an unproven aero concept. It could be a leap forward — or a costly dead end.`,
+          options:[
+            { label:'Greenlight the gamble', desc:'High variance: a real shot at a big step, but it might backfire and cost performance.',
+              resolve:()=>{ if(Math.random()<0.55){ const amt=randFloat(1.4,2.6); RandomEvents._adjCar(g,team,amt); return `🚀 The gamble paid off — the concept worked. Car performance +${amt.toFixed(1)}.`; }
+                else { const amt=randFloat(0.6,1.4); RandomEvents._adjCar(g,team,-amt); return `💸 The concept never came good. Car performance −${amt.toFixed(1)} and a chunk of budget gone.`; } } },
+            { label:'Play it safe', desc:'No risk. A small, dependable gain from conventional development.',
+              resolve:()=>{ const amt=randFloat(0.2,0.6); RandomEvents._adjCar(g,team,amt); return `🔧 You kept development conventional. A steady +${amt.toFixed(1)} car performance, no drama.`; } }
+          ],
+          autoIndex:1
+        }
+      })
+    },
+    {
+      id:'poaching_offer', weight:7, choice:true,
+      condition:({g,team})=> (team.staff && Object.keys(team.staff).length>0),
+      build:({g,team})=>{
+        const roleIds = Object.keys(team.staff);
+        const roleId = roleIds[randInt(0,roleIds.length-1)];
+        const member = team.staff[roleId];
+        const role = (DATA.staffRoles||[]).find(r=>r.id===roleId);
+        return {
+          icon:'🎯', type:'warning',
+          choice:{
+            prompt:`A rival team is trying to poach your ${role?role.name:'key staff member'}${member?`, <strong>${member.name}</strong>`:''}. They want a pay rise to stay.`,
+            options:[
+              { label:'Match the offer', desc:'Keep them — but their salary rises, costing revenue this season.',
+                resolve:()=>{ const cost=randInt(5,10); RandomEvents._adjRevenue(g,team,-cost); if(member) member.salary=(member.salary||4)+1;
+                  return `🤝 You matched the offer and kept ${member?member.name:'your staff member'}. Wage bill up ${formatMoney(cost)}.`; } },
+              { label:'Let them walk', desc:'Save the money, but you lose the staff member and their bonus until you rehire.',
+                resolve:()=>{ if(member){ delete team.staff[roleId]; } 
+                  return `👋 ${member?member.name:'Your staff member'} left for a rival. The role is now vacant — rehire on the Staff page.`; } }
+            ],
+            autoIndex:0
+          }
+        };
+      }
+    }
+  ],
+
+  // Decide whether an event fires this race, pick one, and return a resolved descriptor or null.
+  maybeFire(g, opts){
+    opts = opts || {};
+    const batch = !!opts.batch;
+    try {
+      const st = this._state(g);
+      const ri = g.raceIndex || 0;
+      if(ri < this.CONFIG.minRaceIndex) return null;
+      if(st.firedThisSeason >= this.CONFIG.perSeasonCap) return null;
+      if(ri - st.lastRaceIndex < this.CONFIG.cooldownRaces) return null;
+      if(Math.random() > this.CONFIG.perRaceChance) return null;
+
+      const team = State.getPlayerTeam();
+      if(!team) return null;
+      const drivers = State.getPlayerDrivers() || [];
+      const carRank = [...(g.teams||[])].sort((a,b)=>getTeamOverallCar(b)-getTeamOverallCar(a)).findIndex(t=>t.id===team.id) + 1;
+      const ctx = { g, team, drivers, carRank };
+
+      // Avoid immediately repeating the last event id.
+      const lastId = (st.history[st.history.length-1]||{}).id;
+      const eligible = this.POOL.filter(ev=>{
+        if(ev.id===lastId) return false;
+        try { return ev.condition(ctx); } catch(e){ return false; }
+      });
+      if(!eligible.length) return null;
+
+      const totalW = eligible.reduce((s,e)=>s+(e.weight||1),0);
+      let roll = Math.random()*totalW, chosen=eligible[0];
+      for(const ev of eligible){ roll-=(ev.weight||1); if(roll<=0){ chosen=ev; break; } }
+
+      const built = chosen.build(ctx);
+      st.lastRaceIndex = ri;
+      st.firedThisSeason++;
+      st.history.push({ id:chosen.id, season:g.season, race:ri });
+      if(st.history.length>40) st.history = st.history.slice(-40);
+
+      // CHOICE event
+      if(built.choice){
+        if(batch){
+          // Resolve automatically with the sensible default — never block a batch sim.
+          const opt = built.choice.options[built.choice.autoIndex||0];
+          const resultMsg = opt.resolve();
+          if(!Array.isArray(g.newsFeed)) g.newsFeed = [];
+          g.newsFeed.unshift({ msg:resultMsg, type:built.type||'info', icon:built.icon||'📋', race:ri, ts:Date.now() });
+          return null;
+        }
+        return { kind:'choice', icon:built.icon, type:built.type, choice:built.choice, raceIndex:ri };
+      }
+      // AUTO event
+      const msg = built.auto();
+      if(!Array.isArray(g.newsFeed)) g.newsFeed = [];
+      g.newsFeed.unshift({ msg, type:built.type||'info', icon:built.icon||'📋', race:ri, ts:Date.now() });
+      return null;
+    } catch(e){ console.warn('RandomEvents.maybeFire error:', e); return null; }
+  }
+};
+
 function getEngineContractCost(teamId, manufacturerId) {
   const eng = _liveEngines().find(e => e.id === manufacturerId);
   if(!eng) return 15;
@@ -5235,7 +5646,13 @@ const Sim = {
          : d.trait==='aggressive' ? randFloat(2.0,3.8)  // aggressive drivers struggle on old rubber
          : randFloat(1.2,2.4))                          // others lose a typical 1-2 positions
         : 0;
-      const score = ((_mqCarScore + autoAeroPenalty)/100*55 + (d.qualifying - (d._formDip?d._formDip.qualiPenalty:0))/100*45) + circuitMod + _overdriveVar - _usedTyrePenalty + randNorm(0,2.5);
+      // Outlier weekend: ~11% of the time a driver has a notably scrappy or inspired
+      // qualifying, amplifying their natural swing. This widens race-to-race grid spread
+      // (the over/under-performances real F1 sees) without shifting the season average —
+      // the amplification is symmetric, so a driver's expected grid slot is unchanged
+      // (race-result compression reported by Significant-Care-135).
+      const _qOutlier = Math.random() < 0.11 ? randFloat(1.9, 2.9) : 1;
+      const score = ((_mqCarScore + autoAeroPenalty)/100*55 + (d.qualifying - (d._formDip?d._formDip.qualiPenalty:0))/100*45) + circuitMod + _overdriveVar - _usedTyrePenalty + randNorm(0, 2.5) * _qOutlier;
       entries.push({driverId:d.id,driverName:d.name,teamId:team.id,teamName:team.name,score,dnf:Math.random()<0.02});
     });
     entries.sort((a,b)=>{if(a.dnf&&!b.dnf)return 1;if(!a.dnf&&b.dnf)return -1;return b.score-a.score;});
@@ -5403,8 +5820,13 @@ const Sim = {
       // Weekend form: each driver gets a random weekend offset that persists across the race.
       // This creates race-to-race variance — some weekends a driver just "has it", others they struggle.
       // Scaled so midfield is more variable than the top (elite teams are more consistent weekend-to-weekend).
-      const _weekendFormRange = _circuitCarScore >= 85 ? 0.8 : _circuitCarScore >= 75 ? 1.4 : 2.0;
-      const _weekendForm = randNorm(0, _weekendFormRange);
+      // Ranges nudged up from 0.8/1.4/2.0, and ~11% of weekends are "outliers" that amplify the
+      // swing 1.9-2.9x. Because the swing is symmetric, season-long averages (and the believable
+      // championship hierarchy the player values) are preserved while individual race results spread
+      // out far more — addressing the long-standing "results too compressed" feedback (Significant-Care-135).
+      const _weekendFormRange = _circuitCarScore >= 85 ? 1.0 : _circuitCarScore >= 75 ? 1.7 : 2.4;
+      const _formOutlier = Math.random() < 0.11 ? randFloat(1.9, 2.9) : 1;
+      const _weekendForm = randNorm(0, _weekendFormRange) * _formOutlier;
       // Used tyre quali: saved a fresh set for the race-start compound, whatever the chosen opening stint is.
       const _tyreSaveBonus = (race?._usedTyreQuali?.[driver.id]) ? 1.18 : 1.0;
       const _openingCompound = strategy.opt?.stints?.[0]?.compound || 'medium';
@@ -9639,6 +10061,80 @@ const spons=sumSponsorIncome(g.sponsors||[]);
       g.committedProspects = g.committedProspects.filter(c => c.season > g.season + 1);
     }
 
+    // ── AI INTER-TEAM TRANSFERS — drivers move between teams on ambition ──────
+    // Root-cause fix (reported by red_machine_yuki): the AI market previously only
+    // ever signed FREE AGENTS and prospects, so it had NO way to move a contracted
+    // driver from one team to another. On custom grids — which start with an empty
+    // free-agent pool — that meant the market was completely frozen: every driver
+    // re-signed in place, no one ever moved up or down the grid. Real grids churn
+    // because out-of-contract (and occasionally bought-out) drivers are courted by
+    // stronger rivals. We now run an ambition pass first: stronger AI teams sign
+    // drivers from weaker teams, displacing a weaker driver to free agency and
+    // leaving a vacancy that the existing free-agent / seat-fill passes then resolve.
+    // Player drivers are untouched (they use the poach-attempt system) and all
+    // committed/carried agreements are respected.
+    (function aiInterTeamTransfers(){
+      const carRankOf = t => [...g.teams].sort((a,b)=>getTeamOverallCar(b)-getTeamOverallCar(a)).findIndex(x=>x.id===t.id);
+      const movable = g.drivers.filter(d =>
+        d && !d.retired && !d.isReserve && !d.isProspect && !d.isJunior && !d.isFreeAgent &&
+        d.teamId && d.teamId !== g.playerTeamId &&
+        (d.contract||0) <= 1 &&                       // expired (0) or final year (1, buyout-eligible)
+        !executedMoves.has(d.id) &&
+        !carriedNegotiationDriverIds.has(d.id) &&
+        !(g.committedProspects||[]).some(c=>c.driverId===d.id)
+      );
+      if(!movable.length) return;
+      const suitors = [...g.teams].filter(t=>t.id!==g.playerTeamId)
+        .sort((a,b)=>getTeamOverallCar(b)-getTeamOverallCar(a));
+      const maxMoves = Math.max(2, Math.round(g.teams.length * 0.35)); // organic churn, not a reshuffle
+      let moves = 0;
+      suitors.forEach(suitor=>{
+        if(moves >= maxMoves) return;
+        const suitorCar = getTeamOverallCar(suitor);
+        const suitorRank = carRankOf(suitor);
+        const current = State.getTeamDrivers(suitor.id);
+        const worst = current.length ? current.reduce((w,d)=>(d.rating||0)<(w.rating||0)?d:w, current[0]) : null;
+        const upgradeThreshold = suitorRank <= 2 ? 2 : suitorRank <= 5 ? 4 : 6;
+        const candidates = movable.filter(d=>{
+          if(executedMoves.has(d.id)) return false;
+          if(d.teamId === suitor.id) return false;
+          const fromTeam = State.getTeam(d.teamId);
+          if(!fromTeam) return false;
+          if(getTeamOverallCar(fromTeam) >= suitorCar - 1) return false;      // only move UP the grid
+          const isBuyout = (d.contract||0) >= 1;                              // 1yr left = contract buyout
+          if(isBuyout && suitorRank > 3) return false;                        // only top teams buy out deals
+          const reqGap = upgradeThreshold + (isBuyout ? 3 : 0);
+          if(worst && (d.rating||0) < (worst.rating||0) + reqGap) return false;
+          if(!worst && (d.rating||0) < 68) return false;
+          const affCap = (d.rating>=86? suitor.revenue/9 : d.rating>=78? suitor.revenue/11 : suitor.revenue/13);
+          if((d.salary||0) > affCap) return false;
+          return true;
+        }).sort((a,b)=>(b.rating||0)-(a.rating||0));
+        const target = candidates[0];
+        if(!target) return;
+        if(Math.random() > 0.7) return; // some courted moves fall through — keeps it unpredictable
+        const fromTeam = State.getTeam(target.teamId);
+        if(current.length >= 2 && worst) {
+          worst.teamId=null; worst.contract=0; worst.isFreeAgent=true; worst.isReserve=false;
+          suitor.driverIds=(suitor.driverIds||[]).filter(id=>id!==worst.id);
+          transfers.push({driverName:worst.name,from:suitor.name,to:'Free Agent',teamId:suitor.id,left:true,reason:'released to sign an upgrade'});
+        }
+        if(fromTeam) fromTeam.driverIds=(fromTeam.driverIds||[]).filter(id=>id!==target.id);
+        const fromName = fromTeam ? fromTeam.name : 'Free Agent';
+        target.teamId=suitor.id; target.contract=randInt(2,3); target.isReserve=false;
+        target.isFreeAgent=false; target.isProspect=false; target.prospectSeries=null;
+        target.salary=State.getDriverDemandSalary?State.getDriverDemandSalary(target,'signing'):target.salary;
+        target.morale=clamp((target.morale||70)+12,55,95);
+        if(!suitor.driverIds) suitor.driverIds=[];
+        if(!suitor.driverIds.includes(target.id)) suitor.driverIds.push(target.id);
+        executedMoves.add(target.id);
+        transfers.push({driverName:target.name,from:fromName,to:suitor.name,teamId:suitor.id,rating:Math.round(target.rating||0),reason:'signed from a rival'});
+        if(!g.newsFeed) g.newsFeed=[];
+        g.newsFeed.unshift({type:'transfers',icon:'🔁',msg:`🔁 <strong>${target.name}</strong> switches from <strong>${fromName}</strong> to <strong>${suitor.name}</strong> for ${nextSeason}.`,season:nextSeason,ts:Date.now()});
+        moves++;
+      });
+    })();
+
     // ── AI POACHING — top teams upgrade if a better free agent exists ──
     // Sort teams by prestige so top teams get first pick
     const teamsInOrder=[...g.teams].sort((a,b)=>b.prestige-a.prestige);
@@ -10829,6 +11325,9 @@ const spons=sumSponsorIncome(g.sponsors||[]);
         ceil.reliability = Math.max(ceil.reliability,  eng.reliability);
       }
     });
+    // Lock in the developed power/ERS as the new monotonic high-water mark so no
+    // later reset path can revert this engine below where it has genuinely reached.
+    _recordEngineHighWater(g.engineManufacturers);
     // Tick engine contracts; auto-renew AI teams, flag player
     if(g.teams) g.teams.forEach(t => {
       if(t.engineContractYears===undefined) t.engineContractYears = 3;
@@ -10923,30 +11422,67 @@ const spons=sumSponsorIncome(g.sponsors||[]);
     const lastWins = (g.careerStats?.seasons?.slice(-1)[0]?.wins) || 0;
     const totalSeasons = g.careerStats?.seasons?.length || 0;
     const objPool = [];
-    // Position-based (always 1 easy, scaled to last result)
-    if(lastPos <= 3) {
+    // Car competitiveness — objectives must be reachable with the car you actually
+    // have. Previously goals scaled only to last year's table position and wins, so a
+    // backmarker that finished P9 was handed "Finish top 5 + win a race + 3 poles" —
+    // physically impossible with that package (reported by darkredenchanter13). We now
+    // gate win/pole/podium goals behind a realistic car rank and give the lower order
+    // achievable, motivating targets (out-perform the car, score points, points totals).
+    const _gridSize = g.teams.length || 11;
+    const _carRank = playerTeamForObj
+      ? ([...g.teams].sort((a,b)=>getTeamOverallCar(b)-getTeamOverallCar(a)).findIndex(t=>t.id===playerTeamForObj.id) + 1)
+      : Math.min(_gridSize, Math.max(1, lastPos));
+    const canWin    = _carRank <= 5;
+    const canPole   = _carRank <= 6;
+    const canPodium = _carRank <= 7;
+    // Position-based — scaled to the car, not just last year's finish
+    if(_carRank <= 3) {
       objPool.push({id:'win_title',label:'Win the Constructors Championship',type:'position',target:1,reward:80,difficulty:'hard',icon:'🏆'});
-      // Only add pos_top2 as a fallback medium goal - mark it so we exclude it if win_title is already chosen
       objPool.push({id:'pos_top2',label:'Finish P2 or better in Constructors',type:'position',target:2,reward:60,difficulty:'medium',icon:'🥈',_excludeIfId:'win_title'});
-    } else if(lastPos <= 6) {
+    } else if(_carRank <= 6) {
       objPool.push({id:'pos_top3',label:'Finish top 3 in Constructors',type:'position',target:3,reward:45,difficulty:'hard',icon:'🏆'});
       objPool.push({id:'pos_top5',label:'Finish top 5 in Constructors',type:'position',target:5,reward:28,difficulty:'medium',icon:'📈'});
     } else {
-      objPool.push({id:'pos_top5',label:'Finish top 5 in Constructors',type:'position',target:5,reward:28,difficulty:'hard',icon:'🏆'});
-      objPool.push({id:'pos_top8',label:'Finish top 8 in Constructors',type:'position',target:8,reward:18,difficulty:'medium',icon:'📈'});
+      // Lower midfield / backmarker — reward OUT-PERFORMING the car, not leaping the grid
+      const hardPos = clamp(_carRank - 2, 1, _gridSize);
+      const medPos  = clamp(_carRank - 1, 1, _gridSize);
+      const easyPos = clamp(_carRank,     1, _gridSize);
+      objPool.push({id:'pos_overperform',label:`Finish P${hardPos} or better in Constructors`,type:'position',target:hardPos,reward:32,difficulty:'hard',icon:'🏆'});
+      objPool.push({id:'pos_beatcar',label:`Finish P${medPos} or better in Constructors`,type:'position',target:medPos,reward:20,difficulty:'medium',icon:'📈'});
+      objPool.push({id:'pos_hold',label:`Finish P${easyPos} or better in Constructors`,type:'position',target:easyPos,reward:12,difficulty:'easy',icon:'🎯'});
     }
-    // Win-based
-    const winTarget = lastWins >= 5 ? 8 : lastWins >= 2 ? 5 : lastWins >= 1 ? 3 : 1;
-    objPool.push({id:'wins',label:`Achieve ${winTarget} race win${winTarget>1?'s':''}`,type:'wins',target:winTarget,reward:winTarget*6+12,difficulty:winTarget>=5?'hard':'medium',icon:'🏁'});
-    // Podiums — always achievable
-    const podTarget = Math.max(3, lastPos <= 5 ? 10 : 5);
-    objPool.push({id:'podiums',label:`Earn ${podTarget} podiums this season`,type:'podiums',target:podTarget,reward:podTarget*3+8,difficulty:'medium',icon:'🥉'});
-    // Poles — easy goal
-    objPool.push({id:'poles',label:'Secure at least 3 pole positions',type:'poles',target:3,reward:15,difficulty:'easy',icon:'⚡'});
-    // Legacy milestone
+    // Win-based — only cars that can realistically win
+    if(canWin) {
+      const winTarget = lastWins >= 5 ? 8 : lastWins >= 2 ? 5 : lastWins >= 1 ? 3 : (_carRank<=3?2:1);
+      objPool.push({id:'wins',label:`Achieve ${winTarget} race win${winTarget>1?'s':''}`,type:'wins',target:winTarget,reward:winTarget*6+12,difficulty:winTarget>=5?'hard':'medium',icon:'🏁'});
+    }
+    // Podiums — gated; backmarkers get points-based goals instead
+    if(canPodium) {
+      const podTarget = _carRank<=3 ? 10 : _carRank<=5 ? 6 : 3;
+      objPool.push({id:'podiums',label:`Earn ${podTarget} podium${podTarget>1?'s':''} this season`,type:'podiums',target:podTarget,reward:podTarget*3+8,difficulty:'medium',icon:'🥉'});
+    }
+    // Poles — only capable cars
+    if(canPole) {
+      const poleTarget = _carRank<=3 ? 4 : 2;
+      objPool.push({id:'poles',label:`Secure at least ${poleTarget} pole position${poleTarget>1?'s':''}`,type:'poles',target:poleTarget,reward:poleTarget*5+5,difficulty:'easy',icon:'⚡'});
+    }
+    // Points / consistency — the achievable backbone for the lower order (uses the
+    // already-supported 'points' and 'top10s' objective types)
+    {
+      const totalRacesEst = (g.calendar||[]).length || 24;
+      const top10Target = _carRank<=4 ? Math.round(totalRacesEst*0.7)
+                        : _carRank<=6 ? Math.round(totalRacesEst*0.45)
+                        : _carRank<=8 ? Math.max(4, Math.round(totalRacesEst*0.25))
+                        : Math.max(2, Math.round(totalRacesEst*0.12));
+      objPool.push({id:'top10s',label:`Score points in ${top10Target} race${top10Target>1?'s':''}`,type:'top10s',target:top10Target,reward:Math.round(top10Target*1.5)+10,difficulty:_carRank>=7?'medium':'easy',icon:'🔟'});
+      const ptsTarget = _carRank<=3 ? 400 : _carRank<=5 ? 250 : _carRank<=7 ? 120 : _carRank<=9 ? 50 : 20;
+      objPool.push({id:'points',label:`Score ${ptsTarget}+ constructor points`,type:'points',target:ptsTarget,reward:Math.round(ptsTarget*0.08)+10,difficulty:_carRank>=8?'hard':'medium',icon:'📊'});
+    }
     // Rookie season — special goal
-    if(totalSeasons === 0) {
+    if(totalSeasons === 0 && canWin) {
       objPool.push({id:'first_win',label:'Win your first race',type:'wins',target:1,reward:40,difficulty:'medium',icon:'🎯'});
+    } else if(totalSeasons === 0) {
+      objPool.push({id:'first_points',label:'Score your first championship points',type:'top10s',target:1,reward:30,difficulty:'easy',icon:'🎯'});
     }
     // Pick 3: always include one easy, one medium, one hard if possible
     const easy   = objPool.filter(o=>o.difficulty==='easy');
@@ -11162,6 +11698,7 @@ const sBrands=['Microsoft','Google','Amazon','Apple','Samsung','Sony','Intel','A
         try { Sim.generateRivalNews(race, race.raceResult||[]); } catch(ne){ console.warn('News error race '+g.raceIndex+':',ne); }
         try { GameActions.resolveNegotiations(); } catch(ne){ console.warn('Negotiation resolve error:',ne); }
         g.raceIndex++;
+        try { RandomEvents.maybeFire(g, {batch:true}); } catch(ne){ console.warn('event error:',ne); }
         GameActions.applyPendingUpgrades(g.raceIndex-1);
       } catch(e) {
         console.error('Sim error at race '+g.raceIndex+' ('+race?.name+'):', e);
@@ -11657,7 +12194,11 @@ const Storage = {
       }
       return merged;
     });
-    // Patch teams for new fields — also sync driverIds with actual driver teamId assignments
+    // Seed the monotonic high-water mark from the reconciled live values, the recovery
+    // ceiling and the saved snapshots. This repairs existing saves exhibiting the Audi
+    // PU revert on the very next read, and locks the true developed peak going forward.
+    if(!g._engineHighWater) g._engineHighWater = {};
+    _recordEngineHighWater(g.engineManufacturers);
     const _restoreLoanedIds = new Set((g.academy?.loans||[]).map(l=>l.driverId));
     const _restoreLoanBenchedIds = new Set((g.academy?.loans||[]).map(l=>l.replacedDriverId).filter(Boolean));
     if(g.teams) g.teams.forEach(t=>{
@@ -11871,13 +12412,13 @@ const Storage = {
               if(t.components && u.componentGroup === 'mechanical') {
                 const mechComps = COMP_GROUPS.mechanical || [];
                 const mechFocus = u.componentFocus || 'balanced';
-                const mechGain = Math.abs(relVal) * 0.35;
+                const mechGain = Math.abs(relVal) * 0.85;
                 if(mechFocus === 'balanced') {
                   mechComps.forEach(ck => { t.components[ck] = clamp((t.components[ck]||70) + mechGain / Math.max(1, mechComps.length), 40, 99); });
                 } else if(mechComps.includes(mechFocus)) {
                   const others = mechComps.filter(ck => ck !== mechFocus);
-                  t.components[mechFocus] = clamp((t.components[mechFocus]||70) + mechGain * 0.70, 40, 99);
-                  others.forEach(ck => { t.components[ck] = clamp((t.components[ck]||70) + mechGain * (0.30 / Math.max(1, others.length)), 40, 99); });
+                  t.components[mechFocus] = clamp((t.components[mechFocus]||70) + mechGain * 0.72, 40, 99);
+                  others.forEach(ck => { t.components[ck] = clamp((t.components[ck]||70) + mechGain * (0.28 / Math.max(1, others.length)), 40, 99); });
                 }
                 deriveSubStats(t);
               }
@@ -18604,7 +19145,8 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       }).join('');
       c.innerHTML='<div style="margin-bottom:6px">'
         +'<div style="display:grid;grid-template-columns:48px 1fr 1fr auto;gap:4px;padding:4px 8px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--tx3)">'
-        +'<div></div><div>🥇 Driver</div><div>🏆 Constructor</div><div>Pts</div></div></div>'
+        +'<div></div><div>🥇 Driver</div><div>🏆 Constructor</div><div>Pts</div></div>'
+        +'<div style="padding:2px 8px 4px;font-size:10px;color:var(--tx3)">Tap any season to see the full Drivers\u2019 and Constructors\u2019 points tables for that year.</div></div>'
         +'<div class="champ-list">'+rows+'</div>';
       return;
     }
@@ -18707,7 +19249,65 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       const injTotal = (State.game.injuries||[]).length;
       const injRows = (State.game.injuries||[]).filter(inj=>inj.teamId===State.game.playerTeamId).slice(0,20).map(inj=>`
         <div style="font-size:12px;color:var(--tx2);padding:4px 0;border-bottom:1px solid var(--bd)">${inj.driverName||'?'} — ${inj.reason||'injury'}</div>`).join('');
-      c.innerHTML = '<div style="background:var(--bg2);border:1px solid var(--bd);border-radius:12px;padding:18px;margin-bottom:14px">'
+
+      // ── Dynasty Rating hero panel ──────────────────────────────────────────
+      const dr = computeDynastyRating(cs);
+      const teamColor = (team && team.color) || 'var(--amber)';
+      const breakdownRows = dr.breakdown.map(b =>
+        '<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--bd);font-size:12px">'
+          +'<span style="flex-shrink:0">'+b.icon+'</span>'
+          +'<span style="flex:1;color:var(--tx2)">'+b.label+'</span>'
+          +'<span style="font-weight:800;font-family:var(--fm);color:var(--tx)">+'+b.pts.toLocaleString()+'</span>'
+        +'</div>').join('');
+      // Build a combined, ranked leaderboard with the player's current dynasty slotted in.
+      const lbEntries = DYNASTY_LEADERBOARD.map(e=>({...e, isPlayer:false}))
+        .concat([{name:(team?team.name:'Your Dynasty')+' (You)', score:dr.score, note:dr.tier.name, isPlayer:true}])
+        .sort((a,b)=>b.score-a.score);
+      const playerRank = lbEntries.findIndex(e=>e.isPlayer)+1;
+      const lbRows = lbEntries.map((e,i)=>
+        '<div style="display:flex;align-items:center;gap:10px;padding:7px 8px;border-radius:6px;'+(e.isPlayer?'background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.35)':'')+'">'
+          +'<span style="font-family:var(--fm);font-weight:800;color:var(--tx3);width:22px;flex-shrink:0">'+(i+1)+'</span>'
+          +'<div style="flex:1;min-width:0"><div style="font-weight:'+(e.isPlayer?'800':'600')+';font-size:12px;'+(e.isPlayer?'color:#b45309':'color:var(--tx)')+';white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+e.name+'</div>'
+            +'<div style="font-size:10px;color:var(--tx3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+e.note+'</div></div>'
+          +'<span style="font-family:var(--fm);font-weight:800;font-size:13px;color:var(--tx)">'+e.score.toLocaleString()+'</span>'
+        +'</div>').join('');
+      const progressLabel = dr.nextTier
+        ? dr.pointsToNext.toLocaleString()+' to '+dr.nextTier.icon+' '+dr.nextTier.name
+        : 'Maximum prestige reached';
+      const heroPanel =
+        '<div style="background:linear-gradient(135deg, var(--bg2), var(--bg3));border:1px solid var(--bd);border-radius:14px;padding:20px;margin-bottom:14px;position:relative;overflow:hidden">'
+          +'<div style="position:absolute;top:-30px;right:-20px;font-size:140px;opacity:.06;line-height:1">'+dr.tier.icon+'</div>'
+          +'<div style="position:relative">'
+            +'<div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:6px">Dynasty Rating</div>'
+            +'<div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap">'
+              +'<div style="font-size:46px;font-weight:900;line-height:1;color:var(--tx);font-family:var(--fm)">'+dr.score.toLocaleString()+'</div>'
+              +'<div><div style="font-size:18px;font-weight:900;color:'+teamColor+'">'+dr.tier.icon+' '+dr.tier.name+'</div>'
+                +'<div style="font-size:11px;color:var(--tx3);margin-top:1px">'+dr.tier.blurb+'</div></div>'
+            +'</div>'
+            // progress bar to next tier
+            +'<div style="margin-top:16px">'
+              +'<div style="display:flex;justify-content:space-between;font-size:10px;color:var(--tx3);margin-bottom:5px"><span>'+dr.tier.name+'</span><span>'+progressLabel+'</span></div>'
+              +'<div style="height:8px;background:var(--bd);border-radius:5px;overflow:hidden"><div style="height:100%;width:'+dr.tierProgress+'%;background:linear-gradient(90deg,'+teamColor+',var(--amber));border-radius:5px;transition:width .4s"></div></div>'
+            +'</div>'
+          +'</div>'
+        +'</div>'
+        // Breakdown + leaderboard, two columns on wide screens
+        +'<div style="display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:14px" class="dynasty-rating-cols">'
+          +'<div style="background:var(--bg2);border:1px solid var(--bd);border-radius:12px;padding:16px">'
+            +'<div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);margin-bottom:8px">How your rating is built</div>'
+            +(breakdownRows||'<div style="font-size:12px;color:var(--tx3)">Win races and championships to build your rating.</div>')
+          +'</div>'
+          +'<div style="background:var(--bg2);border:1px solid var(--bd);border-radius:12px;padding:16px">'
+            +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">'
+              +'<div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--tx3)">All-Time Dynasties</div>'
+              +'<div style="font-size:10px;color:var(--tx3)">You\u2019re #'+playerRank+'</div>'
+            +'</div>'
+            +'<div style="display:flex;flex-direction:column;gap:3px">'+lbRows+'</div>'
+            +'<div style="font-size:9px;color:var(--tx3);margin-top:8px;font-style:italic">Historical benchmarks to chase.</div>'
+          +'</div>'
+        +'</div>';
+
+      c.innerHTML = heroPanel + '<div style="background:var(--bg2);border:1px solid var(--bd);border-radius:12px;padding:18px;margin-bottom:14px">'
         +'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px">'
           +'<div style="text-align:center;background:var(--bg3);border-radius:8px;padding:10px"><div style="font-size:28px;font-weight:900;color:'+(cs.championships>0?'var(--amber)':'var(--tx)')+'">'+cs.championships+'</div><div style="font-size:9px;color:var(--tx3);margin-top:2px">Driver Titles</div></div>'
           +'<div style="text-align:center;background:var(--bg3);border-radius:8px;padding:10px"><div style="font-size:28px;font-weight:900;color:'+(cs.constructorChampionships>0?'var(--amber)':'var(--tx)')+'">'+cs.constructorChampionships+'</div><div style="font-size:9px;color:var(--tx3);margin-top:2px">Constructor Titles</div></div>'
@@ -19444,8 +20044,40 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       });
     });
 
-    // Legacy score gain this season
-
+    // Dynasty Rating — show this season's gain in the recap (the "one more season" hook).
+    // careerStats already includes the just-completed season here, so reconstruct the prior
+    // rating by recomputing against all-but-the-last season.
+    let _drStrip = '';
+    try {
+      const _csNow = cs || {seasons:[]};
+      const _drNow = computeDynastyRating(_csNow);
+      const _priorSeasons = (_csNow.seasons||[]).slice(0,-1);
+      const _lastS = (_csNow.seasons||[])[(_csNow.seasons||[]).length-1] || {};
+      // Reconstruct prior totals by subtracting the just-completed season's contributions.
+      const _priorCs = {
+        seasons: _priorSeasons,
+        totalWins: Math.max(0,(_csNow.totalWins||0)-(_lastS.wins||0)),
+        totalPodiums: Math.max(0,(_csNow.totalPodiums||0)-(_lastS.podiums||0)),
+        totalPoles: Math.max(0,(_csNow.totalPoles||0)-(_lastS.poles||0)),
+        championships: Math.max(0,(_csNow.championships||0)-(_lastS.driverChamp?1:0)),
+        constructorChampionships: Math.max(0,(_csNow.constructorChampionships||0)-(_lastS.constructorChamp?1:0))
+      };
+      const _drPrior = computeDynastyRating(_priorCs);
+      const _gain = Math.max(0, _drNow.score - _drPrior.score);
+      const _tieredUp = _drNow.tierIdx > _drPrior.tierIdx;
+      _drStrip =
+        '<div style="background:linear-gradient(135deg,var(--bg3),var(--bg2));border:1px solid var(--bd);border-radius:10px;padding:12px 14px;margin-bottom:16px;display:flex;align-items:center;gap:12px">'
+          +'<div style="font-size:30px;line-height:1">'+_drNow.tier.icon+'</div>'
+          +'<div style="flex:1;min-width:0">'
+            +'<div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--tx3)">Dynasty Rating</div>'
+            +'<div style="font-size:17px;font-weight:900;color:var(--tx);font-family:var(--fm)">'+_drNow.score.toLocaleString()
+              +(_gain>0?' <span style="font-size:12px;color:var(--grn);font-weight:800">+'+_gain.toLocaleString()+'</span>':'')+'</div>'
+            +(_tieredUp
+              ? '<div style="font-size:11px;font-weight:800;color:var(--amber);margin-top:1px">⬆ New rank: '+_drNow.tier.name+'!</div>'
+              : '<div style="font-size:11px;color:var(--tx3);margin-top:1px">'+_drNow.tier.name+(_drNow.nextTier?' · '+_drNow.pointsToNext.toLocaleString()+' to '+_drNow.nextTier.name:'')+'</div>')
+          +'</div>'
+        +'</div>';
+    } catch(e) { _drStrip=''; }
 
     // Stat improvements from drivers
     const driverRows = (snap.drivers||[]).map(d=>`
@@ -19499,6 +20131,8 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
         <div style="font-size:22px;font-weight:900;margin-bottom:16px">${team.name} · ${season}</div>
 
         ${champBanner}
+
+        ${_drStrip}
 
         <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px">
           <div style="background:var(--bg3);border-radius:8px;padding:10px;text-align:center">
@@ -19675,6 +20309,59 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     document.body.appendChild(el);
   },
 
+  // Present a random CHOICE event as a modal overlay. The player's selection resolves the
+  // event, pushes a result news item, refreshes the dashboard, and closes. Auto events never
+  // reach here — they only post to the news feed.
+  showEventModal(desc){
+    if(!desc || !desc.choice) return;
+    const g = State.game;
+    const existing = document.getElementById('event-modal-overlay');
+    if(existing) existing.remove();
+    const ch = desc.choice;
+    const el = document.createElement('div');
+    el.id = 'event-modal-overlay';
+    el.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:2100;display:flex;align-items:center;justify-content:center;padding:16px;animation:fadeIn .2s ease';
+    const optionsHtml = ch.options.map((o,i)=>`
+      <button class="event-opt" data-idx="${i}" style="display:block;width:100%;text-align:left;background:var(--bg3);border:1px solid var(--bd);border-radius:10px;padding:13px 14px;margin-bottom:8px;cursor:pointer;transition:border-color .15s">
+        <div style="font-size:13px;font-weight:800;color:var(--tx);margin-bottom:3px">${o.label}</div>
+        <div style="font-size:11px;color:var(--tx3);line-height:1.45">${o.desc}</div>
+      </button>`).join('');
+    el.innerHTML = `
+      <div style="background:var(--bg2);border-radius:16px;width:100%;max-width:440px;max-height:90dvh;overflow-y:auto;padding:22px;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.4);border:1px solid var(--bd)">
+        <div style="font-size:38px;line-height:1;margin-bottom:8px">${desc.icon||'📋'}</div>
+        <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--tx3);margin-bottom:8px">Paddock Event</div>
+        <div style="font-size:14px;color:var(--tx2);line-height:1.55;margin-bottom:18px">${ch.prompt}</div>
+        <div id="event-result" style="display:none"></div>
+        <div id="event-options">${optionsHtml}</div>
+      </div>`;
+    document.body.appendChild(el);
+    el.querySelectorAll('.event-opt').forEach(btn=>{
+      btn.addEventListener('mouseover',()=>btn.style.borderColor='var(--red)');
+      btn.addEventListener('mouseout',()=>btn.style.borderColor='var(--bd)');
+      btn.addEventListener('click',()=>{
+        const idx = parseInt(btn.dataset.idx,10);
+        const opt = ch.options[idx];
+        let resultMsg = '';
+        try { resultMsg = opt.resolve(); } catch(e){ console.warn('event resolve error:',e); resultMsg='Decision made.'; }
+        try {
+          if(!Array.isArray(g.newsFeed)) g.newsFeed = [];
+          g.newsFeed.unshift({ msg:resultMsg, type:desc.type||'info', icon:desc.icon||'📋', race:desc.raceIndex, ts:Date.now() });
+        } catch(e){}
+        try { Storage.autosave(); } catch(e){}
+        // Show the outcome inline, then let the player dismiss.
+        const resEl = el.querySelector('#event-result');
+        const optsEl = el.querySelector('#event-options');
+        if(optsEl) optsEl.style.display='none';
+        if(resEl){
+          resEl.style.display='block';
+          resEl.innerHTML = `
+            <div style="background:var(--bg3);border:1px solid var(--bd);border-radius:10px;padding:14px;font-size:13px;color:var(--tx2);line-height:1.55;margin-bottom:14px">${resultMsg}</div>
+            <button class="btn btn-red" style="width:100%" onclick="(function(){const o=document.getElementById('event-modal-overlay');if(o)o.remove();UI.renderDashboard();})()">Continue</button>`;
+        }
+      });
+    });
+  },
+
   showFiredScreen(){
     const g=State.game, team=State.getPlayerTeam();
     const snap=g.lastSeasonSnapshot||{};
@@ -19720,7 +20407,12 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       </div>`;
 
     if(isBottomTeam) {
-      // Career over — no one wants a manager who ran the worst team into the ground
+      // Career over — no one wants a manager who ran the worst team into the ground.
+      // Mark the save terminal so it cannot be resumed as the fired team: the begin-season
+      // guard keeps _awaitingJobChoice set, and endCareer() clears the autosave slot so the
+      // player genuinely returns to the menu rather than silently continuing (Snappers5).
+      g._careerOver = true;
+      Storage.autosave();
       const seasonsPlayed = (g.careerStats?.seasons?.length) || 1;
       const totalWins = g.careerStats?.totalWins || 0;
       const totalChamps = g.careerStats?.championships || 0;
@@ -19728,7 +20420,7 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       document.getElementById('offseason-summary').innerHTML = headerHtml + `
         <div style="padding:14px;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;margin-bottom:14px;text-align:center">
           <div style="font-size:14px;font-weight:800;color:var(--red);margin-bottom:6px">No team is willing to hire you.</div>
-          <div style="font-size:12px;color:var(--tx2);line-height:1.6">After finishing at the bottom of the grid, no team principal position is available. Your reputation in the paddock is spent.</div>
+          <div style="font-size:12px;color:var(--tx2);line-height:1.6">After finishing at the bottom of the grid, no team principal position is available. Your reputation in the paddock is spent. This career has ended.</div>
         </div>
         <div style="padding:12px;background:var(--bg3);border-radius:8px;margin-bottom:14px">
           <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--tx3);margin-bottom:8px">Career Summary</div>
@@ -19739,7 +20431,7 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
             <div style="text-align:center"><div style="font-size:20px;font-weight:900">${totalConstrChamps}</div><div style="font-size:10px;color:var(--tx3)">Constructor Titles</div></div>
           </div>
         </div>
-        <button class="btn" style="width:100%;margin-top:4px;background:var(--red);color:#fff;border:none" onclick="UI.showPage('landing')">Return to Main Menu</button>`;
+        <button class="btn" style="width:100%;margin-top:4px;background:var(--red);color:#fff;border:none" onclick="UI.endCareer()">End Career & Return to Main Menu</button>`;
     } else {
       // Mid/top team fired — get offers from teams below
       const offerPool=standings.filter(s=>s.team.id!==team.id).slice(-6);
@@ -19784,6 +20476,20 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     document.getElementById('offseason-transfers').innerHTML='';
     document.getElementById('offseason-team-actions').innerHTML='';
     this.showPage('offseason');
+  },
+
+  // Terminal end-of-career for a bottom-team sacking. Deletes the now-unplayable save
+  // slot so it cannot be reloaded straight back into the fired-but-managing state, then
+  // returns to the landing page. (Fix for Snappers5: a fired bottom-team career could
+  // otherwise be resumed indefinitely with no offers ever arriving.)
+  endCareer(){
+    try {
+      const slot = Storage._currentSlot();
+      if(slot !== -1) Storage.deleteGame(slot);
+    } catch(e) { console.warn('endCareer cleanup error:', e); }
+    State.game = null;
+    this.showPage('landing');
+    if(typeof this.renderLanding === 'function') this.renderLanding();
   },
 
   acceptNewTeamOffer(newTeamId){
@@ -20310,8 +21016,19 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const html=`
       <div style="max-height:85vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.5.3 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.5.4 · Release Notes</div>
         ${[
+    ['v2.5.4','June 2026',[
+            '✨ Random paddock events — mid-season story moments that break up the race-to-race rhythm and give long careers memorable, unpredictable beats. Most are automatic and post to the Paddock News feed with a small bounded effect (a wind-tunnel breakthrough, a commercial windfall, a supplier quality issue, a rival protest against a dominant car). A handful are decision events that pop a modal with a real tradeoff: back an unhappy star driver publicly (morale up, development nudged back) or tell them to focus on driving (development holds, relationship cools); gamble the mid-season budget on an unproven aero concept (high variance) or play it safe (small steady gain); match a rival\u2019s offer to keep poached staff or let them walk. Events are deliberately rare and capped (roughly one every few races, never two in a row, a handful per season) so they stay special, every effect is bounded so nothing is save- or economy-breaking, and they\u2019re context-gated so a backmarker and a front-runner see different events. During batch sims (Sim Quarter / Half / Rest of Season) decision events resolve automatically with a sensible default so a long sim is never interrupted. Fully save-compatible — no migration needed.',
+            '✨ Dynasty Rating — a new legacy score for long careers, on the History → Dynasty tab. A single cumulative rating grows across your whole save and maps to named prestige tiers (Privateer → Race Winners → Champions → Dynasty Architects → Legend of the Sport). Crucially it is fully legible: a breakdown panel shows exactly where every point comes from, so it is never an opaque number. Championships are the core currency, consecutive constructor titles compound into a dynasty multiplier (sustained dominance is worth far more than scattered one-offs), titles won from a backmarker start earn an adversity bonus, and race wins/poles/longevity add texture. Your rating is ranked against fictional all-time benchmark dynasties so there is always a higher rung to chase, and the season recap now shows your rating ticking up (and any rank-up) at the end of every year. Computed purely from your existing career stats, so it works retroactively on all saves with no migration. (An earlier Legacy Score was removed in v1.7 for being opaque and complex — this rebuild is deliberately legible, tiered, and chase-driven to address exactly that.)',
+            '🐛 Fired but the game lets you keep managing anyway: a sacked manager could be told "no team is interested" and yet simply click Begin Season to carry on running the very team that fired them — permanently, with no further job offers ever arriving (reported by Snappers5). Root cause: Begin Season never checked the fired state, so the forced job-choice screen could be bypassed by navigating away from it. Begin Season now hard-blocks while a job decision is outstanding and re-routes to the job screen. Additionally, a bottom-team sacking (which is designed to END the career) is now properly terminal — it clears the unplayable save and returns to the main menu via a dedicated "End Career" action, instead of leaving a fired-but-managing save that could be reloaded and continued. Existing stuck saves are caught on load and shown the correct job-choice / career-over screen.',
+            '🐛 Audi (and any) Power Unit never improving — root cause fixed at last: the engine card and the race simulation both read PU ratings through one shared accessor, and a save-state desync could revert that accessor to the Season-1 DATA defaults (Audi 82/80/76) even after years of development — so the engine did not just *look* stuck, it *performed* stuck, while the breakthrough note still quoted the developed numbers. Previous fixes reconciled the symptom against a mutable season-start snapshot in three different places, but that snapshot could itself be overwritten with the reverted value. Engine power/ERS only ever climb across a save (regulations never touch manufacturer PUs), so the game now keeps a monotonic high-water mark per manufacturer and enforces it at the single read path the UI and the simulation share. No reset path can revert an engine below where it has genuinely developed; existing saves self-repair on load (reported across many versions by GCN_09, Leo3409, ScotOfTheDay, Competitive_Care8189, JDoyle47, gsx512, ImBuckAndWeGonFuck, obonnor, puchunz, Alsh_phoenix, and most recently Delicious_Media5273).',
+            '🐛 AI teams never making transfers — driver market frozen on custom grids: the AI signing logic could only ever pull from the FREE-AGENT pool and prospects, with no mechanism to move a contracted driver between teams. On custom grids, which start with an empty free-agent pool, that meant every driver re-signed in place forever — no one moved up or down the grid. Added an ambition-driven inter-team transfer pass: stronger teams now court out-of-contract (and occasionally bought-out) drivers from weaker teams, displacing a weaker driver and creating cascading vacancies the existing seat-fill resolves. Player drivers are untouched (they keep the poach-approach system) and all committed/carried agreements are respected (reported by red_machine_yuki).',
+            '🐛 Mechanical development did nothing for the parts: investing the reliability budget while focusing a single mechanical component (e.g. sidepods) improved the reliability stat but left chassis/sidepods/suspension visually unchanged, while aero development worked fine. Reliability is the only player lever that develops the mechanical group, and its component conversion was a tiny trickle that vanished into sub-stat re-averaging. The conversion is now large enough to be clearly visible and biased harder toward the focused part, while still costing more car-performance-per-$ than a dedicated aero package so it is not a backdoor car upgrade (reported by Due_Woodpecker_7547, confirmed by Historical-Trouble16).',
+            '⚖️ Unreasonable board objectives for backmarker teams: a team that finished P9 could be handed "Finish top 5 + win a race + 3 poles" — physically impossible with that car — because the offseason objective generator scaled only to last year\'s table position, not to the car you actually have. Objectives are now car-aware: win, pole and podium goals only appear for cars realistically capable of them, and the lower order instead gets motivating, achievable targets — out-performing the car by a place or two, scoring points in a set number of races, and points totals scaled to the package (reported by darkredenchanter13).',
+            '⚖️ Race results felt too compressed weekend-to-weekend: even with believable season standings, individual races settled into predictable finishing brackets. Added a symmetric "outlier weekend" mechanic to both qualifying and race pace — ~11% of weekends amplify a driver\'s natural swing — plus a modest bump to weekend-form variance. Because the swings are symmetric, season-long averages and the championship hierarchy are preserved, but individual weekends spread out far more, giving the occasional surprise grid slot or scrappy/inspired race the previous model rarely produced (reported by Significant-Care-135).',
+            '✨ History — full season points easier to find: the Champions list now makes clear that tapping any past season opens the complete Drivers\u2019 and Constructors\u2019 points tables for that year, so you can see every driver\u2019s total, not just the champion\u2019s (requested by Significant-Care-135, Snappers5).',
+          ]],
     ['v2.5.3','May 2026',[
             '🐛 Mid-season & winter upgrades landing far below their advertised value: a package previewed as "+1.4 Car Perf" was arriving as roughly +0.3 even on a Breakthrough roll, with the popup confusingly showing "Breakthrough result · +0.3". Root cause: an upgrade only touched 3 of the 6 car components, but Car Performance is the average of five sub-stats that are each a weighted blend of all six components — so 60-65% of every upgrade evaporated into the averaging, and a small cross-group decay made it worse. Upgrade gains are now compensated: the game measures how each car responds and scales the component input so the realized Car Performance change matches the package value (modulated by the R&D roll, exactly as the preview implies). Applies to both in-season windows and the winter development budget (reported by username_must_be_be).',
             '🐛 Power Unit winter investment doing nothing: pouring the full winter budget into the Power Unit could leave Power and ERS unchanged or even drifting down, because the only effect was "recover the gap to your engine\'s historical peak" — and an engine already at its peak has no gap to recover. PU and reliability spend now also delivers a direct, guaranteed power/ERS/reliability gain on top of any gap recovery, with elite diminishing returns so a 99-rated engine still gains a little while a midfield engine gains more. The Car page engine trend now reflects the investment as a gain instead of showing stale pre-spend values (reported by GCN_09).',
@@ -21708,17 +22425,27 @@ const GameActions = {
       } else if(u.stat==='reliability') {
         const _baseRel = team.reliability;
         team.reliability=clamp(team.reliability+actualVal,40,100);
-        // Reliability work also improves mechanical components (chassis, sidepods, suspension)
+        // Reliability work also develops the mechanical components (chassis, sidepods,
+        // suspension). This is the ONLY player lever that touches the mechanical group
+        // (aero/engine budgets target the aero group), so the conversion must be large
+        // enough to be visible — previously it was a 0.35 trickle that, once diluted by
+        // deriveSubStats re-averaging, left the focused part visually unchanged
+        // (reported by Due_Woodpecker_7547, Historical-Trouble16). Raised to a clearly
+        // perceptible gain and biased harder toward the focused part, while still costing
+        // more car-performance-per-$ than a dedicated aero package so it doesn't become a
+        // backdoor car upgrade.
         if(team.components && u.componentGroup === 'mechanical') {
           const mechComps = COMP_GROUPS.mechanical || [];
           const mechFocus = u.componentFocus || 'balanced';
-          const mechGain = Math.abs(actualVal) * 0.35; // 35% of reliability gain goes to mechanical components
+          const mechGain = Math.abs(actualVal) * 0.85;
           if(mechFocus === 'balanced') {
             mechComps.forEach(ck => { team.components[ck] = clamp((team.components[ck]||70) + mechGain / mechComps.length, 40, 99); });
           } else if(mechComps.includes(mechFocus)) {
             const others = mechComps.filter(ck => ck !== mechFocus);
-            team.components[mechFocus] = clamp((team.components[mechFocus]||70) + mechGain * 0.70, 40, 99);
-            others.forEach(ck => { team.components[ck] = clamp((team.components[ck]||70) + mechGain * (0.30 / others.length), 40, 99); });
+            team.components[mechFocus] = clamp((team.components[mechFocus]||70) + mechGain * 0.72, 40, 99);
+            others.forEach(ck => { team.components[ck] = clamp((team.components[ck]||70) + mechGain * (0.28 / Math.max(1, others.length)), 40, 99); });
+          } else {
+            mechComps.forEach(ck => { team.components[ck] = clamp((team.components[ck]||70) + mechGain / mechComps.length, 40, 99); });
           }
           deriveSubStats(team);
         }
@@ -21832,8 +22559,19 @@ const GameActions = {
   },
 
   beginSeason(){
-    if(typeof gtag!=='undefined'){ const _bg=State.game; gtag('event','offseason_completed',{season:_bg.season,sponsors:((_bg.sponsors||[]).length),drivers:(_bg.drivers||[]).filter(d=>d.teamId===_bg.playerTeamId&&!d.isReserve&&!d.retired).length}); }
     const g=State.game;
+    // GUARD: a fired manager must resolve their job situation before any new season
+    // can start. Previously beginSeason() never checked the fired flags, so a player
+    // who was sacked could simply navigate away from the job screen and click Begin
+    // Season to keep managing the very team that fired them — permanently, with no
+    // further offers ever arriving (reported by Snappers5). Re-route them back to the
+    // job-choice / career-over screen instead of letting the season proceed.
+    if(g && g._awaitingJobChoice && g.playerFired){
+      UI.toast('Resolve your job situation before starting a new season','warning');
+      UI.showFiredScreen();
+      return;
+    }
+    if(typeof gtag!=='undefined'){ const _bg=State.game; gtag('event','offseason_completed',{season:_bg.season,sponsors:((_bg.sponsors||[]).length),drivers:(_bg.drivers||[]).filter(d=>d.teamId===_bg.playerTeamId&&!d.isReserve&&!d.retired).length}); }
     g._seasonEndProcessing = false;
     const status=this._syncOffseasonPending();
     const drivers=status.drivers;
@@ -22034,6 +22772,7 @@ const GameActions = {
         // reflects the investment as a gain rather than showing stale pre-spend values.
         if(!g._engineStatsSnapshot) g._engineStatsSnapshot = {};
         g._engineStatsSnapshot[playerEng.id] = {powerRating:playerEng.powerRating, ersRating:playerEng.ersRating, reliability:playerEng.reliability};
+        _recordEngineHighWater([playerEng]);
         devResult._puRecovery = {power: pwrTotal, ers: ersTotal, rel: relTotal};
       }
     }
@@ -22914,7 +23653,13 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       UI.toast(`🏁 Winner: ${win?.driverName||'?'}${win?.teamName?' ('+win.teamName+')':''}`,'success');
       UI.renderDashboard(); UI.renderRaceResult(rd); UI.showView('dashboard');
       UI.checkNewAchievements();
-      if(g.raceIndex>=g.calendar.length) setTimeout(()=>this._promptSeasonEnd(),1500);
+      // Random paddock event — auto events post to the news feed immediately; a choice event
+      // returns a descriptor that we surface as a modal once the season isn't ending.
+      const _seasonEnding = g.raceIndex>=g.calendar.length;
+      let _evt=null;
+      try { _evt = RandomEvents.maybeFire(g, {batch:false}); } catch(e){ console.warn('event error:',e); }
+      if(_evt && _evt.kind==='choice' && !_seasonEnding){ setTimeout(()=>{ try{ UI.showEventModal(_evt); }catch(e){} }, 900); }
+      if(_seasonEnding) setTimeout(()=>this._promptSeasonEnd(),1500);
     } catch(e) { console.error('simRace error:', e); UI.toast('Race error: '+e.message+' — try starting a new game','error'); }
   },
   _promptSeasonEnd(){
@@ -23094,6 +23839,7 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       Sim.simRace(race);
       g.raceIndex++;
       try { Sim.generateRivalNews(race, race.raceResult||[]); } catch(ne){ console.warn('News error:',ne); }
+      try { RandomEvents.maybeFire(g, {batch:true}); } catch(ne){ console.warn('event error:',ne); }
       try { this.resolveNegotiations(); } catch(ne){ console.warn('Negotiation resolve error:',ne); }
       this.processScoutingQueue();
     }
