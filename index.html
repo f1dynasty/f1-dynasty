@@ -2148,8 +2148,9 @@ function getTeamErsRating(team) {
 // historical leaderboard below). A "Legacy Score" was tried and pulled in v1.7 for being
 // "too complex and not adding to the experience" — that version was an opaque number with
 // nothing to read or chase. This rebuild is deliberately legible: every point is broken
-// down by source, it maps to a NAMED prestige tier, and it is ranked against fictional
-// historical dynasties so there is always a next rung. It is computed purely from
+// down by source, it maps to a NAMED prestige tier, and it is ranked against the real
+// constructors in the player's own save (see computeTeamDynastyScore) so the dynasties they
+// chase are the genuine front-runners of their simulation. It is computed purely from
 // careerStats on demand (no new persisted state), so it is fully save-compatible and can
 // never desync.
 //
@@ -2171,15 +2172,41 @@ const DYNASTY_TIERS = [
   {min:9000,   name:'Immortals',           icon:'⭐', blurb:'Among the greatest to ever run a team.'},
   {min:14000,  name:'Legend of the Sport', icon:'🌟', blurb:'A legacy that will never be matched.'}
 ];
-// Fictional all-time benchmarks to chase. These are flavour reference points, not real teams.
-const DYNASTY_LEADERBOARD = [
-  {name:'The Scuderia Era',     score:12400, note:'9 constructor titles across a golden generation'},
-  {name:'Silver Arrows Dynasty',score:9600,  note:'8 straight constructor crowns'},
-  {name:'The Woking Resurgence',score:6100,  note:'rebuilt from the midfield to dominance'},
-  {name:'Maranello Revival',    score:4200,  note:'back-to-back doubles'},
-  {name:'The Enstone Project',  score:2300,  note:'two titles against the odds'},
-  {name:'Grove Underdogs',      score:950,   note:'a fairytale championship run'}
-];
+// All-time ranking is computed from the REAL constructors in this save — never invented
+// benchmarks. Every team (player and AI) accumulates genuine career records: constructor
+// titles (team.championships), career wins/poles (team.totalWins/totalPoles, topped up with
+// the live season), career points (team.totalPoints), and a real consecutive-title streak
+// derived from g.history.constructorChampions. We score every team on this SHARED subset so
+// the comparison is apples-to-apples — the player's own breakdown still shows components AI
+// teams don't track per-season (top-3 finishes, against-the-odds starts), but the leaderboard
+// ranks everyone on records they all actually have. The greats you chase are the genuine
+// dominant teams of YOUR simulation.
+function _teamTitleStreak(teamId, history){
+  // Longest run of consecutive (back-to-back season) constructor titles for this team.
+  const log = ((history && history.constructorChampions) || [])
+    .filter(rec => rec.teamId === teamId)
+    .map(rec => rec.season)
+    .sort((a,b)=>a-b);
+  let longest = 0, cur = 0, prevWonSeason = null;
+  log.forEach(season => {
+    cur = (prevWonSeason !== null && season === prevWonSeason + 1) ? cur + 1 : 1;
+    longest = Math.max(longest, cur);
+    prevWonSeason = season;
+  });
+  return longest;
+}
+// Score a constructor on the shared, real fields only (used for the all-time ranking).
+function computeTeamDynastyScore(team, g){
+  if(!team) return 0;
+  const titles = team.championships || 0;
+  const wins   = (team.totalWins || 0) + (team.wins || 0);
+  const poles  = (team.totalPoles || 0) + (team.poles || 0);
+  const points = team.totalPoints || 0;
+  const streak = _teamTitleStreak(team.id, g && g.history);
+  let s = titles * 350 + wins * 8 + poles * 2 + Math.round(points * 0.05);
+  if(streak >= 2) s += Math.round(streak * (streak - 1) * 90);
+  return Math.round(s);
+}
 function computeDynastyRating(careerStats) {
   const cs = careerStats || {};
   const seasons = cs.seasons || [];
@@ -19259,18 +19286,39 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
           +'<span style="flex:1;color:var(--tx2)">'+b.label+'</span>'
           +'<span style="font-weight:800;font-family:var(--fm);color:var(--tx)">+'+b.pts.toLocaleString()+'</span>'
         +'</div>').join('');
-      // Build a combined, ranked leaderboard with the player's current dynasty slotted in.
-      const lbEntries = DYNASTY_LEADERBOARD.map(e=>({...e, isPlayer:false}))
-        .concat([{name:(team?team.name:'Your Dynasty')+' (You)', score:dr.score, note:dr.tier.name, isPlayer:true}])
-        .sort((a,b)=>b.score-a.score);
-      const playerRank = lbEntries.findIndex(e=>e.isPlayer)+1;
-      const lbRows = lbEntries.map((e,i)=>
-        '<div style="display:flex;align-items:center;gap:10px;padding:7px 8px;border-radius:6px;'+(e.isPlayer?'background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.35)':'')+'">'
-          +'<span style="font-family:var(--fm);font-weight:800;color:var(--tx3);width:22px;flex-shrink:0">'+(i+1)+'</span>'
-          +'<div style="flex:1;min-width:0"><div style="font-weight:'+(e.isPlayer?'800':'600')+';font-size:12px;'+(e.isPlayer?'color:#b45309':'color:var(--tx)')+';white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+e.name+'</div>'
+      // All-time ranking from the REAL constructors in this save. Every team is scored on the
+      // shared career fields they all actually accumulate (titles, title-streak, wins, poles,
+      // points) so it's a fair comparison; the player is scored the same way for the ranking,
+      // even though their hero number above shows their fuller Dynasty Rating.
+      const _g = State.game;
+      const _allTeams = (_g.teams || []);
+      const lbAll = _allTeams.map(t => {
+        const sc = computeTeamDynastyScore(t, _g);
+        const titles = t.championships || 0;
+        const wins = (t.totalWins||0)+(t.wins||0);
+        const note = titles>0 ? `${titles} constructor title${titles>1?'s':''}` + (wins>0?` · ${wins} wins`:'')
+                   : wins>0 ? `${wins} career win${wins>1?'s':''}`
+                   : 'Still building a record';
+        return { id:t.id, name:t.name, score:sc, note, isPlayer:(t.id===_g.playerTeamId), color:t.color };
+      }).sort((a,b)=>b.score-a.score);
+      const playerRank = (lbAll.findIndex(e=>e.isPlayer)+1) || _allTeams.length;
+      // Show the top teams, but always include the player's row even if they're outside the top set.
+      const TOP_N = 6;
+      let lbShown = lbAll.slice(0, TOP_N);
+      if(!lbShown.some(e=>e.isPlayer)){
+        const me = lbAll.find(e=>e.isPlayer);
+        if(me) lbShown = lbShown.slice(0, TOP_N-1).concat([me]);
+      }
+      const lbRows = lbShown.map((e)=>{
+        const rank = lbAll.findIndex(x=>x.id===e.id)+1;
+        return '<div style="display:flex;align-items:center;gap:10px;padding:7px 8px;border-radius:6px;'+(e.isPlayer?'background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.35)':'')+'">'
+          +'<span style="font-family:var(--fm);font-weight:800;color:'+(rank<=3?'var(--amber)':'var(--tx3)')+';width:22px;flex-shrink:0">'+rank+'</span>'
+          +'<div style="width:8px;height:8px;border-radius:50%;background:'+(e.color||'#888')+';flex-shrink:0"></div>'
+          +'<div style="flex:1;min-width:0"><div style="font-weight:'+(e.isPlayer?'800':'600')+';font-size:12px;'+(e.isPlayer?'color:#b45309':'color:var(--tx)')+';white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+e.name+(e.isPlayer?' (You)':'')+'</div>'
             +'<div style="font-size:10px;color:var(--tx3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+e.note+'</div></div>'
           +'<span style="font-family:var(--fm);font-weight:800;font-size:13px;color:var(--tx)">'+e.score.toLocaleString()+'</span>'
-        +'</div>').join('');
+        +'</div>';
+      }).join('');
       const progressLabel = dr.nextTier
         ? dr.pointsToNext.toLocaleString()+' to '+dr.nextTier.icon+' '+dr.nextTier.name
         : 'Maximum prestige reached';
@@ -19299,11 +19347,11 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
           +'</div>'
           +'<div style="background:var(--bg2);border:1px solid var(--bd);border-radius:12px;padding:16px">'
             +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">'
-              +'<div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--tx3)">All-Time Dynasties</div>'
-              +'<div style="font-size:10px;color:var(--tx3)">You\u2019re #'+playerRank+'</div>'
+              +'<div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--tx3)">Greatest Constructors — This World</div>'
+              +'<div style="font-size:10px;color:var(--tx3)">You\u2019re #'+playerRank+' of '+_allTeams.length+'</div>'
             +'</div>'
             +'<div style="display:flex;flex-direction:column;gap:3px">'+lbRows+'</div>'
-            +'<div style="font-size:9px;color:var(--tx3);margin-top:8px;font-style:italic">Historical benchmarks to chase.</div>'
+            +'<div style="font-size:9px;color:var(--tx3);margin-top:8px;font-style:italic">Ranked on the real career records of every team in your save — titles, wins, poles, points, and title streaks.</div>'
           +'</div>'
         +'</div>';
 
@@ -19968,7 +20016,7 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
         <li><strong>Longevity</strong> — seasons of commitment count for a little, but can't substitute for success.</li>
       </ul>
       <h4>Prestige tiers and the leaderboard</h4>
-      <p>Your score maps to a named tier — Privateer, Established Outfit, Race Winners, Title Contenders, Champions, Dynasty Builders, Dynasty Architects, Immortals, and finally Legend of the Sport. A progress bar shows how far you are from the next rung. You're also ranked against all-time benchmark dynasties, so there's always a higher target to chase even after you've won everything in the short term.</p>
+      <p>Your score maps to a named tier — Privateer, Established Outfit, Race Winners, Title Contenders, Champions, Dynasty Builders, Dynasty Architects, Immortals, and finally Legend of the Sport. A progress bar shows how far you are from the next rung. Alongside it, the <strong>Greatest Constructors</strong> table ranks every team in your save by the real career records they've built in this world — titles, wins, poles, points, and back-to-back title streaks — so the dynasties you're chasing are the genuine front-runners of your own simulation, not invented benchmarks. Early in a save the board is sparse and fills in as your world's history accumulates.</p>
       <p>At the end of each season the recap shows your rating ticking up, and flags it whenever you climb to a new tier.</p>
       ${tip('It works on every save', 'The rating is calculated from your existing career stats, so it appears retroactively on saves started before this feature — you don\'t need a new game to see your legacy scored.')}
     `)}
@@ -21042,7 +21090,7 @@ const sponsorInc=sumSponsorIncome(sponsors2);
         ${[
     ['v2.5.4','June 2026',[
             '✨ Random paddock events — mid-season story moments that break up the race-to-race rhythm and give long careers memorable, unpredictable beats. Most are automatic and post to the Paddock News feed with a small bounded effect (a wind-tunnel breakthrough, a commercial windfall, a supplier quality issue, a rival protest against a dominant car). A handful are decision events that pop a modal with a real tradeoff: back an unhappy star driver publicly (morale up, development nudged back) or tell them to focus on driving (development holds, relationship cools); gamble the mid-season budget on an unproven aero concept (high variance) or play it safe (small steady gain); match a rival\u2019s offer to keep poached staff or let them walk. Events are deliberately rare and capped (roughly one every few races, never two in a row, a handful per season) so they stay special, every effect is bounded so nothing is save- or economy-breaking, and they\u2019re context-gated so a backmarker and a front-runner see different events. During batch sims (Sim Quarter / Half / Rest of Season) decision events resolve automatically with a sensible default so a long sim is never interrupted. Fully save-compatible — no migration needed.',
-            '✨ Dynasty Rating — a new legacy score for long careers, on the History → Dynasty tab. A single cumulative rating grows across your whole save and maps to named prestige tiers (Privateer → Race Winners → Champions → Dynasty Architects → Legend of the Sport). Crucially it is fully legible: a breakdown panel shows exactly where every point comes from, so it is never an opaque number. Championships are the core currency, consecutive constructor titles compound into a dynasty multiplier (sustained dominance is worth far more than scattered one-offs), titles won from a backmarker start earn an adversity bonus, and race wins/poles/longevity add texture. Your rating is ranked against fictional all-time benchmark dynasties so there is always a higher rung to chase, and the season recap now shows your rating ticking up (and any rank-up) at the end of every year. Computed purely from your existing career stats, so it works retroactively on all saves with no migration. (An earlier Legacy Score was removed in v1.7 for being opaque and complex — this rebuild is deliberately legible, tiered, and chase-driven to address exactly that.)',
+            '✨ Dynasty Rating — a new legacy score for long careers, on the History → Dynasty tab. A single cumulative rating grows across your whole save and maps to named prestige tiers (Privateer → Race Winners → Champions → Dynasty Architects → Legend of the Sport). Crucially it is fully legible: a breakdown panel shows exactly where every point comes from, so it is never an opaque number. Championships are the core currency, consecutive constructor titles compound into a dynasty multiplier (sustained dominance is worth far more than scattered one-offs), titles won from a backmarker start earn an adversity bonus, and race wins/poles/longevity add texture. Your rating sits alongside a Greatest Constructors table that ranks every team in your save on their real career records, so the dynasties you chase are the genuine front-runners of your own simulation rather than invented benchmarks, and the season recap now shows your rating ticking up (and any rank-up) at the end of every year. Computed purely from your existing career stats, so it works retroactively on all saves with no migration. (An earlier Legacy Score was removed in v1.7 for being opaque and complex — this rebuild is deliberately legible, tiered, and chase-driven to address exactly that.)',
             '🐛 Fired but the game lets you keep managing anyway: a sacked manager could be told "no team is interested" and yet simply click Begin Season to carry on running the very team that fired them — permanently, with no further job offers ever arriving (reported by Snappers5). Root cause: Begin Season never checked the fired state, so the forced job-choice screen could be bypassed by navigating away from it. Begin Season now hard-blocks while a job decision is outstanding and re-routes to the job screen. Additionally, a bottom-team sacking (which is designed to END the career) is now properly terminal — it clears the unplayable save and returns to the main menu via a dedicated "End Career" action, instead of leaving a fired-but-managing save that could be reloaded and continued. Existing stuck saves are caught on load and shown the correct job-choice / career-over screen.',
             '🐛 Audi (and any) Power Unit never improving — root cause fixed at last: the engine card and the race simulation both read PU ratings through one shared accessor, and a save-state desync could revert that accessor to the Season-1 DATA defaults (Audi 82/80/76) even after years of development — so the engine did not just *look* stuck, it *performed* stuck, while the breakthrough note still quoted the developed numbers. Previous fixes reconciled the symptom against a mutable season-start snapshot in three different places, but that snapshot could itself be overwritten with the reverted value. Engine power/ERS only ever climb across a save (regulations never touch manufacturer PUs), so the game now keeps a monotonic high-water mark per manufacturer and enforces it at the single read path the UI and the simulation share. No reset path can revert an engine below where it has genuinely developed; existing saves self-repair on load (reported across many versions by GCN_09, Leo3409, ScotOfTheDay, Competitive_Care8189, JDoyle47, gsx512, ImBuckAndWeGonFuck, obonnor, puchunz, Alsh_phoenix, and most recently Delicious_Media5273).',
             '🐛 AI teams never making transfers — driver market frozen on custom grids: the AI signing logic could only ever pull from the FREE-AGENT pool and prospects, with no mechanism to move a contracted driver between teams. On custom grids, which start with an empty free-agent pool, that meant every driver re-signed in place forever — no one moved up or down the grid. Added an ambition-driven inter-team transfer pass: stronger teams now court out-of-contract (and occasionally bought-out) drivers from weaker teams, displacing a weaker driver and creating cascading vacancies the existing seat-fill resolves. Player drivers are untouched (they keep the poach-approach system) and all committed/carried agreements are respected (reported by red_machine_yuki).',
