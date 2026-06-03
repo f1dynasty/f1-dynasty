@@ -769,9 +769,12 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
         </div>
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:16px;max-width:560px;padding:16px 18px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
-          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v2.5.5 — What's New</div>
-          <div style="font-size:14px;font-weight:900;color:#111;margin-bottom:10px">A living, evolving grid — title fights, transfers &amp; community fixes</div>
+          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v2.5.5.1 — What's New</div>
+          <div style="font-size:14px;font-weight:900;color:#111;margin-bottom:10px">Reshape your grid mid-save — plus a living grid, title fights, transfers &amp; community fixes</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 16px">
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">✨</span><span><strong>Live Roster Editor</strong> — rename teams, retune cars and move drivers between teams mid-save (not just at the start), applied to your current career and autosaved instantly</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">✨</span><span><strong>Works Power-Unit Deals</strong> — lock a team to its engine supplier in the editor: free supply and the AI will never poach it onto a rival PU</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:#888;font-weight:800;flex-shrink:0">🐛</span><span><strong>Two-Cadillacs Fix</strong> — a team being bought out and rebranded can no longer duplicate a constructor that's already racing on the grid</span></div>
             <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">✨</span><span><strong>Driver Contracts &amp; Happiness</strong> — drivers no longer auto-renew; an unhappy star can refuse to extend, rivals poach the disgruntled, and every card shows a happiness bar</span></div>
             <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">⚖️</span><span><strong>Rivals Develop Mid-Season</strong> — AI teams now improve through the season instead of standing still, so a strong car can't coast to the title</span></div>
             <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">✨</span><span><strong>Teams Join &amp; Leave the Sport</strong> — over long saves new constructors enter and struggling teams get bought out and rebranded, building living history</span></div>
@@ -1149,6 +1152,9 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </button>
       <button class="drawer-item" onclick="UI.toggleMoreDrawer();UI.openEditor('game')">
         <span class="drawer-item-icon">🛠</span><span>Roster Editor</span>
+      </button>
+      <button class="drawer-item" onclick="UI.toggleMoreDrawer();LiveEditor.open()">
+        <span class="drawer-item-icon">🎛</span><span>Live Roster Editor (this save)</span>
       </button>
       <button class="drawer-item" onclick="UI.toggleMoreDrawer();UI.showChangelog()">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
@@ -2607,9 +2613,27 @@ const GridLifecycle = {
     return g._gridLifecycle;
   },
 
+  // Reduce a constructor name to its marque tokens, dropping generic F1 qualifiers, so
+  // "Cadillac F1 Team" and "Cadillac F1" are recognised as the SAME brand. Matching on the
+  // literal name let an incoming identity duplicate a marque already on the grid — the
+  // two-Cadillacs bug (Aston Martin folded, rebranded as "Cadillac F1" while "Cadillac F1
+  // Team" was still racing). Reported by YouTube-Minimen-Matt.
+  _brandTokens(name){
+    const GENERIC = new Set(['f1','team','racing','global','motorsport','gp','grand','prix','squadra','scuderia','amg','gazoo','magma','sport','formula','one','f','n']);
+    return String(name||'')
+      .toLowerCase()
+      .replace(/[^a-z0-9\s]+/g,' ')
+      .split(/\s+/)
+      .filter(w => w && !GENERIC.has(w));
+  },
+
   _pickIncoming(g, st){
-    const taken = new Set([...(g.teams||[]).map(t=>String(t.name).toLowerCase()), ...(st.usedNames||[]).map(n=>String(n).toLowerCase())]);
-    const pool = this.INCOMING.filter(t => !taken.has(t.name.toLowerCase()));
+    // Collect every marque token already represented on the grid or previously used.
+    const taken = new Set();
+    (g.teams||[]).forEach(t => this._brandTokens(t && t.name).forEach(tok => taken.add(tok)));
+    (st.usedNames||[]).forEach(n => this._brandTokens(n).forEach(tok => taken.add(tok)));
+    // Exclude any incoming identity that shares a marque token with a team already present.
+    const pool = this.INCOMING.filter(t => !this._brandTokens(t.name).some(tok => taken.has(tok)));
     if(!pool.length) return null;
     return pool[randInt(0, pool.length-1)];
   },
@@ -2755,6 +2779,213 @@ const GridLifecycle = {
       }
       return null;
     } catch(e){ console.warn('GridLifecycle.maybeChange error:', e); return null; }
+  }
+};
+
+
+// ── LIVE ROSTER EDITOR — edit the CURRENT save, not just the new-game template ───────────────
+// The Roster Editor (Editor.*) edits a template that only seeds NEW careers, so changes made
+// mid-save never touched the running game. Players asked to reshape the grid mid-save — rename
+// teams, retune cars, and move drivers between teams without starting over (requested by
+// YouTube-Minimen-Matt). LiveEditor mutates State.game directly and autosaves. It is limited to
+// changes that are safe on a running save: existing teams' identity/car/engine and existing
+// drivers' identity/skills, plus straight driver swaps (which preserve every team's seat count).
+// It does NOT add or remove teams/drivers — grid-size changes are handled organically by
+// GridLifecycle and forcing them here would risk standings/history/finance integrity.
+const LiveEditor = {
+  _selectedTeamId: null,
+  _RANGES: {
+    carPerformance:[40,100], reliability:[40,100], developmentRate:[40,100], facilities:[40,100], prestige:[20,100],
+    rating:[40,99], potential:[40,99], qualifying:[40,99], racePace:[40,99], consistency:[40,99], wet:[40,99], aggression:[40,99], marketability:[40,99], age:[16,55]
+  },
+  _engineDefs(){
+    const g = State.game;
+    if(g && Array.isArray(g.engineManufacturers)) return g.engineManufacturers;
+    return (typeof _liveEngines==='function') ? _liveEngines() : DATA.engineManufacturers;
+  },
+  isTeamWorks(teamId){ return this._engineDefs().some(e=>Array.isArray(e.worksTeams)&&e.worksTeams.includes(teamId)); },
+  _clearTeamWorks(teamId){ this._engineDefs().forEach(e=>{ if(Array.isArray(e.worksTeams)) e.worksTeams=e.worksTeams.filter(id=>id!==teamId); }); },
+
+  open(){
+    const g = State.game;
+    if(!g || !Array.isArray(g.teams) || !g.teams.length){ if(typeof UI!=='undefined') UI.toast('Start or load a career first.','warning'); return; }
+    if(!this._selectedTeamId || !g.teams.find(t=>t.id===this._selectedTeamId)) this._selectedTeamId = g.playerTeamId || g.teams[0].id;
+    this.render();
+    const modal = document.getElementById('driver-detail-modal');
+    if(modal) modal.classList.remove('hidden');
+  },
+
+  selectTeam(teamId){ this._selectedTeamId = teamId; this.render(); },
+
+  _refresh(){
+    try { if(typeof Storage!=='undefined' && Storage.autosave) Storage.autosave(); } catch(e){}
+    try { if(typeof UI!=='undefined' && UI.renderView) UI.renderView(UI._activeView||'dashboard'); } catch(e){}
+    this.render();
+  },
+
+  setTeamField(teamId, field, value){
+    const team = State.getTeam(teamId); if(!team) return;
+    if(['name','nation','color'].includes(field)){
+      const v = String(value||'').trim();
+      if(field==='color'){
+        if(!/^#[0-9a-fA-F]{6}$/.test(v)){ if(typeof UI!=='undefined') UI.toast('Colour must be a hex like #DC0000','warning'); this.render(); return; }
+        team.color = v;
+      } else if(v) team[field] = v;
+    } else {
+      const num = parseFloat(value); if(isNaN(num)){ this.render(); return; }
+      const r = this._RANGES[field];
+      const val = r ? clamp(num, r[0], r[1]) : num;
+      if(field==='carPerformance'){
+        // Rebuild the car coherently around the new target so sub-stats and components agree
+        // (matches the team-creation path: set sub-stats, reset components, re-derive).
+        team.carPerformance = val;
+        ['topSpeed','cornering','tyreManagement','dirtyAir','aeroEfficiency'].forEach(k=>{ team[k]=val; });
+        team.components = null;
+        try { initComponents(team); } catch(e){}
+      } else {
+        team[field] = val;
+      }
+    }
+    this._refresh();
+  },
+
+  setEngine(teamId, engId){
+    const team = State.getTeam(teamId); if(!team) return;
+    const wasWorks = this.isTeamWorks(teamId);
+    team.engineManufacturer = engId;
+    if(wasWorks){ // a works deal follows the team to its new supplier
+      this._clearTeamWorks(teamId);
+      const eng = this._engineDefs().find(e=>e.id===engId);
+      if(eng){ if(!Array.isArray(eng.worksTeams)) eng.worksTeams=[]; if(!eng.worksTeams.includes(teamId)) eng.worksTeams.push(teamId); }
+    }
+    team.engineContractCost = getEngineContractCost(teamId, engId);
+    this._refresh();
+  },
+
+  setWorksDeal(teamId, makeWorks){
+    const team = State.getTeam(teamId); if(!team) return;
+    this._clearTeamWorks(teamId);
+    if(makeWorks){
+      const eng = this._engineDefs().find(e=>e.id===(team.engineManufacturer||'mercedes'));
+      if(eng){ if(!Array.isArray(eng.worksTeams)) eng.worksTeams=[]; if(!eng.worksTeams.includes(teamId)) eng.worksTeams.push(teamId); }
+    }
+    team.engineContractCost = getEngineContractCost(teamId, team.engineManufacturer);
+    this._refresh();
+  },
+
+  setDriverField(driverId, field, value){
+    const d = State.getDriver(parseInt(driverId)); if(!d) return;
+    if(['name','nationality'].includes(field)){ const v=String(value||'').trim(); if(v) d[field]=v; }
+    else {
+      const num=parseFloat(value); if(isNaN(num)){ this.render(); return; }
+      const r=this._RANGES[field];
+      const val = r?clamp(num,r[0],r[1]):num;
+      if(field==='rating'){
+        ensureDriverCoreStats(d);
+        const current = getDriverCalculatedRating(d);
+        const delta = val - current;
+        ['racePace','qualifying','consistency','wet'].forEach(k=>{ d[k]=clamp((Number(d[k])||current)+delta,40,99); });
+        syncDriverRatingFromAttributes(d);
+        if(Number(d.potential||0) < d.rating) d.potential = d.rating;
+      } else {
+        d[field]=val;
+        if(['racePace','qualifying','consistency','wet'].includes(field)) {
+          syncDriverRatingFromAttributes(d);
+          if(Number(d.potential||0) < d.rating) d.potential = d.rating;
+        }
+      }
+    }
+    this._refresh();
+  },
+
+  // Exchange two race drivers' seats. Each team loses one and gains one, so seat counts are
+  // preserved; reconcileTeamRosters then re-syncs the driverIds arrays and clears stale flags.
+  swapDrivers(driverIdA, driverIdB){
+    const a = State.getDriver(parseInt(driverIdA)); const b = State.getDriver(parseInt(driverIdB));
+    if(!a || !b || a.id===b.id) return;
+    const ta = a.teamId, tb = b.teamId;
+    const teamA = State.getTeam(ta), teamB = State.getTeam(tb);
+    if(!teamA || !teamB) return;
+    teamA.driverIds = (teamA.driverIds||[]).map(id=>id===a.id?b.id:id);
+    teamB.driverIds = (teamB.driverIds||[]).map(id=>id===b.id?a.id:id);
+    if(!teamA.driverIds.includes(b.id)) teamA.driverIds = [b.id].concat(teamA.driverIds||[]).slice(0,2);
+    if(!teamB.driverIds.includes(a.id)) teamB.driverIds = [a.id].concat(teamB.driverIds||[]).slice(0,2);
+    a.teamId = tb; b.teamId = ta;
+    a.isFreeAgent=false; b.isFreeAgent=false; a.isProspect=false; b.isProspect=false;
+    a.isReserve=false; b.isReserve=false; a.isJunior=false; b.isJunior=false;
+    try { State.reconcileTeamRosters(); } catch(e){}
+    if(typeof UI!=='undefined') UI.toast(`Swapped ${a.name} \u2194 ${b.name}`,'success');
+    this._refresh();
+  },
+
+  render(){
+    const host = document.getElementById('modal-body'); if(!host) return;
+    const g = State.game; if(!g) return;
+    const esc = (typeof escapeHtml==='function') ? escapeHtml : (s=>String(s));
+    const teams = (g.teams||[]).slice().sort((x,y)=>getTeamOverallCar(y)-getTeamOverallCar(x));
+    if(!this._selectedTeamId || !teams.find(t=>t.id===this._selectedTeamId)) this._selectedTeamId = (g.playerTeamId||teams[0]?.id);
+    const team = State.getTeam(this._selectedTeamId) || teams[0];
+    if(!team){ host.innerHTML = '<div style="font-size:13px;color:var(--tx3)">No teams in this save.</div>'; return; }
+    const engines = this._engineDefs();
+    const fieldNum = (label, field, val, min, max) => `<label style="display:flex;flex-direction:column;gap:4px"><span style="font-size:9px;font-weight:700;letter-spacing:.5px;color:var(--tx3);text-transform:uppercase">${label}</span><input type="number" min="${min}" max="${max}" value="${val}" onchange="LiveEditor.setTeamField('${team.id}','${field}',this.value)" style="font-size:12px;padding:7px 9px;border:1px solid var(--bd);border-radius:8px;background:var(--bg2)"></label>`;
+    const teamTabs = teams.map(t=>`<button onclick="LiveEditor.selectTeam('${t.id}')" style="font-size:11px;font-weight:700;padding:6px 10px;border-radius:8px;border:1px solid ${t.id===team.id?'var(--grn)':'var(--bd)'};background:${t.id===team.id?'var(--bg3)':'var(--bg2)'};color:var(--tx);cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap"><span style="width:9px;height:9px;border-radius:50%;background:${esc(t.color||'#888')};display:inline-block"></span>${esc(t.shortName||t.name)}${t.id===g.playerTeamId?' \u2605':''}</button>`).join('');
+
+    const raceDrivers = State.getTeamDrivers(team.id);
+    const otherDrivers = g.drivers.filter(d=>d && !d.retired && !d.isReserve && !d.isProspect && !d.isFreeAgent && d.teamId && d.teamId!==team.id).sort((a,b)=>(b.rating||0)-(a.rating||0));
+    const dInput = (driver, label, field, val, min, max) => `<label style="display:flex;flex-direction:column;gap:3px"><span style="font-size:8px;font-weight:700;letter-spacing:.5px;color:var(--tx3);text-transform:uppercase">${label}</span><input type="number" min="${min}" max="${max}" value="${Math.round(val||0)}" onchange="LiveEditor.setDriverField(${driver.id},'${field}',this.value)" style="font-size:12px;padding:6px 8px;border:1px solid var(--bd);border-radius:7px;background:var(--bg2)"></label>`;
+    const driverCards = raceDrivers.map(d=>`
+      <div style="border:1px solid var(--bd);border-radius:10px;padding:10px 12px;margin-bottom:8px;background:var(--bg2)">
+        <div style="display:grid;grid-template-columns:1fr 80px;gap:8px;margin-bottom:8px">
+          <label style="display:flex;flex-direction:column;gap:3px"><span style="font-size:8px;font-weight:700;letter-spacing:.5px;color:var(--tx3);text-transform:uppercase">Driver Name</span><input value="${esc(d.name)}" onchange="LiveEditor.setDriverField(${d.id},'name',this.value)" style="font-size:13px;font-weight:700;padding:6px 8px;border:1px solid var(--bd);border-radius:7px;background:var(--bg2)"></label>
+          <label style="display:flex;flex-direction:column;gap:3px"><span style="font-size:8px;font-weight:700;letter-spacing:.5px;color:var(--tx3);text-transform:uppercase">Age</span><input type="number" min="16" max="55" value="${d.age||25}" onchange="LiveEditor.setDriverField(${d.id},'age',this.value)" style="font-size:12px;padding:6px 8px;border:1px solid var(--bd);border-radius:7px;background:var(--bg2)"></label>
+        </div>
+        <label style="display:flex;flex-direction:column;gap:3px;margin-bottom:8px"><span style="font-size:8px;font-weight:700;letter-spacing:.5px;color:var(--tx3);text-transform:uppercase">Nationality</span><input value="${esc(d.nationality||'')}" onchange="LiveEditor.setDriverField(${d.id},'nationality',this.value)" style="font-size:12px;padding:6px 8px;border:1px solid var(--bd);border-radius:7px;background:var(--bg2)"></label>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">
+          ${dInput(d,'Overall','rating',d.rating,40,99)}
+          ${dInput(d,'Potential','potential',d.potential,40,99)}
+          ${dInput(d,'Quali','qualifying',d.qualifying,40,99)}
+          ${dInput(d,'Race','racePace',d.racePace,40,99)}
+          ${dInput(d,'Consist','consistency',d.consistency,40,99)}
+          ${dInput(d,'Wet','wet',d.wet,40,99)}
+          ${dInput(d,'Aggr','aggression',d.aggression,40,99)}
+          ${dInput(d,'Market','marketability',d.marketability,40,99)}
+        </div>
+        <div style="margin-top:8px;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+          <span style="font-size:9px;font-weight:700;letter-spacing:.5px;color:var(--tx3);text-transform:uppercase">Swap seat with</span>
+          <select onchange="if(this.value)LiveEditor.swapDrivers(${d.id},this.value);" style="flex:1;min-width:160px;font-size:11px;padding:6px 8px;border:1px solid var(--bd);border-radius:7px;background:var(--bg2)">
+            <option value="">Pick a driver to swap…</option>
+            ${otherDrivers.map(od=>{const ot=State.getTeam(od.teamId);return `<option value="${od.id}">${esc(od.name)} — ${esc(ot?(ot.shortName||ot.name):'?')}</option>`;}).join('')}
+          </select>
+        </div>
+      </div>`).join('') || '<div style="font-size:12px;color:var(--tx3);padding:8px 0">No race drivers found for this team.</div>';
+
+    host.innerHTML = `
+    <div style="max-height:82vh;overflow-y:auto">
+      <div style="font-size:16px;font-weight:900;margin-bottom:2px">Live Roster Editor</div>
+      <div style="font-size:11px;color:var(--tx3);margin-bottom:12px">Edits apply to <strong>this save</strong> straight away and autosave. This is separate from the new-game Roster Editor on the main menu.</div>
+      <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:10px;margin-bottom:12px;border-bottom:1px solid var(--bd)">${teamTabs}</div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="width:14px;height:14px;border-radius:50%;background:${esc(team.color||'#888')};display:inline-block"></span>
+        <div style="font-size:15px;font-weight:900">${esc(team.name)}</div>
+        <div style="font-size:11px;color:var(--tx3)">OVR ${Math.round(getTeamOverallCar(team))}</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-bottom:10px">
+        <label style="display:flex;flex-direction:column;gap:4px;grid-column:1/-1"><span style="font-size:9px;font-weight:700;letter-spacing:.5px;color:var(--tx3);text-transform:uppercase">Team Name</span><input value="${esc(team.name)}" onchange="LiveEditor.setTeamField('${team.id}','name',this.value)" style="font-size:13px;font-weight:700;padding:7px 9px;border:1px solid var(--bd);border-radius:8px;background:var(--bg2)"></label>
+        <label style="display:flex;flex-direction:column;gap:4px"><span style="font-size:9px;font-weight:700;letter-spacing:.5px;color:var(--tx3);text-transform:uppercase">Nation</span><input value="${esc(team.nation||'')}" onchange="LiveEditor.setTeamField('${team.id}','nation',this.value)" style="font-size:12px;padding:7px 9px;border:1px solid var(--bd);border-radius:8px;background:var(--bg2)"></label>
+        <label style="display:flex;flex-direction:column;gap:4px"><span style="font-size:9px;font-weight:700;letter-spacing:.5px;color:var(--tx3);text-transform:uppercase">Colour</span><input value="${esc(team.color||'#888888')}" onchange="LiveEditor.setTeamField('${team.id}','color',this.value)" style="font-size:12px;padding:7px 9px;border:1px solid var(--bd);border-radius:8px;background:var(--bg2)"></label>
+        ${fieldNum('Car Perf','carPerformance',Math.round(team.carPerformance||getTeamOverallCar(team)),40,100)}
+        ${fieldNum('Reliability','reliability',Math.round(team.reliability||70),40,100)}
+        ${fieldNum('Dev Rate','developmentRate',Math.round(team.developmentRate||70),40,100)}
+        ${fieldNum('Facilities','facilities',Math.round(team.facilities||70),40,100)}
+        ${fieldNum('Prestige','prestige',Math.round(team.prestige||50),20,100)}
+        <label style="display:flex;flex-direction:column;gap:4px"><span style="font-size:9px;font-weight:700;letter-spacing:.5px;color:var(--tx3);text-transform:uppercase">Engine</span><select onchange="LiveEditor.setEngine('${team.id}',this.value)" style="font-size:12px;padding:7px 9px;border:1px solid var(--bd);border-radius:8px;background:var(--bg2)">${engines.map(e=>`<option value="${esc(e.id)}" ${(team.engineManufacturer||'mercedes')===e.id?'selected':''}>${esc(e.shortName||e.name)}</option>`).join('')}</select></label>
+        <label style="display:flex;flex-direction:column;gap:4px" title="Lock this team to its supplier as a works deal — free supply, never poached by the AI."><span style="font-size:9px;font-weight:700;letter-spacing:.5px;color:var(--tx3);text-transform:uppercase">Works Deal</span><span style="display:flex;align-items:center;gap:6px;font-size:11px;padding:7px 9px;border:1px solid var(--bd);border-radius:8px;background:var(--bg2)"><input type="checkbox" ${this.isTeamWorks(team.id)?'checked':''} onchange="LiveEditor.setWorksDeal('${team.id}',this.checked)" style="margin:0;cursor:pointer;width:15px;height:15px"><span style="color:var(--tx2)">Lock</span></span></label>
+      </div>
+      <div style="font-size:11px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--tx2);margin:14px 0 8px">Race Drivers</div>
+      ${driverCards}
+      <div style="font-size:10px;color:var(--tx3);margin:6px 0 12px">Swapping exchanges two drivers' seats, so every team keeps two race drivers. Adding or removing whole teams isn't available mid-save — the grid evolves on its own over a long career.</div>
+      <button onclick="UI.closeModal()" class="btn btn-ghost" style="width:100%">Done</button>
+    </div>`;
   }
 };
 
@@ -4221,6 +4452,53 @@ const Editor = {
     this.persist();
     if(typeof UI !== 'undefined') { UI.renderLanding(); UI.renderEditor(); UI.toast('Engine supplier removed.', 'success'); }
   },
+  // ── Works deals ─────────────────────────────────────────────────────────────
+  // A works deal locks a team to a single power-unit supplier: the team gets the engine at
+  // works rate (free supply) and is never poached onto another PU by the offseason AI switch
+  // pass. The relationship lives in engineManufacturers[].worksTeams, so it flows straight into
+  // a new career (newGame copies the editor engine table) and is honoured everywhere works
+  // status is already read — getEngineContractCost and the AI switch logic. A team can hold at
+  // most one works deal. (Requested by Competitive_Care8189.)
+  _engineDefs() {
+    if(!this._state) this.init();
+    if(!this._state.engineManufacturers) this._state.engineManufacturers = JSON.parse(JSON.stringify(DATA.engineManufacturers));
+    return this._state.engineManufacturers;
+  },
+  isTeamWorks(teamId) {
+    return this._engineDefs().some(e => Array.isArray(e.worksTeams) && e.worksTeams.includes(teamId));
+  },
+  // Strip a team from every supplier's works list (a team is works with at most one PU).
+  _clearTeamWorks(teamId) {
+    this._engineDefs().forEach(e => {
+      if(Array.isArray(e.worksTeams)) e.worksTeams = e.worksTeams.filter(id => id !== teamId);
+    });
+  },
+  // Re-point a team's works membership at the supplier it currently runs — used after an engine
+  // change so a works deal follows the team rather than going stale on the old PU.
+  _syncTeamWorksToEngine(teamId) {
+    const team = (this._state?.teams||[]).find(t => t.id === teamId);
+    if(!team) return;
+    this._clearTeamWorks(teamId);
+    const eng = this._engineDefs().find(e => e.id === (team.engineManufacturer || 'mercedes'));
+    if(eng) { if(!Array.isArray(eng.worksTeams)) eng.worksTeams = []; if(!eng.worksTeams.includes(teamId)) eng.worksTeams.push(teamId); }
+  },
+  setTeamWorksDeal(teamId, makeWorks) {
+    const team = (this._state?.teams||[]).find(t => t.id === teamId);
+    if(!team) return;
+    this._clearTeamWorks(teamId);
+    if(makeWorks) {
+      const eng = this._engineDefs().find(e => e.id === (team.engineManufacturer || 'mercedes'));
+      if(eng) {
+        if(!Array.isArray(eng.worksTeams)) eng.worksTeams = [];
+        if(!eng.worksTeams.includes(teamId)) eng.worksTeams.push(teamId);
+      }
+    }
+    this.persist();
+    if(typeof UI !== 'undefined') {
+      UI.renderEditor(); UI.renderLanding();
+      UI.toast(makeWorks ? 'Works deal locked — this team keeps this engine and pays works rate.' : 'Works deal removed — team is now a paying customer.', 'success');
+    }
+  },
   // ── Staff editing ──────────────────────────────────────────────────────────
   getStaffPool() {
     if(!this._state) this.init();
@@ -4454,7 +4732,11 @@ const Editor = {
       }
       team.color = nextColor;
     } else if(['name','nation','difficulty','engineManufacturer'].includes(field)) {
+      const wasWorks = field === 'engineManufacturer' && this.isTeamWorks(team.id);
       team[field] = String(value || '').trim() || team[field];
+      // A works deal follows the team to whatever supplier it now runs, so switching a works
+      // team's engine re-points the deal rather than leaving it stale on the old PU.
+      if(field === 'engineManufacturer' && wasWorks) this._syncTeamWorksToEngine(team.id);
     } else {
       team[field] = parseFloat(value);
     }
@@ -4965,6 +5247,11 @@ nextRegsYear: startYear + randInt(3,5), regsHistory: [],
     this._generatingNames = null;
     // Initialize car component system for all teams
     if(this.game.teams) this.game.teams.forEach(t => initComponents(t));
+    // Recompute engine supply costs against the freshly-installed engine table, so any works
+    // deals set in the editor read at works rate (free) from the first season — _buildTeam runs
+    // before game.engineManufacturers is assigned, so its cost could be computed against a stale
+    // engine table.
+    if(this.game.teams) this.game.teams.forEach(t => { t.engineContractCost = getEngineContractCost(t.id, t.engineManufacturer); });
     // Apply difficulty budget penalty to player team starting revenue
     const _diff = getDiff(this.game);
     if(_diff.budgetMult < 1.0) {
@@ -13530,6 +13817,7 @@ const UI = {
           <label style="display:flex;flex-direction:column;gap:4px"><span style="font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--tx3);text-transform:uppercase">Prestige</span><input type="number" min="20" max="100" value="${team.prestige}" onchange="Editor.updateTeamField('${team.id}','prestige',this.value)" style="font-size:12px;padding:8px 10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg2)"></label>
           <label style="display:flex;flex-direction:column;gap:4px"><span style="font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--tx3);text-transform:uppercase">Downforce</span><input type="number" min="0" max="100" value="${team.downforce}" onchange="Editor.updateTeamField('${team.id}','downforce',this.value)" style="font-size:12px;padding:8px 10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg2)"></label>
           <label style="display:flex;flex-direction:column;gap:4px"><span style="font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--tx3);text-transform:uppercase">Engine Supplier</span><select onchange="Editor.updateTeamField('${team.id}','engineManufacturer',this.value)" style="font-size:12px;padding:8px 10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg2)">${Editor.getEditorEngines().map(e=>`<option value="${escapeHtml(e.id)}" ${(team.engineManufacturer||'mercedes')===e.id?'selected':''}>${escapeHtml(e.shortName||e.name)}</option>`).join('')}</select></label>
+          <label style="display:flex;flex-direction:column;gap:4px" title="Lock this team to its engine supplier as a works deal: free supply (works rate) and the AI will never switch it to another PU."><span style="font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--tx3);text-transform:uppercase">Works Deal</span><span style="display:flex;align-items:center;gap:6px;font-size:11px;padding:8px 10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg2);box-sizing:border-box"><input type="checkbox" ${Editor.isTeamWorks(team.id)?'checked':''} onchange="Editor.setTeamWorksDeal('${team.id}',this.checked)" style="margin:0;cursor:pointer;width:15px;height:15px"><span style="color:var(--tx2)">Lock to supplier</span></span></label>
         </div>
         <details style="margin-top:10px" ${Editor._openSections?.sponsors?'open':''} ontoggle="Editor.setSectionOpen('sponsors',this.open)">
           <summary style="cursor:pointer;font-size:11px;font-weight:700;color:var(--tx2);letter-spacing:.5px;text-transform:uppercase;list-style:none">💰 Sponsors</summary>
@@ -21778,8 +22066,13 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const html=`
       <div style="max-height:85vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.5.5 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.5.5.1 · Release Notes</div>
         ${[
+    ['v2.5.5.1','June 2026',[
+            '✨ Live Roster Editor — you can now edit the grid mid-save, not just at the start. A new "Live Roster Editor (this save)" entry in the More menu lets you rename any team, change its colour/nation, retune its car (performance, reliability, dev rate, facilities, prestige), set its engine supplier and works deal, and edit any race driver\'s name, age, nationality and skills — all applied to the current career and autosaved instantly. You can also move drivers between teams by swapping two seats, so every team always keeps two race drivers. (Adding or removing whole teams mid-save isn\'t included — the grid still evolves on its own over a long career via teams joining and folding.) (Requested by YouTube-Minimen-Matt.)',
+            '✨ Works power-unit deals in the editor — you can now lock any team to its engine supplier as a works deal from the Roster Editor (a "Works Deal" toggle sits next to each team\'s Engine Supplier). A works team gets its power unit at works rate (free supply) and is never poached onto a rival PU by the offseason supplier-switch logic, so a custom team and its manufacturer stay tied together for the life of the save. Switching a works team\'s engine moves the deal with it, and a team holds at most one works deal at a time. (Requested by Competitive_Care8189.)',
+            '🐛 Two of the same team on the grid — when a struggling team withdrew and its entry was taken over (e.g. Aston Martin folding), the replacement could be a constructor that was already racing, producing duplicates such as two Cadillacs. Incoming constructors are now matched by marque rather than by exact name, so a brand already on the grid can no longer be cloned by a join or a rebrand. A marque still enters normally if it isn\'t already present, so Cadillac (or any other) can legitimately join a grid that doesn\'t yet field it. (Reported by YouTube-Minimen-Matt.)',
+          ]],
     ['v2.5.5','June 2026',[
             '✨ Driver contracts, happiness & poaching overhaul — your drivers no longer rubber-stamp every renewal. An unhappy, ambitious driver stuck in an uncompetitive seat can now refuse to extend (or sign only reluctantly, for a premium), with the renewal screen showing whether he\'s happy to stay, reluctant, or unwilling. Rival teams are far more likely to make a real approach for a driver who has refused to re-sign or is clearly unhappy — so failing to keep your driver content can genuinely cost you him. A driver demoted to a reserve role takes it harder if he\'s good enough to race, and a strong demoted driver will push to leave. Each driver card now shows a clear Happiness bar (and a "WANTS OUT" flag when a driver has rejected an extension). (Reported by AdorableRegret685.)',
             '⚖️ AI teams now develop mid-season — previously only your car improved during a season (via in-season and quarter upgrades) while rivals stayed frozen until the winter, so a strong team could pull away every race with a lever the AI didn\'t have. Rival teams now make small per-race gains through the season, weighted toward those chasing the leader and scaled by difficulty, so the title fight stays live instead of being decided by mid-season. Your own car still develops faster if you invest — this closes the free in-season lead rather than removing the reward for good development. (Reported by Significant-Care-135.)',
