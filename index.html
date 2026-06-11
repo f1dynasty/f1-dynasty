@@ -362,6 +362,12 @@ input:focus,select:focus{border-color:var(--red)}
 /* ── GAME CONTENT ── */
 #game-content{flex:1;height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;background:var(--bg)}
 .view{display:none;padding:14px;max-width:920px;margin:0 auto;width:100%}
+/* Desktop width (v2.5.9, TheExoticKoala): give wide screens more room, especially the dashboard */
+/* Watch-race desktop readability (v2.5.9): the modal content is sized for mobile (8-11px inline
+   styles throughout), so on desktop the feed, position tower and results footer are scaled up as
+   whole regions — text, spacing and controls grow together and the scroll containers absorb it. */
+@media(min-width:1280px){.view{max-width:1120px}.wr-shell{max-width:820px !important}.wr-shell>div:first-child{zoom:1.08}.wr-pos-col{width:228px !important;zoom:1.12}#wr-feed{zoom:1.18}#wr-footer{zoom:1.12}}
+@media(min-width:1600px){.view{max-width:1240px}.wr-shell{max-width:920px !important}.wr-shell>div:first-child{zoom:1.12}.wr-pos-col{width:238px !important;zoom:1.18}#wr-feed{zoom:1.25}#wr-footer{zoom:1.18}}
 @media(min-width:480px){.view{padding:18px}}
 .view.active{display:block;animation:fadeUp .16s ease}
 @keyframes fadeUp{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
@@ -769,15 +775,16 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
         </div>
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:16px;max-width:560px;padding:16px 18px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
-          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v2.5.8 — What's New</div>
-          <div style="font-size:14px;font-weight:900;color:#111;margin-bottom:10px">A late-game title fight worth having, deeper feeder series, and the custom-calendar race bug squashed</div>
+          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v2.5.9 — What's New</div>
+          <div style="font-size:14px;font-weight:900;color:#111;margin-bottom:10px">Climbing the grid is a project again, rivals look after their factories, and historical rosters get real tools</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 16px">
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🚀</span><span><strong>A Rival Can Now Beat You</strong> — when you dominate, a named challenger gets a multi-season surge and can genuinely take the title, harder on Hard/Nightmare</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>Custom Calendars Fixed</strong> — rounds can no longer lose their lap count, so the sim never skips a race to the finish; every calendar self-repairs on load</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">⚖️</span><span><strong>Weekends Shuffle More</strong> — teams now have on/off weekends at each track, so the order moves race to race without breaking the season hierarchy</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>Rebrands Keep Their Own History</strong> — a new team no longer inherits the titles of the marque it replaced; the old name lives on in the record books</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">✨</span><span><strong>Living Feeder Series</strong> — young drivers stay in F2/F3 instead of flooding free agency, feeder duplicates work as weights, and retirements are announced a year ahead</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:#888;font-weight:800;flex-shrink:0">🙏</span><span><strong>Built from your requests</strong> — every change here came directly from r/f1dynasty; thanks for the ideas and keep them coming</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">⚖️</span><span><strong>No More One-Season Miracles</strong> — your Factory determines how much of each upgrade package reaches the car, so back-to-front takes building the operation, not just spending</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">⚖️</span><span><strong>Rivals Reinvest</strong> — AI teams maintain facilities and dev rate, so big teams stay competitive and the grid no longer flattens over a decade; AI also develops harder at upgrade windows</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">⚡</span><span><strong>Power Units in the Live Editor</strong> — add, edit and remove engine suppliers mid-save, removed suppliers finally stay removed, and engine allocation is now a real season decision</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>Historical Rosters Fixed Up</strong> — custom sponsors survive export, upgrade windows scale to short calendars, veterans no longer debut as rookies, and the guide reads your real team names</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">✨</span><span><strong>Smarter Wet Calls & Living Morale</strong> — no more pit-every-two-laps weather spam, morale moves race by race, aero confidence follows your Simulator, and your car gets a per-track rating</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">✨</span><span><strong>Better on Desktop</strong> — wider dashboard and race screens, a readable live position tower in Watch Race, and a Race Story that stops repeating itself</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:#888;font-weight:800;flex-shrink:0">🙏</span><span><strong>Built from your requests</strong> — every change here came directly from r/f1dynasty: Significant-Care-135, Raskachas, TheExoticKoala, ZareJonathan, Weet-Bix54 and Appropriate-Rip-4087. Thanks, and keep them coming</span></div>
           </div>
           <button onclick="UI.showChangelog()" style="margin-top:10px;width:100%;padding:7px;background:none;border:1.5px solid rgba(192,57,43,.3);border-radius:7px;font-size:11px;font-weight:700;color:var(--red);cursor:pointer">Full release notes →</button>
         </div>
@@ -896,7 +903,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </div>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.5.8</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.5.9</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -3131,6 +3138,92 @@ const LiveEditor = {
     this._refresh();
   },
 
+  // ── Power Unit management (v2.5.9, requested by ZareJonathan) ───────────────
+  // The Live Editor could only switch teams between EXISTING suppliers — historical-roster
+  // players had no way to introduce a new manufacturer mid-save (his case: adding Renault and
+  // Ligier-Malta for 1981). Suppliers can now be added, edited and removed in-save with the
+  // same safety rules as the Roster Editor: at least two suppliers always remain, teams on a
+  // removed PU are reassigned to a survivor, and works links are cleaned up. Edits write to
+  // g.engineManufacturers, so they take effect immediately and persist in the save.
+  setEngineField(engId, field, value){
+    const g = State.game; if(!g) return;
+    const eng = this._engineDefs().find(e=>e.id===engId); if(!eng) return;
+    if(field==='name'){ const v=String(value||'').trim(); if(v){ eng.name=v; if(!eng.shortName) eng.shortName=v.split(' ')[0]; } }
+    else if(field==='shortName'){ const v=String(value||'').trim(); if(v) eng.shortName=v; }
+    else if(field==='color'){ const v=String(value||'').trim(); if(/^#[0-9a-fA-F]{3,8}$/.test(v)) eng.color=v; }
+    else if(field==='powerRating'||field==='ersRating') eng[field]=clamp(parseInt(value)||80, 50, 99);
+    else if(field==='reliability') eng.reliability=clamp(parseInt(value)||80, 50, 98);
+    else if(field==='devRate') eng.devRate=clamp(parseInt(value)||8, 1, 10);
+    else if(field==='maxCustomers') eng.maxCustomers=clamp(parseInt(value)||4, 1, 16);
+    else if(field==='annualCost') eng.annualCost=clamp(parseFloat(value)||15, 0, 100);
+    this._refresh();
+  },
+  addEngine(){
+    const g = State.game; if(!g) return;
+    if(!Array.isArray(g.engineManufacturers)) g.engineManufacturers = JSON.parse(JSON.stringify(DATA.engineManufacturers));
+    const defs = g.engineManufacturers;
+    let n=1; while(defs.some(e=>e.id==='custom_pu_'+n)) n++;
+    defs.push({ id:'custom_pu_'+n, name:'New Power Unit '+n, shortName:'NewPU'+n,
+      powerRating:82, ersRating:80, reliability:80, devRate:8, maxCustomers:4, annualCost:12,
+      worksTeams:[], color:'#666666', desc:'Custom supplier added in the Live Editor.', _custom:true });
+    if(typeof UI!=='undefined') UI.toast('Power unit added — edit its name and ratings below, then assign teams on the Teams tab.','success');
+    this._refresh();
+  },
+  removeEngine(engId){
+    const g = State.game; if(!g) return;
+    const defs = this._engineDefs();
+    if(defs.length <= 2){ if(typeof UI!=='undefined') UI.toast('At least two engine suppliers must remain.','warning'); return; }
+    const idx = defs.findIndex(e=>e.id===engId); if(idx<0) return;
+    const removed = defs[idx];
+    const survivor = defs.find(e=>e.id!==engId);
+    defs.splice(idx,1);
+    let moved=0;
+    (g.teams||[]).forEach(t=>{
+      if(t.engineManufacturer===engId){
+        t.engineManufacturer = survivor.id;
+        t.engineContractCost = getEngineContractCost(t.id, survivor.id);
+        moved++;
+      }
+    });
+    if(typeof UI!=='undefined') UI.toast(`${removed.shortName||removed.name} removed${moved?` — ${moved} team${moved!==1?'s':''} reassigned to ${survivor.shortName||survivor.name}`:''}.`,'success');
+    this._refresh();
+  },
+  _renderEnginesTab(){
+    const g = State.game;
+    const esc = (typeof escapeHtml==='function') ? escapeHtml : (s=>String(s));
+    const defs = this._engineDefs();
+    const eInput = (eng, label, field, val, min, max, step) => `<label style="display:flex;flex-direction:column;gap:3px"><span style="font-size:8px;font-weight:700;letter-spacing:.5px;color:var(--tx3);text-transform:uppercase">${label}</span><input type="number" min="${min}" max="${max}" ${step?`step="${step}"`:''} value="${val}" onchange="LiveEditor.setEngineField('${esc(eng.id)}','${field}',this.value)" style="font-size:12px;padding:6px 8px;border:1px solid var(--bd);border-radius:7px;background:var(--bg2)"></label>`;
+    const cards = defs.map(eng=>{
+      const users = (g.teams||[]).filter(t=>!t.retired && t.engineManufacturer===eng.id);
+      const works = (eng.worksTeams||[]).map(id=>(g.teams||[]).find(t=>t.id===id)).filter(Boolean);
+      return `<div style="border:1px solid var(--bd);border-radius:10px;padding:12px;margin-bottom:10px;background:var(--bg2)">
+        <div style="display:grid;grid-template-columns:1fr 110px 86px;gap:8px;margin-bottom:8px">
+          <label style="display:flex;flex-direction:column;gap:3px"><span style="font-size:8px;font-weight:700;letter-spacing:.5px;color:var(--tx3);text-transform:uppercase">Supplier Name</span><input value="${esc(eng.name)}" onchange="LiveEditor.setEngineField('${esc(eng.id)}','name',this.value)" style="font-size:13px;font-weight:700;padding:6px 8px;border:1px solid var(--bd);border-radius:7px;background:var(--bg2)"></label>
+          <label style="display:flex;flex-direction:column;gap:3px"><span style="font-size:8px;font-weight:700;letter-spacing:.5px;color:var(--tx3);text-transform:uppercase">Short Name</span><input value="${esc(eng.shortName||eng.name)}" onchange="LiveEditor.setEngineField('${esc(eng.id)}','shortName',this.value)" style="font-size:12px;padding:6px 8px;border:1px solid var(--bd);border-radius:7px;background:var(--bg2)"></label>
+          <label style="display:flex;flex-direction:column;gap:3px"><span style="font-size:8px;font-weight:700;letter-spacing:.5px;color:var(--tx3);text-transform:uppercase">Colour</span><input value="${esc(eng.color||'#666666')}" onchange="LiveEditor.setEngineField('${esc(eng.id)}','color',this.value)" style="font-size:12px;font-family:var(--fm);padding:6px 8px;border:1px solid var(--bd);border-radius:7px;background:var(--bg2)"></label>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:8px">
+          ${eInput(eng,'Power','powerRating',Math.round(eng.powerRating||80),50,99)}
+          ${eInput(eng,'ERS','ersRating',Math.round(eng.ersRating||80),50,99)}
+          ${eInput(eng,'Reliability','reliability',Math.round(eng.reliability||80),50,98)}
+          ${eInput(eng,'Dev Rate','devRate',eng.devRate||8,1,10)}
+          ${eInput(eng,'Max Teams','maxCustomers',eng.maxCustomers||4,1,16)}
+          ${eInput(eng,'Cost $M/yr','annualCost',eng.annualCost||15,0,100,'0.5')}
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+          <div style="font-size:10px;color:var(--tx3);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+            ${users.length ? `Supplies: ${users.map(t=>esc(t.shortName||t.name)).join(', ')}` : 'No teams currently'}${works.length ? ` · Works: ${works.map(t=>esc(t.shortName||t.name)).join(', ')}` : ''}
+          </div>
+          <button onclick="LiveEditor.removeEngine('${esc(eng.id)}')" style="flex-shrink:0;font-size:10px;font-weight:700;padding:5px 10px;border-radius:7px;border:1px solid rgba(192,57,43,.35);background:none;color:var(--red);cursor:pointer">Remove</button>
+        </div>
+      </div>`;
+    }).join('');
+    return `
+      <div style="font-size:11px;color:var(--tx3);margin-bottom:10px;line-height:1.5">Add, edit or remove engine suppliers in this save. Rating changes apply immediately; assign teams to a supplier on the <strong>Teams & Drivers</strong> tab. Removing a supplier reassigns its teams, and at least two suppliers always remain.</div>
+      ${cards}
+      <button onclick="LiveEditor.addEngine()" style="width:100%;font-size:12px;font-weight:800;padding:10px;border-radius:8px;border:1.5px dashed var(--bd);background:none;color:var(--tx2);cursor:pointer">+ Add Power Unit</button>`;
+  },
+
   setDriverField(driverId, field, value){
     const d = State.getDriver(parseInt(driverId)); if(!d) return;
     if(['name','nationality'].includes(field)){ const v=String(value||'').trim(); if(v) d[field]=v; }
@@ -3289,10 +3382,11 @@ const LiveEditor = {
         <button onclick="if(confirm('Load the current game state into the new-game Roster Editor? This replaces the editor template you have there.')) Editor.loadLiveGameIntoEditor()" style="flex:1;min-width:160px;font-size:11px;font-weight:700;padding:7px 10px;border-radius:7px;border:1px solid var(--bd);background:var(--bg2);color:var(--tx2);cursor:pointer" title="Send this game to the Roster Editor so you can edit it in detail and start a fresh save from it">✏️ Edit in Roster Editor</button>
       </div>
       <div style="display:flex;gap:6px;margin-bottom:14px">
-        <button onclick="LiveEditor.selectTab('roster')" style="flex:1;font-size:12px;font-weight:800;padding:8px;border-radius:8px;border:1px solid ${this._tab!=='calendar'?'var(--red)':'var(--bd)'};background:${this._tab!=='calendar'?'rgba(192,57,43,.1)':'var(--bg2)'};color:${this._tab!=='calendar'?'var(--red)':'var(--tx2)'};cursor:pointer">🛠 Teams & Drivers</button>
+        <button onclick="LiveEditor.selectTab('roster')" style="flex:1;font-size:12px;font-weight:800;padding:8px;border-radius:8px;border:1px solid ${this._tab!=='calendar'&&this._tab!=='engines'?'var(--red)':'var(--bd)'};background:${this._tab!=='calendar'&&this._tab!=='engines'?'rgba(192,57,43,.1)':'var(--bg2)'};color:${this._tab!=='calendar'&&this._tab!=='engines'?'var(--red)':'var(--tx2)'};cursor:pointer">🛠 Teams & Drivers</button>
+        <button onclick="LiveEditor.selectTab('engines')" style="flex:1;font-size:12px;font-weight:800;padding:8px;border-radius:8px;border:1px solid ${this._tab==='engines'?'var(--red)':'var(--bd)'};background:${this._tab==='engines'?'rgba(192,57,43,.1)':'var(--bg2)'};color:${this._tab==='engines'?'var(--red)':'var(--tx2)'};cursor:pointer">⚡ Power Units</button>
         <button onclick="LiveEditor.selectTab('calendar')" style="flex:1;font-size:12px;font-weight:800;padding:8px;border-radius:8px;border:1px solid ${this._tab==='calendar'?'var(--red)':'var(--bd)'};background:${this._tab==='calendar'?'rgba(192,57,43,.1)':'var(--bg2)'};color:${this._tab==='calendar'?'var(--red)':'var(--tx2)'};cursor:pointer">📅 Next Season Calendar</button>
       </div>
-      ${this._tab==='calendar' ? this._renderCalendarTab() : `
+      ${this._tab==='calendar' ? this._renderCalendarTab() : this._tab==='engines' ? this._renderEnginesTab() : `
       <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:10px;margin-bottom:12px;border-bottom:1px solid var(--bd)">${teamTabs}</div>
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
         <span style="width:14px;height:14px;border-radius:50%;background:${esc(team.color||'#888')};display:inline-block"></span>
@@ -3352,6 +3446,34 @@ function getInSeasonDevEfficiency(carPerf){
   if(carPerf >= 85) return 0.82;
   if(carPerf >= 78) return 0.90;
   return 1.0;
+}
+
+// ── Upgrade window scheduling (v2.5.9, ZareJonathan) ─────────────────────────
+// Windows were hardcoded to open after races 7 and 14, so on short custom
+// calendars (e.g. a 14-race 1980s roster) the summer window opened after the
+// final race and its upgrades could never be applied. Thresholds now scale with
+// calendar length (~30% and ~60% of the season), with the second window always
+// landing at least 2 races before the finale. On the default 24-race calendar
+// this resolves to the same [7, 14] as before, so existing saves are unaffected.
+// Returns [w1, w2] where w2 is null when the calendar is too short for a
+// second window.
+function getUpgradeWindowThresholds(g){
+  const total = (g && g.calendar && g.calendar.length) || 24;
+  const w1 = Math.max(2, Math.round(total * 0.30));
+  let w2 = Math.max(w1 + 2, Math.round(total * 0.60));
+  if(w2 > total - 2) w2 = total - 2;
+  if(w2 <= w1) w2 = null;
+  return [w1, w2];
+}
+
+// Combined in-season window effectiveness for the player's performance packages
+// (elite-car drag × factory throughput). Single source of truth so the window
+// previews, live slider labels and the applied values always agree (v2.5.9).
+function getQuarterWindowEffectiveness(team){
+  const eff = getInSeasonDevEfficiency((team && team.carPerformance) || 70);
+  const factory = (typeof getFacilityUnit==='function' ? getFacilityUnit(team,'factory') : 0) || (team && team.facilities) || 70;
+  const throughput = clamp(0.62 + (factory/100)*0.40, 0.62, 1.0);
+  return { eff, throughput, total: eff * throughput };
 }
 
 // ── CAR COMPONENT SYSTEM ──────────────────────────────────────────────────
@@ -5360,6 +5482,16 @@ const Editor = {
     const mapDriver = (d)=>{ const o={}; PICK_D.forEach(k=>{ if(d[k]!==undefined && d[k]!==null) o[k]=d[k]; }); o.rating=Math.round(d.rating||70); return o; };
     const TEAM_STRIP = new Set(['driverIds','reserveIds','seasonPoints','wins','poles','podiums','sprintWins','_rebrandedFrom']);
     const mapTeam = (t)=>{ const o=JSON.parse(JSON.stringify(t)); TEAM_STRIP.forEach(k=>delete o[k]); return o; };
+    // Sponsors (v2.5.9, ZareJonathan): export the player team's LIVE sponsor deals (they evolve
+    // during a save) and every other team's stored editor sponsor set, trimmed back to editor
+    // shape so the importer treats them as definitions rather than mid-contract deals.
+    const _editorSponsorShape = sp => ({ name: sp.name, value: sp.value, type: sp.type, ...(sp.totalSeasons ? { totalSeasons: sp.totalSeasons } : {}) });
+    const attachSponsors = (o, t)=>{
+      const live = (t.id === g.playerTeamId && Array.isArray(g.sponsors) && g.sponsors.length) ? g.sponsors : null;
+      const src = live || (Array.isArray(t.sponsors) && t.sponsors.length ? t.sponsors : null);
+      if(src) o.sponsors = src.map(_editorSponsorShape);
+      return o;
+    };
     const year = g.season || 2026;
     const seasonDrivers = { [year]: {} };
     const reserveDrivers = {};
@@ -5372,7 +5504,7 @@ const Editor = {
     const namedFreeAgents = (g.drivers||[]).filter(d=>!d.teamId && !d.retired && !d.isProspect && !d.isReserve && !d.isJunior).map(mapDriver);
     const namedProspects = (g.drivers||[]).filter(d=>d.isProspect && !d.retired).map(mapDriver);
     return {
-      teams: (g.teams||[]).filter(t=>!t.retired).map(mapTeam),
+      teams: (g.teams||[]).filter(t=>!t.retired).map(t=>attachSponsors(mapTeam(t), t)),
       seasonDrivers, reserveDrivers, namedFreeAgents, namedProspects,
       prospectClasses: (g.prospectClasses && g.prospectClasses.length) ? [...g.prospectClasses] : [...DATA.prospectSeries],
       deletedTeamIds: [],
@@ -5802,6 +5934,10 @@ nextRegsYear: startYear + randInt(3,5), regsHistory: [],
       facilities:tDef.facilities, facilityUnits: (tDef.facilityUnits && typeof tDef.facilityUnits==='object') ? {windTunnel:clamp(parseFloat(tDef.facilityUnits.windTunnel)||tDef.facilities||65,40,99), simulator:clamp(parseFloat(tDef.facilityUnits.simulator)||tDef.facilities||65,40,99), factory:clamp(parseFloat(tDef.facilityUnits.factory)||tDef.facilities||65,40,99)} : undefined, revenue:tDef.revenue, color:tDef.color,
       difficulty:tDef.difficulty, downforce:tDef.downforce||50,
       driverIds:[], reserveIds:[], baseDrivers:tDef.baseDrivers,
+      // Keep the editor-defined sponsor set on the team (v2.5.9, reported by ZareJonathan):
+      // _buildTeam previously dropped it, so custom sponsors never entered the save and an
+      // exported template fell back to the default 2026 sponsor map on import.
+      sponsors: Array.isArray(tDef.sponsors) && tDef.sponsors.length ? JSON.parse(JSON.stringify(tDef.sponsors)) : undefined,
       seasonPoints:0, totalPoints:0, wins:0, sprintWins:0, poles:0, podiums:0, championships:0
     };
     ensureFacilityUnits(_t); // v2.5.8: initialise the three sub-facilities for every new team
@@ -7055,6 +7191,24 @@ const Sim = {
       if(lap <= dryOutLap) return build;
       return clamp(1 - ((lap - dryOutLap) / 5), 0, 1);
     };
+    // ── Realized tyre degradation (v2.5.9, requested by TheExoticKoala) ─────────
+    // Strategy always fixated on the under/overcut because every race's degradation matched the
+    // forecast exactly. Each race now rolls a hidden "realized deg" once, before the lap engine
+    // runs: ~44% of races are on forecast, ~28% run higher (stops come forward, one-stoppers get
+    // caught by the cliff and forced into an extra stop), ~28% run lower (stints stretch, and AI
+    // two-stoppers can gamble on converting to a one-stop). The pre-race strategy screen still
+    // shows the FORECAST — the divergence is discovered in-race, called out by the pit wall in
+    // the feed, and the existing cliff-forced stop acts as the safety net when a stretch gamble
+    // fails. The player's chosen plan is never silently rewritten: their recommended stop laps
+    // shift with the conditions and the box-or-stay prompts let them skip a stop themselves.
+    {
+      const _dvr = Math.random();
+      race._tyreDegVariance = _dvr < 0.10 ? randFloat(1.16, 1.28)
+        : _dvr < 0.28 ? randFloat(1.06, 1.16)
+        : _dvr > 0.90 ? randFloat(0.76, 0.86)
+        : _dvr > 0.72 ? randFloat(0.86, 0.94)
+        : randFloat(0.95, 1.05);
+    }
     const chooseStrategy = function(driver, team, startPos) {
       const isPlayerTeam = team.id === g.playerTeamId;
       let chosenId = isPlayerTeam ? ((race._driverStrategies && race._driverStrategies[driver.id]) || race._chosenStrategy) : null;
@@ -7114,6 +7268,22 @@ const Sim = {
           });
         }
       }
+      // ── Adaptive stops (v2.5.9) ──────────────────────────────────────────────
+      // Planned stop laps shift with the day's realized deg (earlier when wear runs above
+      // forecast, later when below). On genuinely low-deg days, AI teams on a two-stop can
+      // gamble on a stretched one-stop — if the gamble fails, the cliff-forced stop catches
+      // them. The player's stops shift too (the pit wall adapting its recommendation), but
+      // their chosen stop COUNT is never changed for them — the box-or-stay prompt lets them
+      // skip the second stop themselves when the tyres are holding.
+      const _degVarCS = race._tyreDegVariance || 1;
+      if(opt && plannedPitLaps.length && Math.abs(_degVarCS - 1) > 0.05) {
+        const _stopShift = Math.round((1/_degVarCS - 1) * 8);
+        for(let i=0;i<plannedPitLaps.length;i++) plannedPitLaps[i] = clamp(plannedPitLaps[i] + _stopShift, 2, race.laps - 2);
+      }
+      if(!isPlayerTeam && _degVarCS <= 0.88 && plannedPitLaps.length >= 2 && weather === 'dry' && Math.random() < 0.65) {
+        const _onePitJitter = (((driver.id || startPos || 0) % 3) - 1);
+        plannedPitLaps.splice(0, plannedPitLaps.length, clamp(Math.round(race.laps * 0.46) + _onePitJitter, 2, race.laps - 2));
+      }
       return { chosenId, opt, plannedPitLaps };
     };
     const entries = qualiOrder.map((entry, idx) => {
@@ -7171,9 +7341,12 @@ const Sim = {
       const _tyreSaveBonus = (race?._usedTyreQuali?.[driver.id]) ? 1.18 : 1.0;
       const _openingCompound = strategy.opt?.stints?.[0]?.compound || 'medium';
       const _openBonus = c => c === _openingCompound ? _tyreSaveBonus : 1.0;
-      const softLife = Math.max(12, Math.round(stratData.softLife * clamp(0.92 + tyreMgmt / 500, 0.95, 1.15) * _openBonus('soft')));
-      const medLife = Math.max(softLife + 10, Math.round(stratData.medLife * clamp(0.94 + tyreMgmt / 420, 0.96, 1.16) * _openBonus('medium')));
-      const hardLife = Math.max(medLife + 8, Math.round(stratData.hardLife * clamp(0.95 + tyreMgmt / 400, 0.97, 1.16) * _openBonus('hard')));
+      // Realized deg vs forecast (v2.5.9): the day's hidden roll scales every compound's life,
+      // so cliffs, forced stops and stretch opportunities all emerge naturally downstream.
+      const _lifeVarMult = clamp(1 / (race._tyreDegVariance || 1), 0.77, 1.35);
+      const softLife = Math.max(12, Math.round(stratData.softLife * clamp(0.92 + tyreMgmt / 500, 0.95, 1.15) * _openBonus('soft') * _lifeVarMult));
+      const medLife = Math.max(softLife + 10, Math.round(stratData.medLife * clamp(0.94 + tyreMgmt / 420, 0.96, 1.16) * _openBonus('medium') * _lifeVarMult));
+      const hardLife = Math.max(medLife + 8, Math.round(stratData.hardLife * clamp(0.95 + tyreMgmt / 400, 0.97, 1.16) * _openBonus('hard') * _lifeVarMult));
       const tyreLife = { soft:softLife, medium:medLife, hard:hardLife, inter:999, wet:999 };
       // DNF chance: keep retirements present, but avoid turning every long race into a crash lottery
       const _relForDnf = getTeamCombinedReliability(team);
@@ -7548,10 +7721,17 @@ const Sim = {
       const _pw = State.game.puWear;
       const _eng = _findEngine(State.getPlayerTeam());
       const _engRel = _eng ? (_eng.reliability || 80) : 80;
-      // Base wear per race: 3-5% per component, reduced by engine reliability
-      // Reliable engines (95+) wear at ~60% rate, fragile engines (70-) at ~120%
-      const _relMult = 1.4 - (_engRel / 100);
-      const _baseWear = (2.8 + Math.random() * 2.2) * _relMult;
+      // Base wear per race, reduced by engine reliability. Retuned (v2.5.9, TheExoticKoala):
+      // the old rate let a single PU set cruise through a full season at ~40% total wear,
+      // so engine management was only a consideration if you pushed. A reliable engine now
+      // accrues ~2.7-2.9%/race and a fragile one ~3.3%+, crossing the 50%-wear performance
+      // penalty around the summer — carrying one set to the flag is possible but taxed, two
+      // sets is the sensible season, and habitual pushers need their third. Wear scales to
+      // calendar length so short historical seasons face the same allocation pressure.
+      const _relMult = 1.45 - (_engRel / 115);
+      const _calLenPW = (g.calendar||[]).length || 24;
+      const _calMultPW = clamp(Math.pow(24/_calLenPW, 0.7), 0.8, 1.5);
+      const _baseWear = (3.2 + Math.random() * 2.4) * _relMult * _calMultPW;
       // Circuit type affects which components wear more
       const _cType = race.circuitType || 'balanced';
       const _iceWear = _baseWear * (_cType === 'power' ? 1.3 : _cType === 'street' ? 0.8 : 1.0);
@@ -7586,6 +7766,8 @@ const Sim = {
     State.game.lastRaceResult={race:{...race},results};
     State.game.totalRaces++;
     Sim._processInjuries(results, race);
+    Sim._applyPostRaceMorale(results, race);
+    Sim._applyPostRaceTeamLearning();
     return {race,results,weather,hadSafetyCar,lapEvents,lapStates,simEvents};
   },
   simRace(race) {
@@ -7893,12 +8075,8 @@ const Sim = {
     const lapEvents=Sim._generateLapEvents(race,results,weather,hadSafetyCar,rainStartLap);
     race.raceDone=true; race.raceResult=results; race.weather=weather; race.hadSafetyCar=hadSafetyCar; race.rainStartLap=rainStartLap||null; race.lapEvents=lapEvents;
     race._raceSubIds = Array.from(reserveSubIds);
-    // In-season setup knowledge growth — each race gives data about the car
-    if(g.teams) g.teams.forEach(t => {
-      if(t.setupKnowledge !== undefined && t.setupKnowledge < 85) {
-        t.setupKnowledge = clamp(t.setupKnowledge + randFloat(0.8, 1.8), 30, 100);
-      }
-    });
+    // In-season setup knowledge growth now runs in Sim._applyPostRaceTeamLearning (v2.5.9)
+    // so watched races gain knowledge too and the cap scales with the Simulator facility.
     // Save strategy context for post-race display before clearing ephemeral fields
     race._strategyUsed = race._chosenStrategy || null;
     race._weatherRiskUsed = race._weatherRisk || 0;
@@ -7906,6 +8084,8 @@ const Sim = {
     delete race._chosenStrategy; delete race._pendingStrategy; delete race._weatherRisk; delete race._driverStrategies;
     State.game.lastRaceResult={race:{...race},results}; State.game.totalRaces++;
     Sim._processInjuries(results, race);
+    Sim._applyPostRaceMorale(results, race);
+    Sim._applyPostRaceTeamLearning();
     return {race,results,weather,hadSafetyCar,lapEvents};
   },
 
@@ -8153,6 +8333,22 @@ const Sim = {
     const openingLogged = {};
     const pitDecisionLogged = {};
     const weatherDecisionLogged = {};
+    // ── Weather prompt damping (v2.5.9, reported by TheExoticKoala) ──────────
+    // A passing shower could ramp wetness through both thresholds and back within a few laps,
+    // prompting Dry → Inter → Wet → Inter → Slick with 2-lap stints — five stops nobody sane
+    // would make. Prompts now require the conditions to HOLD for the next few laps before
+    // recommending a switch (the lap timeline is precomputed, so the pit wall can "read the
+    // radar"), and a driver is not re-prompted within 3 laps of their last weather call unless
+    // they are stranded on slicks in heavy rain.
+    const lastWeatherPromptLap = {};
+    const _wetAt = i => { const ls = lapStates[Math.max(0, Math.min(lapStates.length-1, i))]; return ls ? (ls.wetness || 0) : 0; };
+    const _wetHolds = (startIdx, n, pred) => { for(let k=0;k<n;k++){ if(!pred(_wetAt(startIdx+k))) return false; } return true; };
+    const _weatherPromptOK = (driverId, lap, urgent) => urgent || (lap - (lastWeatherPromptLap[driverId]||-99)) >= 3;
+    const _markWeatherPrompt = (driverId, lap) => { lastWeatherPromptLap[driverId] = lap; };
+    // Realized-deg pit wall callout (v2.5.9): when the day's degradation diverges from forecast,
+    // the feed says so early enough to act on — the cue for stretching a stint or skipping a stop.
+    const _degVarNote = race._tyreDegVariance || 1;
+    const _degNoteLap = (laps >= 14 && Math.abs(_degVarNote - 1) > 0.05) ? Math.min(8, Math.max(4, Math.round(laps * 0.16))) : null;
     const poleSitter = (race.qualiResult || []).find(r => r && r.position === 1) || null;
     events.push({
       lap: 1,
@@ -8177,10 +8373,12 @@ const Sim = {
         const pitPromptSuppressed = (suppressedPitPrompts[o.driverId] || 0) >= lap;
         const plannedStopLap = o.nextPlannedPitLap || prevEntryForDriver?.nextPlannedPitLap || null;
         const prevWetness = prev ? (prev.wetness || 0) : 0;
-        if(prevEntryForDriver && prevWetness < 0.28 && lapState.wetness >= 0.28 && prevEntryForDriver.compound !== 'inter' && prevEntryForDriver.compound !== 'wet') {
+        if(prevEntryForDriver && prevWetness < 0.28 && lapState.wetness >= 0.28 && prevEntryForDriver.compound !== 'inter' && prevEntryForDriver.compound !== 'wet'
+           && _wetHolds(idx, 3, w=>w>=0.24) && _weatherPromptOK(o.driverId, lap, lapState.wetness >= 0.6)) {
           const weatherKey = `${o.driverId}:${lap}:inter`;
           if(!weatherDecisionLogged[weatherKey] && !consumedPrompts[weatherKey]) {
             weatherDecisionLogged[weatherKey] = true;
+            _markWeatherPrompt(o.driverId, lap);
             events.push({
               lap,
               type: 'weather_decision',
@@ -8193,10 +8391,13 @@ const Sim = {
               driverPositions: prevSnap
             });
           }
-        } else if(prevEntryForDriver && prevWetness < 0.78 && lapState.wetness >= 0.78 && prevEntryForDriver.compound !== 'wet') {
+        } else if(prevEntryForDriver && prevWetness < 0.78 && lapState.wetness >= 0.78 && prevEntryForDriver.compound !== 'wet'
+           && _wetHolds(idx, 3, w=>w>=0.72) && (laps - lap) >= 4
+           && _weatherPromptOK(o.driverId, lap, prevEntryForDriver.compound !== 'inter')) {
           const weatherKey = `${o.driverId}:${lap}:wet`;
           if(!weatherDecisionLogged[weatherKey] && !consumedPrompts[weatherKey]) {
             weatherDecisionLogged[weatherKey] = true;
+            _markWeatherPrompt(o.driverId, lap);
             events.push({
               lap,
               type: 'weather_decision',
@@ -8210,10 +8411,12 @@ const Sim = {
               driverPositions: prevSnap
             });
           }
-        } else if(prevEntryForDriver && prevWetness >= 0.78 && lapState.wetness < 0.78 && lapState.wetness >= 0.28 && prevEntryForDriver.compound === 'wet') {
+        } else if(prevEntryForDriver && prevWetness >= 0.78 && lapState.wetness < 0.78 && lapState.wetness >= 0.28 && prevEntryForDriver.compound === 'wet'
+           && _wetHolds(idx, 3, w=>w<0.78) && (laps - lap) >= 4 && _weatherPromptOK(o.driverId, lap, false)) {
           const weatherKey = `${o.driverId}:${lap}:inter-dry`;
           if(!weatherDecisionLogged[weatherKey] && !consumedPrompts[weatherKey]) {
             weatherDecisionLogged[weatherKey] = true;
+            _markWeatherPrompt(o.driverId, lap);
             events.push({
               lap,
               type: 'weather_decision',
@@ -8226,7 +8429,8 @@ const Sim = {
               driverPositions: prevSnap
             });
           }
-        } else if(prevEntryForDriver && prevWetness >= 0.12 && lapState.wetness < 0.12 && (prevEntryForDriver.compound === 'inter' || prevEntryForDriver.compound === 'wet')) {
+        } else if(prevEntryForDriver && prevWetness >= 0.12 && lapState.wetness < 0.12 && (prevEntryForDriver.compound === 'inter' || prevEntryForDriver.compound === 'wet')
+           && _wetHolds(idx, 4, w=>w<0.14) && _weatherPromptOK(o.driverId, lap, false)) {
           const strategyOpt = DATA.getStrategyOptions(race, race._weatherRiskUsed || race._weatherRisk || 0).options.find(opt => opt.id === chosenStrategyId);
           const stintIndexForPrompt = prevEntryForDriver?.stintIndex ?? o.stintIndex ?? 0;
           const slickCompound = strategyOpt?.stints?.[Math.min(stintIndexForPrompt + 1, Math.max(0, (strategyOpt?.stints?.length || 1) - 1))]?.compound
@@ -8236,6 +8440,7 @@ const Sim = {
           const weatherKey = `${o.driverId}:${lap}:slick`;
           if(!weatherDecisionLogged[weatherKey] && !consumedPrompts[weatherKey]) {
             weatherDecisionLogged[weatherKey] = true;
+            _markWeatherPrompt(o.driverId, lap);
             events.push({
               lap,
               type: 'weather_decision',
@@ -8624,6 +8829,13 @@ const Sim = {
           text: `🌧 Rain is arriving. Teams are watching the crossover closely.`,
           driverPositions: snap
         });
+      }
+      if(_degNoteLap && lap === _degNoteLap) {
+        const _dnText = _degVarNote >= 1.15 ? '📊 Tyre degradation is running well above forecast. Pit windows are coming forward — anyone planning a long stint is in trouble.'
+          : _degVarNote > 1.05 ? '📊 Tyre wear is a touch higher than forecast. Expect stops to come a lap or two early.'
+          : _degVarNote <= 0.85 ? '📊 Tyres are holding up far better than forecast. Stretching the stint — or skipping a stop altogether — is on today.'
+          : '📊 Degradation is running below forecast. Teams can afford to stretch their stints.';
+        events.push({ lap, type: 'timing', text: _dnText, driverPositions: snap });
       }
       if(weather !== 'dry' && prev && prev.wetness < 0.2 && lapState.wetness >= 0.2) {
         events.push({
@@ -9818,6 +10030,68 @@ events.push({lap:r.dnfLap||laps-5, type:'dnf', driverId:r.driverId, text:`⭐ ${
   },
 
 
+  // ── Per-race morale drift (v2.5.9, reported by TheExoticKoala) ─────────────
+  // Morale previously only moved at season end (plus one-off events), so two teammates in a
+  // fierce title fight both sat at 95+ all year no matter how one-sided it got. Each race now
+  // applies a small drift: podiums lift, DNFs sting, being well behind your teammate in the
+  // standings wears a driver down, and everyone drifts gently toward a sustainable baseline so
+  // morale can't pin at the cap. Deltas are fractional with stochastic rounding so morale stays
+  // a clean integer while small pressures still accumulate over a season.
+  // ── Post-race team learning (v2.5.9) ───────────────────────────────────────
+  // Two fixes in one (reported by TheExoticKoala):
+  // 1. Setup knowledge previously hard-capped at 85, and the winter pull dragged it back toward
+  //    the Simulator facility level — so aero balance confidence read "Moderate" virtually
+  //    forever regardless of investment. The in-season ceiling is now driven by your Simulator
+  //    facility (~83 at a 40-rated sim, ~97 at 90+), so facility upgrades visibly move the
+  //    confidence label, exactly as suggested.
+  // 2. This growth only ran on the quick-sim path — teams in watched races never gained setup
+  //    knowledge at all. It now runs after every race regardless of how it was simulated.
+  _applyPostRaceTeamLearning(){
+    const g = State.game; if(!g || !g.teams) return;
+    g.teams.forEach(t => {
+      if(t.setupKnowledge === undefined) return;
+      const _simUnit = (typeof getFacilityUnit==='function' ? getFacilityUnit(t,'simulator') : 0) || t.facilities || 60;
+      const _skCap = clamp(72 + _simUnit * 0.28, 78, 99);
+      if(t.setupKnowledge < _skCap) {
+        t.setupKnowledge = clamp(t.setupKnowledge + randFloat(0.8, 1.8) * (0.7 + _simUnit/250), 30, _skCap);
+      }
+    });
+  },
+  _applyPostRaceMorale(results, race){
+    try {
+      const g = State.game; if(!g || !Array.isArray(results)) return;
+      const byTeam = {};
+      results.forEach(r => {
+        if(!r || r.driverId == null) return;
+        const d = State.getDriver(r.driverId);
+        if(!d || d.retired || !d.teamId) return;
+        (byTeam[d.teamId] = byTeam[d.teamId] || []).push({ d, r });
+      });
+      const stochRound = v => {
+        const f = Math.floor(Math.abs(v)), frac = Math.abs(v) - f;
+        return Math.sign(v) * (f + (Math.random() < frac ? 1 : 0));
+      };
+      Object.values(byTeam).forEach(pair => {
+        pair.forEach(({ d, r }) => {
+          let delta = 0;
+          if(!r.dnf && (r.position||99) <= 3) delta += 1.4;
+          else if(!r.dnf && (r.position||99) <= 6) delta += 0.7;
+          if(r.dnf) delta -= 1.4;
+          const mate = pair.find(p => p.d.id !== d.id);
+          if(mate) {
+            const gap = (mate.d.seasonPoints||0) - (d.seasonPoints||0);
+            if(gap >= 90) delta -= 1.6;
+            else if(gap >= 45) delta -= 1.0;
+            else if(gap >= 20) delta -= 0.5;
+            if(!r.dnf && !mate.r.dnf && (r.position||99) < (mate.r.position||99)) delta += 0.4;
+          }
+          // Gentle pull toward a sustainable baseline — stops morale pinning at 98 all season
+          delta += (72 - (d.morale||75)) * 0.02;
+          d.morale = clamp((d.morale||75) + stochRound(delta), 25, 98);
+        });
+      });
+    } catch(e) { /* morale drift must never break a race result */ }
+  },
   _processInjuries(results, race) {
     const g = State.game;
     if(!g.injuries) g.injuries = [];
@@ -11490,6 +11764,11 @@ const spons=sumSponsorIncome(g.sponsors||[]);
       d._isGenerated !== false && (d.rating || 0) >= 64 && (d.age || 18) >= 18 &&
       !carriedNegotiationDriverIds.has(d.id) &&
       !(g.committedProspects || []).some(c => c.driverId === d.id);
+    // (v2.5.9, reported by Raskachas) The seat-fill passes can sign experienced free agents,
+    // not just feeder graduates — but every signing was tagged as a rookie and credited to the
+    // 'Feeder Series', so veterans like a multi-season race winner showed under 'Rookie Debuts'.
+    // A driver is only a rookie if they have never started an F1 race.
+    const _hasF1Experience = d => ((d?.totalRaces||0) > 0) || ((d?.careerHistory||[]).length > 0) || ((d?.totalPoints||0) > 0) || ((d?.totalWins||0) > 0);
     const _aiRaceSeatVacancies = () => (g.teams || []).reduce((sum, team) => {
       if(!team || team.id === g.playerTeamId) return sum;
       return sum + Math.max(0, 2 - State.getTeamDrivers(team.id).filter(d => !d.isReserve && !d.isProspect && !d.isJunior && !d.retired).length);
@@ -11500,16 +11779,21 @@ const spons=sumSponsorIncome(g.sponsors||[]);
     (g.teams || []).filter(team => team && team.id !== g.playerTeamId).forEach(team => {
       const enteredShort = Math.max(0, 2 - ((preTeamDrivers[team.id] || []).length));
       let slotsNeeded = Math.max(enteredShort, 2 - State.getTeamDrivers(team.id).filter(d => !d.isReserve && !d.isProspect && !d.isJunior && !d.retired).length);
+      // Don't immediately re-sign a driver this same team released earlier in the offseason
+      // (v2.5.9 — the release-and-resign loop looked absurd in the transfer digest)
+      const _leftThisTeam = new Set(transfers.filter(t=>t.left&&t.teamId===team.id).map(t=>t.driverName));
       while(slotsNeeded > 0) {
-        const prospect = g.drivers.filter(_isReadyAiSeatProspect).sort((a,b)=>(b.rating||0)-(a.rating||0))[0];
+        const prospect = g.drivers.filter(d=>_isReadyAiSeatProspect(d)&&!_leftThisTeam.has(d.name)).sort((a,b)=>(b.rating||0)-(a.rating||0))[0]
+          || g.drivers.filter(_isReadyAiSeatProspect).sort((a,b)=>(b.rating||0)-(a.rating||0))[0];
         if(!prospect) break;
+        const _isTrueRookie = !_hasF1Experience(prospect);
         prospect.teamId=team.id; prospect.contract=randInt(1,3); prospect.isReserve=false;
         prospect.isFreeAgent=false; prospect.isProspect=false; prospect.prospectSeries=null;
-        prospect.rookie=true;
+        prospect.rookie=_isTrueRookie;
         prospect.morale=clamp((prospect.morale||70)+10,50,95);
         if(!team.driverIds) team.driverIds=[];
         if(!team.driverIds.includes(prospect.id)) team.driverIds.push(prospect.id);
-        transfers.push({driverName:prospect.name,from:'Feeder Series',to:team.name,teamId:team.id,rookie:true,reason:'promoted to fill vacant seat'});
+        transfers.push({driverName:prospect.name,from:_isTrueRookie?'Feeder Series':'Free Agent',to:team.name,teamId:team.id,rookie:_isTrueRookie,reason:_isTrueRookie?'promoted to fill vacant seat':'signed to fill vacant seat'});
         slotsNeeded--;
       }
     });
@@ -11841,13 +12125,14 @@ const spons=sumSponsorIncome(g.sponsors||[]);
         const eligibleProspects = g.drivers.filter(_isReadyAiSeatProspect).sort((a,b)=>(b.rating||0)-(a.rating||0));
         const prospect = eligibleProspects[0];
         if(prospect){
+          const _isTrueRookie2 = !_hasF1Experience(prospect);
           prospect.teamId=team.id; prospect.contract=randInt(1,3); prospect.isReserve=false;
           prospect.isFreeAgent=false; prospect.isProspect=false; prospect.prospectSeries=null;
-          prospect.rookie=true;
+          prospect.rookie=_isTrueRookie2;
           prospect.morale=clamp((prospect.morale||70)+10,50,95);
           if(!team.driverIds) team.driverIds=[];
           if(!team.driverIds.includes(prospect.id)) team.driverIds.push(prospect.id);
-          transfers.push({driverName:prospect.name,from:'Feeder Series',to:team.name,teamId:team.id,rookie:true});
+          transfers.push({driverName:prospect.name,from:_isTrueRookie2?'Feeder Series':'Free Agent',to:team.name,teamId:team.id,rookie:_isTrueRookie2});
         } else {
           // No prospects available — generate a young rookie (not a random 30-year-old)
           const rookie=State._generateDriver(g.nextDriverId++,g.season+1,team.id,'rookie');
@@ -12464,6 +12749,22 @@ const spons=sumSponsorIncome(g.sponsors||[]);
       }
       adjustFacilities(team, -(infraDecay * 0.35 * (_devDiff.facilitiesDecayMult || 1.0)));
       team.developmentRate = clamp(team.developmentRate - Math.max(0, infraDecay * 0.12) + randFloat(-0.2, 0.4), 40, 99);
+      // ── AI infrastructure reinvestment (v2.5.9) ──────────────────────────
+      // Reported by Significant-Care-135 + Raskachas: AI facilities only ever decayed, so the
+      // facilities ceiling and dev rate of every incumbent eroded structurally — top teams
+      // drifted to the bottom of the grid over ~10 seasons and "teams barely improve" because
+      // gains were spent fighting their own decay. Real teams reinvest. Well-resourced,
+      // prestigious teams now maintain facilities near a target their budget supports, and
+      // dev rate recovers toward a prestige/facilities baseline. Backmarkers hold lower
+      // targets, preserving the grid's structure without freezing it.
+      const _facTarget = clamp(48 + (team.prestige||50)*0.28 + clamp((team.revenue||120)/320, 0, 1)*30, 50, 96);
+      if(team.facilities < _facTarget){
+        adjustFacilities(team, Math.min(2.4, (_facTarget - team.facilities) * 0.22) * randFloat(0.8, 1.2));
+      }
+      const _drTarget = clamp(50 + (team.prestige||50)*0.25 + (team.facilities||70)*0.22, 50, 95);
+      if(team.developmentRate < _drTarget){
+        team.developmentRate = clamp(team.developmentRate + (_drTarget - team.developmentRate) * 0.15, 40, 99);
+      }
       // Recover setup knowledge toward facilities level — takes ~3 seasons after a reg reset
       // Floor at 70 so even teams with low facilities eventually reach moderate confidence
       const knowledgeTarget = Math.max(70, getFacilityUnit(team,'simulator') || 60);
@@ -13805,10 +14106,18 @@ const Storage = {
     // already developed far beyond that. Engine ratings only move in the offseason,
     // so current live values should never sit materially below the season-start snap.
     const _savedEnginesById = new Map(((g.engineManufacturers||[])||[]).map(eng=>[eng.id, eng]));
-    const _engineDefsForRestore = (DATA.engineManufacturers||[]).map(def=>({...def}));
-    _savedEnginesById.forEach((saved, id) => {
-      if(!_engineDefsForRestore.some(def=>def.id===id)) _engineDefsForRestore.push({...saved});
-    });
+    // (v2.5.9, reported by ZareJonathan) This normaliser used to seed from the FULL default
+    // supplier list and merge the save on top — which resurrected every engine the player had
+    // deliberately removed in the Roster Editor (his Ford/Ferrari/Alfa Romeo 1980 grid kept
+    // growing Sakura and Ingolstadt back). The save's own engine roster is now authoritative;
+    // defaults only provide per-engine stat fallbacks for matching ids, and only seed the whole
+    // list for true legacy saves that predate per-save engine data.
+    const _engineDefsForRestore = _savedEnginesById.size
+      ? Array.from(_savedEnginesById.values()).map(saved => {
+          const def = (DATA.engineManufacturers||[]).find(d=>d.id===saved.id);
+          return def ? {...def} : {...saved};
+        })
+      : (DATA.engineManufacturers||[]).map(def=>({...def}));
     g.engineManufacturers = _engineDefsForRestore.map(def=>{
       const saved = _savedEnginesById.get(def.id) || {};
       const snap = g._engineStatsSnapshot && g._engineStatsSnapshot[def.id] ? g._engineStatsSnapshot[def.id] : null;
@@ -14382,6 +14691,35 @@ const UI = {
     const overlay = document.createElement('div');
     overlay.id = 'landing-guide-overlay';
     overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9998;display:flex;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto';
+    // (v2.5.9, reported by Weet-Bix54) The grid tiers and tips were hardcoded with the original
+    // team names, so they were wrong whenever the default roster changed or the player renamed
+    // teams in the editor. The guide now reads the live roster the landing page actually uses.
+    Editor.init();
+    const _gYear = parseInt(document.getElementById('landing-start-year')?.value) || parseInt(document.getElementById('input-start-year')?.value) || 2026;
+    const _gTeams = [...Editor.getTeams()].sort((a,b)=>(b.carPerformance||0)-(a.carPerformance||0));
+    const _gN = _gTeams.length;
+    const _names = arr => arr.map(t=>escapeHtml(t.name)).join(', ');
+    const _topTier = _gTeams.slice(0, Math.min(3,_gN));
+    const _rebuildTier = _gN >= 7 ? _gTeams.slice(-2) : [];
+    const _lowerTier = _gN >= 9 ? _gTeams.slice(-4,-2) : (_gN >= 7 ? _gTeams.slice(-3,-2) : []);
+    const _midTier = _gTeams.slice(_topTier.length, _gN - _rebuildTier.length - _lowerTier.length);
+    const _tierRow = (label, bg, col, teams, desc) => teams.length
+      ? `<div style="display:flex;align-items:center;gap:8px"><span style="background:${bg};color:${col};font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;white-space:nowrap">${label}</span><span>${_names(teams)} — ${desc}</span></div>` : '';
+    const _gridTiersHtml =
+      _tierRow('Top '+_topTier.length, '#fee2e2', '#991b1b', _topTier, 'title contenders from race one')
+      + _tierRow('Midfield', '#fef9c3', '#854d0e', _midTier, 'fighting for points every race')
+      + _tierRow('Lower', '#f0f9ff', '#0369a1', _lowerTier, 'points are hard but a platform to build from')
+      + _tierRow('Rebuild', '#f4f4f2', '#555', _rebuildTier, 'hardest start, longest road to the top');
+    const _tipTop = _topTier.slice(0,2);
+    const _tipMid = [..._midTier].sort((a,b)=>(b.developmentRate||0)-(a.developmentRate||0)).slice(0,2);
+    const _tipProject = [..._lowerTier, ..._rebuildTier].sort((a,b)=>(b.developmentRate||0)-(a.developmentRate||0))[0] || null;
+    const _tipsHtml = [
+      _tipTop.length ? `<li>Pick <strong>${_names(_tipTop)}</strong> to compete for titles straight away</li>` : '',
+      _tipMid.length ? `<li>Pick <strong>${_names(_tipMid)}</strong> for a competitive midfield challenge with room to grow</li>` : '',
+      _tipProject ? `<li>Pick <strong>${escapeHtml(_tipProject.name)}</strong> for a long-term project — their Dev Rate means they can challenge at the top over 4-5 seasons</li>` : '',
+      '<li>Sign young drivers with high Potential and invest in Facilities to develop them</li>',
+      '<li>The full in-depth guide is available in-game from the menu at any time</li>'
+    ].filter(Boolean).join('');
     overlay.innerHTML = `
       <div style="background:#fff;border-radius:12px;width:100%;max-width:600px;overflow-y:auto;padding:20px;position:relative;margin:auto">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;border-bottom:2px solid #c0392b;padding-bottom:12px">
@@ -14406,22 +14744,15 @@ const UI = {
             </div>
           </div>
           <div>
-            <div style="font-weight:800;font-size:14px;margin-bottom:8px">The 2026 grid — tiers at a glance</div>
+            <div style="font-weight:800;font-size:14px;margin-bottom:8px">The ${_gYear} grid — tiers at a glance</div>
             <div style="display:flex;flex-direction:column;gap:6px">
-              <div style="display:flex;align-items:center;gap:8px"><span style="background:#fee2e2;color:#991b1b;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;white-space:nowrap">Top 3</span><span>Mercedes, Ferrari, McLaren — title contenders from race one</span></div>
-              <div style="display:flex;align-items:center;gap:8px"><span style="background:#fef9c3;color:#854d0e;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;white-space:nowrap">Midfield</span><span>Red Bull, Haas, Alpine, Racing Bulls — fighting for points every race</span></div>
-              <div style="display:flex;align-items:center;gap:8px"><span style="background:#f0f9ff;color:#0369a1;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;white-space:nowrap">Lower</span><span>Audi, Williams — points are hard but both have strong development</span></div>
-              <div style="display:flex;align-items:center;gap:8px"><span style="background:#f4f4f2;color:#555;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;white-space:nowrap">Rebuild</span><span>Cadillac, Aston Martin — hardest start, longest road to the top</span></div>
+              ${_gridTiersHtml}
             </div>
           </div>
           <div>
             <div style="font-weight:800;font-size:14px;margin-bottom:6px">Tips for first-timers</div>
             <ul style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:5px">
-              <li>Pick <strong>Mercedes or Ferrari</strong> to compete for titles straight away</li>
-              <li>Pick <strong>Haas or Alpine</strong> for a competitive midfield challenge with room to grow</li>
-              <li>Pick <strong>Audi</strong> for a long-term project — their Dev Rate means they can challenge at the top over 4-5 seasons</li>
-              <li>Sign young drivers with high Potential and invest in Facilities to develop them</li>
-              <li>The full in-depth guide is available in-game from the menu at any time</li>
+              ${_tipsHtml}
             </ul>
           </div>
         </div>
@@ -15040,10 +15371,10 @@ const UI = {
 
     // Upgrade available banner
     const _racesDoneNow = g.calendar.filter(r=>r.raceDone).length;
-    const _qT2=[7,14];
+    const _qT2=getUpgradeWindowThresholds(g);
     const _upgradeAlertEl = document.getElementById('dash-upgrade-alert');
     if(_upgradeAlertEl){
-      const _openWindow = _qT2.findIndex((t,i)=>_racesDoneNow>=t && g.quarterDev && g.quarterDev[i] && !g.quarterDev[i].applied);
+      const _openWindow = _qT2.findIndex((t,i)=>t!=null && _racesDoneNow>=t && g.quarterDev && g.quarterDev[i] && !g.quarterDev[i].applied);
       if(_openWindow>=0 && !g.offseasonPending){
         _upgradeAlertEl.innerHTML=`<div style="background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.5);border-radius:8px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center">
           <div><span style="font-size:13px;font-weight:800;color:var(--amber)">🔧 Upgrade Window Open</span><span style="font-size:11px;color:var(--tx2);margin-left:8px">${_openWindow===0?'Mid-Season':'Summer'} upgrade — configure your packages</span></div>
@@ -15068,8 +15399,8 @@ const UI = {
     // Car Development card
     const devCardEl = document.getElementById('dash-dev-content');
     if(devCardEl && !g.offseasonPending){
-      // Match Car page thresholds exactly — 2 windows, race 7 and race 14
-      const qThresholds = [7, 14];
+      // Match Car page thresholds exactly — calendar-scaled windows (v2.5.9)
+      const qThresholds = getUpgradeWindowThresholds(g);
       const qLabels = ['Mid-Season','Summer'];
       const qDevArr = (g.quarterDev||[]).slice(0,2);
       // Recent car gains — look at pendingUpgrades that have been applied
@@ -15081,10 +15412,10 @@ const UI = {
         recentRelGain>0?`+${recentRelGain.toFixed(1)} Reliability`:'',
       ].filter(Boolean).join(' · ') : null;
       // Next unlock
-      const nextQ = qThresholds.findIndex((t,i)=>racesDone<t && qDevArr[i] && !qDevArr[i].applied);
+      const nextQ = qThresholds.findIndex((t,i)=>t!=null && racesDone<t && qDevArr[i] && !qDevArr[i].applied);
       const racesToNext = nextQ>=0 ? qThresholds[nextQ]-racesDone : null;
       // Open window — threshold passed AND not yet submitted
-      const openQ = qDevArr.findIndex((q,i)=>!q.applied && racesDone>=qThresholds[i]);
+      const openQ = qDevArr.findIndex((q,i)=>!q.applied && qThresholds[i]!=null && racesDone>=qThresholds[i]);
       const carPerf = getTeamOverallCar(team);
       const carRank = [...g.teams].sort((a,b)=>getTeamOverallCar(b)-getTeamOverallCar(a)).findIndex(t=>t.id===team.id)+1;
       const regsThisSeason = g.nextRegsYear === g.season;
@@ -15268,6 +15599,7 @@ const UI = {
         <div class="race-sub">${race.location}, ${race.country} · Round ${n}${sprintStep?'  ·  <strong style="color:var(--red)">'+sprintStep+'</strong>':''}</div>
         ${race.circuitType?`<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">
           <span style="font-size:11px;background:var(--bg3);border:1px solid var(--bd);border-radius:20px;padding:2px 8px;font-weight:600">${race.circuitType==='power'?'⚡ Power Circuit':race.circuitType==='technical'?'⚙️ Technical Circuit':race.circuitType==='street'?'🏙️ Street Circuit':'⚖️ Balanced Circuit'}</span>
+          ${(()=>{const _ptT=State.getPlayerTeam();if(!_ptT)return '';const _ct=race.circuitType||'balanced';const _ts=getTeamCarScore(_ptT,_ct);const _tr=[...(State.game.teams||[])].sort((a,b)=>getTeamCarScore(b,_ct)-getTeamCarScore(a,_ct)).findIndex(t=>t.id===_ptT.id)+1;const _tc=_tr<=3?'var(--grn)':_tr>=9?'var(--red)':'var(--amber)';return '<span onclick="UI.showView(\'car\')" style="font-size:11px;background:var(--bg3);border:1px solid var(--bd);border-radius:20px;padding:2px 8px;font-weight:700;cursor:pointer" title="Your car\'s track-weighted rating this weekend — sub-stats weighted by circuit type. Tap for the full breakdown.">🏎️ '+_ts.toFixed(1)+' · <span style="color:'+_tc+'">P'+_tr+'</span> here</span>';})()}
           ${(()=>{const team=State.getPlayerTeam();if(State.game.autoAero) return '<span style="font-size:11px;background:var(--bg3);border:1px solid var(--bd);border-radius:20px;padding:2px 8px;font-weight:700;color:var(--grn)">🤖 Auto setup</span>';const df=team?.downforce||50;const _h=State.getSetupRangeHint(team.id,race.idealDownforce||50);const withinR=df>=_h.low&&df<=_h.high;const _tio=race._trueIdealOffset||0;const _trueIdealDf=Math.max(0,Math.min(100,(race.idealDownforce||50)+_tio));const veryCloseR=Math.abs(df-_trueIdealDf)<=4;const revealed=race.qualiDone||race.raceDone||race.sprintQualiDone;if(revealed){const col=veryCloseR?'var(--grn)':withinR?'var(--grn)':df<_h.low-10||df>_h.high+10?'var(--red)':'var(--amber)';const lbl=veryCloseR?'✓ Perfect setup':withinR?'✓ Good setup':df<_h.low-10||df>_h.high+10?'✗ Poor setup':'~ Adjusted setup';return '<span onclick="UI.showView(\'car\')" style="font-size:11px;background:var(--bg3);border:1px solid '+col+';border-radius:20px;padding:2px 8px;font-weight:700;color:'+col+';cursor:pointer" title="Tap to adjust aero">'+lbl+'</span>';}const inRange=withinR||veryCloseR;const col=inRange?'var(--grn)':df<_h.low-10||df>_h.high+10?'var(--red)':'var(--amber)';const lbl=inRange?'✓ In range':df<_h.low-10||df>_h.high+10?'✗ Out of range':'~ Near range';return '<span onclick="UI.showView(\'car\')" style="font-size:11px;background:var(--bg3);border:1px solid '+col+';border-radius:20px;padding:2px 8px;font-weight:700;color:'+col+';cursor:pointer" title="Outcome revealed after qualifying">'+lbl+'</span>';})()}
         </div>`:''}
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
@@ -16178,7 +16510,7 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
         <div class="dev-slider-desc">${desc}</div>
       </div>`;
 
-    // Two in-season upgrade windows: after race 7 (European swing) and race 14 (post-summer break)
+    // Two in-season upgrade windows, scheduled by calendar length (v2.5.9) — ~30% and ~60% of the season
     if(!g.pendingUpgrades) g.pendingUpgrades=[];
     if(!g.retirements) g.retirements=[];
     if(!g.newsFeed) g.newsFeed=[];
@@ -16187,9 +16519,10 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
     // Ensure exactly 2 windows (save compat)
     while(g.quarterDev.length < 2) g.quarterDev.push({aero:0,reliability:0,engine:0,applied:false});
     g.quarterDev = g.quarterDev.slice(0,2);
-    // Window 1 unlocks after race 7 (mid-European swing), Window 2 after race 14 (post-summer)
-    const qThresholds = [7, 14];
-    const currentQ = qThresholds.reduce((q,t,i)=>racesDone>=t?i:q, -1);
+    // Window thresholds scale with calendar length (v2.5.9) — ~30% and ~60% of
+    // the season, [7, 14] on the default 24-race calendar
+    const qThresholds = getUpgradeWindowThresholds(g);
+    const currentQ = qThresholds.reduce((q,t,i)=>t!=null && racesDone>=t?i:q, -1);
     const qBudget = Math.round(team.revenue * 0.15); // 15% per window
 
     const qLabels = [
@@ -16218,6 +16551,12 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
           <div style="font-size:12px;color:var(--tx3)">Applied: Aero ×${qd.aero} · Reliability ×${qd.reliability} · Engine ×${qd.engine}</div>
         </div>`;
       }
+      if(qThresholds[qi]==null){
+        return `<div class="dev-section" style="opacity:0.4">
+          <div class="dev-section-title">${qIcons[qi]} ${qLabels[qi]} <span style="font-size:10px;background:var(--bg3);padding:2px 7px;border-radius:10px;margin-left:6px;font-weight:600">NOT SCHEDULED</span></div>
+          <div style="font-size:12px;color:var(--tx3)">This calendar is too short for a second upgrade window.</div>
+        </div>`;
+      }
       if(isFuture){
         const racesUntil = qThresholds[qi] - racesDone;
         return `<div class="dev-section" style="opacity:0.4">
@@ -16228,6 +16567,7 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
       return `<div class="dev-section" style="border:1px solid var(--red)">
         <div class="dev-section-title">${qIcons[qi]} ${qLabels[qi]} <span style="font-size:10px;background:#fee2e2;color:var(--red);padding:2px 7px;border-radius:10px;margin-left:6px;font-weight:700">AVAILABLE NOW</span></div>
         <div class="dev-section-sub">Budget: <strong>${formatMoney(qBudget)}</strong> available · <strong>${formatMoney(Math.max(0,qBudget-qCost))}</strong> remaining. Upgrades are queued now and usually arrive in 2-4 races for the rest of the season.</div>
+        ${(()=>{const _we=getQuarterWindowEffectiveness(team);return _we.total<0.99?`<div style="font-size:10px;color:var(--tx3);margin-top:4px">🏭 Package conversion: <strong>${Math.round(_we.total*100)}%</strong>${_we.throughput<0.99?' — your Factory limits how much of each performance package reaches the car':''}${_we.eff<0.99&&_we.throughput>=0.99?' — elite cars see diminishing in-season returns':''}. Previews below already reflect this.</div>`:''})()}
         <div style="font-size:11px;color:var(--amber);font-weight:600;margin-top:4px">${qd.applied && qd.arrivalRaceName ? `Upgrades ordered — due after ${qd.arrivalRaceName}.` : 'Apply now and the exact arrival race will be shown once you confirm.'}</div>
         ${(()=>{
           // Let players spend the full window budget however they want.
@@ -16271,11 +16611,12 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
             html += '</div>';
             return html;
           };
-          return slider('aero','Aerodynamic Package',Math.min(qd.aero,_aMax),_aMax,'q'+qi,6,'Aero updates — front/rear wing, floor, diffuser.','→ +'+(Math.min(qd.aero,_aMax)*0.9).toFixed(1)+' Car Perf')
+          return (()=>{const _wEff=getQuarterWindowEffectiveness(team).total;
+          return slider('aero','Aerodynamic Package',Math.min(qd.aero,_aMax),_aMax,'q'+qi,6,'Aero updates — front/rear wing, floor, diffuser.','→ +'+(Math.min(qd.aero,_aMax)*0.9*_wEff).toFixed(1)+' Car Perf')
             + _compFocusUI('aero','Aero Component', qd.aero <= 0)
             +slider('reliability','Mechanical & Reliability',Math.min(qd.reliability,_rMax),_rMax,'q'+qi,4,'Chassis, suspension and reliability work.','→ +'+(Math.min(qd.reliability,_rMax)*0.6).toFixed(1)+' Reliability')
             + _compFocusUI('mechanical','Mechanical Component', qd.reliability <= 0)
-            +slider('engine','Engine Mode',Math.min(qd.engine,_eMax),_eMax,'q'+qi,10,'Power unit mapping push — expensive but fast.','→ +'+(Math.min(qd.engine,_eMax)*1.4).toFixed(1)+' Car Perf');
+            +slider('engine','Engine Mode',Math.min(qd.engine,_eMax),_eMax,'q'+qi,10,'Power unit mapping push — expensive but fast.','→ +'+(Math.min(qd.engine,_eMax)*1.4*_wEff).toFixed(1)+' Car Perf');})();
         })()}
         <div style="margin-top:12px">
           <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px">
@@ -16408,6 +16749,21 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
         <div class="dev-section-title">🔩 Car Sub-Stats${_nextRaceForCar?` <span style="font-size:10px;font-weight:500;color:var(--tx3)">· weighted for ${_nextRaceForCar.name.replace(' Grand Prix','')}</span>`:''}
         </div>
         <div class="dev-section-sub">Each stat affects performance differently by circuit type. The circuit weight bar shows how much each pillar matters this weekend.</div>
+        ${(()=>{
+          // Track-weighted overall (v2.5.9, requested by TheExoticKoala): the per-circuit
+          // composite of your sub-stats, ranked against the grid — your car's true rating
+          // at THIS track, separate from the headline OVR and from race-day execution.
+          if(!_nextRaceForCar) return '';
+          const _trkScore = getTeamCarScore(team, _cType);
+          const _trkRank = [...(g.teams||[])].sort((a,b)=>getTeamCarScore(b,_cType)-getTeamCarScore(a,_cType)).findIndex(t=>t.id===team.id)+1;
+          const _trkCol = _trkRank<=3?'var(--grn)':_trkRank>=9?'var(--red)':'var(--amber)';
+          return `<div style="display:flex;align-items:center;gap:10px;margin-top:8px;padding:9px 12px;background:var(--bg2);border:1px solid var(--bd);border-radius:8px">
+            <div style="font-size:18px;font-weight:900;font-family:var(--fm)">${_trkScore.toFixed(1)}</div>
+            <div style="flex:1"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--tx3)">Car at this circuit</div>
+            <div style="font-size:11px;color:var(--tx2)">Track-weighted rating for ${escapeHtml(_nextRaceForCar.name)}</div></div>
+            <div style="font-size:14px;font-weight:900;font-family:var(--fm);color:${_trkCol}">P${_trkRank}<span style="font-size:10px;font-weight:600;color:var(--tx3)"> of ${(g.teams||[]).length}</span></div>
+          </div>`;
+        })()}
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
           ${subStatBar('Top Speed',_topSpeedEff,_subR('topSpeed'),_cw.topSpeed,'#f97316')}
           ${subStatBar('Cornering',team.cornering||team.carPerformance,_subR('cornering'),_cw.cornering,'#8b5cf6')}
@@ -16647,7 +17003,8 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
       }
       const cost=qd.aero*6+qd.reliability*4+qd.engine*10;
       const lbl=document.getElementById(`slv-${section}-${key}`);
-      const impacts={aero:`+${(val*0.9).toFixed(1)} Car Perf`,reliability:`+${(val*0.6).toFixed(1)} Reliability`,engine:`+${(val*1.4).toFixed(1)} Car Perf`};
+      const _wEffLive=getQuarterWindowEffectiveness(team).total; // keep live labels in sync with the scaled previews (v2.5.9)
+      const impacts={aero:`+${(val*0.9*_wEffLive).toFixed(1)} Car Perf`,reliability:`+${(val*0.6).toFixed(1)} Reliability`,engine:`+${(val*1.4*_wEffLive).toFixed(1)} Car Perf`};
       if(lbl) lbl.textContent=val===0?'No investment':`${val} package${val!==1?'s':''} · ${impacts[key]||''}`;
       const disp=document.getElementById(`${section}-cost-display`);
       if(disp){
@@ -20613,6 +20970,19 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
         <!-- Race narrative — prose story of what happened -->
         ${(()=>{ 
           const narrativeParts = [];
+          // Recap phrase variation (v2.5.9, TheExoticKoala): the most frequent narrative lines
+          // (weather, safety car, pole-to-win) were single fixed templates, so the Race Story
+          // read near-identically race after race. Each now draws from a small pool and never
+          // repeats the variant it used the previous time that line appeared in this save.
+          const _phraseMem = (State.game && (State.game._recapPhraseMemory = State.game._recapPhraseMemory || {})) || {};
+          const _vary = (key, variants) => {
+            if(!variants || !variants.length) return '';
+            if(variants.length === 1) return variants[0];
+            let pick = Math.floor(Math.random()*variants.length);
+            if(pick === _phraseMem[key]) pick = (pick+1) % variants.length;
+            _phraseMem[key] = pick;
+            return variants[pick];
+          };
           const overtakingDiff = race.overtakingDiff || 0.5;
           const isStreetOrTight = overtakingDiff >= 0.75; // Monaco, Singapore, Hungary etc
           const winnerCause = winner ? buildDriverCauseSummary(winner) : '';
@@ -20623,8 +20993,16 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
             const poleToWin = pole && pole.driverId === winner.driverId;
             if(poleToWin) {
               const poleWinNote = isStreetOrTight
-                ? winner.driverName+' took pole and converted it to a win at '+race.location+'. On a circuit like this, that is almost the whole story'+(winnerCause?' — helped by '+winnerCause:'')+'. '
-                : winner.driverName+' took pole and the win at '+race.location+(race.hadSafetyCar?', though a safety car spiced things up in the middle stint':'')+(winnerCause?' with '+winnerCause:'')+'. ';
+                ? _vary('poleWinStreet', [
+                    winner.driverName+' took pole and converted it to a win at '+race.location+'. On a circuit like this, that is almost the whole story'+(winnerCause?' — helped by '+winnerCause:'')+'. ',
+                    winner.driverName+' controlled it from pole at '+race.location+'. Around here, Saturday wins Sunday'+(winnerCause?' — and '+winnerCause+' sealed it':'')+'. ',
+                    winner.driverName+' made pole count at '+race.location+'. Track position is king on this circuit and they never gave it up'+(winnerCause?', backed by '+winnerCause:'')+'. '
+                  ])
+                : _vary('poleWin', [
+                    winner.driverName+' took pole and the win at '+race.location+(race.hadSafetyCar?', though a safety car spiced things up in the middle stint':'')+(winnerCause?' with '+winnerCause:'')+'. ',
+                    winner.driverName+' led from pole to flag at '+race.location+(race.hadSafetyCar?' and even a safety car could not break the rhythm':'')+(winnerCause?', built on '+winnerCause:'')+'. ',
+                    'Pole, win, and full control for '+winner.driverName+' at '+race.location+(winnerCause?'. '+winnerCause+' did the heavy lifting':'')+'. '
+                  ]);
               narrativeParts.push(poleWinNote);
             } else {
               const poleDriverName = pole ? pole.driverName : null;
@@ -20652,9 +21030,34 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
               }
             }
           }
-          if(race.weather==='wet') narrativeParts.push('The wet conditions mixed things up throughout the field. Tyre choices and driver skill in the rain made the difference. ');
-          else if(race.weather==='mixed') narrativeParts.push('Rain came mid-race and caught a few teams off guard. The calls on when to switch to inters made a real difference to where people finished. ');
-          if(race.hadSafetyCar) narrativeParts.push(isStreetOrTight ? 'A safety car came out, as it so often does on these streets. It shuffled the strategy picture. ' : 'A safety car bunched the field up and a lot of teams used it to pit. It reset the race completely. ');
+          if(race.weather==='wet') narrativeParts.push(_vary('wetRace', [
+            'The wet conditions mixed things up throughout the field. Tyre choices and driver skill in the rain made the difference. ',
+            'Standing water and low grip turned this into a survival race. The drivers who kept it clean in the rain were rewarded. ',
+            'A fully wet race, and it showed in the order. Car balance mattered less than bravery and tyre calls out there. '
+          ]));
+          else if(race.weather==='mixed') narrativeParts.push(_vary('mixedRace', [
+            'Rain came mid-race and caught a few teams off guard. The calls on when to switch to inters made a real difference to where people finished. ',
+            'The rain arrived partway through and rewrote the strategy books. Some pit walls read the crossover perfectly, others got it badly wrong. ',
+            'Changing conditions defined the afternoon. Timing the switch between slicks and inters was worth more than raw pace today. '
+          ]));
+          const _recapDegVar = race._tyreDegVariance || 1;
+          if(_recapDegVar >= 1.15) narrativeParts.push(_vary('degHigh', [
+            'Tyre wear ran well above what anyone forecast, dragging the pit windows forward and punishing anyone who tried to stretch. ',
+            'Degradation was brutal compared to the forecast — teams that reacted early to the wear kept their races alive. '
+          ]));
+          else if(_recapDegVar <= 0.85) narrativeParts.push(_vary('degLow', [
+            'The tyres held on far better than forecast, and the smart money stretched stints or dropped a stop entirely. ',
+            'Degradation came in well under forecast — a free strategy day for anyone brave enough to stay out. '
+          ]));
+          if(race.hadSafetyCar) narrativeParts.push(isStreetOrTight ? _vary('scStreet', [
+            'A safety car came out, as it so often does on these streets. It shuffled the strategy picture. ',
+            'The walls claimed their usual safety car here, and the cheap stops that followed reshuffled the order. ',
+            'A safety car on a circuit this tight is a strategy reset, and several teams cashed in with a cheap stop. '
+          ]) : _vary('scNormal', [
+            'A safety car bunched the field up and a lot of teams used it to pit. It reset the race completely. ',
+            'The safety car wiped out the gaps mid-race. Free pit stops for some, lost track position for others. ',
+            'A mid-race safety car compressed the field and turned it into a sprint to the flag. '
+          ]));
           const champLeader = postChampLeader;
           const secondPlace = postChampRunnerUp;
           if(driverTitleStatus && driverTitleStatus.clinched) {
@@ -21714,7 +22117,7 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     ${sec('🏎️','Car Development — The Core Loop',`
       <p>Your car performance rating is the single biggest factor in race results. A 10-point car advantage is worth roughly 2–3 positions per race. Development is therefore your most important long-term investment.</p>
       <h4>Two in-season upgrade windows</h4>
-      <p>The <strong>Mid-Season window</strong> opens after race 7 and the <strong>Summer window</strong> opens after race 14. When a window opens, go to the Car page, allocate budget across Aero, Reliability, and Engine using the sliders, then click Apply. Packages take 2–4 races to arrive from the factory — you'll get a popup with the outcome (Breakthrough / As Planned / Below Expectations / Integration Problems). The dashboard Car Development card tracks this in real time.</p>
+      <p>The <strong>Mid-Season window</strong> opens about 30% of the way through the season and the <strong>Summer window</strong> at about 60% (races 7 and 14 on the default calendar — both scale to shorter or longer custom calendars). When a window opens, go to the Car page, allocate budget across Aero, Reliability, and Engine using the sliders, then click Apply. Packages take 2–4 races to arrive from the factory — you'll get a popup with the outcome (Breakthrough / As Planned / Below Expectations / Integration Problems). The dashboard Car Development card tracks this in real time.</p>
       <h4>Winter development</h4>
       <p>The largest lever. Allocate up to 35% of revenue across Aero, Engine, Reliability, and Facilities before each season. The outcome has a luck component — the same spend can yield a breakthrough or a setback. Facilities investment improves your <em>development rate</em>, making future R&D more effective rather than adding pace directly.</p>
       <h4>Facilities: three departments</h4>
@@ -21880,7 +22283,7 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       <p>From there, the race evolves through several lap-by-lap systems:</p>
       <p><strong>Circuit downforce</strong> — each circuit has a hidden ideal downforce level. Your engineers give you a recommended range (e.g. "65–80") — not the exact number. Get within 4 of the true ideal for a pace bonus. Land in the range and you avoid penalties. Miss badly and you lose time all race. The range width depends on your setup knowledge — wider after new regulations, tighter as engineers learn the car.</p>
       <p><strong>Tyre wear and tyre management</strong> — every stint ages the compound. On high-degradation tracks, softs cliff early and even mediums can become painful if you overstay. Drivers with stronger tyre management can stretch stints better and lose less when the tyres start to go off.</p>
-      <p><strong>Pit windows</strong> — strategy now matters as a true timing problem. An early stop can unlock an undercut, a long first stint can enable an overcut, and a bad stop window can trap you in traffic or on the wrong tyre.</p>
+      <p><strong>Pit windows</strong> — strategy now matters as a true timing problem. An early stop can unlock an undercut, a long first stint can enable an overcut, and a bad stop window can trap you in traffic or on the wrong tyre. The pre-race strategy screen shows the <strong>forecast</strong> degradation — but each race the real wear can run above or below it. Watch the feed early in the race: if the pit wall reports tyres holding better than forecast, you can stretch stints or decline your second stop at the prompt; if wear is running high, stops come forward and one-stop plans get caught by the cliff.</p>
       <p><strong>Weather</strong> — in changing conditions, wet-weather skill matters and crossover timing can swing several places. A strong driver can survive longer; a weak one will bleed time quickly.</p>
       <p><strong>Safety car and traffic</strong> — bunching, cheap pit stops, and dirty-air traffic can all reshape the race even when the raw pace hierarchy is unchanged.</p>
       <p><strong>Variance</strong> — launch quality, race rhythm, and small lap-level randomness keep seasons believable. The idea is to produce understandable race stories, not coin flips.</p>
@@ -22697,7 +23100,10 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     try {
       const newTeamObj = (g.teams||[]).find(t=>t.id===newTeamId);
       let templateSponsors;
-      try {
+      // Prefer the sponsor set stored ON the team in this save (v2.5.9 — the editor's current
+      // state may belong to a completely different roster than the one this save was built from).
+      if(newTeamObj && Array.isArray(newTeamObj.sponsors) && newTeamObj.sponsors.length) templateSponsors = newTeamObj.sponsors;
+      if(!templateSponsors) try {
         const tmpl = (typeof Editor!=='undefined' && Editor.getState) ? Editor.getState() : null;
         const tDef = tmpl && (tmpl.teams||[]).find(t=>teamIdsEqual(t.id, newTeamId));
         templateSponsors = tDef && tDef.sponsors;
@@ -23225,8 +23631,27 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const html=`
       <div style="max-height:85vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.5.8 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.5.9 · Release Notes</div>
         ${[
+    ['v2.5.9','June 2026',[
+            '🚀 Race strategy escapes the under/overcut rut — every race previously degraded exactly as forecast, so strategy collapsed into pure stop-timing games. Each race now rolls a hidden "realized degradation" before lights out: most days run close to forecast, but roughly a quarter run hotter (pit windows come forward, one-stop plans get caught by the cliff and forced into an extra stop) and a quarter run cooler (stints stretch, and AI two-stoppers can gamble on converting to a one-stop, with the cliff as their safety net if it fails). The pre-race screen still shows the forecast — the divergence is discovered live, with the pit wall calling it in the feed early enough to act on. Your own plan is never silently rewritten: your recommended stop laps adapt, and when tyres are holding you can simply decline the second stop at the box-or-stay prompt. (Requested by TheExoticKoala.)',
+            '🐛 Custom sponsors survive export and re-import — the game-to-template export dropped every team\'s custom sponsor set because sponsors were never carried onto the in-game team objects at creation, so a re-imported file silently fell back to the default 2026 sponsor map. Teams now keep their editor-defined sponsors through the save, the export writes your team\'s live sponsor deals plus every other team\'s stored set, and switching teams mid-save picks up the new team\'s own sponsors instead of whatever roster the editor happens to hold. Saves started before this fix cannot recover sponsor sets that were never stored. (Reported by ZareJonathan.)',
+            '🐛 Removed engine suppliers stay removed — the save-load normaliser seeded from the full default supplier list and merged your save on top, which resurrected every power unit you had deliberately deleted in the Roster Editor (a Ford/Ferrari/Alfa Romeo 1980 grid kept growing the modern fictional suppliers back on every load). The save\'s own engine roster is now authoritative; the defaults only provide stat fallbacks for matching suppliers and only seed true legacy saves. (Reported by ZareJonathan.)',
+            '✨ Power Unit management in the Live Editor — a new ⚡ Power Units tab lets you add, edit and remove engine suppliers mid-save: name, short name, colour, power, ERS, reliability, dev rate, customer cap and annual cost. The same safety rules as the Roster Editor apply — at least two suppliers always remain, teams on a removed engine are reassigned to a survivor, and works links are cleaned up. Built for historical saves that introduce manufacturers over time, like adding Renault for 1981. (Requested by ZareJonathan.)',
+            '⚖️ Engine allocation is a real season decision — one PU set could previously cruise through a full season at around 40% total wear, so unless you pushed hard, component management never entered the picture. Base wear is retuned so a reliable engine accrues roughly 2.7-2.9% a race and a fragile one 3.3%+, crossing the 50%-wear performance penalty around the summer — nursing one set to the flag is possible but taxed, two sets is the sensible season, and habitual pushers will need their third. Wear scales with calendar length so short historical seasons face the same allocation pressure. (Reported by TheExoticKoala.)',
+            '✨ The Race Story stops repeating itself — the highest-frequency recap lines (wet races, mixed conditions, safety cars, pole-to-win) were single fixed templates, so the narrative read near-identically race after race. Each now draws from a pool of variants and remembers which one it used last in your save, so the same sentence never appears twice in a row. (Reported by TheExoticKoala.)',
+            '✨ Watch Race is readable on desktop — the modal kept mobile-sized text (8-11px) even after gaining width, and the positions column was a fixed 152px that truncated most names. On large screens the whole experience now scales up: the feed, position tower, header and results footer grow together, the tower widens to 228-238px, and the window itself is larger. Mobile is untouched.',
+            '⚖️ Climbing the grid takes building a team, not just buying parts — the core of this round\'s balance feedback: a backmarker could jump 4-7 car performance in a single season through the two upgrade windows and brute-force its way from the back to the front, even on Nightmare. Your Factory facility now determines how much of each performance package actually reaches the car (roughly 82% at a 50-rated factory, rising to 100% at 95+), so a small team has to grow its operation before its spend converts like a front-runner\'s — exactly how real rebuilds work. The window previews and live slider labels show the same scaled numbers, so what you see is what arrives (this also fixes previews quietly overstating gains for elite cars). Reliability work is unaffected. (Reported by Significant-Care-135, confirmed by Raskachas and Appropriate-Rip-4087.)',
+            '⚖️ Rival teams keep their houses in order — the other half of "teams barely improve": AI facilities only ever decayed, with no reinvestment, so every incumbent\'s development ceiling eroded year on year. That is why top teams unrealistically drifted to the bottom of the grid over a decade — they were structurally bleeding out, and their winter gains were spent fighting their own decay. AI teams now reinvest each offseason toward an infrastructure level their prestige and revenue support, and their development rate recovers toward the same baseline, so a big team stays a big team unless the story (regulation resets, rival surges, your own rise) says otherwise. AI in-season window gains are also raised so a typical midfield rival lands around +1.0 per window and a chasing backmarker over +2.0. (Reported by Significant-Care-135; the ten-year slide reported by Raskachas.)',
+            '🐛 Veterans no longer make their "rookie debut" — experienced free agents signed by AI teams to fill vacant seats were tagged as rookies and credited to the Feeder Series, so a multi-season race winner could show under Rookie Debuts a decade into a save. A driver now only counts as a rookie if they have never started an F1 race; veterans appear under New Signings as joining from free agency. A team can also no longer release a driver and immediately re-sign them in the same offseason, which produced an absurd departure-plus-arrival pair in the transfer digest. (Reported by Raskachas, with the perfect screenshot.)',
+            '🐛 The Quick Start Guide now reads your actual grid — the team tiers and first-timer tips were hardcoded with the original team names, so they were wrong for renamed teams, custom rosters and the fictionalised defaults alike. The guide now builds its tier list and recommendations live from the roster the landing page is actually offering, including the selected start year. (Reported by Weet-Bix54.)',
+            '🐛 Upgrade windows now scale with your calendar — windows were fixed after races 7 and 14, so on a short custom calendar (a 14-race 1980s season, say) the summer window opened after the final race and its upgrades could never land. Windows now open at roughly 30% and 60% of the season, with the second always at least two races before the finale; very short calendars get a single window and say so. The default 24-race calendar resolves to the same races 7 and 14 as before, so existing saves are untouched. The AI\'s window development fires on the same schedule. (Reported by ZareJonathan.)',
+            '✨ The pit wall can read the radar — in changeable weather you could be prompted to pit four or five times in quick succession (dry to inters to wets and back) as a shower swept through, burning two-lap stints nobody sane would run. Weather calls now require conditions to hold for the next few laps before recommending a switch, full wets are only suggested when the heavy rain will last and enough laps remain to profit, and a driver is not re-prompted within three laps of their previous call — unless they are stranded on slicks in genuinely heavy rain, which is always urgent. (Reported by TheExoticKoala.)',
+            '✨ Morale now moves race by race — morale previously only changed at season end, so two teammates in a fierce title fight both sat at 95+ all year however one-sided it became. Each race now applies a small drift: podiums lift, DNFs sting, trailing your teammate by a wide points margin wears a driver down, and everyone settles gently toward a sustainable baseline so morale can no longer pin at the cap for a whole season. Effects are deliberately small per race and accumulate over a campaign. (Reported by TheExoticKoala.)',
+            '✨ Aero balance confidence is now earned through your Simulator — setup knowledge was hard-capped at 85 in-season and pulled back toward your facility level every winter, so the confidence label read Moderate virtually forever no matter what you did. The in-season ceiling now scales with your Simulator facility (about 83 at a 40-rated sim, up to 97+ at 90+), so investing in facilities visibly moves the label, exactly as suggested. Root-causing this also uncovered that knowledge only grew on skipped races — teams in watched races never gained setup data at all. Both paths now learn identically. (Reported by TheExoticKoala.)',
+            '✨ Your car\'s rating at this circuit — sub-stats have always been weighted differently per track, but there was no way to see the combined result. The Car page now shows a track-weighted overall rating and grid rank for the next round, and the dashboard\'s Next Event panel carries a matching pill (tap it for the full breakdown) — your expected competitiveness this weekend, separate from the headline OVR and from race-day execution. (Requested by TheExoticKoala.)',
+            '✨ Desktop gets more room — the main views now widen on large screens (1120px from 1280px-wide displays, 1240px on very wide ones) and the watch-race window grows with them, so the dashboard and race screens use more of the width available. (Requested by TheExoticKoala.)',
+          ]],
     ['v2.5.8','June 2026',[
             '\ud83d\udc1b Custom calendars no longer break the race sim \u2014 the most serious bug this round. A custom calendar round that arrived without a lap count made the race loop (which runs while the lap counter is \u2264 the round\u2019s laps) never execute, so the race \u201cskipped\u201d straight to the finish with no positions or times changing, the header read \u201cLap undefined / undefined\u201d, and the replay feed showed \u201cLNaN\u201d lines. Every place a calendar is built or loaded now passes each round through a normaliser that guarantees a valid lap count and full circuit profile (circuit type, downforce, tyre deg, overtaking, safety-car), the four sim entry points self-heal a round in place as a safety net, and any existing save with a broken calendar repairs itself the first time it loads. (Reported by ZareJonathan.)',
             '\ud83d\ude80 A genuine title rival can now emerge when you dominate \u2014 the biggest piece of feedback across the board: once you reach the top, the championship stops being a contest. Uniform catch-up couldn\u2019t fix this without feeling like your advantage was being erased, so instead, when you\u2019ve been dominant, a NAMED rival periodically gets a concentrated multi-season development surge \u2014 a real new force (think 2009 Brawn or 2014 Mercedes) that can reach your level and actually win seasons. A surging rival can develop to the same 99 ceiling you can and is announced in the news feed when it begins. It triggers more often and pushes harder on Hard and Nightmare. (Reported by janko1655, aashankumarsingh and EmiliusReturns.)',
@@ -25832,12 +26257,22 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
         msg:`Factory resources redirected — <strong>${Math.round(_diversion*100)}%</strong> of this upgrade window allocated to ${g.nextRegsYear} regulation concept. In-season upgrades will be reduced accordingly.`,
         race:g.raceIndex});
     }
-    const upgradeEff = getInSeasonDevEfficiency(team.carPerformance || 70);
+    const _winEff = getQuarterWindowEffectiveness(team);
+    const upgradeEff = _winEff.eff;
+    // ── Factory throughput (v2.5.9) ──────────────────────────────────────────
+    // Reported by Significant-Care-135 (+2 confirmations): a backmarker could buy its way from
+    // the back to the front inside a single season because upgrade packages landed at full
+    // value regardless of infrastructure. A team's Factory now determines how much of each
+    // performance package actually reaches the car (~82% at a 50-rated factory, ~100% at 95+),
+    // so climbing the grid first means building the operation — upgrades convert better as your
+    // facilities improve. Reliability work is unaffected. The window previews show the same
+    // scaled values, so what you see is what arrives.
+    const _throughput = _winEff.throughput;
     const relEff = team.reliability >= 95 ? 0.65
       : team.reliability >= 90 ? 0.78
       : team.reliability >= 82 ? 0.90
       : 1.0;
-    const _upgradeScale = (1 - _diversion) * upgradeEff; // reduce current car upgrades by diversion fraction and elite-car drag
+    const _upgradeScale = (1 - _diversion) * upgradeEff * _throughput; // diversion + elite-car drag + factory throughput
     // Queue with countdown — arrive in 2-4 races
     const racesLeft = g.calendar.length - g.raceIndex;
     const delay = Math.min(Math.max(2, randInt(2,4)), Math.max(1,racesLeft));
@@ -26159,8 +26594,8 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       rd.preConstrStandings = _preConstrStandings;
       g.raceIndex++; Storage.autosave();
       if(typeof gtag!=='undefined') gtag('event','race_simulated',{race_name:race.name,season:g.season,is_sprint:!!race.sprint,race_number:g.raceIndex,team:g.teams.find(t=>t.id===g.playerTeamId)?.name||'?'});
-      // Check if an upgrade window just unlocked
-      const _qT=[7,14], _rd=g.raceIndex;
+      // Check if an upgrade window just unlocked (thresholds scale with calendar length, v2.5.9)
+      const _qT=getUpgradeWindowThresholds(g), _rd=g.raceIndex;
       if(_qT.includes(_rd)){
         const _qi=_qT.indexOf(_rd);
         const _qDev = g.quarterDev || [];
@@ -26175,6 +26610,9 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
         // include a catch-up term so teams chasing the in-season pace-setter (which is often the
         // player once they lead) develop harder — keeping the grid honest without nerfing the
         // player's own car directly.
+        // v2.5.9 (same reporters, still reproducible on Nightmare): base gain and the catch-up cap
+        // raised so a typical midfield team lands ~1.0/window and a chasing backmarker ~2.0+,
+        // paired with the new factory-throughput trim on player packages.
         const _isDiff = getDiff(g);
         const _isFieldMaxCar = g.teams.reduce((m,t)=>Math.max(m, t.carPerformance||70), 0);
         const _isDiffBoost = 1 + (_isDiff.devRateBoostAI||0) * 0.03; // normal 1.0, hard ~1.12, nightmare ~1.24
@@ -26187,8 +26625,8 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
           const _aiBudgetFactor = clamp((aiTeam.revenue||100)/200, 0.5, 1.4);
           // Catch-up: the further a team is behind the current pace-setter, the harder it develops.
           const _leadGap = Math.max(0, _isFieldMaxCar - _cp);
-          const _catchUp = _leadGap > 2 ? Math.min(1.0, (_leadGap - 2) * 0.06) : 0;
-          const _aiDevGain = (randFloat(0.5, 1.5) * _aiDevEff * _aiBudgetFactor * ((aiTeam.developmentRate||70)/100) + _catchUp) * _isDiffBoost;
+          const _catchUp = _leadGap > 2 ? Math.min(1.3, (_leadGap - 2) * 0.07) : 0;
+          const _aiDevGain = (randFloat(0.8, 1.9) * _aiDevEff * _aiBudgetFactor * ((aiTeam.developmentRate||70)/100) + _catchUp) * _isDiffBoost;
           const _aiRelGain = randFloat(-0.2, 0.5);
           aiTeam.carPerformance = clamp(aiTeam.carPerformance + _aiDevGain, 40, 97);
           aiTeam.reliability    = clamp((aiTeam.reliability||70) + _aiRelGain, 40, 97);
@@ -29567,7 +30005,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 <!-- WATCH RACE MODAL -->
 <div id="watch-race-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;align-items:center;justify-content:center;padding:12px">
-  <div style="background:var(--bg2);border-radius:12px;width:92%;max-width:560px;max-height:calc(100dvh - 24px);box-shadow:0 20px 60px rgba(0,0,0,.3);overflow:hidden;font-family:system-ui,sans-serif;display:flex;flex-direction:column">
+  <div class="wr-shell" style="background:var(--bg2);border-radius:12px;width:92%;max-width:560px;max-height:calc(100dvh - 24px);box-shadow:0 20px 60px rgba(0,0,0,.3);overflow:hidden;font-family:system-ui,sans-serif;display:flex;flex-direction:column">
     <div style="background:var(--bg2);border-bottom:1px solid var(--bd);flex-shrink:0">
       <div style="padding:12px 16px;display:flex;align-items:center;justify-content:space-between">
         <div>
@@ -29593,7 +30031,7 @@ document.addEventListener('DOMContentLoaded', () => {
     </div>
     <div style="flex:1;min-height:0;display:flex;overflow:hidden;background:var(--bg)">
       <div id="wr-feed" style="flex:1;min-height:0;overflow-y:auto;padding:10px 14px;background:var(--bg);display:flex;flex-direction:column;gap:4px"></div>
-      <div style="width:152px;flex-shrink:0;border-left:1px solid var(--bd);background:var(--bg2);display:flex;flex-direction:column">
+      <div class="wr-pos-col" style="width:152px;flex-shrink:0;border-left:1px solid var(--bd);background:var(--bg2);display:flex;flex-direction:column">
         <div style="padding:10px 10px 6px;font-size:10px;font-weight:800;letter-spacing:.8px;color:var(--tx3);text-transform:uppercase">Positions</div>
         <div id="wr-positions" style="flex:1;min-height:0;overflow-y:auto;padding:0 8px 10px;display:flex;flex-direction:column;gap:4px"></div>
       </div>
