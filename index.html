@@ -61,7 +61,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="F1 Dynasty">
 <style>
-:root{--bg:#f4f4f2;--bg2:#fff;--bg3:#ededeb;--bd:#e0e0dd;--tx:#1a1a1a;--tx2:#666;--tx3:#aaa;--red:#c0392b;--grn:#27ae60;--amber:#b8860b;--blu:#2980b9;--sh:rgba(0,0,0,.07);--ff:system-ui,sans-serif;--fm:'JetBrains Mono',ui-monospace,monospace}
+:root{--bg:#f4f4f2;--bg2:#fff;--bg3:#ededeb;--bd:#e0e0dd;--tx:#1a1a1a;--tx2:#666;--tx3:#aaa;--red:#c0392b;--grn:#27ae60;--amber:#b8860b;--blu:#2980b9;--acc:#c0392b;--sh:rgba(0,0,0,.07);--ff:system-ui,sans-serif;--fm:'JetBrains Mono',ui-monospace,monospace}
 [data-theme="dark"]{--bg:#111;--bg2:#1a1a1a;--bg3:#222;--bd:#333;--tx:#f0f0ee;--tx2:#aaa;--tx3:#666;--sh:rgba(0,0,0,.4)}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;background:var(--bg);color:var(--tx);font-family:var(--ff);font-size:14px;line-height:1.5;overflow:hidden}
@@ -195,23 +195,24 @@ input:focus,select:focus{border-color:var(--red)}
 /* Team grid */
 .land-team-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:20px}
 .land-tcard{
-  padding:10px 12px;border:1.5px solid #e8e5e0;border-radius:6px;
-  cursor:pointer;transition:border-color .15s,box-shadow .15s,background .15s;background:#fff;
+  padding:10px 12px;border:1.5px solid var(--bd);border-radius:6px;
+  cursor:pointer;transition:border-color .15s,box-shadow .15s,background .15s;background:var(--bg2);
   display:flex;flex-direction:column;gap:0;position:relative;overflow:hidden;
 }
 .land-tcard:hover{border-color:#bbb;box-shadow:0 2px 8px rgba(0,0,0,.07)}
 .land-tcard.selected{border-color:#16a34a;border-width:2px;background:#f0fdf4;box-shadow:0 0 0 3px rgba(22,163,74,.15)}
+[data-theme="dark"] .land-tcard.selected{background:rgba(22,163,74,.10)}
 .land-tcard-check{display:none;position:absolute;top:6px;right:6px;background:#16a34a;color:#fff;font-size:9px;font-weight:800;padding:2px 6px;border-radius:10px;letter-spacing:.3px}
 .land-tcard.selected .land-tcard-check{display:block}
 .land-tcard-accent{position:absolute;top:0;left:0;right:0;height:3px}
 .land-tcard-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:5px}
-.land-tcard-name{font-size:12px;font-weight:800;color:#111;line-height:1.3;flex:1;margin-right:4px}
+.land-tcard-name{font-size:12px;font-weight:800;color:var(--tx);line-height:1.3;flex:1;margin-right:4px}
 .land-tcard-diff{font-size:9px;font-weight:700;padding:2px 6px;border-radius:8px;flex-shrink:0;margin-top:1px}
 .land-tcard-diff.easy{background:#dcfce7;color:#166534}
 .land-tcard-diff.medium{background:#fef9c3;color:#854d0e}
 .land-tcard-diff.hard{background:#fee2e2;color:#991b1b}
-.land-tcard-drivers{font-size:11px;color:#444;margin-bottom:6px;font-weight:600}
-.land-tcard-stats{font-size:11px;color:#666;margin-top:2px;font-weight:600;font-variant-numeric:tabular-nums}
+.land-tcard-drivers{font-size:11px;color:var(--tx2);margin-bottom:6px;font-weight:600}
+.land-tcard-stats{font-size:11px;color:var(--tx2);margin-top:2px;font-weight:600;font-variant-numeric:tabular-nums}
 #custom-team-builder-landing{flex-shrink:0;max-width:100%}
 #custom-team-builder-body-landing input,
 #custom-team-builder-body-landing select{min-width:0;width:100%;max-width:100%;box-sizing:border-box}
@@ -775,16 +776,16 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
         </div>
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:16px;max-width:560px;padding:16px 18px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
-          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v2.5.9 — What's New</div>
-          <div style="font-size:14px;font-weight:900;color:#111;margin-bottom:10px">Climbing the grid is a project again, rivals look after their factories, and historical rosters get real tools</div>
+          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v2.6.0 — What's New</div>
+          <div style="font-size:14px;font-weight:900;color:#111;margin-bottom:10px">Race results you can trust, winters that shuffle the grid, and dark mode that actually works</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 16px">
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">⚖️</span><span><strong>No More One-Season Miracles</strong> — your Factory determines how much of each upgrade package reaches the car, so back-to-front takes building the operation, not just spending</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">⚖️</span><span><strong>Rivals Reinvest</strong> — AI teams maintain facilities and dev rate, so big teams stay competitive and the grid no longer flattens over a decade; AI also develops harder at upgrade windows</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">⚡</span><span><strong>Power Units in the Live Editor</strong> — add, edit and remove engine suppliers mid-save, removed suppliers finally stay removed, and engine allocation is now a real season decision</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>Historical Rosters Fixed Up</strong> — custom sponsors survive export, upgrade windows scale to short calendars, veterans no longer debut as rookies, and the guide reads your real team names</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">✨</span><span><strong>Smarter Wet Calls & Living Morale</strong> — no more pit-every-two-laps weather spam, morale moves race by race, aero confidence follows your Simulator, and your car gets a per-track rating</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">✨</span><span><strong>Better on Desktop</strong> — wider dashboard and race screens, a readable live position tower in Watch Race, and a Race Story that stops repeating itself</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:#888;font-weight:800;flex-shrink:0">🙏</span><span><strong>Built from your requests</strong> — every change here came directly from r/f1dynasty: Significant-Care-135, Raskachas, TheExoticKoala, ZareJonathan, Weet-Bix54 and Appropriate-Rip-4087. Thanks, and keep them coming</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>One Result, Everywhere</strong> — in-race penalties no longer leave the debrief saying P2 while the results tab says P4; every post-race screen now reads a single finishing order, points included</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">⚖️</span><span><strong>Winters With Consequences</strong> — AI teams can now nail or flub a winter and genuinely jump or fall several places, with the big movers called out in testing news</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>No More −195 Grid Penalties</strong> — PU changes are one per race window and penalties cap at a back-of-grid start, exactly like real F1; affected saves self-repair</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🌙</span><span><strong>Dark Mode Cleanup</strong> — team ratings on the start screen, upgrade-window focus buttons and the budget bar are all readable and live-updating again</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">✨</span><span><strong>Deeper Live Calendar Editor</strong> — edit downforce, tyre deg, overtaking and safety car chance mid-save, and add tracks straight from the circuit library</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">✨</span><span><strong>All-Time Team Stats</strong> — every team page now shows career wins, podiums, poles and best finishes alongside the current season</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:#888;font-weight:800;flex-shrink:0">🙏</span><span><strong>Built from your requests</strong> — every change here came directly from r/f1dynasty: Turbulent_Standard61, Raskachas, ZareJonathan, RuleImpossible3362, Significant-Care-135, Bulky-Comfortable-13, Comfortable_Tie_9289, Disastrous_Act9613 and Appropriate-Rip-4087. Thanks, and keep them coming</span></div>
           </div>
           <button onclick="UI.showChangelog()" style="margin-top:10px;width:100%;padding:7px;background:none;border:1.5px solid rgba(192,57,43,.3);border-radius:7px;font-size:11px;font-weight:700;color:var(--red);cursor:pointer">Full release notes →</button>
         </div>
@@ -903,7 +904,7 @@ input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
       </div>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.5.9</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
+        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v2.6.0</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" onclick="window.location.href=this.href;return false;" style="color:#aaa;text-decoration:none">r/f1dynasty</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -2998,8 +2999,19 @@ const LiveEditor = {
   // season and beyond; the in-progress season is never touched, so results stay intact.
   addRound(){
     const rounds = this._nextSeasonRounds();
-    rounds.push({ name:'New Grand Prix', location:'City', country:'Country', circuitType:'balanced', sprint:false, idealDownforce:50, laps:58, tireDeg:0.6, overtakingDiff:0.5 });
+    rounds.push({ name:'New Grand Prix', location:'City', country:'Country', circuitType:'balanced', sprint:false, idealDownforce:50, laps:58, tireDeg:0.6, overtakingDiff:0.5, safetyCar:0.2 });
     this._commitCalendar(rounds);
+  },
+  // ── Circuit library (v2.6.0, ZareJonathan) — add a preset historic/default circuit with its
+  // full profile (downforce, tyre deg, overtaking, safety car) instead of a blank 58-lap track.
+  addLibraryTrack(kind, idx){
+    const pool = kind === 'historic' ? (DATA.historicTracks||[]) : (DATA.calendarFull||[]);
+    const t = pool[idx];
+    if(!t) return;
+    const rounds = this._nextSeasonRounds();
+    rounds.push({ name:t.name, location:t.location, country:t.country, circuitType:t.circuitType||'balanced', sprint:!!t.sprint, idealDownforce:t.idealDownforce!=null?t.idealDownforce:50, laps:t.laps||58, tireDeg:t.tireDeg!=null?t.tireDeg:0.6, overtakingDiff:t.overtakingDiff!=null?t.overtakingDiff:0.5, safetyCar:t.safetyCar!=null?t.safetyCar:0.2 });
+    this._commitCalendar(rounds);
+    if(typeof UI!=='undefined') UI.toast(`${t.name} added to next season's calendar.`,'success');
   },
   removeRound(idx){
     const rounds = this._nextSeasonRounds();
@@ -3016,6 +3028,11 @@ const LiveEditor = {
     else if(field === 'circuitType'){ rounds[idx].circuitType = _CIRCUIT_TYPES.includes(v) ? v : 'balanced'; }
     else if(field === 'laps'){ rounds[idx].laps = clamp(parseInt(value,10)||58, 10, 200); }
     else if(field === 'idealDownforce'){ rounds[idx].idealDownforce = clamp(parseInt(value,10)||50, 0, 100); }
+    // v2.6.0 (ZareJonathan): full circuit profile editing — tyre deg, overtaking difficulty and
+    // safety car chance, matching the pre-game Roster Editor's depth.
+    else if(field === 'tireDeg'){ rounds[idx].tireDeg = clamp(parseFloat(value)||0.6, 0.1, 1.0); }
+    else if(field === 'overtakingDiff'){ rounds[idx].overtakingDiff = clamp(parseFloat(value)||0.5, 0.1, 1.0); }
+    else if(field === 'safetyCar'){ rounds[idx].safetyCar = clamp(parseFloat(value)||0, 0, 1.0); }
     // Normalise so committed rounds always carry a full, valid circuit profile.
     rounds[idx] = sanitizeCalendarRound(rounds[idx], idx);
     this._commitCalendar(rounds);
@@ -3061,14 +3078,36 @@ const LiveEditor = {
           <select onchange="LiveEditor.setRoundField(${i},'circuitType',this.value)" title="Circuit type" style="font-size:11px;padding:5px 7px;border:1px solid var(--bd);border-radius:6px;background:var(--bg2);min-width:0">${ctOpts(r.circuitType||'balanced')}</select>
           <input type="number" min="10" max="200" value="${r.laps||58}" onchange="LiveEditor.setRoundField(${i},'laps',this.value)" title="Laps" placeholder="Laps" style="font-size:11px;padding:5px 7px;border:1px solid var(--bd);border-radius:6px;background:var(--bg2);min-width:0">
         </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:4px;margin-top:5px">
+          <label style="display:flex;flex-direction:column;gap:1px;min-width:0"><span style="font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--tx3)">Downforce</span><input type="number" min="0" max="100" value="${r.idealDownforce!=null?r.idealDownforce:50}" onchange="LiveEditor.setRoundField(${i},'idealDownforce',this.value)" title="Ideal downforce (0-100)" style="font-size:11px;padding:4px 6px;border:1px solid var(--bd);border-radius:6px;background:var(--bg2);min-width:0"></label>
+          <label style="display:flex;flex-direction:column;gap:1px;min-width:0"><span style="font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--tx3)">Tyre Deg</span><input type="number" min="0.1" max="1.0" step="0.05" value="${r.tireDeg!=null?r.tireDeg:0.6}" onchange="LiveEditor.setRoundField(${i},'tireDeg',this.value)" title="Tyre degradation (0.1-1.0)" style="font-size:11px;padding:4px 6px;border:1px solid var(--bd);border-radius:6px;background:var(--bg2);min-width:0"></label>
+          <label style="display:flex;flex-direction:column;gap:1px;min-width:0"><span style="font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--tx3)">Overtaking</span><input type="number" min="0.1" max="1.0" step="0.05" value="${r.overtakingDiff!=null?r.overtakingDiff:0.5}" onchange="LiveEditor.setRoundField(${i},'overtakingDiff',this.value)" title="Overtaking difficulty (0.1-1.0)" style="font-size:11px;padding:4px 6px;border:1px solid var(--bd);border-radius:6px;background:var(--bg2);min-width:0"></label>
+          <label style="display:flex;flex-direction:column;gap:1px;min-width:0"><span style="font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--tx3)">Safety Car</span><input type="number" min="0" max="1.0" step="0.05" value="${r.safetyCar!=null?r.safetyCar:0}" onchange="LiveEditor.setRoundField(${i},'safetyCar',this.value)" title="Safety car chance (0=off)" style="font-size:11px;padding:4px 6px;border:1px solid var(--bd);border-radius:6px;background:var(--bg2);min-width:0"></label>
+        </div>
       </div>`).join('');
+    // Circuit library (v2.6.0, ZareJonathan) — add preset circuits with full profiles, like
+    // the pre-game Roster Editor. Filtered against tracks already on next season's calendar.
+    const calKeys = rounds.map(r=>r.name+'|'+r.location);
+    const _libBtn = (kind,t,origIdx)=>`<button class="btn btn-ghost btn-sm" style="font-size:10px" onclick="LiveEditor.addLibraryTrack('${kind}',${origIdx})">+ ${esc(t.name.replace(' Grand Prix',''))} (${esc(t.location)})</button>`;
+    const histAvail = (DATA.historicTracks||[]).map((t,oi)=>({t,oi})).filter(o=>!calKeys.includes(o.t.name+'|'+o.t.location));
+    const defAvail = (DATA.calendarFull||[]).map((t,oi)=>({t,oi})).filter(o=>!calKeys.includes(o.t.name+'|'+o.t.location));
+    const libraryHtml = `
+      <details style="border:1px solid var(--bd);border-radius:8px;background:var(--bg2);overflow:hidden;margin-top:10px">
+        <summary style="padding:8px 10px;cursor:pointer;font-size:12px;font-weight:700;color:var(--tx2);list-style:none">📚 Circuit Library — click to add</summary>
+        <div style="padding:8px 10px;border-top:1px solid var(--bd)">
+          ${defAvail.length?'<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--tx3);margin-bottom:4px">Modern circuits</div><div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px">'+defAvail.map(o=>_libBtn('modern',o.t,o.oi)).join('')+'</div>':''}
+          ${histAvail.length?'<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--tx3);margin-bottom:4px">Historic circuits</div><div style="display:flex;flex-wrap:wrap;gap:4px">'+histAvail.map(o=>_libBtn('historic',o.t,o.oi)).join('')+'</div>':''}
+          ${!defAvail.length&&!histAvail.length?'<div style="font-size:11px;color:var(--tx3)">Every library circuit is already on the calendar</div>':''}
+        </div>
+      </details>`;
     return `
-      <div style="font-size:11px;color:var(--tx3);margin-bottom:6px">Build the <strong>${nextSeason}</strong> season calendar (and beyond). The current season can't be changed once you're racing it. Edit the name, location, country, circuit type and laps; reorder by typing a round number or using ↑/↓; toggle sprints with <strong>S</strong>; and add or drop tracks — e.g. bring back Turkey and Portugal for a 2027 schedule. ${isCustom?'<span style="color:var(--amber);font-weight:700">Custom calendar active.</span>':'Currently using the default calendar.'}</div>
+      <div style="font-size:11px;color:var(--tx3);margin-bottom:6px">Build the <strong>${nextSeason}</strong> season calendar (and beyond). The current season can't be changed once you're racing it. Edit every circuit detail — name, location, country, type, laps, downforce, tyre deg, overtaking and safety car chance — reorder by typing a round number or using ↑/↓, toggle sprints with <strong>S</strong>, and add tracks from the circuit library or from scratch. ${isCustom?'<span style="color:var(--amber);font-weight:700">Custom calendar active.</span>':'Currently using the default calendar.'}</div>
       <div style="display:flex;gap:6px;margin-bottom:10px">
         <button onclick="LiveEditor.addRound()" class="btn btn-outline btn-sm" style="border-color:var(--grn);color:var(--grn)">+ Add round</button>
         ${isCustom?`<button onclick="LiveEditor.resetCalendar()" class="btn btn-ghost btn-sm">Reset to default</button>`:''}
       </div>
-      ${rows||'<div style="font-size:12px;color:var(--tx3)">No calendar found for this save.</div>'}`;
+      ${rows||'<div style="font-size:12px;color:var(--tx3)">No calendar found for this save.</div>'}
+      ${libraryHtml}`;
   },
 
 
@@ -3103,6 +3142,22 @@ const LiveEditor = {
         ['topSpeed','cornering','tyreManagement','dirtyAir','aeroEfficiency'].forEach(k=>{ team[k]=val; });
         team.components = null;
         try { initComponents(team); } catch(e){}
+        // (v2.6.0, Disastrous_Act9613) initComponents seeds each component with ±2 random
+        // variance and the overall is re-derived from their weighted average — so typing 80
+        // displayed as 79–82. Calibrate: shift every component uniformly until the derived
+        // overall lands on the typed value. Two passes absorb the rounding; component
+        // variety is preserved because the shift is uniform. Only saturates at the 40/99
+        // component clamps, where the exact target is genuinely unreachable.
+        try {
+          if(team.components){
+            for(let _cp=0; _cp<3; _cp++){
+              const _drift = val - (team.carPerformance||val);
+              if(Math.abs(_drift) < 0.05) break;
+              COMP_KEYS.forEach(ck=>{ team.components[ck] = clamp((team.components[ck]||70) + _drift, 40, 99); });
+              deriveSubStats(team);
+            }
+          }
+        } catch(e){}
       } else if(field==='facilities'){
         // Editing the aggregate resets all three sub-facilities to that value (a clean slate).
         team.facilities = val;
@@ -3293,6 +3348,11 @@ const LiveEditor = {
 
   render(){
     const host = document.getElementById('modal-body'); if(!host) return;
+    // (v2.6.0, Disastrous_Act9613) Every field edit re-renders the editor, which reset the
+    // .modal-box scroll to the top — deeply annoying when editing a long team panel. Capture
+    // and restore the scroll position around the rebuild.
+    const _scrollHost = (host.closest && host.closest('.modal-box')) || host.parentElement || null;
+    const _savedScroll = _scrollHost ? _scrollHost.scrollTop : 0;
     const g = State.game; if(!g) return;
     const esc = (typeof escapeHtml==='function') ? escapeHtml : (s=>String(s));
     const teams = (g.teams||[]).slice().sort((x,y)=>getTeamOverallCar(y)-getTeamOverallCar(x));
@@ -3417,6 +3477,7 @@ const LiveEditor = {
       `}
       <button onclick="UI.closeModal()" class="btn btn-ghost" style="width:100%">Done</button>
     </div>`;
+    if(_scrollHost) _scrollHost.scrollTop = _savedScroll;
   }
 };
 
@@ -3585,6 +3646,65 @@ function initComponents(team) {
     suspension:  clamp(Math.round((tm * 0.45 + co * 0.30 + da * 0.15 + ts * 0.10) + randFloat(-2, 2)), 40, 99),
   };
   deriveSubStats(team);
+}
+// ── Race time gaps (v2.6.0, requested by Appropriate-Rip-4087) ────────────────
+// Returns { driverId: '+12.345' | '+1 Lap' | 'DNF' | '' } for a completed race result.
+// Watched/simulated GPs reuse the REAL gaps from the lap model's final lap state, so the
+// numbers reflect the actual race story; sprints and races without lap data synthesize
+// plausible gaps deterministically (seeded per race, so re-renders always agree). Time
+// penalties are added on top, and gaps are forced monotonic by final position so the
+// classification and the clock can never disagree.
+function getRaceGapStrings(race, results, isSprint){
+  try {
+    if(!race || !Array.isArray(results) || !results.length) return {};
+    const finishers = results.filter(r=>r && !r.dnf && r.position).slice().sort((a,b)=>a.position-b.position);
+    if(!finishers.length) return {};
+    const out = {};
+    results.forEach(r=>{ if(r && r.dnf) out[r.driverId]='DNF'; });
+    // 1) Try real gaps from the final lap state (GP races simulated by the lap model)
+    let rawGap = null;
+    if(!isSprint && Array.isArray(race.lapStates) && race.lapStates.length){
+      const lastLs = race.lapStates[race.lapStates.length-1];
+      if(lastLs && Array.isArray(lastLs.order)){
+        rawGap = {};
+        let found = 0;
+        lastLs.order.forEach(o=>{ if(o && !o.dnf && typeof o.gap==='number'){ rawGap[o.driverId]=Math.max(0,o.gap); found++; } });
+        if(found < Math.min(3, finishers.length)) rawGap = null; // not enough real data
+      }
+    }
+    // 2) Deterministic synthesis fallback (mulberry32 seeded per race)
+    if(!rawGap){
+      let h = 1779033703 ^ ((race.name||'GP').length);
+      const seedStr = (race.name||'GP') + '|' + ((typeof State!=='undefined'&&State.game&&State.game.season)||0) + '|' + (finishers[0].driverId||0);
+      for(let i=0;i<seedStr.length;i++){ h = Math.imul(h ^ seedStr.charCodeAt(i), 3432918353); h = (h<<13)|(h>>>19); }
+      const rand = function(){ h = Math.imul(h ^ (h>>>16), 2246822507); h = Math.imul(h ^ (h>>>13), 3266489909); return ((h ^= h>>>16)>>>0)/4294967296; };
+      const scale = isSprint ? 0.45 : 1.0;
+      rawGap = {}; let cum = 0;
+      finishers.forEach((r,i)=>{
+        if(i===0){ rawGap[r.driverId]=0; return; }
+        const close = rand() < 0.30;
+        const depth = i<=3 ? 1.0 : i<=8 ? 1.25 : 1.6; // gaps widen down the field
+        cum += (close ? (0.3+rand()*1.3) : (1.5+rand()*6.0)) * depth * scale;
+        rawGap[r.driverId] = cum;
+      });
+    }
+    // 3) Penalties on top, then enforce monotonicity by final position
+    let prev = -1;
+    finishers.forEach((r,i)=>{
+      let gp = (rawGap[r.driverId]!=null ? rawGap[r.driverId] : (prev>=0?prev+2.5:0)) + (r.penaltySeconds||0);
+      if(i===0) gp = 0; else if(gp <= prev) gp = prev + 0.15 + ((i*7)%10)/20;
+      rawGap[r.driverId] = gp; prev = gp;
+    });
+    // 4) Format — lapped cars show +N Lap(s); total race ≈ 90 min regardless of lap count
+    const lapSec = 5400 / Math.max(20, (isSprint ? Math.round((race.laps||58)*0.30) : (race.laps||58)));
+    finishers.forEach((r,i)=>{
+      const gp = rawGap[r.driverId];
+      if(i===0){ out[r.driverId]=''; return; }
+      const lapsDown = Math.floor(gp / lapSec);
+      out[r.driverId] = lapsDown >= 1 ? ('+'+lapsDown+' Lap'+(lapsDown>1?'s':'')) : ('+'+gp.toFixed(3));
+    });
+    return out;
+  } catch(e){ return {}; }
 }
 function getSponsorEffectiveValue(sp){
   if(!sp) return 0;
@@ -5486,9 +5606,24 @@ const Editor = {
     // during a save) and every other team's stored editor sponsor set, trimmed back to editor
     // shape so the importer treats them as definitions rather than mid-contract deals.
     const _editorSponsorShape = sp => ({ name: sp.name, value: sp.value, type: sp.type, ...(sp.totalSeasons ? { totalSeasons: sp.totalSeasons } : {}) });
+    // v2.6.0 (ZareJonathan): saves created before v2.5.9 never carried editor sponsors onto
+    // the in-game AI team objects, so those saves have nothing stored and the export used to
+    // fall back to the default 2026 sponsor map on import. As a recovery path, fall back to
+    // the Roster Editor's persisted template — if it still holds the roster this save was
+    // started from, the original custom sponsors are recovered from there.
+    let _editorTemplateTeams = null;
+    try {
+      const _es = (typeof Editor !== 'undefined' && Editor.getState) ? Editor.getState() : null;
+      if(_es && Array.isArray(_es.teams)) _editorTemplateTeams = _es.teams;
+    } catch(e) { _editorTemplateTeams = null; }
+    const _editorTemplateSponsors = (teamId) => {
+      if(!_editorTemplateTeams) return null;
+      const _match = _editorTemplateTeams.find(et => et && (typeof teamIdsEqual === 'function' ? teamIdsEqual(et.id, teamId) : et.id === teamId));
+      return (_match && Array.isArray(_match.sponsors) && _match.sponsors.length) ? _match.sponsors : null;
+    };
     const attachSponsors = (o, t)=>{
       const live = (t.id === g.playerTeamId && Array.isArray(g.sponsors) && g.sponsors.length) ? g.sponsors : null;
-      const src = live || (Array.isArray(t.sponsors) && t.sponsors.length ? t.sponsors : null);
+      const src = live || (Array.isArray(t.sponsors) && t.sponsors.length ? t.sponsors : null) || _editorTemplateSponsors(t.id);
       if(src) o.sponsors = src.map(_editorSponsorShape);
       return o;
     };
@@ -6154,9 +6289,17 @@ return {id,name:def.name,age:def.age,nationality:def.nationality||DATA.nationali
     const fnPool = natGroups[nat] || DATA.firstNames;
     const lnGroup = natToLnGroup[nat] || 'Other';
     const lnPool = natLnGroups[lnGroup] || DATA.lastNames;
-    // Ensure generated name is unique across all existing drivers (retry up to 8 times)
+    // Ensure generated name is unique across all existing drivers (retry up to 8 times).
+    // v2.6.0 (Comfortable_Tie_9289): retired drivers and past champions are included too —
+    // the check previously only covered ACTIVE drivers, so once a legacy great retired, the
+    // generator could re-roll their exact name onto an 18-year-old rookie ("Fernando Alonso
+    // joins as a rookie"). Fresh recombinations stay possible; resurrections don't.
     let fn, ln;
-    const _existingNames = new Set([...(this.game?.drivers||[]).filter(d=>!d.retired).map(d=>d.name), ...(this._generatingNames||[])]);
+    const _existingNames = new Set([
+      ...(this.game?.drivers||[]).map(d=>d.name),
+      ...((this.game?.history?.champions||[]).map(c=>c.driverName||c.name).filter(Boolean)),
+      ...(this._generatingNames||[])
+    ]);
     for(let _ni=0;_ni<8;_ni++){
       fn = fnPool[Math.floor(Math.random()*fnPool.length)];
       ln = lnPool[Math.floor(Math.random()*lnPool.length)];
@@ -10922,6 +11065,29 @@ const spons=sumSponsorIncome(g.sponsors||[]);
       constructorChamp.team.championships++;
       g.history.constructorChampions.push({season:g.season,teamId:constructorChamp.team.id,teamName:constructorChamp.team.name,points:constructorChamp.points});
     }
+    // ── Rookie of the Year (v2.6.0, requested by Disastrous_Act9613) ─────────
+    // Crowned from the highest-scoring driver in their debut season. Points decide it;
+    // ties break on wins then podiums. Recorded in history and announced in Paddock News.
+    // The rookie flag is then cleared for everyone who raced — rookie status ends with
+    // the debut season (it previously persisted indefinitely outside one academy path).
+    {
+      const _royCands = (g.drivers||[]).filter(d=>d && !d.retired && d.teamId && !d.isReserve && !d.isProspect && d.rookie === true);
+      if(_royCands.length){
+        const _roy = _royCands.slice().sort((a,b)=>(b.seasonPoints||0)-(a.seasonPoints||0)||(b.wins||0)-(a.wins||0)||(b.podiums||0)-(a.podiums||0))[0];
+        if(_roy){
+          if(!g.history.rookiesOfTheYear) g.history.rookiesOfTheYear=[];
+          g.history.rookiesOfTheYear.push({season:g.season,driverId:_roy.id,driverName:_roy.name,teamId:_roy.teamId,teamName:State.getTeam(_roy.teamId)?.name||'?',points:_roy.seasonPoints||0});
+          if(!g.newsFeed) g.newsFeed=[];
+          g.newsFeed.unshift({
+            icon:'🌟', type:'success',
+            msg:`<strong>ROOKIE OF THE YEAR:</strong> ${_roy.name} (${State.getTeam(_roy.teamId)?.name||'?'}) takes the award with ${_roy.seasonPoints||0} points in their debut season${(_roy.wins||0)>0?` — including ${_roy.wins} win${_roy.wins>1?'s':''}`:''}.`,
+            race:undefined, ts:Date.now()
+          });
+        }
+      }
+      // A completed season ends rookie status for everyone who held a race seat.
+      (g.drivers||[]).forEach(d=>{ if(d && d.rookie === true && d.teamId && !d.isReserve && !d.isProspect && !d.retired) d.rookie = false; });
+    }
     // Retirement announcements
     g.retirements = g.retirements || [];
     g.drivers.forEach(d=>{
@@ -11768,7 +11934,15 @@ const spons=sumSponsorIncome(g.sponsors||[]);
     // not just feeder graduates — but every signing was tagged as a rookie and credited to the
     // 'Feeder Series', so veterans like a multi-season race winner showed under 'Rookie Debuts'.
     // A driver is only a rookie if they have never started an F1 race.
+    // (v2.6.0, reported by Comfortable_Tie_9289) The stats-only check above misfires on day one
+    // of a real-roster import: a real veteran (e.g. Fernando Alonso) sitting in the free-agent
+    // pool has zero IN-SAVE races/points, so promoting him to a seat tagged him "rookie". The
+    // reliable signals are that _buildDriver stamps every named/template driver with rookie:false
+    // (generated prospects get rookie:true), plus an age sanity cap — a 44-year-old is never a
+    // rookie. _isGenerated is NOT trustworthy here: _buildDriver never sets it, and the load
+    // migration can infer it true for any roster whose names aren't in the default DATA pool.
     const _hasF1Experience = d => ((d?.totalRaces||0) > 0) || ((d?.careerHistory||[]).length > 0) || ((d?.totalPoints||0) > 0) || ((d?.totalWins||0) > 0);
+    const _isTrueRookieDriver = d => !_hasF1Experience(d) && (d?.rookie !== false) && ((d?.age||18) <= 24);
     const _aiRaceSeatVacancies = () => (g.teams || []).reduce((sum, team) => {
       if(!team || team.id === g.playerTeamId) return sum;
       return sum + Math.max(0, 2 - State.getTeamDrivers(team.id).filter(d => !d.isReserve && !d.isProspect && !d.isJunior && !d.retired).length);
@@ -11786,7 +11960,7 @@ const spons=sumSponsorIncome(g.sponsors||[]);
         const prospect = g.drivers.filter(d=>_isReadyAiSeatProspect(d)&&!_leftThisTeam.has(d.name)).sort((a,b)=>(b.rating||0)-(a.rating||0))[0]
           || g.drivers.filter(_isReadyAiSeatProspect).sort((a,b)=>(b.rating||0)-(a.rating||0))[0];
         if(!prospect) break;
-        const _isTrueRookie = !_hasF1Experience(prospect);
+        const _isTrueRookie = _isTrueRookieDriver(prospect);
         prospect.teamId=team.id; prospect.contract=randInt(1,3); prospect.isReserve=false;
         prospect.isFreeAgent=false; prospect.isProspect=false; prospect.prospectSeries=null;
         prospect.rookie=_isTrueRookie;
@@ -12125,7 +12299,7 @@ const spons=sumSponsorIncome(g.sponsors||[]);
         const eligibleProspects = g.drivers.filter(_isReadyAiSeatProspect).sort((a,b)=>(b.rating||0)-(a.rating||0));
         const prospect = eligibleProspects[0];
         if(prospect){
-          const _isTrueRookie2 = !_hasF1Experience(prospect);
+          const _isTrueRookie2 = _isTrueRookieDriver(prospect);
           prospect.teamId=team.id; prospect.contract=randInt(1,3); prospect.isReserve=false;
           prospect.isFreeAgent=false; prospect.isProspect=false; prospect.prospectSeries=null;
           prospect.rookie=_isTrueRookie2;
@@ -12634,6 +12808,30 @@ const spons=sumSponsorIncome(g.sponsors||[]);
       return clamp((gap + randFloat(0.5, 2.5)) * 0.55 * _mult, 0.6, 7.5);
     };
 
+    // ── WINTER R&D ROLL (v2.6.0) ─────────────────────────────────────────────
+    // Significant-Care-135 (again, after v2.5.8): even with the rival surge, season-to-season
+    // AI movement was too smooth — every team's annual delta sat in a narrow band, so the
+    // competitive order barely shuffled outside regulation years. Each AI team now rolls a
+    // winter R&D outcome with fat tails: most winters land near plan, but a team can NAIL a
+    // winter (a genuine multi-place jump up the grid) or FLUB one (a multi-place fall). The
+    // odds tilt with dev rate + facilities — a well-run team nails more and flubs less — but
+    // nobody is immune in either direction, so Brawn-style breakthroughs and big-team misses
+    // both happen. Big movers are reported in Paddock News so the story is told, not hidden.
+    const _winterStories = { nailed: [], flubbed: [] };
+    const _winterRollFor = (team) => {
+      const _wq = clamp(((team.developmentRate||70) + (team.facilities||70)) / 200, 0.35, 0.95);
+      const _nailedP = 0.04 + _wq * 0.07;        // ~6.5% midfield, ~10.5% elite operations
+      const _goodP = 0.14;
+      const _flubbedP = Math.max(0.03, 0.11 - _wq * 0.06); // ~5% elite, ~9% strugglers
+      const _poorP = 0.12;
+      const _r = Math.random();
+      if(_r < _nailedP) return { v: randFloat(2.8, 5.2), tag: 'nailed' };
+      if(_r < _nailedP + _goodP) return { v: randFloat(1.0, 2.4), tag: null };
+      if(_r < _nailedP + _goodP + _flubbedP) return { v: -randFloat(2.8, 5.2), tag: 'flubbed' };
+      if(_r < _nailedP + _goodP + _flubbedP + _poorP) return { v: -randFloat(1.0, 2.4), tag: null };
+      return { v: 0, tag: null };
+    };
+
     g.teams.forEach(team=>{
       if(team.id===g.playerTeamId) return; // player car handled via offseason budget
       // Development gain based on the team's own dev rate — high devRate teams grow faster.
@@ -12706,7 +12904,12 @@ const spons=sumSponsorIncome(g.sponsors||[]);
       const relTarget = 55 + (getFacilityUnit(team,'factory') / 100) * 30 + (team.prestige / 100) * 10; // ~55-95 range
       const relRecovery = team.reliability < relTarget ? (relTarget - team.reliability) * 0.15 : 0;
       const _surgeBoost = _surgeBoostFor(team);
-      const _aiCarDelta = devGain + ceilingPull + floorPull + pressureBoost + eraConvergence + rivalLift + dynastyFatigue + _surgeBoost - leaderPenalty + randFloat(-1.2, 1.2) + getDiff(g).devRateBoostAI * (team.developmentRate/100) * 0.04;
+      const _winterRoll = _winterRollFor(team);
+      // A surging rival's story is a concentrated multi-season rise — don't undercut it with a flub.
+      const _winterDelta = _surgeBoost > 0 ? Math.max(0, _winterRoll.v) : _winterRoll.v;
+      if(_winterRoll.tag === 'nailed' && _winterDelta > 0) _winterStories.nailed.push({ name: team.name, v: _winterDelta });
+      if(_winterRoll.tag === 'flubbed' && _winterDelta < 0) _winterStories.flubbed.push({ name: team.name, v: _winterDelta });
+      const _aiCarDelta = devGain + ceilingPull + floorPull + pressureBoost + eraConvergence + rivalLift + dynastyFatigue + _surgeBoost + _winterDelta - leaderPenalty + randFloat(-1.2, 1.2) + getDiff(g).devRateBoostAI * (team.developmentRate/100) * 0.04;
       // A surging rival can reach the player's 99 ceiling (and is exempt from the leader pull-back
       // while surging); normal AI cars stay capped at 97 so the player keeps a structural edge by default.
       const _aiCeiling = _surgeBoost > 0 ? 99 : 97;
@@ -12771,6 +12974,18 @@ const spons=sumSponsorIncome(g.sponsors||[]);
       const currentKnowledge = team.setupKnowledge !== undefined ? team.setupKnowledge : knowledgeTarget;
       team.setupKnowledge = clamp(currentKnowledge + (knowledgeTarget - currentKnowledge) * 0.38 + randFloat(-1, 1), 30, 100);
     });
+    // Winter R&D roll news (v2.6.0) — name the big movers so the order shuffle reads as a story.
+    if(_winterStories.nailed.length || _winterStories.flubbed.length){
+      const _wsParts = [];
+      if(_winterStories.nailed.length) _wsParts.push(`<strong>${_winterStories.nailed.map(s=>s.name).join(' and ')}</strong> ${_winterStories.nailed.length>1?'have':'has'} stunned the paddock in testing — their winter programme has delivered a major step forward`);
+      if(_winterStories.flubbed.length) _wsParts.push(`<strong>${_winterStories.flubbed.map(s=>s.name).join(' and ')}</strong> ${_winterStories.flubbed.length>1?'look':'looks'} to have missed development targets badly and could fall down the order`);
+      if(!g.newsFeed) g.newsFeed=[];
+      g.newsFeed.unshift({
+        icon:'🧪', type:'info',
+        msg:`<strong>WINTER TESTING VERDICT:</strong> ${_wsParts.join(', while ')}.`,
+        race:undefined, ts:Date.now()
+      });
+    }
     if(g.pendingDev){
       const team=State.getPlayerTeam();
       const opt=DATA.devOptions.find(o=>o.id===g.pendingDev);
@@ -14049,6 +14264,10 @@ const Storage = {
     if(g.regsInvestment===undefined) g.regsInvestment = 0;
     if(!g.quarterDevDiversion) g.quarterDevDiversion = {};
     if(!g._injurySubs) g._injurySubs = {};
+    // v2.6.0 save repair (Raskachas): the pre-fix Take New PU button could stack unbounded
+    // grid penalties (e.g. −195). Anything past 40 places is just back of the grid — clamp
+    // so an affected save serves one back-of-grid start and moves on.
+    if(typeof g.pendingGridPenalty === 'number' && g.pendingGridPenalty > 40) g.pendingGridPenalty = 40;
     // Patch drivers for new fields
     (g.drivers||[]).forEach(d=>{
       if(d._formDip && d._formDip.racesLeft <= 0) delete d._formDip;
@@ -14391,12 +14610,16 @@ const Storage = {
               const relVal = u.value||0;
               // Reliability stat takes the value; mechanical conversion raised to 1.3 so
               // mechanical car performance keeps pace with the reliability climb (reported by
-              // Due_Woodpecker_7547).
+              // Due_Woodpecker_7547). v2.6.0: cap overflow recycles into mechanical at 1.1x
+              // (Turbulent_Standard61), matching the main arrival path.
+              const _baseRelR = t.reliability;
               t.reliability = clamp(t.reliability + relVal, 40, 100);
               if(t.components && u.componentGroup === 'mechanical') {
                 const mechComps = COMP_GROUPS.mechanical || [];
                 const mechFocus = u.componentFocus || 'balanced';
-                const mechGain = Math.abs(relVal) * 1.3;
+                const _relRealizedR = t.reliability - _baseRelR;
+                const _relOverflowR = Math.max(0, Math.abs(relVal) - Math.max(0, _relRealizedR));
+                const mechGain = Math.abs(relVal) * 1.3 + _relOverflowR * 1.1;
                 if(mechFocus === 'balanced') {
                   mechComps.forEach(ck => { t.components[ck] = clamp((t.components[ck]||70) + mechGain / Math.max(1, mechComps.length), 40, 99); });
                 } else if(mechComps.includes(mechFocus)) {
@@ -14616,8 +14839,8 @@ const UI = {
           <div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px">
             <span class="land-tcard-stats">Car ${Math.round(t.carPerformance)} · Reliability ${Math.round(t.reliability)} · Dev ${Math.round(t.developmentRate)}</span>
             <div style="text-align:right;line-height:1.2">
-              <span style="font-size:13px;font-weight:900;color:#111">${Math.round(getTeamOverallCar(t))}<span style="font-size:9px;font-weight:600;color:#999"> OVR</span></span>
-              <span style="font-size:9px;font-weight:600;color:#999;display:block">${escapeHtml(eng ? (eng.shortName||eng.name) : (t.engineManufacturer||'?'))}</span>
+              <span style="font-size:13px;font-weight:900;color:var(--tx)">${Math.round(getTeamOverallCar(t))}<span style="font-size:9px;font-weight:600;color:var(--tx3)"> OVR</span></span>
+              <span style="font-size:9px;font-weight:600;color:var(--tx3);display:block">${escapeHtml(eng ? (eng.shortName||eng.name) : (t.engineManufacturer||'?'))}</span>
             </div>
           </div>
         </div>`;
@@ -16593,11 +16816,11 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
             html += '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--tx3);margin-bottom:4px">'+groupLabel+' Focus'+helperText+'</div>';
             html += '<div style="display:flex;gap:4px;flex-wrap:wrap">';
             // Balanced option
-            html += '<button class="btn btn-sm" style="font-size:10px;padding:3px 8px;'+(current==='balanced'?'background:var(--acc);color:#fff;border-color:var(--acc)':'background:var(--bg);border:1px solid var(--bd)')+'" onclick="GameActions.setComponentFocus('+qi+',\''+group+'\',\'balanced\')">Balanced</button>';
+            html += '<button class="btn btn-sm" style="font-size:10px;padding:3px 8px;'+(current==='balanced'?'background:var(--acc);color:#fff;border-color:var(--acc)':'background:var(--bg);color:var(--tx);border:1px solid var(--bd)')+'" onclick="GameActions.setComponentFocus('+qi+',\''+group+'\',\'balanced\')">Balanced</button>';
             comps.forEach(ck => {
               const cd = CAR_COMPONENTS[ck];
               const rating = team.components ? (team.components[ck]||70) : 70;
-              html += '<button class="btn btn-sm" style="font-size:10px;padding:3px 8px;'+(current===ck?'background:var(--acc);color:#fff;border-color:var(--acc)':'background:var(--bg);border:1px solid var(--bd)')+'" onclick="GameActions.setComponentFocus('+qi+',\''+group+'\',\''+ck+'\')">'+(cd.icon||'')+' '+cd.label+' <span style="font-weight:400;color:'+(current===ck?'rgba(255,255,255,.7)':'var(--tx3)')+'">'+Math.round(rating)+'</span></button>';
+              html += '<button class="btn btn-sm" style="font-size:10px;padding:3px 8px;'+(current===ck?'background:var(--acc);color:#fff;border-color:var(--acc)':'background:var(--bg);color:var(--tx);border:1px solid var(--bd)')+'" onclick="GameActions.setComponentFocus('+qi+',\''+group+'\',\''+ck+'\')">'+(cd.icon||'')+' '+cd.label+' <span style="font-weight:400;color:'+(current===ck?'rgba(255,255,255,.7)':'var(--tx3)')+'">'+Math.round(rating)+'</span></button>';
             });
             html += '</div>';
             if(current !== 'balanced' && !inactive) {
@@ -16614,7 +16837,7 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
           return (()=>{const _wEff=getQuarterWindowEffectiveness(team).total;
           return slider('aero','Aerodynamic Package',Math.min(qd.aero,_aMax),_aMax,'q'+qi,6,'Aero updates — front/rear wing, floor, diffuser.','→ +'+(Math.min(qd.aero,_aMax)*0.9*_wEff).toFixed(1)+' Car Perf')
             + _compFocusUI('aero','Aero Component', qd.aero <= 0)
-            +slider('reliability','Mechanical & Reliability',Math.min(qd.reliability,_rMax),_rMax,'q'+qi,4,'Chassis, suspension and reliability work.','→ +'+(Math.min(qd.reliability,_rMax)*0.6).toFixed(1)+' Reliability')
+            +slider('reliability','Mechanical & Reliability',Math.min(qd.reliability,_rMax),_rMax,'q'+qi,4,'Chassis, suspension and reliability work. When reliability is near max, surplus spend converts into extra mechanical component gains.',(()=>{const _rv=Math.min(qd.reliability,_rMax)*0.6;const _rCap=Math.max(0,99.4-(team.reliability||70));const _rPart=Math.min(_rv,_rCap);const _mech=_rv*1.3+Math.max(0,_rv-_rPart)*1.1;return _rPart<_rv-0.05?'→ +'+_rPart.toFixed(1)+' Reliability · +'+_mech.toFixed(1)+' Mech':'→ +'+_rv.toFixed(1)+' Reliability';})())
             + _compFocusUI('mechanical','Mechanical Component', qd.reliability <= 0)
             +slider('engine','Engine Mode',Math.min(qd.engine,_eMax),_eMax,'q'+qi,10,'Power unit mapping push — expensive but fast.','→ +'+(Math.min(qd.engine,_eMax)*1.4*_wEff).toFixed(1)+' Car Perf');})();
         })()}
@@ -16628,8 +16851,8 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
           </div>
           <div style="height:6px;background:var(--bd);border-radius:3px;overflow:hidden">
             <div style="height:100%;border-radius:3px;display:flex;overflow:hidden">
-              <div style="background:${qCost>qBudget?'var(--red)':qCost>qBudget*0.8?'var(--amber)':'var(--grn)'};width:${Math.min(100,(qCost/qBudget)*100).toFixed(1)}%;transition:width .2s"></div>
-              ${_divFrac>0?`<div style="background:rgba(245,158,11,.4);width:${Math.min(100,(qCostNewRegs/qBudget)*100).toFixed(1)}%;transition:width .2s"></div>`:''}
+              <div id="q${qi}-cost-bar" style="background:${qCost>qBudget?'var(--red)':qCost>qBudget*0.8?'var(--amber)':'var(--grn)'};width:${Math.min(100,(qCost/qBudget)*100).toFixed(1)}%;transition:width .2s"></div>
+              ${_divFrac>0?`<div id="q${qi}-cost-bar-regs" style="background:rgba(245,158,11,.4);width:${Math.min(100,(qCostNewRegs/qBudget)*100).toFixed(1)}%;transition:width .2s"></div>`:''}
             </div>
           </div>
         </div>
@@ -16809,8 +17032,14 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
               </div>
             </div>`;
           const _hasSignificantWear = pw.ice >= 30 || pw.turbo >= 30 || pw.ers >= 30;
-          const _canTakeNewPU = true; // Player can always choose to take a new PU — strategic decision
-          const _penaltyPositions = pw.components > 3 ? (pw.components - 3) * 5 : 0;
+          const _puChangedThisWindow = pw._lastChangeRace === g.raceIndex && pw._lastChangeSeason === g.season;
+          const _canTakeNewPU = !_puChangedThisWindow; // one PU change per race window (v2.6.0, Raskachas)
+          const _overAlloc = Math.max(0, pw.components - 2);
+          const _nextPenLabel = pw.components < 3 ? ` (${3-pw.components} free left)`
+            : _overAlloc <= 0 ? ' (−5 grid next)'
+            : _overAlloc === 1 ? ' (−5 grid)'
+            : _overAlloc === 2 ? ' (−10 grid)'
+            : ' (back of grid)';
           return `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px">
           <div style="background:var(--bg3);border-radius:7px;padding:9px 10px;text-align:center">
             <div style="font-size:10px;color:var(--tx3);font-weight:700;text-transform:uppercase;letter-spacing:.5px">Power</div>
@@ -16840,7 +17069,7 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
           </div>
           ${parseFloat(_totalPerfLoss) > 0 ? `<div style="margin-top:6px;font-size:10px;color:#dc2626;text-align:center;font-weight:700">⚠️ Wear penalty: −${_totalPerfLoss} effective car performance</div>` : ''}
           <div style="display:flex;gap:6px;margin-top:8px">
-            ${_canTakeNewPU ? `<button class="btn btn-outline btn-sm" style="flex:1;border-color:${_hasSignificantWear?'var(--amber)':'var(--bd)'};color:${_hasSignificantWear?'var(--amber)':'var(--tx2)'}" onclick="GameActions.takeNewPU()">🔄 Take New PU${_penaltyPositions > 0 ? ` (−${5+(_penaltyPositions)} grid)` : pw.components >= 3 ? ' (−5 grid next)' : ` (${3-pw.components} free left)`}</button>` : `<div style="flex:1;font-size:10px;color:var(--tx3);text-align:center;padding:4px">Components healthy — no need to replace${pw.components < 3 ? ` · ${3-pw.components} free change${3-pw.components!==1?'s':''} left` : ''}</div>`}
+            ${_canTakeNewPU ? `<button class="btn btn-outline btn-sm" style="flex:1;border-color:${_hasSignificantWear?'var(--amber)':'var(--bd)'};color:${_hasSignificantWear?'var(--amber)':'var(--tx2)'}" onclick="GameActions.takeNewPU()">🔄 Take New PU${_nextPenLabel}</button>` : `<div style="flex:1;font-size:10px;color:var(--tx3);text-align:center;padding:4px">Fresh PU fitted for the next race — you can change again after it runs.</div>`}
           </div>
           <div style="font-size:9px;color:var(--tx3);margin-top:4px;text-align:center">Each driver gets 3 PU allocations per season. Taking more incurs grid penalties. Push mode in races accelerates wear.</div>
         </div>`;
@@ -17004,14 +17233,23 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
       const cost=qd.aero*6+qd.reliability*4+qd.engine*10;
       const lbl=document.getElementById(`slv-${section}-${key}`);
       const _wEffLive=getQuarterWindowEffectiveness(team).total; // keep live labels in sync with the scaled previews (v2.5.9)
-      const impacts={aero:`+${(val*0.9*_wEffLive).toFixed(1)} Car Perf`,reliability:`+${(val*0.6).toFixed(1)} Reliability`,engine:`+${(val*1.4*_wEffLive).toFixed(1)} Car Perf`};
+      const _relCapLive = Math.max(0, 99.4 - (team.reliability||70));
+      const impacts={aero:`+${(val*0.9*_wEffLive).toFixed(1)} Car Perf`,reliability:(()=>{const nom=val*0.6;const relPart=Math.min(nom,_relCapLive);const mech=(nom*1.3+Math.max(0,nom-relPart)*1.1);return relPart<nom-0.05?`+${relPart.toFixed(1)} Reliability · +${mech.toFixed(1)} Mech (rel near max)`:`+${nom.toFixed(1)} Reliability`;})(),engine:`+${(val*1.4*_wEffLive).toFixed(1)} Car Perf`};
       if(lbl) lbl.textContent=val===0?'No investment':`${val} package${val!==1?'s':''} · ${impacts[key]||''}`;
       const disp=document.getElementById(`${section}-cost-display`);
       if(disp){
-        disp.innerHTML=`${formatMoney(cost)} <span style="font-weight:400;color:var(--tx3)">of ${formatMoney(qBudget)}</span>`;
-        disp.style.color=cost>qBudget?'var(--red)':'var(--tx)';
+        // Mirror the render: with a new-regs diversion active, the displayed cost is split
+        // between the current car and the new-reg concept (v2.6.0 — live bar fix).
+        const _racesDoneLive=(g.calendar||[]).filter(r=>r.raceDone).length;
+        const _divFracLive=(g.nextRegsYear===g.season+1&&_racesDoneLive>=10)?((g.quarterDevDiversion&&g.quarterDevDiversion[qi])||0):0;
+        const _costCar=Math.round(cost*(1-_divFracLive));
+        const _costRegs=Math.round(cost*_divFracLive);
+        disp.innerHTML=`${formatMoney(_costCar)} <span style="font-weight:400;color:var(--tx3)">of ${formatMoney(qBudget)}</span>${_divFracLive>0?`<span style="font-size:10px;color:var(--amber);font-weight:600;margin-left:4px">+${formatMoney(_costRegs)} → new regs</span>`:''}`;
+        disp.style.color=_costCar>qBudget?'var(--red)':'var(--tx)';
         const bar=document.getElementById(`q${qi}-cost-bar`);
-        if(bar){bar.style.width=Math.min(100,(cost/qBudget)*100).toFixed(1)+'%';bar.style.background=cost>qBudget?'var(--red)':cost>qBudget*0.8?'var(--amber)':'var(--grn)';}
+        if(bar){bar.style.width=Math.min(100,(_costCar/qBudget)*100).toFixed(1)+'%';bar.style.background=_costCar>qBudget?'var(--red)':_costCar>qBudget*0.8?'var(--amber)':'var(--grn)';}
+        const barRegs=document.getElementById(`q${qi}-cost-bar-regs`);
+        if(barRegs){barRegs.style.width=Math.min(100,(_costRegs/qBudget)*100).toFixed(1)+'%';}
       }
     } else {
       if(section==='inseason') { if(!g.inSeasonDev) g.inSeasonDev={aero:0,reliability:0,engine:0}; g.inSeasonDev[key]=val; }
@@ -17042,13 +17280,15 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
       return (a.position||99)-(b.position||99);
     }).slice(0,5), pids=State.getPlayerRacingDriverIds();
     const winner=results.find(r=>r.position===1);
+    const _gapMap=(typeof getRaceGapStrings==='function')?getRaceGapStrings(race,results,!!race?.isSprint):{};
     return `
       ${winner?`<div class="winner-block"><div><div class="winner-label">Race Winner</div><div class="winner-name">${winner.driverName}</div><div class="winner-team">${winner.teamName}</div></div><div class="winner-laps">${race.laps} laps</div></div>`:''}
-      <div class="tbl-scroll"><table><thead><tr><th>Pos</th><th>Driver</th><th>Team</th><th>Pts</th></tr></thead><tbody>
+      <div class="tbl-scroll"><table><thead><tr><th>Pos</th><th>Driver</th><th>Team</th><th style="text-align:right">Gap</th><th>Pts</th></tr></thead><tbody>
       ${top5.map(r=>`<tr class="${pids.includes(r.driverId)?'my-row':''}">
         <td>${r.dnf?`<span class="dnf-tag">DNF</span>`:`<span class="pos-cell p${r.position}">${r.position}</span>`}</td>
         <td class="name-cell">${r.driverName}${r.fastestLap?'<span class="fl-tag">FL</span>':''}${r.penaltySeconds?`<span class="pen-tag">${r.penaltySeconds}s PEN</span>`:''}</td>
         <td class="muted-cell">${r.teamName}</td>
+        <td class="muted-cell" style="text-align:right;font-family:var(--fm);font-size:10px;white-space:nowrap">${r.dnf?'':(_gapMap[r.driverId]||'')}</td>
         <td class="pts-cell">${r.points||0}</td>
       </tr>`).join('')}
       </tbody></table></div>
@@ -20217,6 +20457,29 @@ const activeIncome=formatMoney(sumSponsorIncome(g.sponsors||[]));
           ${mstat('Budget',formatMoney(t.revenue))}${mstat('Championships',t.championships||0)}
         </div>
       </div>
+      ${(()=>{
+        // ── All-time stats (v2.6.0, requested by Bulky-Comfortable-13) ─────────
+        // Career totals aggregated from the per-season history snapshots plus the
+        // in-progress season. Snapshots only exist from the version that introduced
+        // them, so very old saves show what has been recorded since.
+        const hist = (State.game.history?.seasonStandings||[]);
+        const myRows = hist.map(ss=>({season:ss.season, e:(ss.constructors||[]).find(c=>c.teamId===teamId)})).filter(r=>r.e);
+        if(!myRows.length && !(t.totalPoints>t.seasonPoints)) return '';
+        const histHasCurrent = myRows.some(r=>r.season===State.game.season);
+        const allWins = myRows.reduce((s,r)=>s+(r.e.wins||0),0) + (histHasCurrent?0:(t.wins||0));
+        const allPods = myRows.reduce((s,r)=>s+(r.e.podiums||0),0) + (histHasCurrent?0:(t.podiums||0));
+        const allPoles = myRows.reduce((s,r)=>s+(r.e.poles||0),0) + (histHasCurrent?0:(t.poles||0));
+        const allSeasons = myRows.length + (histHasCurrent?0:1);
+        const bestPos = myRows.length ? Math.min(...myRows.map(r=>r.e.position||99), pos||99) : (pos||99);
+        return `<div class="modal-section">
+          <div class="modal-sec-title">All-Time</div>
+          <div class="modal-stat-grid">
+            ${mstat('Wins',allWins)}${mstat('Podiums',allPods)}
+            ${mstat('Poles',allPoles)}${mstat('Points',Math.round(t.totalPoints||0))}
+            ${mstat('Seasons',allSeasons)}${mstat('Best Finish',bestPos<99?'P'+bestPos:'—')}
+          </div>
+        </div>`;
+      })()}
       ${drivers.length?`<div class="modal-section">
         <div class="modal-sec-title">Race Drivers</div>
         ${drivers.map(d=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bd);cursor:pointer" onclick="UI.showDriverModal(${d.id})">
@@ -23633,6 +23896,22 @@ const sponsorInc=sumSponsorIncome(sponsors2);
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
   <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v2.5.9 · Release Notes</div>
         ${[
+    ['v2.6.0','June 2026',[
+            '🐛 Live Editor stays where you are — every field edit re-rendered the editor and reset the scroll to the top, so editing a long team panel meant scrolling back down after every single change. The scroll position is now captured and restored around each rebuild, in both the Teams & Drivers and Calendar tabs. (Reported by Disastrous_Act9613.)',
+            '🐛 Live Editor car pace sticks to what you type — setting Car Perf to 80 could display as 79, 81 or 82. The car is rebuilt from six components seeded with small random variance, and the overall is re-derived from their weighted average, so the typed number drifted in the rounding. The editor now calibrates: components keep their individual variety, but the whole set is shifted until the derived overall lands exactly on your number. (Reported by Disastrous_Act9613.)',
+            '✨ Race gaps in the results — finishing classifications now show a Gap column (+12.345-style intervals to the winner, lapped cars as +1 Lap), in the watch-race result table and the dashboard\'s last-race panel. Watched and simulated GPs reuse the REAL gaps from the lap-by-lap model\'s final lap, so the clock reflects the actual race story; sprints and races without lap data generate plausible gaps deterministically. Time penalties are added on top, and gaps are forced consistent with the final classification so the order and the clock can never disagree. (Requested by Appropriate-Rip-4087.)',
+            '✨ Rookie of the Year — crowned at every season end from the highest-scoring driver in their debut season (ties break on wins, then podiums), announced in Paddock News and recorded in your save\'s history. Rookie status now also formally ends with the debut season, where previously the flag could linger indefinitely. (Requested by Disastrous_Act9613.)',
+            '🐛 One race result, everywhere — the biggest fix in this release. When your driver picked up an in-race penalty while you were watching, the penalty handler rewrote the live result and the stored race result but never told the post-race debrief, the main-screen recap, or driver/team season points. The result: the debrief and dashboard said your driver finished P2 with 18 points, while the results tab, the watch-race tower, the share card and (after the standings rebuilt) the championship all said P4 with 12. The finish commentary made it worse — the cards are wrapped in lap/tag markup that the line-start matcher could never see, so stale pre-penalty "P2:" lines survived in the feed. Three things changed: the penalty handler now syncs every consumer the moment it fires (including season points, wins and podiums, using the correct sprint points table and preserving the fastest-lap bonus); the end-of-race validation now pushes the final canonical order into the live result state and the debrief source in one place; and the commentary patcher matches finish lines inside rendered cards. However a result is reached, every screen now reads the same finishing order. (Reported by Turbulent_Standard61, with a superb four-screenshot trail.)',
+            '🐛 The −195 grid penalty is gone — Take New PU could be tapped repeatedly in the same window, stacking 5 extra places per unit with no ceiling, which is how one Cadillac ended up facing a 195-place penalty. Two changes, both straight from real F1: you can fit one new PU per race window (a second change before the next race did nothing useful anyway), and over-allocation penalties now escalate 5 places → 10 places → back of grid, full stop. There is nowhere lower than last to start from, so penalties no longer stack past it. Saves already carrying an absurd stacked penalty self-repair on load to a single back-of-grid start. (Reported by Raskachas — "the image explains it lol".)',
+            '🐛 Custom sponsors recover on export for older saves — the v2.5.9 fix stored editor sponsors on team objects, but only for saves created AFTER it shipped; a 1980 career started earlier had nothing stored for AI teams, so exports still fell back to the modern default sponsor map (HP/Shell Ferrari in 1980). The export now has a recovery path: when a team has no stored sponsors, it falls back to the Roster Editor\'s persisted template — if the editor still holds the roster the save was started from, the original custom sponsors are recovered from there. Saves whose source template is gone from the editor genuinely have nothing left to recover, but any new career stores sponsors from day one. (Reported by ZareJonathan.)',
+            '⚖️ Winters that shuffle the grid — the long-running "AI teams barely improve and the order never changes" thread, continued. The rival-surge system gave the player a periodic title challenger, but between surges every AI team\'s annual development landed in a narrow, smooth band, so the competitive order froze outside regulation years while the player kept climbing. Every AI team now rolls a winter R&D outcome with fat tails: most winters land near plan, but a team can nail a winter (a multi-place jump worth up to ~5 car performance) or badly flub one and fall down the order. The odds tilt with dev rate and facilities — a well-run team nails more and flubs less — but nobody is immune in either direction, so Brawn-style breakthroughs and big-team misses both happen, and the big movers are named in a Winter Testing Verdict news story so the shuffle reads as a season narrative rather than silent noise. Regulation resets already compress and reshuffle the field with multi-year recovery; this closes the gap between them. (Reported by Significant-Care-135 — the third round of this conversation, and the feedback keeps making the game better.)',
+            '⚖️ Reliability spend stops burning against the ceiling — the Mechanical & Reliability slider always pushed the reliability stat first, so a team at 97.7 reliability with 77-rated chassis was wasting most of every package against the cap with no way to target the weak components. Spend that the reliability cap swallows is now recycled into the mechanical components (chassis, sidepods, suspension) at a slightly favourable rate, the slider\'s preview shows the mechanical gain whenever the cap is in play, and your Mechanical Component Focus choice directs where it lands. High-reliability teams can finally develop their mechanical platform through the same slider. (Reported by Turbulent_Standard61.)',
+            '🌙 Dark mode audit — two same-day reports pointed at the same root cause: hardcoded light-theme colours bypassing the theme variables. The start-screen team cards hardcoded white backgrounds and near-black text (the OVR figure was unreadable), the upgrade window\'s component-focus buttons never set a text colour at all (browser-default black on a dark panel), the selected-chip accent colour pointed at a CSS variable that was never defined anywhere (six selectors silently failing in BOTH themes), and the budget bar\'s live update targeted an element id that didn\'t exist, so it only moved on a full re-render. All four are fixed at the variable level rather than spot-painted, the team cards are fully themed, and the budget bar (including the new-regs diversion split) now tracks every slider movement live. (Reported by RuleImpossible3362 and Turbulent_Standard61.)',
+            '✨ All-time team stats — every team\'s page now shows an All-Time section: career wins, podiums, poles, total points, seasons contested and best championship finish, aggregated from the season history alongside the existing current-season stats and per-season table. History snapshots only exist from the version that introduced them, so very old saves show what has been recorded since. (Requested by Bulky-Comfortable-13.)',
+            '✨ Live Calendar Editor goes deep — the in-save calendar tab now edits the full circuit profile (ideal downforce, tyre degradation, overtaking difficulty and safety car chance, alongside the existing name/location/country/type/laps), new rounds carry a sensible safety-car default instead of zero, and a Circuit Library section adds modern and historic preset tracks with their complete profiles in one tap — matching the pre-game Roster Editor\'s depth. (Requested by ZareJonathan.)',
+            '🐛 Imported veterans no longer make a "rookie debut" — on a real-roster save, a real veteran sitting in the free-agent pool (e.g. Fernando Alonso) could be promoted to fill a seat and tagged as a rookie joining his new team. The v2.5.9 fix only recognised veterans who had already raced IN your save, but a freshly imported driver has zero in-save races and points on day one, so the check misfired. A driver is now only treated as a rookie debut if they have no F1 experience AND were not authored as an established driver (every named/template driver is stamped as a non-rookie) AND are young enough to plausibly debut — so a 44-year-old former champion can never be flagged a rookie regardless of save age. Procedurally generated feeder graduates still debut as rookies exactly as before. Note: this is separate from evocative recombinations like a "Michael Lauda" the name generator can still produce in fictionalised saves — those are intentional flavour, not this bug. (Reported by Comfortable_Tie_9289.)',
+            '🔧 Name generator hardening — as a related safeguard, the procedural name generator\'s uniqueness check now also spans retired drivers and past champions, not just active ones, so a generated driver can\'t be handed the exact name of a driver your save already knew. (Internal follow-up to the above.)',
+          ]],
     ['v2.5.9','June 2026',[
             '🚀 Race strategy escapes the under/overcut rut — every race previously degraded exactly as forecast, so strategy collapsed into pure stop-timing games. Each race now rolls a hidden "realized degradation" before lights out: most days run close to forecast, but roughly a quarter run hotter (pit windows come forward, one-stop plans get caught by the cliff and forced into an extra stop) and a quarter run cooler (stints stretch, and AI two-stoppers can gamble on converting to a one-stop, with the cliff as their safety net if it fails). The pre-race screen still shows the forecast — the divergence is discovered live, with the pit wall calling it in the feed early enough to act on. Your own plan is never silently rewritten: your recommended stop laps adapt, and when tyres are holding you can simply decline the second stop at the box-or-stay prompt. (Requested by TheExoticKoala.)',
             '🐛 Custom sponsors survive export and re-import — the game-to-template export dropped every team\'s custom sponsor set because sponsors were never carried onto the in-game team objects at creation, so a re-imported file silently fell back to the default 2026 sponsor map. Teams now keep their editor-defined sponsors through the save, the export writes your team\'s live sponsor deals plus every other team\'s stored set, and switching teams mid-save picks up the new team\'s own sponsors instead of whatever roster the editor happens to hold. Saves started before this fix cannot recover sponsor sets that were never stored. (Reported by ZareJonathan.)',
@@ -24878,13 +25157,25 @@ const GameActions = {
     const g = State.game; if(!g) return;
     if(!g.puWear) g.puWear = { ice:0, turbo:0, ers:0, components:1, penalties:0 };
     const pw = g.puWear;
-    // Confirm if this will incur a grid penalty
+    // v2.6.0 (Raskachas): one PU change per race window. The button could be spammed to
+    // stack unbounded grid penalties (a 195-place penalty on one car) — and a fresh unit
+    // makes a second same-window change pointless anyway. Real teams fit one new PU per
+    // weekend; so does this one.
+    if(pw._lastChangeRace === g.raceIndex && pw._lastChangeSeason === g.season) {
+      UI.toast('A new PU is already fitted for the next race. You can change again after it runs.', 'warning');
+      return;
+    }
+    // Escalation mirrors real F1: first over-allocation costs 5 places, the next 10,
+    // anything beyond that is simply back of the grid. No more −195s.
     const willPenalize = pw.components >= 3;
-    const penaltyAmount = willPenalize ? 5 + Math.max(0, (pw.components - 3) * 5) : 0;
+    const overAllocations = Math.max(0, pw.components - 2); // 1st over = 4th unit
+    const isBackOfGrid = willPenalize && overAllocations >= 3;
+    const penaltyAmount = !willPenalize ? 0 : overAllocations <= 1 ? 5 : overAllocations === 2 ? 10 : 40; // 40 = guaranteed back of grid
+    const penaltyLabel = isBackOfGrid ? 'a back-of-grid start' : penaltyAmount + ' grid places';
     if(willPenalize && !pw._confirmPending) {
       pw._confirmPending = true;
       setTimeout(()=>{ if(pw) delete pw._confirmPending; }, 4000);
-      UI.toast(`Taking a ${pw.components >= 3 ? (pw.components+1)+'th' : 'new'} PU will cost ${penaltyAmount} grid places at the next race. Tap again to confirm.`, 'warning');
+      UI.toast(`Taking another PU will cost ${penaltyLabel} at the next race. Tap again to confirm.`, 'warning');
       return;
     }
     delete pw._confirmPending;
@@ -24893,6 +25184,8 @@ const GameActions = {
     pw.turbo = 0;
     pw.ers = 0;
     pw.components++;
+    pw._lastChangeRace = g.raceIndex;
+    pw._lastChangeSeason = g.season;
     // Reset wear notification flags so they can fire again for the new PU
     delete pw._notifiedWorn;
     delete pw._notifiedCritical;
@@ -24900,12 +25193,13 @@ const GameActions = {
     if(willPenalize) {
       pw.penalties++;
       if(!g.pendingGridPenalty) g.pendingGridPenalty = 0;
-      g.pendingGridPenalty += penaltyAmount;
-      UI.toast(`New PU installed. ${penaltyAmount}-place grid penalty applied to next race.`, 'warning');
+      // Penalties don't stack past back-of-grid — there is nowhere lower to start from.
+      g.pendingGridPenalty = Math.min(40, g.pendingGridPenalty + penaltyAmount);
+      UI.toast(`New PU installed. ${isBackOfGrid ? 'Back-of-grid start' : penaltyAmount + '-place grid penalty'} applied to the next race.`, 'warning');
       // Add to news feed
       if(!g.newsFeed) g.newsFeed = [];
       g.newsFeed.unshift({
-        text: `🔧 New power unit (#${pw.components}) installed — ${penaltyAmount}-place grid penalty at the next race.`,
+        text: `🔧 New power unit (#${pw.components}) installed — ${isBackOfGrid ? 'back-of-grid start' : penaltyAmount + '-place grid penalty'} at the next race.`,
         race: g.raceIndex,
         type: 'strategy'
       });
@@ -25249,7 +25543,13 @@ const GameActions = {
         if(team.components && u.componentGroup === 'mechanical') {
           const mechComps = COMP_GROUPS.mechanical || [];
           const mechFocus = u.componentFocus || 'balanced';
-          const mechGain = Math.abs(actualVal) * 1.3;
+          // v2.6.0 (Turbulent_Standard61): when reliability is at or near its cap, the portion
+          // of the spend that the cap swallowed is recycled into the mechanical components at
+          // 1.1x, so a 97+ reliability team can still meaningfully develop chassis/sidepods/
+          // suspension through this slider instead of burning budget against the ceiling.
+          const _relRealized = team.reliability - _baseRel;
+          const _relOverflow = Math.max(0, Math.abs(actualVal) - Math.max(0, _relRealized));
+          const mechGain = Math.abs(actualVal) * 1.3 + _relOverflow * 1.1;
           if(mechFocus === 'balanced') {
             mechComps.forEach(ck => { team.components[ck] = clamp((team.components[ck]||70) + mechGain / mechComps.length, 40, 99); });
           } else if(mechComps.includes(mechFocus)) {
@@ -28395,12 +28695,16 @@ window._wrSyncCommentary = function(race, isSprint) {
       text = '🏁 Chequered flag! ' + finishers[0].driverName + ' wins the ' + race.name + '!';
     } else if(text.includes('Sprint winner:')) {
       text = '🏁 Sprint winner: ' + finishers[0].driverName + '!';
-    } else if(text.match(/^P2:/) && finishers[1]) {
+    } else if((text.match(/^P2:/) || text.match(/>\s*P2:/)) && finishers[1]) {
+      // v2.6.0: feed cards wrap the text in lap/tag spans, so the old ^P2: anchor never
+      // matched rendered cards and stale pre-penalty finish lines survived in the feed.
       const p2 = finishers[1];
-      text = 'P2: ' + p2.driverName + (p2.teamName ? ' (' + p2.teamName + ')' : '');
-    } else if(text.match(/^P3:/) && finishers[2]) {
+      const p2Text = 'P2: ' + p2.driverName + (p2.teamName ? ' (' + p2.teamName + ')' : '');
+      text = text.match(/^P2:/) ? p2Text : text.replace(/(>\s*)P2:[^<]*/, '$1' + p2Text);
+    } else if((text.match(/^P3:/) || text.match(/>\s*P3:/)) && finishers[2]) {
       const p3 = finishers[2];
-      text = 'P3: ' + p3.driverName + (p3.teamName ? ' (' + p3.teamName + ')' : '');
+      const p3Text = 'P3: ' + p3.driverName + (p3.teamName ? ' (' + p3.teamName + ')' : '');
+      text = text.match(/^P3:/) ? p3Text : text.replace(/(>\s*)P3:[^<]*/, '$1' + p3Text);
     }
     Object.keys(finalByName).forEach(function(name){
       if(text.indexOf(name) < 0 || text.indexOf('finishes P') < 0) return;
@@ -28804,6 +29108,24 @@ window._wrTick = function() {
     var _vrResultKey = isSprint ? 'sprintResult' : 'raceResult';
     var _vrCanonicalResult = _vrSorted.map(function(r){ var copy = Object.assign({}, r); delete copy._origPoints; return copy; });
     if(race) race[_vrResultKey] = _vrCanonicalResult;
+    // ── Single source of truth (v2.6.0, Turbulent_Standard61) ────────────────
+    // Push the validated canonical order into EVERY downstream consumer: the live
+    // resultState (commentary patching reads it), and lastRaceResult/lastSprintResult
+    // (the post-race debrief, main-screen recap and "your drivers" panel read those).
+    // Before this, a mid-race mutation that touched one copy but not another left the
+    // debrief saying P2 while the results tab, tower and share card said P4.
+    WR.resultState = _vrCanonicalResult.map(function(r){ return Object.assign({}, r); });
+    var _vrLrKey = isSprint ? 'lastSprintResult' : 'lastRaceResult';
+    if(State.game[_vrLrKey] && State.game[_vrLrKey].race && race && State.game[_vrLrKey].race.name === race.name) {
+      State.game[_vrLrKey].results = _vrCanonicalResult.map(function(r){ return Object.assign({}, r); });
+    } else if(race) {
+      State.game[_vrLrKey] = {
+        race: {...race},
+        results: _vrCanonicalResult.map(function(r){ return Object.assign({}, r); }),
+        preDriverStandings: (State.game[_vrLrKey] && State.game[_vrLrKey].preDriverStandings) || WR._preDriverStandings || [],
+        preConstrStandings: (State.game[_vrLrKey] && State.game[_vrLrKey].preConstrStandings) || WR._preConstrStandings || []
+      };
+    }
     // ── Points sync: the original simRace already awarded points via addPoints.
     // If the WR finish validation changed any positions/points (position normalization,
     // penalty drops, or position swaps), the stored race result now has different points
@@ -28849,16 +29171,21 @@ window._wrTick = function() {
         +'</div>';
     }).join('');
 
-    const rowsHtml = fin.slice(0,showRows).map(function(r){
-      const mine = pids.indexOf(r.driverId)>=0;
-      const fl = r.fastestLap ? ' <span style="background:#dbeafe;color:#1d4ed8;font-size:9px;padding:1px 4px;border-radius:3px;font-weight:700">FL</span>' : '';
-      return '<tr style="border-bottom:1px solid #e0e0dd'+(mine?';background:rgba(192,57,43,.05)':'')+'">'
-        +'<td style="padding:5px 2px;font-weight:700;width:28px">'+r.position+'</td>'
-        +'<td style="padding:5px 4px;font-weight:'+(mine?'800':'500')+'">'+r.driverName+fl+'</td>'
-        +'<td style="padding:5px 4px;color:var(--tx3);font-size:11px">'+r.teamName+'</td>'
-        +'<td style="padding:5px 2px;text-align:right;font-weight:700">'+r.points+'</td>'
-        +'</tr>';
-    }).join('');
+    const rowsHtml = (function(){
+      const _gapMap = (typeof getRaceGapStrings==='function') ? getRaceGapStrings(race, resultData, isSprint) : {};
+      return fin.slice(0,showRows).map(function(r){
+        const mine = pids.indexOf(r.driverId)>=0;
+        const fl = r.fastestLap ? ' <span style="background:#dbeafe;color:#1d4ed8;font-size:9px;padding:1px 4px;border-radius:3px;font-weight:700">FL</span>' : '';
+        const gapStr = _gapMap[r.driverId] || '';
+        return '<tr style="border-bottom:1px solid #e0e0dd'+(mine?';background:rgba(192,57,43,.05)':'')+'">'
+          +'<td style="padding:5px 2px;font-weight:700;width:28px">'+r.position+'</td>'
+          +'<td style="padding:5px 4px;font-weight:'+(mine?'800':'500')+'">'+r.driverName+fl+'</td>'
+          +'<td style="padding:5px 4px;color:var(--tx3);font-size:11px">'+r.teamName+'</td>'
+          +'<td style="padding:5px 4px;text-align:right;color:var(--tx3);font-size:10px;font-family:var(--fm);white-space:nowrap">'+gapStr+'</td>'
+          +'<td style="padding:5px 2px;text-align:right;font-weight:700">'+r.points+'</td>'
+          +'</tr>';
+      }).join('');
+    })();
 
     const footer = document.getElementById('wr-footer');
     // Strategy feedback
@@ -28961,6 +29288,7 @@ window._wrTick = function() {
       +'<th style="text-align:left;padding:4px 2px;color:var(--tx3);font-weight:600;width:28px">P</th>'
       +'<th style="text-align:left;padding:4px 4px;color:var(--tx3);font-weight:600">Driver</th>'
       +'<th style="text-align:left;padding:4px 4px;color:var(--tx3);font-weight:600">Team</th>'
+      +'<th style="text-align:right;padding:4px 4px;color:var(--tx3);font-weight:600">Gap</th>'
       +'<th style="text-align:right;padding:4px 2px;color:var(--tx3);font-weight:600">Pts</th>'
       +'</tr></thead><tbody>'+rowsHtml+'</tbody></table></div>'
       +(isSprint?'<div style="font-size:10px;color:var(--tx3);margin-top:6px;text-align:center">Points: 8-7-6-5-4-3-2-1 (top 8 only)</div>':'')
@@ -29205,17 +29533,57 @@ window._wrTick = function() {
         var oldPenPos = penRs.position;
         var newPenPos = Math.min(WR.resultState.filter(function(r){return !r.dnf;}).length, oldPenPos + penDrop);
         if(newPenPos > oldPenPos) {
+          // v2.6.0 result-uniformity fix (Turbulent_Standard61): this handler previously
+          // rewrote resultState and the stored race result but never told lastRaceResult or
+          // driver/team season points — so the post-race debrief and main screen showed the
+          // pre-penalty order (P2) while the results tab, watch-race tower and standings
+          // rebuild showed the post-penalty order (P4). Every consumer is now synced here,
+          // the correct points table is used for sprints, and the fastest-lap bonus survives.
+          var _penIsSprint = !!WR.isSprint;
+          var _penPtsTable = _penIsSprint
+            ? ((State.game&&State.game.customSprintPoints)||[8,7,6,5,4,3,2,1])
+            : ((State.game&&State.game.customPoints)||DATA.points);
+          var _penRules = State.getScoringRules ? State.getScoringRules() : {};
+          var _penRaceObj = State.game.calendar[WR.raceIdx];
+          var _penDbl = (!_penIsSprint && State.isDoublePointsRace && _penRaceObj && State.isDoublePointsRace(_penRaceObj)) ? 2 : 1;
+          var _penPointsFor = function(r){
+            if(r.dnf || !r.position) return 0;
+            var base = _penPtsTable[r.position-1]||0;
+            var fl = (!_penIsSprint && _penRules.fastestLap && r.fastestLap && r.position <= (_penRules.fastestLapTopN||10)) ? (_penRules.fastestLapPoints||1) : 0;
+            var pole = (!_penIsSprint && (_penRules.polePoints||0) > 0 && r.startPos === 1) ? _penRules.polePoints : 0;
+            return (base + fl + pole) * _penDbl;
+          };
+          var _penPriorPts = {};
+          WR.resultState.forEach(function(r){ _penPriorPts[r.driverId] = { pts: r.points||0, pos: r.position }; });
           // Shift drivers between old and new position up by 1
           WR.resultState.forEach(function(r) {
             if(!r.dnf && r.driverId !== penDriver && r.position > oldPenPos && r.position <= newPenPos) {
               r.position--;
-              var _ptsT = (State.game&&State.game.customPoints)||DATA.points;
-              r.points = _ptsT[r.position-1]||0;
+              r.points = _penPointsFor(r);
             }
           });
           penRs.position = newPenPos;
-          var _ptsT2 = (State.game&&State.game.customPoints)||DATA.points;
-          penRs.points = _ptsT2[newPenPos-1]||0;
+          penRs.points = _penPointsFor(penRs);
+          penRs.penaltySeconds = ev.penaltySeconds || penRs.penaltySeconds || 5;
+          // Sync season points / wins / podiums for every shifted driver and their team,
+          // so standings and the close-of-race reconciliation agree with the stored result.
+          WR.resultState.forEach(function(r){
+            var prior = _penPriorPts[r.driverId];
+            if(!prior || r.dnf) return;
+            var delta = (r.points||0) - prior.pts;
+            var _pd = State.getDriver(r.driverId);
+            var _pt = State.getTeam(r.teamId) || (_pd ? State.getTeam(_pd.teamId) : null);
+            if(delta !== 0) {
+              if(_pd){ _pd.seasonPoints = Math.max(0,(_pd.seasonPoints||0)+delta); _pd.totalPoints = Math.max(0,(_pd.totalPoints||0)+delta); }
+              if(_pt){ _pt.seasonPoints = Math.max(0,(_pt.seasonPoints||0)+delta); _pt.totalPoints = Math.max(0,(_pt.totalPoints||0)+delta); }
+            }
+            if(!_penIsSprint && _pd && prior.pos !== r.position) {
+              if(prior.pos===1 && r.position!==1){ _pd.wins=Math.max(0,(_pd.wins||0)-1); if(_pt) _pt.wins=Math.max(0,(_pt.wins||0)-1); }
+              if(prior.pos!==1 && r.position===1){ _pd.wins=(_pd.wins||0)+1; if(_pt) _pt.wins=(_pt.wins||0)+1; }
+              if(prior.pos<=3 && r.position>3){ _pd.podiums=Math.max(0,(_pd.podiums||0)-1); if(_pt) _pt.podiums=Math.max(0,(_pt.podiums||0)-1); }
+              if(prior.pos>3 && r.position<=3){ _pd.podiums=(_pd.podiums||0)+1; if(_pt) _pt.podiums=(_pt.podiums||0)+1; }
+            }
+          });
           // Update lastPos to show the drop
           WR.resultState.forEach(function(r) {
             if(!r.dnf && r.position) WR.lastPos[r.driverId] = r.position;
@@ -29226,6 +29594,9 @@ window._wrTick = function() {
           if(_penRace && Array.isArray(_penRace[_penResultKey])) {
             _penRace[_penResultKey] = WR.resultState.map(function(r){ return Object.assign({},r); });
           }
+          // And the post-race debrief / main screen source (v2.6.0 — was missing)
+          var _penLrKey = WR.isSprint ? 'lastSprintResult' : 'lastRaceResult';
+          if(State.game[_penLrKey]) State.game[_penLrKey].results = WR.resultState.map(function(r){ return Object.assign({},r); });
         }
       }
     }
