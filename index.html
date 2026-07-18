@@ -640,7 +640,9 @@ tr.clickable-row:hover td{background:rgba(192,57,43,.07)!important}
 .os-cta{text-align:center}
 
 /* ── TOAST ── */
-#toast-container{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:7px;align-items:center;pointer-events:none;width:calc(100% - 32px);max-width:360px}
+/* z-index above the Team HQ iframe (99998) and elevated modals (100000): toasts fired
+   while the HQ is on screen used to render invisibly behind it (v3.0.1). */
+#toast-container{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);z-index:100001;display:flex;flex-direction:column;gap:7px;align-items:center;pointer-events:none;width:calc(100% - 32px);max-width:360px}
 .modal-open #toast-container{bottom:auto;top:20px}
 .toast{width:100%;border-radius:8px;padding:11px 14px;font-size:13px;font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,.2);animation:toastIn .18s ease;display:flex;align-items:center;gap:8px;color:#fff}
 .toast::before{content:'';width:7px;height:7px;border-radius:50%;flex-shrink:0}
@@ -807,6 +809,10 @@ body.hq-skin #view-guide{
   --bg:#eceef3;--bg2:#fff;--bg3:#f3f4f8;--tx:#0f1218;--tx1:#0f1218;--tx2:#5a606c;--tx3:#8b91a0;
   --bd:rgba(15,18,24,.12);--red:#e8112d;--grn:#1faa5e;
   --fm:'Segoe UI',system-ui,sans-serif;
+  /* Re-anchor the text colour inside the skinned subtree. Inherited `color` carries the
+     CONCRETE value resolved at <body> — in dark mode that's the light theme text, which
+     produced white-on-white in the white skin panels (v3.0.1, reported by Image_f3quet). */
+  color:var(--tx);
 }
 /* — Roster Editor (#page-editor) — */
 body.hq-skin #page-editor{background:#eceef3}
@@ -880,15 +886,16 @@ body.hq-skin #driver-detail-modal .modal-box:has(.le-head)::before{display:none}
         </div>
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:16px;max-width:560px;padding:16px 18px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
-          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v3.0: What's New</div>
-          <div style="font-size:14px;font-weight:900;color:#111;margin-bottom:10px">A completely redesigned Team HQ, clearer weekly challenges, and the biggest collection of career, balance and quality-of-life improvements since v2.6.2</div>
+          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v3.0.1: What's New</div>
+          <div style="font-size:14px;font-weight:900;color:#111;margin-bottom:10px">Every piece of launch feedback fixed — plus a classic interface toggle, visible pre-contracts and the quarterly upgrade budget back in Team HQ</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 16px">
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">✨</span><span><strong>All-new look and feel</strong>: Team HQ now gives the landing page, dashboard and every management screen one modern, consistent home.</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🏁</span><span><strong>Weekly Challenge progress</strong>: see your live score, completed rounds, next race, target Grand Prix and exactly when the run finishes.</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🧭</span><span><strong>Offseason lives in Team HQ</strong>: contracts, sponsors, scouting and power-unit decisions now happen inline without dropping into the old interface.</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🏛️</span><span><strong>History has a home</strong>: Hall of Fame inductees and all-time driver and constructor records turn every long save into a legacy chase.</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🛡️</span><span><strong>Safer, smoother careers</strong>: save backups, overwrite warnings, nationality-correct recruits, stronger difficulty and development-rate recovery are all included.</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:#888;font-weight:800;flex-shrink:0">🙏</span><span><strong>Built from your reports</strong>: IronicGerman, Polkiu4863, GCN_09, Choice_Scholar_4470, RuleImpossible3362, ZareJonathan, Zealousideal-Sir754, wildhorses717, janko1655 and Significant-Care-135. Thanks, and keep them coming.</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🖥️</span><span><strong>Classic interface toggle</strong>: prefer the old menus? Settings → Interface switches back at any time — both interfaces share the same saves.</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">💰</span><span><strong>Quarterly upgrade budget in Team HQ</strong>: live spend vs the window budget, per-point prices, projected gains and an over-budget guard on the Car page.</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">📋</span><span><strong>Pre-signed drivers are visible</strong>: profile badges, list chips, locked buttons once a deal is agreed — and pre-signed rookies join at the salary you were quoted.</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🤝</span><span><strong>Approach for Next Season works in Team HQ</strong>: the offer dialog, its explanation toasts and the upgrade-results popup now always appear above the new interface.</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🌙</span><span><strong>Dark mode covers every page</strong>: Team Plan &amp; Driver Setup, career stats, finance details, the Academy and completed races — and Settings text is always readable.</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🔧</span><span><strong>Small fixes</strong>: the Canadian GP shows CAN (no more second Monaco), team tiers match across screens, and custom season years work again.</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:#888;font-weight:800;flex-shrink:0">🙏</span><span><strong>Built from your reports</strong>: RuleImpossible3362, ZareJonathan, IronicGerman, Traditional_Ice_5636, morfeusz78, competitive_Sky5272, Image_f3quet and MinhKhanh4463. Thanks, and keep them coming.</span></div>
           </div>
           <button onclick="UI.showChangelog()" style="margin-top:10px;width:100%;padding:7px;background:none;border:1.5px solid rgba(192,57,43,.3);border-radius:7px;font-size:11px;font-weight:700;color:var(--red);cursor:pointer">Full release notes →</button>
         </div>
@@ -1019,7 +1026,7 @@ body.hq-skin #driver-detail-modal .modal-box:has(.le-head)::before{display:none}
       </div>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v3.0</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">Reddit</a> · <a href="https://discord.gg/w3R97uTBW" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">Discord</a></div>
+        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v3.0.1</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">Reddit</a> · <a href="https://discord.gg/w3R97uTBW" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">Discord</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -12287,7 +12294,9 @@ const spons=sumSponsorIncome(g.sponsors||[]);
           }
           d.teamId=g.playerTeamId; d.isProspect=false; d.isFreeAgent=false; d.isReserve=true; d.isJunior=false;
           const _fromSeriesRes = c.fromSeries || d.prospectSeries || 'Feeder Series';
-          d.prospectSeries=null; d.contract=2; d.salary=State.getDriverDemandSalary(d,'reserve');
+          // Honour the salary quoted at pre-sign time (v3.0.1, Zare Jonathan); older
+          // saves without a stored quote fall back to current demand.
+          d.prospectSeries=null; d.contract=2; d.salary=c.salary||State.getDriverDemandSalary(d,'reserve');
           d.morale=clamp((d.morale||75)+8,60,95);
           if(playerTeamObjCP) {
             if(!playerTeamObjCP.reserveIds) playerTeamObjCP.reserveIds=[];
@@ -12322,7 +12331,8 @@ const spons=sumSponsorIncome(g.sponsors||[]);
         }
         d.teamId = g.playerTeamId; d.isProspect=false; d.isFreeAgent=false; d.isReserve=false;
         const _fromSeriesCP = c.fromSeries || d.prospectSeries || 'Feeder Series';
-        d.prospectSeries=null; d.contract=2; d.salary=State.getDriverDemandSalary(d,'signing');
+        // Honour the salary quoted at pre-sign time (v3.0.1, Zare Jonathan).
+        d.prospectSeries=null; d.contract=2; d.salary=c.salary||State.getDriverDemandSalary(d,'signing');
         d.morale=clamp((d.morale||75)+10,60,95);
         if(playerTeamObjCP) {
           if(!playerTeamObjCP.driverIds) playerTeamObjCP.driverIds=[];
@@ -23469,6 +23479,7 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       <p>From race 6, any driver in their final contract year has an <strong>Approach for Next Season</strong> button on their profile. Tapping it opens a picker where you choose salary tier and contract length before talks begin. Negotiations take 2–4 races to resolve — elite drivers (88+ rated) take longer and need a clear car advantage.</p>
       <p>During talks, rival teams may counter-bid, which reduces your acceptance chances. The <strong>Active Negotiations panel</strong> on your dashboard shows the current lean (Leaning yes / Undecided / Leaning no), rival bid count, and your offer. Use <strong>Improve Offer</strong> to bump the salary if you're losing ground to rivals.</p>
       <p>When a driver rejects you, the news names the rival team he signed with. He's then committed there and cannot be re-approached. When he accepts, a pre-contract is stored and executes automatically at the offseason start.</p>
+      <p>Committed moves are visible everywhere (v3.0.1): a driver who has already agreed a deal for next season shows a <strong>SIGNED FOR NEXT SEASON</strong> badge on their profile (green when they're joining you), a chip in the Free Agents and All Drivers lists, and your own squad cards flag a driver who has agreed to leave. Their Approach and Sign buttons are disabled while the pre-contract stands.</p>
       ${warn('Elite drivers (88+ rated) at strong teams will not even take a meeting without a clear car performance advantage. Don\'t waste negotiations on drivers who are out of reach.')}
       <h4>Approaching free agents</h4>
       <p>Drivers who are already free agents — no current team — bypass the car comparison gate entirely. They have no car to compare to, so any offer is evaluated purely on salary, contract length, your team prestige, and their morale. Elite free agents are rare but genuinely available to any team that can pay them.</p>
@@ -24756,8 +24767,23 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const html=`
       <div style="max-height:85vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v3.0 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v3.0.1 · Release Notes</div>
         ${[
+    ['v3.0.1','July 2026',[
+            '✨ Upgrade results pop up again: the popup showing each package\'s outcome — planned vs delivered gains, the result label and any new-regs redirect note — was rendering invisibly behind Team HQ, leaving only the news feed entry. It now appears above the new interface the moment a package arrives. (Requested by ZareJonathan, also reported by MinhKhanh4463.)',
+            '🐛 Pre-signed rookies join at the salary you were quoted: pre-signing a feeder prospect showed their tiny feeder wage, then billed their full F1 market rate once they arrived — a $1M rookie could turn into a $20M contract with no warning. The pre-sign dialog now quotes the real market salary for both seat types, and that figure is locked into the agreement and honoured when they join. (Reported by Zare Jonathan.)',
+            '🐛 Settings are readable in dark mode: with dark mode on, the Settings dialog (and other white Team HQ panels) inherited the dark theme\'s light text colour, producing white-on-white labels in the Watch Race section. (Reported by Image_f3quet.)',
+            '🐛 Pit-wall feed formatting: timing updates read "TIMINGAyrton Senna leads" — the classic feed\'s TIMING/PENALTY/YOU labels weren\'t stripped before the pit wall added its own badge. (Reported by Zare Jonathan.)',
+            '⚙️ The Apply Upgrades button now looks pressable: its ghost styling on the white upgrade cards read as permanently disabled. It\'s now a solid red button, greying out only when the window is genuinely locked or over budget. (Reported by MinhKhanh4463.)',
+            '✨ Quarterly upgrade budget restored in Team HQ: the Car page\'s upgrade windows now show the live package spend against the window budget with a colour-coded meter, per-point prices ($6M Aero, $4M Mechanical, $10M Engine), the projected gain for each slider (factory conversion included), and a clear over-budget warning that disables Apply — matching what the classic Car page always showed. Completed windows keep their final spend on record. (Reported by morfeusz78.)',
+            '✨ Classic interface toggle: Settings → Interface now has a Classic interface switch that brings back the original pre-3.0 menus — no URL tricks needed. The choice is remembered on your device, both interfaces share the same saves, and you can switch back from the same place at any time (the ?ui=classic link still works too). Handy if you prefer the old layout or use classic-only detail views like the quarterly upgrade budgets. (Requested by Traditional_Ice_5636; quarterly budget gap flagged by morfeusz78.)',
+            '🐛 Approach for Next Season works again in Team HQ: the salary and contract-length picker opened invisibly behind the new interface, so tapping the button appeared to do nothing — and the explanation toasts (like "no clear seat path") were hidden the same way. Dialogs and toasts now always rise above Team HQ. (Reported by RuleImpossible3362.)',
+            '🐛 The Canadian GP no longer shows as a second Monaco: short race codes in the results grid were built from the first three letters of the location, so Montreal and Monte Carlo both became MON. Montreal now shows CAN. (Reported by RuleImpossible3362, confirmed by competitive_Sky5272.)',
+            '🐛 Team tiers now agree everywhere: the landing paddock used a fixed per-team difficulty label while the Teams page used prestige, so with custom rosters the same team could show different tiers on different screens (Aston Martin "Mid" with a backmarker car). Both screens now rank the grid by actual car strength — top 3 cars are Top tier, the next 4 Mid, the rest Back. (Reported by RuleImpossible3362.)',
+            '🐛 Custom season years work again: starting a career from the new Team HQ landing always began in 2026, ignoring the season selected in the Roster Editor — a regression of the v2.5.3 fix. A custom year (e.g. a 2020 season) now starts with its own year and grid again. (Reported by RuleImpossible3362.)',
+            '🐛 Dark mode covers every page: Team Plan and Driver Setup, the car development panels, driver career stats, the full finance report, the Academy development section and completed race cards on the Schedule no longer render as white pages with unreadable light text. (Reported by IronicGerman.)',
+            '✨ Pre-signed drivers are now visible: a driver who has already agreed a move for next season shows a badge and banner on their profile, a chip in the Free Agents and All Drivers lists, and your own squad cards flag a driver who has agreed to join a rival. Sign and approach buttons disable once a pre-contract exists instead of failing silently. (Requested by ZareJonathan.)',
+    ]],
     ['v3.0','July 2026',[
             'A completely new look and feel. Team HQ is now the default home for F1 Dynasty, with a redesigned landing page, a live management dashboard and a consistent modern interface across all ten management screens. Standings, Schedule, Drivers, Car, Finance, Teams, Staff, Scouting, Academy and History all read directly from your real save, and the previous interface remains available with ?ui=classic.',
             'Weekly Challenge progress is now visible throughout the run. The dashboard shows rounds completed, the target round, your next race, a live score and the featured Grand Prix finish line. The challenge completes automatically when that Grand Prix is finished; the final score is every point earned by both cars from Round 1 through the target Grand Prix, including sprints. Completed results can be shared from the dashboard at any time, including through the device share sheet or directly to r/f1dynasty. The public challenge can rotate after race week without invalidating a saved run.',
@@ -26093,6 +26119,9 @@ const sponsorInc=sumSponsorIncome(sponsors2);
       </div>`;
 
     const showNums = g.showDriverNumbers || false;
+    // Current interface: mirrors flag() in the Team HQ module — URL param wins,
+    // then the stored Settings preference, default Team HQ.
+    const _classicUI = (()=>{ try { if(/[?&]ui=classic\b/.test(location.search)) return true; return localStorage.getItem('f1d_ui')==='classic'; } catch(e){ return false; } })();
     const html = `
       <div style="max-height:72vh;overflow-y:auto;padding-bottom:4px">
         <div style="font-size:16px;font-weight:900;margin-bottom:2px">Settings</div>
@@ -26116,6 +26145,15 @@ const sponsorInc=sumSponsorIncome(sponsors2);
             ${toggle('Show Driver Numbers', 'Display car numbers next to driver names in grids and standings',
               showNums,
               `State.game.showDriverNumbers=!${showNums};Storage.autosave();UI.showSettings()`)}
+          </div>`
+        )}
+
+        ${section('Interface',
+          `<div style="display:flex;flex-direction:column;gap:8px">
+            ${toggle('Classic interface', 'Use the original pre-3.0 menus instead of Team HQ',
+              _classicUI,
+              `UI.setInterfaceMode('${_classicUI?'hq':'classic'}')`)}
+            <div style="font-size:11px;color:var(--tx3);line-height:1.5">Your career is saved automatically and the game reloads with the interface you pick. You can switch back here at any time — both interfaces use the same saves.</div>
           </div>`
         )}
 
@@ -26154,6 +26192,21 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     // frame sits at z-index 99998, so lift the modal above it; harmless in classic
     // mode since modals are topmost there anyway.
     if(window._hqMode === 'hq'){ _sm.style.zIndex = '100000'; }
+  },
+  // Settings → Interface: persist the choice and reload so the right shell mounts
+  // from a clean slate. The reload strips any ?ui= override so the stored preference
+  // governs. (v3.0.1, requested by Traditional_Ice_5636.)
+  setInterfaceMode(mode){
+    try { localStorage.setItem('f1d_ui', mode==='classic'?'classic':'hq'); } catch(e){}
+    try { Storage.autosave(); } catch(e){}
+    try { UI.toast(mode==='classic'?'Switching to the classic interface…':'Switching to Team HQ…','info'); } catch(e){}
+    // Reload so the right shell mounts cleanly. If the URL carries a ?ui= override it
+    // must be stripped (it would outrank the stored preference); otherwise a plain
+    // reload — same-URL href assignment is ignored by some embedded browsers.
+    setTimeout(()=>{
+      try { if(/[?&]ui=/.test(location.search)) location.replace(location.pathname); else location.reload(); }
+      catch(e){ location.reload(); }
+    }, 250);
   },
   updateDashAero(df){
     // Live-update the inline dashboard aero control in place (no full re-render, so the
@@ -26481,18 +26534,25 @@ const GameActions = {
       const canReserve = (reserves.length + incomingRes) < 2;
       const raceBlockReason = !canRace ? 'No open race seat next season — let a contract expire, release, or demote a driver first.' : '';
       const resBlockReason = !canReserve ? 'Both reserve slots are filled or committed — release or promote a reserve first.' : '';
+      // Quote the real F1 contract now. The old modal showed no salary, while the profile
+      // showed the prospect's feeder wage — so a "$1M" rookie could arrive on a $20M F1
+      // demand salary with no warning (v3.0.1, reported by Zare Jonathan). The quoted
+      // figure is stored on the commitment and honoured when they join.
+      const quoteRace = State.getDriverDemandSalary(d,'signing');
+      const quoteRes  = State.getDriverDemandSalary(d,'reserve');
       document.getElementById('modal-body').innerHTML = `
         <div style="color:var(--tx)">
           <div style="font-size:17px;font-weight:900;margin-bottom:4px">📋 Pre-sign ${d.name}</div>
           <div style="font-size:11px;color:var(--tx3);margin-bottom:16px">${d.prospectSeries||'Feeder Series'} · ${yr} entry</div>
+          <div style="background:var(--bg3);border:1px solid var(--bd);border-radius:8px;padding:9px 12px;font-size:11px;color:var(--tx2);margin-bottom:12px;line-height:1.5">💰 An F1 deal is agreed at their <strong>market rate</strong>, not their current feeder wage. The figure below is locked in now and honoured when they join.</div>
           ${!canRace && !canReserve ? '<div style="background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.2);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--red);font-weight:600;margin-bottom:12px">⚠️ No available slots — both race seats and reserve spots are full or committed. Release or promote a driver to make room.</div>' : ''}
           <div style="display:flex;flex-direction:column;gap:10px">
             <button ${canRace ? `onclick="GameActions.commitProspect(${driverId}, false)"` : 'disabled'} style="padding:12px 14px;border:2px solid ${canRace ? 'var(--red)' : 'var(--bd)'};border-radius:10px;background:${canRace ? 'rgba(192,57,43,.04)' : 'var(--bg3)'};color:var(--tx);${canRace ? 'cursor:pointer' : 'cursor:not-allowed;opacity:0.5'};text-align:left">
-              <div style="font-size:13px;font-weight:800">🏎 Race Seat</div>
+              <div style="font-size:13px;font-weight:800;display:flex;justify-content:space-between;gap:10px">🏎 Race Seat ${canRace?`<span style="font-family:var(--fm);color:var(--amber)">$${quoteRace}M/yr × 2yr</span>`:''}</div>
               <div style="font-size:11px;color:var(--tx3);margin-top:3px">${canRace ? 'Locked into a race seat. They bypass free agency and cannot sign elsewhere. Requires an open race seat next season.' : raceBlockReason}</div>
             </button>
             <button ${canReserve ? `onclick="GameActions.commitProspect(${driverId}, true)"` : 'disabled'} style="padding:12px 14px;border:2px solid ${canReserve ? 'rgba(124,58,237,.6)' : 'var(--bd)'};border-radius:10px;background:${canReserve ? 'rgba(124,58,237,.04)' : 'var(--bg3)'};color:var(--tx);${canReserve ? 'cursor:pointer' : 'cursor:not-allowed;opacity:0.5'};text-align:left">
-              <div style="font-size:13px;font-weight:800">🔵 Reserve Seat</div>
+              <div style="font-size:13px;font-weight:800;display:flex;justify-content:space-between;gap:10px">🔵 Reserve Seat ${canReserve?`<span style="font-family:var(--fm);color:var(--amber)">$${quoteRes}M/yr × 2yr</span>`:''}</div>
               <div style="font-size:11px;color:var(--tx3);margin-top:3px">${canReserve ? 'Joins as a reserve driver. Lower commitment — they might still attract race seat offers from other teams, but they are protected from the free agent market.' : resBlockReason}</div>
             </button>
             <button onclick="UI.closeModal()" class="btn btn-ghost btn-sm" style="margin-top:4px">Cancel</button>
@@ -26523,13 +26583,16 @@ const GameActions = {
       }
     }
 
-    g.committedProspects.push({ driverId, driverName:d.name, season:g.season+1, fromSeries: d.prospectSeries||'Feeder Series', asReserve:!!asReserve });
+    // Lock the quoted market salary into the commitment so what was shown is what gets
+    // paid when they join (v3.0.1, reported by Zare Jonathan).
+    const agreedSalary = State.getDriverDemandSalary(d, asReserve ? 'reserve' : 'signing');
+    g.committedProspects.push({ driverId, driverName:d.name, season:g.season+1, fromSeries: d.prospectSeries||'Feeder Series', asReserve:!!asReserve, salary: agreedSalary });
     d.bookmarked = true;
     Storage.autosave();
     UI.closeModal();
     if(document.getElementById('view-drivers')?.classList.contains('active')) UI.renderDrivers();
     UI.renderScouting();
-    UI.toast(`📋 ${d.name} pre-signed — they\'ll join your team at the start of ${g.season+1} as a ${asReserve?'reserve driver':'race driver'}.`,'success');
+    UI.toast(`📋 ${d.name} pre-signed at $${agreedSalary}M/yr — they\'ll join your team at the start of ${g.season+1} as a ${asReserve?'reserve driver':'race driver'}.`,'success');
   },
 
   scoutGridDriver(driverId){
@@ -26785,7 +26848,10 @@ const GameActions = {
         // Show rich popup (same style as winter dev)
         setTimeout(()=>{
           const popup = document.createElement('div');
-          popup.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:3000;display:flex;align-items:center;justify-content:center;padding:16px;animation:fadeIn .2s ease';
+          // z-index above the Team HQ iframe (99998): at 3000 this popup rendered
+          // invisibly behind the HQ, so the upgrade outcome was only in the news feed
+          // (v3.0.1, reported by ZareJonathan and MinhKhanh4463).
+          popup.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100002;display:flex;align-items:center;justify-content:center;padding:16px;animation:fadeIn .2s ease';
           popup.innerHTML='<div style="background:var(--bg2);border-radius:14px;width:100%;max-width:360px;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.4);border:1px solid var(--bd)">'
             +'<div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--tx3);margin-bottom:4px">Upgrade Arrived</div>'
             +'<div style="font-size:22px;margin-bottom:2px">'+outcomeIcon+' <span style="font-weight:900;color:'+outcomeCol+'">'+outcomeLabel+'</span></div>'
@@ -32034,7 +32100,11 @@ window._wrBuildPitwallData = function(){
     feed = kids.slice(-7).map(k=>{
       const raw=(k.textContent||'').trim().replace(/\s+/g,' ');
       const m=raw.match(/^L(\d+)/i)||raw.match(/Lap (\d+)/i); const lap=m?('L'+m[1]):'';
-      const txt=raw.replace(/^L\d+\s*/i,'').replace(/^(NOTE|MOVE|PIT|FLAG|INFO|RADIO)\s*/i,'');
+      // Strip list covers every classic feed label (TIMING/PENALTY/YOU were missing, so
+      // "TIMINGAyrton Senna leads" leaked through — v3.0.1, reported by Zare Jonathan).
+      // Case-sensitive with a lowercase guard: labels are uppercase in the DOM, and the
+      // guard stops "You…"/"Note…" prose from being clipped.
+      const txt=raw.replace(/^L\d+\s*/i,'').replace(/^(NOTE|MOVE|PIT|FLAG|INFO|RADIO|TIMING|PENALTY|YOU)(?=[^a-z]|$)\s*/,'');
       let type='NOTE';
       if(/pit|box|fitting|stop/i.test(txt)) type='PIT';
       else if(/past|overtak|moves? (ahead|up)|loses out|drops to|gets past|takes P/i.test(txt)) type='MOVE';
@@ -32235,6 +32305,9 @@ window._pwHandleOrder = function(code, val){
   function flag(){
     try { if(typeof window.UI_SHELL==='string') return window.UI_SHELL; } catch(e){}
     try { if(/[?&]ui=classic\b/.test(location.search)) return 'classic'; } catch(e){}
+    // Settings → Interface preference (v3.0.1, requested by Traditional_Ice_5636):
+    // an explicit ?ui= URL still wins, otherwise the stored choice governs.
+    try { var _stored=localStorage.getItem('f1d_ui'); if(_stored==='classic'||_stored==='hq') return _stored; } catch(e){}
     return 'hq';
   }
   function hasGame(){ try { return (typeof State!=='undefined' && !!State.game); } catch(e){ return false; } }
@@ -32362,10 +32435,12 @@ window._pwHandleOrder = function(code, val){
       +allTh('pace','PACE','famh2')+allTh('quali','QUAL','famh2')+allTh('con','CON','famh2')+allTh('wet','WET','famh2')
       +allTh('ovr','OVR')+allTh('pts','PTS')+'<span class="famth" style="cursor:default">STATUS</span><span class="famth" style="cursor:default"></span></div>';
     var allRows=allDrivers.map(function(r){
-      var status=r.freeAgent?'FREE AGENT':(r.reserve?'RESERVE':'RACE SEAT');
-      var statusCol=r.freeAgent?'var(--grn)':(r.reserve?'var(--amb)':'var(--mut)');
+      var status=r.preToMe?'JOINING US':(r.preSigned&&!r.preStaying?'PRE-SIGNED':(r.freeAgent?'FREE AGENT':(r.reserve?'RESERVE':'RACE SEAT')));
+      var statusCol=r.preToMe?'var(--grn)':(r.preSigned&&!r.preStaying?'var(--vio)':(r.freeAgent?'var(--grn)':(r.reserve?'var(--amb)':'var(--mut)')));
+      var preChip=r.preToMe?' <span class="chipT" style="font-size:8px" title="Pre-contract agreed — joins your team next season">SIGNED FOR NEXT SEASON</span>'
+        :(r.preSigned&&!r.preStaying?' <span class="chipN" style="font-size:8px" title="Committed to '+esc(r.preTo||'another team')+' for next season">→ '+esc(r.preTo||'COMMITTED')+'</span>':'');
       return '<div class="fam"'+(r.mine?' style="background:rgba(232,17,45,.035)"':'')+'>'
-        +'<div style="min-width:0"><div class="fw7 fs13" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(r.traitIcon?'<span title="'+esc(r.traitLabel||'')+'">'+r.traitIcon+'</span> ':'')+esc(r.name)+(r.reserve?' <span class="chipN" style="font-size:8px">RSV</span>':'')+'</div><div class="fs11 mut" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(r.nat||'')+' · Age '+r.age+' · '+esc(r.freeAgent?'Available':r.team||'Unassigned')+'</div></div>'
+        +'<div style="min-width:0"><div class="fw7 fs13" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(r.traitIcon?'<span title="'+esc(r.traitLabel||'')+'">'+r.traitIcon+'</span> ':'')+esc(r.name)+(r.reserve?' <span class="chipN" style="font-size:8px">RSV</span>':'')+preChip+'</div><div class="fs11 mut" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(r.nat||'')+' · Age '+r.age+' · '+esc(r.freeAgent?'Available':r.team||'Unassigned')+'</div></div>'
         +'<span class="mono fs12 tc famh2">'+r.pace+'</span><span class="mono fs12 tc famh2">'+r.quali+'</span><span class="mono fs12 tc famh2">'+r.consistency+'</span><span class="mono fs12 tc famh2">'+r.wet+'</span>'
         +'<span class="fw8 mono tc fs14">'+r.ovr+'</span><span class="mono fs12 fw7 tc">'+r.points+'</span>'
         +'<span class="fs10 fw8" style="text-align:right;color:'+statusCol+'">'+status+'</span>'
@@ -32382,6 +32457,22 @@ window._pwHandleOrder = function(code, val){
       _hq = _hq.replace(
         "+ tabpanel('drivers','squad',squadHtml)\n      + tabpanel('drivers','market',marketHtml)",
         "+ tabpanel('drivers','squad',squadHtml)\n      + tabpanel('drivers','all',allHtml)\n      + tabpanel('drivers','market',marketHtml)"
+      );
+      // Pre-contract visibility (v3.0.1, requested by ZareJonathan): market rows show a
+      // chip when a driver has already committed for next season, the SIGN button is
+      // disabled once a pre-contract exists, and your own squad cards flag a driver who
+      // has agreed to leave.
+      _hq = _hq.replace(
+        "+trait+esc(r.name)+'</div><div class=\"fs11 mut\">'",
+        "+trait+esc(r.name)+(r.preToMe?' <span class=\"chipT\" style=\"font-size:8px\" title=\"Pre-contract agreed — joins your team next season\">SIGNED FOR NEXT SEASON</span>':(r.preSigned?' <span class=\"chipN\" style=\"font-size:8px\" title=\"Already committed for next season\">COMMITTED'+(r.preTo?' · '+esc(r.preTo):'')+'</span>':''))+'</div><div class=\"fs11 mut\">'"
+      );
+      _hq = _hq.replace(
+        "<button class=\"renew\" data-act=\"signFreeAgent\" data-arg=\\''+argOf({id:r.id})+'\\'>SIGN</button>",
+        "'+(r.preSigned?'<button class=\"renew\" disabled style=\"opacity:.45;cursor:not-allowed\">'+(r.preToMe?'✓ SIGNED':'PRE-SIGNED')+'</button>':'<button class=\"renew\" data-act=\"signFreeAgent\" data-arg=\\''+argOf({id:r.id})+'\\'>SIGN</button>')+'"
+      );
+      _hq = _hq.replace(
+        "'<div class=\"crow\"><span class=\"chipT\">◉ '+(d.atRisk?'EXPIRING':'SIGNED')+'</span>'",
+        "'<div class=\"crow\">'+(d.leavingTo?'<span class=\"chipR\" title=\"Pre-contract agreed with a rival\">→ '+esc(d.leavingTo).toUpperCase()+' NEXT SEASON</span>':'<span class=\"chipT\">◉ '+(d.atRisk?'EXPIRING':'SIGNED')+'</span>')"
       );
       _hq = _hq.replace(/    var wcHtml='';if\(D\.challenge\)\{[^\n]+\}/, String.raw`    var wcHtml='';
     if(D.challenge){
@@ -32685,6 +32776,32 @@ html[data-theme="dark"] .gm [style*="color:#5a606c"],html[data-theme="dark"] .gm
 html[data-theme="dark"] .gm [style*="border:1px solid #dfe3e9"],html[data-theme="dark"] .gm [style*="border:1px solid #e1e4e9"]{border-color:var(--line)!important}
 html[data-theme="dark"] .stcard,html[data-theme="dark"] .sth2h-driver,html[data-theme="dark"] .stgrid th:first-child,html[data-theme="dark"] .stgrid td:first-child{background:var(--panel);color:var(--ink)}
 html[data-theme="dark"] .sttbl th{background:#202631}html[data-theme="dark"] .sttbl tr.mine,html[data-theme="dark"] .stgrid tr.mine td:first-child{background:rgba(232,17,45,.12)}
+/* v3.0.1 dark parity (reported by IronicGerman): surfaces that still hardcoded light
+   colours — completed race cards, the driver profile's career-stats strips, and the
+   Team Plan / Driver Setup strategy dialog (which sits OUTSIDE .gm, so the .gm
+   attribute rules above never reached it). Later rules win over the generic
+   [style*="background:#fff"] match above, so the specific tints must stay below it. */
+html[data-theme="dark"] .rnd{border-color:var(--line)}
+html[data-theme="dark"] .rnd.done{background:#141923}
+html[data-theme="dark"] .stgrid th:first-child,html[data-theme="dark"] .stgrid td:first-child{background:var(--panel)}
+html[data-theme="dark"] .gm [style*="background:#f4f6fa"],html[data-theme="dark"] .gm [style*="background:#f3f4f8"],html[data-theme="dark"] .gm [style*="background:#f8f9fb"]{background:#202631!important}
+html[data-theme="dark"] .gm [style*="background:#e8eaef"]{background:#242b37!important}
+html[data-theme="dark"] .gm [style*="background:#fef2f2"]{background:rgba(220,38,38,.15)!important;border-color:rgba(220,38,38,.4)!important;color:#fca5a5!important}
+html[data-theme="dark"] .gm [style*="background:#fff0f2"],html[data-theme="dark"] .gm [style*="background:#fff4f5"]{background:rgba(232,17,45,.15)!important}
+html[data-theme="dark"] .gm [style*="background:#fff7ed"],html[data-theme="dark"] .gm [style*="background:#fff7e8"]{background:rgba(232,150,26,.14)!important;border-color:rgba(232,150,26,.4)!important;color:#fbd38d!important}
+html[data-theme="dark"] .hqs3-dialog{background:#12161f;border-color:rgba(255,255,255,.11);color:#f3f5f8}
+html[data-theme="dark"] .hqs3-head,html[data-theme="dark"] .hqs3-tabs,html[data-theme="dark"] .hqs3-foot{background:#171b24;border-color:rgba(255,255,255,.11);color:#f3f5f8}
+html[data-theme="dark"] .hqs3-driver{background:#171b24;border-color:rgba(255,255,255,.11)}
+html[data-theme="dark"] .hqs3-close{background:#202631;border-color:rgba(255,255,255,.14);color:#a7afbd}
+html[data-theme="dark"] .hqs3 .cpill{color:#a7afbd!important;background:#202631!important;border-color:rgba(255,255,255,.12)!important}
+html[data-theme="dark"] .hqs3 [style*="background:#fff"]{background:#1b202a!important}
+html[data-theme="dark"] .hqs3 [style*="background:#f7f8fb"],html[data-theme="dark"] .hqs3 [style*="background:#f5f6f8"],html[data-theme="dark"] .hqs3 [style*="background:#f4f5f8"]{background:#202631!important}
+html[data-theme="dark"] .hqs3 [style*="background:#fff4f5"],html[data-theme="dark"] .hqs3 [style*="background:#fff0f2"]{background:rgba(232,17,45,.16)!important}
+html[data-theme="dark"] .hqs3 [style*="background:#fff7e8"]{background:rgba(232,150,26,.16)!important}
+html[data-theme="dark"] .hqs3 [style*="color:#0f1218"]{color:#f3f5f8!important}
+html[data-theme="dark"] .hqs3 [style*="color:#5a606c"],html[data-theme="dark"] .hqs3 [style*="color:#8b91a0"]{color:#a7afbd!important}
+html[data-theme="dark"] .hqs3 [style*="color:#8b4b00"]{color:#e8b96a!important}
+html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-theme="dark"] .hqs3 [style*="border:1px solid #e1e4e9"],html[data-theme="dark"] .hqs3 [style*="border:1px solid #d7dbe2"]{border-color:rgba(255,255,255,.13)!important}
 </style>`; });
       _hq = _hq.replace("      if (data) deepMerge(GAME_DATA, data);", "      if (data) deepMerge(GAME_DATA, data);\n      var _theme=(GAME_DATA.appearance&&GAME_DATA.appearance.theme)||'light'; document.documentElement.setAttribute('data-theme',_theme);");
       // Upgrade allocations: window 0 used to fail the truthy dataset test. Keep the
@@ -32723,6 +32840,37 @@ html[data-theme="dark"] .sttbl th{background:#202631}html[data-theme="dark"] .st
       _hq = _hq.replace("      + tabpanel('history','records',recHtml)\n      + tabpanel('history','grid',gridHtml)", "      + tabpanel('history','records',recHtml)\n      + tabpanel('history','standings',seasonStandingsHtml)\n      + tabpanel('history','grid',gridHtml)");
       _hq = _hq.replace("if(e.target&&e.target.hasAttribute('data-gridyear')){TeamHQ._gridYear=e.target.value;renderHistory();return;}", "if(e.target&&e.target.hasAttribute('data-gridyear')){TeamHQ._gridYear=e.target.value;renderHistory();return;}if(e.target&&e.target.hasAttribute('data-history-standings-year')){TeamHQ._historyStandingsYear=e.target.value;renderHistory();return;}");
       _hq = _hq.replace('    toast: toast\n', '    toast: toast,\n    openStrategy: openStrategyOverlay\n');
+      // Quarterly upgrade budget parity (v3.0.1, reported by morfeusz78): the classic Car
+      // page shows live spend vs the window budget, per-point prices and preview gains;
+      // Team HQ only showed bare sliders, so the first sign of overspending was the
+      // rejection toast on Apply. These patches restore the budget readout in HQ.
+      _hq = _hq.replace(
+        "var disabled = w.status!=='available'||w.applied;",
+        "var disabled = w.status!=='available'||w.applied; var spend=(w.aero||0)*6+(w.reliability||0)*4+(w.engine||0)*10; var over=spend>wb;"
+      );
+      // NOTE: these replacements contain $ sequences ($' is special in string-form
+      // .replace), so they use function replacements — the return value is literal.
+      _hq = _hq.replace(
+        "+ '<div class=\"fs11 mut mt6\">'+esc(w.status==='upcoming'?'Unlocks in '+w.until+' races.':w.status==='complete'?'This package has already been applied.':'Budget: $'+wb+'M · Allocate development below.')+'</div>'",
+        function(){ return "+ '<div class=\"fs11 mut mt6\">'+esc(w.status==='upcoming'?'Unlocks in '+w.until+' races.':w.status==='complete'?'This package has already been applied.':'Allocate development below — Aero costs $6M, Mechanical $4M and Engine $10M per point.'+(w.eff&&w.eff<0.99?' Factory conversion '+Math.round(w.eff*100)+'% — previews already reflect it.':''))+'</div>'"
+        + "+ (w.status!=='upcoming'?'<div style=\"margin-top:10px\"><div class=\"fx jb ac\" style=\"font-size:11px;font-weight:700\"><span class=\"mut\">'+(w.status==='complete'?'Package spend':'Window budget')+'</span><b class=\"mono\" style=\"color:'+(over?'var(--red)':'var(--ink)')+'\">$'+spend+'M <span class=\"mut\" style=\"font-weight:500\">of $'+wb+'M</span></b></div><div class=\"smeter lite\" style=\"height:7px;margin-top:5px\"><div class=\"smf\" style=\"width:'+Math.min(100,wb>0?Math.round(spend/wb*100):0)+'%;background:'+(over?'var(--red)':(spend>wb*0.8?'var(--amb)':'var(--grn)'))+'\"></div></div>'+(over?'<div class=\"fs11\" style=\"color:var(--red);font-weight:700;margin-top:5px\">Over budget — reduce the allocation before applying.</div>':'')+'</div>':'')"; }
+      );
+      _hq = _hq.replace(
+        "[['aero','Aerodynamic Package',maxA,w.aero],['reliability','Mechanical & Reliability',maxR,w.reliability],['engine','Engine Mode',maxE,w.engine]]",
+        function(){ return "[['aero','Aerodynamic Package',maxA,w.aero,'$6M/pt','+'+((w.aero||0)*0.9*(w.eff||1)).toFixed(1)+' Car Perf'],['reliability','Mechanical & Reliability',maxR,w.reliability,'$4M/pt','+'+((w.reliability||0)*0.6).toFixed(1)+' Reliability'],['engine','Engine Mode',maxE,w.engine,'$10M/pt','+'+((w.engine||0)*1.4*(w.eff||1)).toFixed(1)+' Car Perf']]"; }
+      );
+      _hq = _hq.replace(
+        "<span>'+x[1]+'</span><div style=\"display:grid;grid-template-columns:32px minmax(90px,1fr) 32px;",
+        "<span>'+x[1]+(x[4]?'<span style=\"display:block;font-size:9px;color:var(--fnt);margin-top:2px\">'+x[4]+(x[5]?' · '+x[5]:'')+'</span>':'')+'</span><div style=\"display:grid;grid-template-columns:32px minmax(90px,1fr) 32px;"
+      );
+      _hq = _hq.replace(
+        "data-arg=\\'{\"qi\":'+w.qi+'}\\'>Apply Upgrades to Car</button>",
+        "data-arg=\\'{\"qi\":'+w.qi+'}\\''+(over?' disabled style=\"opacity:.55;cursor:not-allowed\"':'')+'>'+(over?'Over Budget — Reduce Allocation':'Apply Upgrades to Car')+'</button>"
+      );
+      // The ghost gcta2 style reads as a DISABLED button on the white upgrade cards
+      // (v3.0.1, reported by MinhKhanh4463) — give Apply a clearly active solid style.
+      _hq = _hq.replace('<button class="gcta2" data-act="applyQuarterDev"', '<button class="gcta2 hq-apply-dev" data-act="applyQuarterDev"');
+      _hq = _hq.replace('</head>', '<style id="hq-apply-dev-style">.gcta2.hq-apply-dev{background:#e8112d;border-color:#e8112d;color:#fff;font-weight:800;letter-spacing:.05em}.gcta2.hq-apply-dev:hover{background:#c60e26}.gcta2.hq-apply-dev[disabled]{background:#9aa1ad;border-color:#9aa1ad;color:#fff;opacity:1!important}</style></head>');
       return _hq;
     } catch(e){ return null; }
   };
@@ -33031,18 +33179,24 @@ html[data-theme="dark"] .sttbl th{background:#202631}html[data-theme="dark"] .st
       if (!base.length) base = (typeof DATA!=='undefined' && DATA.teams) ? DATA.teams : [];
       base = base.slice().sort(function(a,b){ return (b.carPerformance||0)-(a.carPerformance||0); });
       var seasonDrv = {};
-      try { var _es = (typeof Editor!=='undefined' && Editor.getState) ? Editor.getState() : null; seasonDrv = (_es && _es.seasonDrivers && _es.seasonDrivers[2026]) || {}; } catch(e){}
-      var TIERD = { easy:'Top', medium:'Mid', hard:'Back' };
+      try {
+        var _es = (typeof Editor!=='undefined' && Editor.getState) ? Editor.getState() : null;
+        var _selY = 2026; try { _selY = parseInt(Editor.getSelectedSeason&&Editor.getSelectedSeason())||2026; } catch(e){}
+        seasonDrv = (_es && _es.seasonDrivers && (_es.seasonDrivers[_selY]||_es.seasonDrivers[2026])) || {};
+      } catch(e){}
       var teams = base.map(function(t){
         var car=Math.round(t.carPerformance!=null?t.carPerformance:(t.car||0));
         var rel=Math.round(t.reliability||0);
         var dev=Math.round(t.developmentRate!=null?t.developmentRate:(t.dev||0));
         var ovr; try { ovr=Math.round((typeof getTeamOverallCar==='function')?getTeamOverallCar(t):((car+rel+dev)/3)); } catch(e){ ovr=Math.round((car+rel+dev)/3); }
-        var tier = TIERD[t.difficulty] || (t.prestige>=90?'Top':(t.prestige>=75?'Mid':'Back'));
         var lineup = seasonDrv[t.id] || t.baseDrivers || [];
         var drv=[]; try { drv=lineup.slice(0,2).map(function(d){ return { name: (typeof d==='string'?d:((d&&d.name)||'')) }; }).filter(function(x){ return x.name; }); } catch(e){}
-        return { id:t.id, name:t.name, color:t.color||'#888', car:car, reliability:rel, dev:dev, ovr:ovr, tier:tier, base:t.nation||'', drivers:drv };
+        return { id:t.id, name:t.name, color:t.color||'#888', car:car, reliability:rel, dev:dev, ovr:ovr, tier:'Back', base:t.nation||'', drivers:drv };
       });
+      // Tier chips follow the same car-strength ranking as the in-game Teams page
+      // (v3.0.1) — the static difficulty field disagreed with real car values on
+      // custom rosters.
+      try { var _tm=TIER_BY_CAR(teams.map(function(t){ return { id:t.id, car:t.ovr }; })); teams.forEach(function(t){ t.tier=_tm[String(t.id)]||t.tier; }); } catch(e){}
       var cur=null; try { cur = window._hqRC && window._hqRC.data; } catch(e){}
       var curSel = cur && cur.landing && cur.landing.selectedTeam;
       var sel = (curSel && teams.some(function(t){ return t.id===curSel; })) ? curSel : (teams.length ? teams[0].id : null);
@@ -33062,13 +33216,13 @@ html[data-theme="dark"] .sttbl th{background:#202631}html[data-theme="dark"] .st
         }
       } catch(e){}
       var landingTheme='light'; try { landingTheme=localStorage.getItem('f1d_theme')==='dark'?'dark':'light'; } catch(e){}
-      return { appearance:{theme:landingTheme}, landing:{ saves:saves, teams:teams, selectedTeam:sel, challenge:challenge, patchVersion:'3.0', whatsNew:[
-        {tag:'NEW', text:'All-new look and feel: a redesigned Team HQ, live dashboard and consistent management screens'},
-        {tag:'NEW', text:'Weekly Challenge tracker: live score, rounds completed, a clear finish line and shareable final results'},
-        {tag:'NEW', text:'The whole offseason now lives in Team HQ, with inline sponsor deals, contract terms, scouting tiers and a Power Unit hub'},
-        {tag:'NEW', text:'Hall of Fame, all-time records, downloadable backups and confirmed save deletion'},
-        {tag:'FIX', text:'Since v2.6.2: stronger difficulty, dev-rate recovery, nationality-correct academy names and smoother race behaviour'},
-        {tag:'FIX', text:'Safer careers: a 6th save warns before overwriting, sponsor renewals return correctly and upgrade results are clearer'}
+      return { appearance:{theme:landingTheme}, landing:{ saves:saves, teams:teams, selectedTeam:sel, challenge:challenge, patchVersion:'3.0.1', whatsNew:[
+        {tag:'NEW', text:'Classic interface toggle — prefer the old menus? Settings → Interface switches back, and both interfaces share your saves'},
+        {tag:'NEW', text:'Quarterly upgrade budget is back on the Car page: live spend, per-point prices, projected gains and an over-budget guard'},
+        {tag:'NEW', text:'Pre-signed drivers are visible everywhere — profile badges, list chips, and rookies join at the salary you were quoted'},
+        {tag:'FIX', text:'Approach for Next Season works in Team HQ — its dialog, toasts and the upgrade-results popup now appear above the new interface'},
+        {tag:'FIX', text:'Dark mode covers every page and Settings text is always readable'},
+        {tag:'FIX', text:'The Canadian GP shows CAN (no more second Monaco), team tiers match across screens, and custom season years work again'}
       ], cloudSave:{
         available: (typeof CloudSave!=='undefined' && CloudSave.isAvailable()),
         signedIn: (typeof CloudSave!=='undefined' && CloudSave.isSignedIn()),
@@ -33081,6 +33235,17 @@ html[data-theme="dark"] .sttbl th{background:#202631}html[data-theme="dark"] .st
   function T_(id){ try{ var g=State.game; return (g.teams||[]).find(function(t){return String(t.id)===String(id);})||{}; }catch(e){ return {}; } }
   function dcode(n){ n=n||''; var p=n.trim().split(/\s+/); var last=p[p.length-1]||n; return last.slice(0,3).toUpperCase(); }
   var TIER2=function(p){ return p>=90?'Top':(p>=75?'Mid':'Back'); };
+  // One tier rule for every surface: rank the grid by car strength and split it
+  // top 3 / middle 4 / rest (proportionally on other grid sizes). The landing paddock
+  // used the static difficulty field while the Teams page used prestige, so with
+  // custom rosters the two disagreed — e.g. Aston Martin "Mid" on one screen and
+  // effectively a backmarker on the other (v3.0.1, reported by RuleImpossible3362).
+  var TIER_BY_CAR=function(list){
+    var ranked=list.slice().sort(function(a,b){ return (b.car||0)-(a.car||0); });
+    var n=Math.max(1,ranked.length), map={};
+    ranked.forEach(function(t,i){ var f=(i+1)/n; map[String(t.id)]=f<=0.28?'Top':(f<=0.65?'Mid':'Back'); });
+    return map;
+  };
   var ROLE={td:'Technical Director',rs:'Race Strategist',cm:'Chief Mechanic',pcc:'Pit Crew Chief'};
 
   window._buildHQStandings = function(){
@@ -33107,8 +33272,13 @@ html[data-theme="dark"] .sttbl th{background:#202631}html[data-theme="dark"] .st
       out.results.pointsEnd=Math.max(10,points.reduce(function(m,p,i){return p>0?i+1:m;},0));
       out.results.drivers=out.drivers.map(function(d){var bits=(d.name||'').trim().split(/\s+/);return{id:d.id,name:d.name,last:bits[bits.length-1]||d.name,team:d.team,color:d.color,mine:d.isPlayer};});
       var compactRace=function(r,key,index){
+        // Location-derived codes collide: Montreal and Monte Carlo both truncated to
+        // "MON", so the results grid showed two Monaco GPs. Known clashes are mapped to
+        // their proper codes (v3.0.1, reported by RuleImpossible3362 / competitive_Sky5272).
+        var CODE_FIX={'Montreal':'CAN','Monte Carlo':'MON','Le Castellet':'FRA','Greater Noida':'IND'};
         var short=(r.location||r.country||(r.name||('R'+(index+1))).replace(' Grand Prix','')).toString();
-        if(short.length>5) short=short.slice(0,3).toUpperCase();
+        if(CODE_FIX[short]) short=CODE_FIX[short];
+        else if(short.length>5) short=short.slice(0,3).toUpperCase();
         return {round:index+1,name:r.name||('Round '+(index+1)),short:short,entries:(r[key]||[]).map(function(x){return{id:x.driverId,pos:x.position||0,dnf:!!x.dnf};})};
       };
       (g.calendar||[]).forEach(function(r,i){
@@ -33190,6 +33360,18 @@ html[data-theme="dark"] .sttbl th{background:#202631}html[data-theme="dark"] .st
   };
   window._buildHQDrivers = function(){
     var g=State.game, pid=g.playerTeamId;
+    // Pre-contract map: driverId -> committed next-season move. Surfaced as badges on
+    // the squad cards, market and All Drivers rows so an agreed future signing is
+    // visible at a glance (v3.0.1, requested by ZareJonathan).
+    var preMap={};
+    try { (g.preSeasonMoves||[]).forEach(function(m){ if(m&&m.driverId!=null) preMap[String(m.driverId)]=m; }); } catch(e){}
+    var preOf=function(d){ return preMap[String(d.id)]||null; };
+    var preFields=function(d){
+      var m=preOf(d); if(!m) return {};
+      var toMe=String(m.toTeamId)===String(pid);
+      var staying=String(m.toTeamId)===String(m.fromTeamId||'');
+      return { preSigned:true, preToMe:toMe, preStaying:staying, preTo:m.toTeamName||'' };
+    };
     var med=[];
     try {
       med=(g.injuries||[]).filter(function(inj){ return !inj.cleared && g.raceIndex<=inj.returnsAfterRace && String(inj.teamId)===String(pid); })
@@ -33203,7 +33385,7 @@ html[data-theme="dark"] .sttbl th{background:#202631}html[data-theme="dark"] .st
       var scoutedIds={}; try { (g.scoutedGridDrivers||[]).forEach(function(sd){ scoutedIds[String(sd.driverId)]=1; }); } catch(e){}
       market=(State.getFreeAgents?State.getFreeAgents():(g.drivers||[]).filter(function(d){return !d.teamId;})).filter(function(d){return !d.retired&&!d.isProspect;}).sort(function(a,b){return (b.rating||0)-(a.rating||0);}).slice(0,40).map(function(d){
         var td=((typeof DATA!=='undefined'&&DATA.traitDefs)||{})[d.trait]||null;
-        return {id:d.id,name:d.name||'',age:d.age||0,nat:nat2(d),ovr:R(d.rating),potential:R(d.potential),potKnown:!!scoutedIds[String(d.id)],asking:R(d.salary),pace:R(d.racePace),quali:R(d.qualifying),consistency:R(d.consistency),wet:R(d.wet),aggression:R(d.aggression),marketability:R(d.marketability),trait:d.trait||'',traitIcon:td?td.icon:'',traitLabel:td?td.label:'',points:R(d.seasonPoints)};
+        return Object.assign({id:d.id,name:d.name||'',age:d.age||0,nat:nat2(d),ovr:R(d.rating),potential:R(d.potential),potKnown:!!scoutedIds[String(d.id)],asking:R(d.salary),pace:R(d.racePace),quali:R(d.qualifying),consistency:R(d.consistency),wet:R(d.wet),aggression:R(d.aggression),marketability:R(d.marketability),trait:d.trait||'',traitIcon:td?td.icon:'',traitLabel:td?td.label:'',points:R(d.seasonPoints)},preFields(d));
       });
     }catch(e){}
     // Match the classic All tab: every active F1 race driver, reserve and free agent in one
@@ -33213,10 +33395,10 @@ html[data-theme="dark"] .sttbl th{background:#202631}html[data-theme="dark"] .st
       all=(g.drivers||[]).filter(function(d){ return d&&!d.retired&&!d.isProspect&&!d.isJunior; }).map(function(d){
         var tm=d.teamId?T_(d.teamId):null;
         var td=((typeof DATA!=='undefined'&&DATA.traitDefs)||{})[d.trait]||null;
-        return { id:d.id, name:d.name||'', age:d.age||0, nat:nat2(d), ovr:R(d.rating), pace:R(d.racePace), quali:R(d.qualifying), consistency:R(d.consistency), wet:R(d.wet), aggression:R(d.aggression), marketability:R(d.marketability), points:R(d.seasonPoints), team:tm&&tm.name||'', teamColor:tm&&tm.color||'#8b91a0', reserve:!!d.isReserve, freeAgent:!d.teamId, mine:String(d.teamId)===String(pid), years:d.contract||0, traitIcon:td?td.icon:'', traitLabel:td?td.label:'' };
+        return Object.assign({ id:d.id, name:d.name||'', age:d.age||0, nat:nat2(d), ovr:R(d.rating), pace:R(d.racePace), quali:R(d.qualifying), consistency:R(d.consistency), wet:R(d.wet), aggression:R(d.aggression), marketability:R(d.marketability), points:R(d.seasonPoints), team:tm&&tm.name||'', teamColor:tm&&tm.color||'#8b91a0', reserve:!!d.isReserve, freeAgent:!d.teamId, mine:String(d.teamId)===String(pid), years:d.contract||0, traitIcon:td?td.icon:'', traitLabel:td?td.label:'' },preFields(d));
       });
     } catch(e){}
-    return { race: mine.slice(0,2).map(function(d){ return { id:d.id, name:d.name||'', code:dcode(d.name), nat:nat2(d), age:d.age||0, ovr:R(d.rating), potential:R(d.potential), pace:R(d.racePace), quali:R(d.qualifying), consistency:R(d.consistency), wet:R(d.wet), aggression:R(d.aggression), marketability:R(d.marketability), trait:d.trait||'', years:d.contract||0, salary:d.salary||0, morale:R(d.morale), points:R(d.seasonPoints), wins:R(d.wins), podiums:R(d.podiums), poles:R(d.poles), atRisk:(d.contract||0)<=1 }; }),
+    return { race: mine.slice(0,2).map(function(d){ var m=preOf(d); return Object.assign({ id:d.id, name:d.name||'', code:dcode(d.name), nat:nat2(d), age:d.age||0, ovr:R(d.rating), potential:R(d.potential), pace:R(d.racePace), quali:R(d.qualifying), consistency:R(d.consistency), wet:R(d.wet), aggression:R(d.aggression), marketability:R(d.marketability), trait:d.trait||'', years:d.contract||0, salary:d.salary||0, morale:R(d.morale), points:R(d.seasonPoints), wins:R(d.wins), podiums:R(d.podiums), poles:R(d.poles), atRisk:(d.contract||0)<=1, leavingTo:(m&&String(m.fromTeamId)===String(pid)&&String(m.toTeamId)!==String(pid))?(m.toTeamName||''):null }, preFields(d)); }),
              reserve: res.map(function(d){ return { id:d.id, name:d.name||'', code:dcode(d.name), nat:nat2(d), age:d.age||0, ovr:R(d.rating), potential:R(d.potential), pace:R(d.racePace), quali:R(d.qualifying), consistency:R(d.consistency), wet:R(d.wet), aggression:R(d.aggression), marketability:R(d.marketability), trait:d.trait||'', years:d.contract||0, salary:d.salary||0, morale:R(d.morale) }; }),
              all: all,
              medical: med,
@@ -33279,7 +33461,8 @@ html[data-theme="dark"] .sttbl th{background:#202631}html[data-theme="dark"] .st
     var _windows=[0,1].map(function(qi){
       var qd=_qArr[qi]||{aero:0,reliability:0,engine:0,applied:false}, threshold=_qThresholds[qi], focus=qd.componentFocus||{};
       var focusOptions={}; try { ['aero','mechanical'].forEach(function(group){ focusOptions[group]=[{id:'balanced',label:'Balanced',rating:null}].concat((COMP_GROUPS[group]||[]).map(function(k){var cm=CAR_COMPONENTS[k]||{};return {id:k,label:(cm.icon?cm.icon+' ':'')+(cm.label||k),rating:R(t.components&&t.components[k])};})); }); } catch(e){}
-      return {qi:qi,label:qi===0?'Mid-Season Upgrade Window':'Summer Upgrade Window',threshold:threshold,until:threshold==null?null:Math.max(0,threshold-_racesDone),status:qd.applied?'complete':(threshold!=null&&_racesDone>=threshold?'available':'upcoming'),aero:qd.aero||0,reliability:qd.reliability||0,engine:qd.engine||0,applied:!!qd.applied,focus:focus,focusOptions:focusOptions,canDivert:State.game.nextRegsYear===State.game.season+1&&_racesDone>=10,diversion:Math.round(((State.game.quarterDevDiversion&&State.game.quarterDevDiversion[qi])||0)*100),nextRegsYear:State.game.nextRegsYear||State.game.season+1};
+      var _wEff=1; try { _wEff=getQuarterWindowEffectiveness(t).total; } catch(e){}
+      return {qi:qi,label:qi===0?'Mid-Season Upgrade Window':'Summer Upgrade Window',threshold:threshold,until:threshold==null?null:Math.max(0,threshold-_racesDone),status:qd.applied?'complete':(threshold!=null&&_racesDone>=threshold?'available':'upcoming'),aero:qd.aero||0,reliability:qd.reliability||0,engine:qd.engine||0,applied:!!qd.applied,eff:_wEff,focus:focus,focusOptions:focusOptions,canDivert:State.game.nextRegsYear===State.game.season+1&&_racesDone>=10,diversion:Math.round(((State.game.quarterDevDiversion&&State.game.quarterDevDiversion[qi])||0)*100),nextRegsYear:State.game.nextRegsYear||State.game.season+1};
     });
     var _winterDev=null;
     try {
@@ -33327,7 +33510,8 @@ html[data-theme="dark"] .sttbl th{background:#202631}html[data-theme="dark"] .st
   };
   window._buildHQTeams = function(){
     var g=State.game, pid=g.playerTeamId, selectedId=g._hqViewedTeamId||pid;
-    var teams=(g.teams||[]).map(function(t){ var drv=(t.driverIds||[]).map(function(id){ var d=(g.drivers||[]).find(function(x){return x.id===id;}); return { name:(d&&d.name)||'', rating:Math.round((d&&d.rating)||0) }; }).filter(function(x){return x.name;}); return { id:t.id, name:t.name, color:t.color||'#888', ovr:Math.round(t.carPerformance||0), prestige:t.prestige||0, tier:TIER2(t.prestige||0), drivers:drv, isPlayer:String(t.id)===String(pid), reliability:Math.round(t.reliability||0), facilities:Math.round(t.facilities||0), development:Math.round(t.developmentRate||0) }; });
+    var tierMap=TIER_BY_CAR((g.teams||[]).map(function(t){ var c=0; try { c=getTeamOverallCar(t); } catch(e){ c=t.carPerformance||0; } return { id:t.id, car:c }; }));
+    var teams=(g.teams||[]).map(function(t){ var drv=(t.driverIds||[]).map(function(id){ var d=(g.drivers||[]).find(function(x){return x.id===id;}); return { name:(d&&d.name)||'', rating:Math.round((d&&d.rating)||0) }; }).filter(function(x){return x.name;}); return { id:t.id, name:t.name, color:t.color||'#888', ovr:Math.round(t.carPerformance||0), prestige:t.prestige||0, tier:tierMap[String(t.id)]||TIER2(t.prestige||0), drivers:drv, isPlayer:String(t.id)===String(pid), reliability:Math.round(t.reliability||0), facilities:Math.round(t.facilities||0), development:Math.round(t.developmentRate||0) }; });
     var selected=teams.filter(function(t){return String(t.id)===String(selectedId);})[0]||teams[0]||null;
     return { teams:teams, selected:selected };
   };
@@ -34256,7 +34440,15 @@ html[data-theme="dark"] .sttbl th{background:#202631}html[data-theme="dark"] .st
         '.hq-insight{background:#fff;border:1px solid rgba(15,18,24,.09);border-radius:13px;padding:15px 16px;box-shadow:0 1px 2px rgba(15,18,24,.04)}'+
         '.hq-insight-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.hq-insight-grid>div{min-width:0;background:#f4f6fa;border-radius:9px;padding:10px}'+
         '.hq-insight-k{font:700 9px "Segoe UI",system-ui,sans-serif;letter-spacing:.08em;color:var(--mut);text-transform:uppercase}.hq-insight-v{font:800 17px "Segoe UI",system-ui,sans-serif;color:var(--ink);margin-top:3px}.hq-profile{margin-top:10px;border:1px solid rgba(15,18,24,.09);border-radius:11px;background:#fff;overflow:hidden}.hq-profile summary{cursor:pointer;list-style:none;padding:13px 14px;display:flex;gap:10px;align-items:center;justify-content:space-between}.hq-profile summary::-webkit-details-marker{display:none}.hq-profile[open] summary{border-bottom:1px solid rgba(15,18,24,.08);background:#f8f9fb}.hq-profile-body{padding:13px 14px}.hq-metric-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}.hq-metric{background:#f4f6fa;border-radius:8px;padding:8px;min-width:0}.hq-metric b{display:block;font-size:15px;font-variant-numeric:tabular-nums;color:var(--ink)}.hq-metric span{display:block;margin-top:2px;font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);font-weight:700}.hq-sponsor{border-left:3px solid #b7bdc9}.hq-sponsor.focus{box-shadow:0 0 0 2px rgba(232,17,45,.45);border-left-color:var(--red)}.rnd.done.hq-race-link{cursor:pointer;transition:transform .15s,box-shadow .15s}.rnd.done.hq-race-link:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(15,18,24,.1)}.hq-race-link-note{display:block;margin-top:8px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--red)}.conr.me .fw7,.conr.me .mono,.drvr.me .fw7,.drvr.me .mono{color:var(--ink)!important}.conr.me,.drvr.me{background:#fff0f2!important}'+
-        '@media(max-width:680px){.hq-insight-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.hq-metric-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.screen[data-screen="drivers"] .mkr{grid-template-columns:minmax(0,1fr) 52px auto;gap:9px;padding:12px 13px}.screen[data-screen="drivers"] .mkr .fs11{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}';
+        '@media(max-width:680px){.hq-insight-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.hq-metric-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.screen[data-screen="drivers"] .mkr{grid-template-columns:minmax(0,1fr) 52px auto;gap:9px;padding:12px 13px}.screen[data-screen="drivers"] .mkr .fs11{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}'+
+        /* v3.0.1 dark parity for the appended panels (finance report, sponsor details,
+           academy development) which hardcoded light backgrounds (IronicGerman). */
+        'html[data-theme="dark"] .hq-insight{background:var(--panel);border-color:var(--line)}'+
+        'html[data-theme="dark"] .hq-insight-grid>div,html[data-theme="dark"] .hq-metric{background:#202631}'+
+        'html[data-theme="dark"] .hq-profile{background:var(--panel);border-color:var(--line)}'+
+        'html[data-theme="dark"] .hq-profile[open] summary{background:#141923;border-bottom-color:var(--line)}'+
+        'html[data-theme="dark"] .conr.me,html[data-theme="dark"] .drvr.me{background:rgba(232,17,45,.16)!important}'+
+        'html[data-theme="dark"] .rnd.done.hq-race-link:hover{box-shadow:0 8px 18px rgba(0,0,0,.45)}';
       doc.head.appendChild(style);
     } catch(e){}
   };
@@ -34429,6 +34621,23 @@ html[data-theme="dark"] .sttbl th{background:#202631}html[data-theme="dark"] .st
               : '<span class="hqp-badge" style="background:rgba(16,185,129,.12);color:#047857">AVAILABLE</span>';
       } else if((d.contract||0)<=0){ badge='<span class="hqp-badge" style="background:rgba(220,38,38,.12);color:#b91c1c">EXPIRED</span>'; }
       else if(d.contract===1){ badge='<span class="hqp-badge" style="background:rgba(245,158,11,.16);color:#b45309">AT RISK</span>'; }
+      // Pre-contract status (v3.0.1, requested by ZareJonathan): a driver who has already
+      // agreed a move for next season shows it on the profile — as a badge and a banner.
+      var pre=null; try { pre=(g.preSeasonMoves||[]).find(function(m){ return m&&String(m.driverId)===String(d.id); })||null; } catch(e){}
+      // Committed prospects (pre-signed feeder drivers) get the same badge/banner, showing
+      // the salary agreed at pre-sign time (v3.0.1, reported by Zare Jonathan).
+      try {
+        if(!pre){
+          var _cp=(g.committedProspects||[]).find(function(c){ return c&&String(c.driverId)===String(d.id); });
+          if(_cp){ var _pt=State.getPlayerTeam(); pre={ driverId:d.id, fromTeamId:null, toTeamId:g.playerTeamId, toTeamName:(_pt&&_pt.name)||'your team', salary:_cp.salary||null, years:2 }; }
+        }
+      } catch(e){}
+      var preToMe=!!(pre&&String(pre.toTeamId)===String(g.playerTeamId));
+      var preStaying=!!(pre&&String(pre.toTeamId)===String(pre.fromTeamId||''));
+      if(pre&&!preStaying){
+        badge+=preToMe?'<span class="hqp-badge" style="background:rgba(16,185,129,.14);color:#059669">SIGNED FOR '+((g.season||2026)+1)+'</span>'
+                      :'<span class="hqp-badge" style="background:rgba(124,58,237,.12);color:#7c3aed">COMMITTED · '+esc((pre.toTeamName||'').toUpperCase())+'</span>';
+      }
       // -- injury banner --
       var banner='';
       try {
@@ -34436,6 +34645,7 @@ html[data-theme="dark"] .sttbl th{background:#202631}html[data-theme="dark"] .st
         if(inj){ var left=Math.max(0,(inj.returnsAfterRace||0)-(g.raceIndex||0)); banner='<div style="margin:12px 0;padding:10px 12px;background:#fef2f2;border:1px solid #fca5a5;border-radius:9px;color:#991b1b;font-size:12px"><b>🚑 Injured</b> — '+esc(inj.type||'Injury')+' · out for '+left+' more race'+(left===1?'':'s')+'</div>'; }
       } catch(e){}
       if(d.isWonderkid&&d.age<=26) banner+='<div style="margin:12px 0;padding:10px 12px;background:linear-gradient(135deg,#1a1100,#2d1f00);border:1px solid #f59e0b;border-radius:9px;font-size:12px;color:#f59e0b"><b>🌟 Generational Talent</b><span style="color:rgba(255,255,255,.65)"> — one of the rarest prospects in a generation. Ceiling: elite.</span></div>';
+      if(pre&&!preStaying) banner+='<div style="margin:12px 0;padding:10px 12px;background:'+(preToMe?'rgba(16,185,129,.10);border:1px solid rgba(16,185,129,.4)':'rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.35)')+';border-radius:9px;font-size:12px;color:inherit"><b>'+(preToMe?'📋 Pre-contract agreed':'📋 Future move agreed')+'</b> — '+esc(typeof lastNameOf==='function'?lastNameOf(d.name):d.name)+' joins <b>'+esc(pre.toTeamName||'')+'</b> for the '+((g.season||2026)+1)+' season'+(pre.salary?' · $'+Math.round(pre.salary)+'M/yr'+(pre.years?' × '+pre.years+'yr':''):'')+'.</div>';
       if(feederLocked) banner+='<div style="margin:12px 0;padding:12px 14px;background:#fff7ed;border:1px solid #fdba74;border-left:4px solid #f59e0b;border-radius:9px;color:#9a3412;font-size:12px;line-height:1.55"><b>🔒 Unable to sign to an F1 race seat</b><br>'+esc(d.name)+' is currently contracted to <b>'+esc(feederSeries)+'</b> for '+feederYears+' more season'+(feederYears===1?'':'s')+' and becomes available in <b>'+feederAvailableYear+'</b>.'+(feederYears===1?' You can pre-sign them now for next season.':'')+' A reserve contract can still be offered under the current rules.</div>';
       // -- potential visibility (classic rules: own/loaned/scouted only) --
       var potHtml;
@@ -34504,8 +34714,8 @@ html[data-theme="dark"] .sttbl th{background:#202631}html[data-theme="dark"] .st
       } else if(isFA){ acts.push(actBtn('signRace','OFFER RACE CONTRACT',true),actBtn('signReserve','OFFER RESERVE CONTRACT')); }
       else if(team&&!d.retired){
         var alreadyTalks=(g.pendingNegotiations||[]).some(function(n){return String(n.driverId)===String(d.id);});
-        var canApproach=(d.contract||0)<=1&&(g.raceIndex||0)>=6&&!alreadyTalks;
-        acts.push(actBtn('approach',canApproach?'APPROACH FOR NEXT SEASON':((g.raceIndex||0)<6?'APPROACH OPENS AT RACE 6':alreadyTalks?'NEGOTIATION IN PROGRESS':'UNDER LONG-TERM CONTRACT'),true,!canApproach),actBtn('scout','SCOUT DRIVER'));
+        var canApproach=(d.contract||0)<=1&&(g.raceIndex||0)>=6&&!alreadyTalks&&!pre;
+        acts.push(actBtn('approach',canApproach?'APPROACH FOR NEXT SEASON':(pre?(preToMe?'✓ SIGNED FOR NEXT SEASON':(preStaying?'STAYING PUT — NOT APPROACHABLE':'ALREADY COMMITTED ELSEWHERE')):(g.raceIndex||0)<6?'APPROACH OPENS AT RACE 6':alreadyTalks?'NEGOTIATION IN PROGRESS':'UNDER LONG-TERM CONTRACT'),true,!canApproach),actBtn('scout','SCOUT DRIVER'));
       }
       var actionHtml=acts.length?'<div class="hqp-sec">Management</div><div style="display:flex;gap:7px;flex-wrap:wrap">'+acts.join('')+'</div>':'';
       var old=doc.getElementById('hq-driver-profile-overlay'); if(old) old.remove();
@@ -34585,7 +34795,13 @@ html[data-theme="dark"] .sttbl th{background:#202631}html[data-theme="dark"] .st
     }
     return false;
   };
-  function anyModalOpen(){ try { var ms=document.querySelectorAll('.modal-overlay'); for(var i=0;i<ms.length;i++){ var m=ms[i]; if(!m.classList.contains('hidden') && m.offsetParent!==null) return true; } } catch(e){} return false; }
+  // Visibility check for fixed-position overlays: offsetParent is ALWAYS null for
+  // position:fixed elements, so the old `offsetParent!==null` test meant no modal was
+  // ever considered open — the approach picker opened invisibly BEHIND the HQ iframe
+  // (v3.0.1, reported by RuleImpossible3362). getClientRects() is empty for
+  // display:none (.hidden) but populated for rendered fixed elements.
+  function modalVisible(m){ try { return !m.classList.contains('hidden') && m.getClientRects().length>0; } catch(e){ return false; } }
+  function anyModalOpen(){ try { var ms=document.querySelectorAll('.modal-overlay'); for(var i=0;i<ms.length;i++){ if(modalVisible(ms[i])) return true; } } catch(e){} return false; }
   // Shared classic dialogs still contain a lot of canonical game logic (contracts, sponsor
   // negotiations, loans, event choices).  Keep Team HQ mounted underneath them and lift only
   // the dialog above the iframe.  Hiding the frame here was the cause of the strategy picker
@@ -34595,7 +34811,7 @@ html[data-theme="dark"] .sttbl th{background:#202631}html[data-theme="dark"] .st
       var ms=document.querySelectorAll('.modal-overlay');
       for(var i=0;i<ms.length;i++){
         var m=ms[i];
-        if(!m.classList.contains('hidden') && m.offsetParent!==null) m.style.zIndex='100000';
+        if(modalVisible(m)) m.style.zIndex='100000';
       }
     } catch(e){}
   }
@@ -35023,7 +35239,12 @@ html[data-theme="dark"] .sttbl th{background:#202631}html[data-theme="dark"] .st
         } catch(e){}
         if(window.__hqStarting) return; window.__hqStarting=true; setTimeout(function(){window.__hqStarting=false;},1500);
         try { State._pendingDifficulty = String(p.difficulty||'normal').toLowerCase(); } catch(e){}
-        try { State.newGame((p.managerName||'').trim(), teamId, 2026); } catch(e){}
+        // Honour a custom season chosen in the Roster Editor. The HQ start handler used
+        // to hardcode 2026, which silently regressed the v2.5.3 fix — a 2020 (or any
+        // custom-year) grid always started as 2026 (v3.0.1, reported by RuleImpossible3362).
+        var _startY=2026;
+        try { _startY=parseInt(typeof Editor!=='undefined'&&Editor.getSelectedSeason&&Editor.getSelectedSeason())||2026; } catch(e){}
+        try { State.newGame((p.managerName||'').trim(), teamId, _startY); } catch(e){}
         try { (typeof Storage!=='undefined'&&Storage.saveGame)?Storage.saveGame():(window.saveGame&&window.saveGame()); } catch(e){}
         try { (typeof UI!=='undefined') && UI.showPage && UI.showPage('game'); } catch(e){}
         try { window._hqRC.render(window._buildHQAll()); window._hqRC.show('offseason'); } catch(e){}
