@@ -47,6 +47,15 @@
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'G-6B4MBFG3FX');
+  // Single source of truth for the build number. The HQ landing reads this rather than
+  // carrying its own literal, so a release bump touches the same number of places as before.
+  window.__f1dVersion = '3.0.4';
+  // Analytics helper. Every call site is fire-and-forget: a missing gtag (ad blocker,
+  // offline, file:// testing) or a bad param must never break gameplay, so the guard and
+  // the try/catch live here once rather than being repeated at ~40 call sites.
+  window.__f1dEv = function(name, params){
+    try { if(typeof gtag!=='undefined') gtag('event', name, params||{}); } catch(e){}
+  };
   // Session time tracking
   (function(){
     const _start = Date.now();
@@ -61,6 +70,36 @@
     }
     document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='hidden') _sendTime(); });
     window.addEventListener('beforeunload', _sendTime);
+  })();
+  // Crash reporting. Until now the only bug channel was players posting screenshots on
+  // r/f1dynasty, so silent breakage in a rarely-visited screen could sit unnoticed for
+  // weeks. Reports the GA4 'exception' event with enough context to locate the fault.
+  // Deduped per message and capped per session so one error inside a render loop cannot
+  // flood the property (or the user's network).
+  (function(){
+    var seen = {}, sent = 0, MAX = 12;
+    function report(desc, where, fatal){
+      try {
+        if(typeof gtag==='undefined') return;
+        desc = String(desc||'unknown').slice(0,150);
+        var key = desc+'@'+where;
+        if(seen[key] || sent >= MAX) return;
+        seen[key] = 1; sent++;
+        gtag('event','exception',{description:desc, where:String(where||'').slice(0,100), fatal:!!fatal,
+          ui_mode:(window._hqMode||'unknown'), version:(window.__f1dVersion||'')});
+      } catch(e){}
+    }
+    window.addEventListener('error', function(e){
+      if(!e) return;
+      var at = '';
+      try { at = (String(e.filename||'').split('/').pop()||'')+':'+(e.lineno||0); } catch(x){}
+      report((e.message||'script error'), at, true);
+    });
+    window.addEventListener('unhandledrejection', function(e){
+      var r = e && e.reason;
+      report((r && (r.message||r)) || 'unhandled rejection', 'promise', false);
+    });
+    window.__f1dReportError = report;   // for explicit reporting from catch blocks
   })();
 </script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -861,6 +900,35 @@ body.hq-skin #driver-detail-modal .btn-red{box-shadow:0 6px 18px rgba(232,17,45,
 #driver-detail-modal .le-title{font-size:17px;font-weight:900;color:#fff;margin-top:3px}
 #driver-detail-modal .le-sub{font-size:11px;color:#aeb4c0;margin-top:4px;line-height:1.5}
 #driver-detail-modal .le-sub strong{color:#fff}
+/* — Dark variant of the HQ skin (v3.0.4, reported by IronicGerman) — the skin above
+   pinned the Roster Editor, Live Editor and Guide to a LIGHT palette so they'd match
+   the then-light-only Team HQ. Once the HQ itself learned dark mode (v3.0.3), a
+   dark-mode player opening any of these got a white flash. Same skin, dark palette;
+   every !important here mirrors an !important in the light skin it must outrank. */
+html[data-theme="dark"] body.hq-skin #page-editor,
+html[data-theme="dark"] body.hq-skin #driver-detail-modal .modal-box,
+html[data-theme="dark"] body.hq-skin #view-guide{
+  --bg:#101319;--bg2:#171b23;--bg3:#1c212b;--tx:#e8eaf0;--tx1:#e8eaf0;--tx2:#9aa1af;--tx3:#8e95a3;
+  --bd:rgba(255,255,255,.12);
+  color:var(--tx);
+}
+html[data-theme="dark"] body.hq-skin #page-editor{background:#101319}
+html[data-theme="dark"] body.hq-skin #page-editor .panel{background:#171b23;border-color:rgba(255,255,255,.08)!important;box-shadow:0 1px 3px rgba(0,0,0,.35),0 12px 28px rgba(0,0,0,.3)!important}
+html[data-theme="dark"] body.hq-skin #page-editor input,html[data-theme="dark"] body.hq-skin #page-editor select,html[data-theme="dark"] body.hq-skin #page-editor textarea{background:#1c212b!important;border-color:rgba(255,255,255,.16)!important;color:#e8eaf0}
+html[data-theme="dark"] body.hq-skin #page-editor .panel-title{color:#9aa1af!important}
+html[data-theme="dark"] body.hq-skin #page-editor .btn-outline{background:#1c212b;border-color:rgba(255,255,255,.16);color:#e8eaf0}
+html[data-theme="dark"] body.hq-skin #page-editor .btn-outline:hover{border-color:rgba(255,255,255,.4)}
+html[data-theme="dark"] body.hq-skin #page-editor .btn-ghost{color:#9aa1af}
+html[data-theme="dark"] body.hq-skin #page-editor table th{color:#8e95a3}
+html[data-theme="dark"] body.hq-skin #page-editor table tr:nth-child(even){background:rgba(255,255,255,.03)}
+html[data-theme="dark"] body.hq-skin #driver-detail-modal .modal-box{background:#171b23;border-color:rgba(255,255,255,.08)!important}
+html[data-theme="dark"] body.hq-skin #driver-detail-modal input,html[data-theme="dark"] body.hq-skin #driver-detail-modal select,html[data-theme="dark"] body.hq-skin #driver-detail-modal textarea{background:#1c212b!important;border-color:rgba(255,255,255,.16)!important;color:#e8eaf0}
+html[data-theme="dark"] body.hq-skin #driver-detail-modal .modal-close{background:#1c212b;border-color:rgba(255,255,255,.14);color:#9aa1af}
+html[data-theme="dark"] body.hq-skin #view-guide .view-title{color:#e8eaf0}
+html[data-theme="dark"] body.hq-skin #view-guide .guide-section{background:#171b23;border-color:rgba(255,255,255,.08)!important;box-shadow:0 1px 3px rgba(0,0,0,.35),0 12px 28px rgba(0,0,0,.3)!important}
+html[data-theme="dark"] body.hq-skin #view-guide .guide-sec-header{background:#171b23}
+html[data-theme="dark"] body.hq-skin #view-guide .guide-sec-header:hover{background:#1c212b}
+html[data-theme="dark"] body.hq-skin #view-guide .guide-sec-body{background:#12161d}
 body.hq-skin #driver-detail-modal .le-head{border-radius:16px 16px 0 0}
 body.hq-skin #driver-detail-modal .modal-box:has(.le-head)::before{display:none}
 #hq-guide-host #view-guide{display:block!important}
@@ -886,12 +954,12 @@ body.hq-skin #driver-detail-modal .modal-box:has(.le-head)::before{display:none}
         </div>
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:16px;max-width:560px;padding:16px 18px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
-          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v3.0.3: What's New</div>
-          <div style="font-size:14px;font-weight:900;color:#111;margin-bottom:10px">Weekly Challenge 2.0 — every week is now a 5-round mini-season</div>
+          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v3.0.4: What's New</div>
+          <div style="font-size:14px;font-weight:900;color:#111;margin-bottom:10px">Dark mode everywhere + the community fix batch</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 16px">
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🏁</span><span><strong>Fixed-length challenges</strong>: five rounds ending at the real week's Grand Prix — a July week and the season finale now cost the same evening, instead of the run growing all year.</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🗓️</span><span><strong>From the Hungarian GP week</strong>: the live Belgian GP challenge keeps its original run-from-Round-1 rules until it rotates, so nobody's in-progress run changes.</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:#888;font-weight:800;flex-shrink:0">📋</span><span><strong>Plus everything from v3.0.2</strong>: realistic qualifying gaps, junior-team promotions, classic interface staying classic, and mobile pit calls — full notes below.</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🌙</span><span><strong>Dark mode everywhere</strong>: the pit wall race viewer, Roster Editor, Live Editor and Guide now follow your theme — no more white flash on race day.</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🔧</span><span><strong>Community fixes</strong>: winter results are back, the race feed scrolls, upgrade arrivals show on the Car page, roster imports keep junior-team links, and long saves get real regulation shake-ups.</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:#888;font-weight:800;flex-shrink:0">🏁</span><span><strong>Plus Weekly Challenge 2.0 from this week</strong>: every challenge is a fixed 5-round mini-season ending at the real week's Grand Prix — full notes below.</span></div>
           </div>
           <button onclick="UI.showChangelog()" style="margin-top:10px;width:100%;padding:7px;background:none;border:1.5px solid rgba(192,57,43,.3);border-radius:7px;font-size:11px;font-weight:700;color:var(--red);cursor:pointer">Full release notes →</button>
         </div>
@@ -1022,7 +1090,7 @@ body.hq-skin #driver-detail-modal .modal-box:has(.le-head)::before{display:none}
       </div>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v3.0.3</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">Reddit</a> · <a href="https://discord.gg/w3R97uTBW" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">Discord</a></div>
+        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v3.0.4</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">Reddit</a> · <a href="https://discord.gg/w3R97uTBW" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">Discord</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -3952,6 +4020,11 @@ function teamIdsEqual(a, b){
   if(a === undefined || a === null || b === undefined || b === null) return a === b;
   return normalizeTeamId(a) === normalizeTeamId(b);
 }
+// Senior→junior pipeline defaults, shared by the offseason sim (juniorTeamPromotions)
+// and the Roster Editor dropdown (v3.0.4). An explicit team.juniorTeamId overrides;
+// the sentinel 'none' explicitly severs a default link, so "None" chosen in the
+// editor stays None instead of the default silently reasserting itself.
+const JUNIOR_TEAM_DEFAULTS = { redbull:'racingbulls' };
 function normalizeGameTeamAliases(game){
   if(!game || typeof game !== 'object') return game;
   const refKeys = new Set(['teamId','fromTeamId','toTeamId','playerTeamId','_lastTeamId','_loanFromTeamId']);
@@ -5076,6 +5149,17 @@ const Editor = {
       color: /^#[0-9a-fA-F]{6}$/.test(String(team?.color || '').trim()) ? String(team.color).trim() : fallback.color,
       difficulty: ['easy','medium','hard'].includes(team?.difficulty) ? team.difficulty : fallback.difficulty,
       engineManufacturer,
+      // Junior-team pipeline link (v3.0.4, reported by RuleImpossible3362): this whitelist
+      // dropped the imported team.juniorTeamId, so loading a roster from a link silently
+      // severed every senior→junior link and the editor dropdown showed "None" while the
+      // JSON clearly carried the field. Preserved sanitized; 'none' is the explicit
+      // severs-the-default sentinel, and self-links stay blocked.
+      ...(()=>{
+        const _j = String((team?.juniorTeamId ?? fallback?.juniorTeamId) ?? '').trim();
+        if(!_j || (_j !== 'none' && _j === String(fallback.id))) return {};
+        const _clean = this._sanitizeText(_j, 40, '');
+        return _clean ? { juniorTeamId: _clean } : {};
+      })(),
       sponsors: Array.isArray(team?.sponsors) ? team.sponsors.map(sp => ({
         name: this._sanitizeText(sp.name, 40, 'Sponsor') || 'Sponsor',
         value: clamp(parseInt(sp.value) || 10, 1, 200),
@@ -5642,9 +5726,13 @@ const Editor = {
       team.color = nextColor;
     } else if(field === 'juniorTeamId') {
       // Junior-team pipeline link (v3.0.3, requested by DocumentAlive2384): editable in
-      // the browser instead of hand-editing the roster JSON. Empty = no junior team.
+      // the browser instead of hand-editing the roster JSON. Clearing a team that has a
+      // built-in default (JUNIOR_TEAM_DEFAULTS) stores the 'none' sentinel so the default
+      // does not silently reassert itself in the sim (v3.0.4, RuleImpossible3362).
       const jid = String(value||'').trim();
-      if(jid && jid !== team.id) team.juniorTeamId = jid; else delete team.juniorTeamId;
+      if(jid && jid !== team.id) team.juniorTeamId = jid;
+      else if(JUNIOR_TEAM_DEFAULTS[team.id]) team.juniorTeamId = 'none';
+      else delete team.juniorTeamId;
     } else if(['name','nation','difficulty','engineManufacturer'].includes(field)) {
       const wasWorks = field === 'engineManufacturer' && this.isTeamWorks(team.id);
       team[field] = (field==='name'||field==='nation' ? sanitizeUserName(value,60) : String(value||'').trim()) || team[field];
@@ -12412,11 +12500,11 @@ const spons=sumSponsorIncome(g.sponsors||[]);
     // team ids, so the Red Bull ↔ Racing Bulls link survives renames; a roster can
     // also set team.juniorTeamId or driver.academyTeamId to define its own links.
     (function juniorTeamPromotions(){
-      const DEFAULT_JUNIOR = { redbull:'racingbulls' };
+      // Defaults hoisted to JUNIOR_TEAM_DEFAULTS (shared with the Roster Editor, v3.0.4).
       const seniors = [...g.teams].filter(t=>t && t.id!==g.playerTeamId)
         .sort((a,b)=>getTeamOverallCar(b)-getTeamOverallCar(a));
       seniors.forEach(senior=>{
-        const juniorId = senior.juniorTeamId || DEFAULT_JUNIOR[String(senior.id)];
+        const juniorId = senior.juniorTeamId==='none' ? null : (senior.juniorTeamId || JUNIOR_TEAM_DEFAULTS[String(senior.id)]);
         const seniorCar = getTeamOverallCar(senior);
         // Pipeline: the junior team's out-of-contract race drivers, plus any driver on
         // the grid whose academyTeamId points at this senior team (e.g. an academy
@@ -13196,6 +13284,29 @@ const spons=sumSponsorIncome(g.sponsors||[]);
         }
       });
 
+      // Engine regulation reset (v3.0.4, reported by Supa_Kam): engine ratings only ever
+      // ratcheted upward — annual dev pushes toward 99, backmarker catch-up converges the
+      // rest, and the anti-revert guards (high-water / recovery ceiling / snapshots, added
+      // for the Audi PU revert bug) make every gain permanent. Over a long save all
+      // manufacturers hit 97-99 and the engine game went silent. A power-unit era change
+      // now genuinely resets the engine order: ratings compress to a fresh band with a
+      // per-manufacturer aptitude spread (a strong R&D programme tilts the odds), and every
+      // anti-revert mark is lowered in the same breath — those guards exist to stop
+      // ACCIDENTAL reverts, not a sanctioned rules reset.
+      if(regsType.powerShift || regsType.fullReset){
+        (g.engineManufacturers||[]).forEach(eng=>{
+          if(!eng || eng.id==null) return;
+          const engApt = randNorm(0, 1) + ((eng.devRate||7) - 7.5) * 0.22;
+          const newPow = clamp(randFloat(84, 88) + engApt * 3.0, 78, 93);
+          const newErs = clamp(newPow + randFloat(-2.5, 2.0), 76, 93);
+          eng.powerRating = newPow;
+          eng.ersRating = newErs;
+          eng.reliability = clamp((eng.reliability||90) - randFloat(4, 10), 70, 95);
+          const _sync = store => { if(store && store[eng.id]){ store[eng.id].powerRating = newPow; store[eng.id].ersRating = newErs; if(store[eng.id].reliability!=null) store[eng.id].reliability = eng.reliability; } };
+          _sync(g._engineHighWater); _sync(g._engineRecoveryCeiling); _sync(g._engineStatsSnapshot); _sync(g._enginePreDevSnapshot);
+        });
+      }
+
       g.regsHistory.push({season: g.season+1, type: regsType.name, desc: regsType.desc});
       // Reset setup knowledge — new regs mean nobody knows what the car needs yet
       g.teams.forEach(t=>{ t.setupKnowledge = regsType.fullReset ? 40 : 50; });
@@ -13404,7 +13515,14 @@ const spons=sumSponsorIncome(g.sponsors||[]);
       const _winterDelta = _surgeBoost > 0 ? Math.max(0, _winterRoll.v) : _winterRoll.v;
       if(_winterRoll.tag === 'nailed' && _winterDelta > 0) _winterStories.nailed.push({ name: team.name, v: _winterDelta });
       if(_winterRoll.tag === 'flubbed' && _winterDelta < 0) _winterStories.flubbed.push({ name: team.name, v: _winterDelta });
-      const _aiCarDelta = devGain + ceilingPull + floorPull + pressureBoost + eraConvergence + rivalLift + dynastyFatigue + _surgeBoost + _winterDelta - leaderPenalty + randFloat(-1.2, 1.2) + getDiff(g).devRateBoostAI * (team.developmentRate/100) * 0.04;
+      // Era aptitude persistence (v3.0.4, reported by Supa_Kam): the regs-aptitude draw
+      // claimed to "persist as their structural advantage for the whole era" but was only
+      // applied in the reset winter itself, so era winners and losers re-converged within
+      // a season and every era collapsed into the same 89-93 pack. A team's read of the
+      // rules now keeps shaping its development — strongest right after the reset, fading
+      // to nothing as the era matures and the field copies what works.
+      const eraAptitude = (team._regsAptitude || 0) * Math.max(0, 1 - eraSeasonsElapsed * 0.3) * 1.1;
+      const _aiCarDelta = devGain + ceilingPull + floorPull + pressureBoost + eraConvergence + rivalLift + dynastyFatigue + _surgeBoost + _winterDelta + eraAptitude - leaderPenalty + randFloat(-1.2, 1.2) + getDiff(g).devRateBoostAI * (team.developmentRate/100) * 0.04;
       // A surging rival can reach the player's 99 ceiling (and is exempt from the leader pull-back
       // while surging); normal AI cars stay capped at 97 so the player keeps a structural edge by default.
       const _aiCeiling = _surgeBoost > 0 ? 99 : (getDiff(g).aiCeiling || 97);
@@ -16090,7 +16208,15 @@ const UI = {
           <label style="display:flex;flex-direction:column;gap:4px"><span style="font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--tx3);text-transform:uppercase">Downforce</span><input type="number" min="0" max="100" value="${team.downforce}" onchange="Editor.updateTeamField('${team.id}','downforce',this.value)" style="font-size:12px;padding:8px 10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg2)"></label>
           <label style="display:flex;flex-direction:column;gap:4px"><span style="font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--tx3);text-transform:uppercase">Engine Supplier</span><select onchange="Editor.updateTeamField('${team.id}','engineManufacturer',this.value)" style="font-size:12px;padding:8px 10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg2)">${Editor.getEditorEngines().map(e=>`<option value="${escapeHtml(e.id)}" ${(team.engineManufacturer||'mercedes')===e.id?'selected':''}>${escapeHtml(e.shortName||e.name)}</option>`).join('')}</select></label>
           <label style="display:flex;flex-direction:column;gap:4px" title="Lock this team to its engine supplier as a works deal: free supply (works rate) and the AI will never switch it to another PU."><span style="font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--tx3);text-transform:uppercase">Works Deal</span><span style="display:flex;align-items:center;gap:6px;font-size:11px;padding:8px 10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg2);box-sizing:border-box"><input type="checkbox" ${Editor.isTeamWorks(team.id)?'checked':''} onchange="Editor.setTeamWorksDeal('${team.id}',this.checked)" style="margin:0;cursor:pointer;width:15px;height:15px"><span style="color:var(--tx2)">Lock to supplier</span></span></label>
-          <label style="display:flex;flex-direction:column;gap:4px" title="Senior→junior pipeline: when a seat opens at this team it looks at its junior team's drivers first, and academy-tagged drivers come home when their contract allows."><span style="font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--tx3);text-transform:uppercase">Junior Team</span><select onchange="Editor.updateTeamField('${team.id}','juniorTeamId',this.value)" style="font-size:12px;padding:8px 10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg2)"><option value="">None</option>${teams.filter(t=>t.id!==team.id).map(t=>`<option value="${escapeHtml(t.id)}" ${team.juniorTeamId===t.id?'selected':''}>${escapeHtml(t.name)}</option>`).join('')}</select></label>
+          <label style="display:flex;flex-direction:column;gap:4px" title="Senior→junior pipeline: when a seat opens at this team it looks at its junior team's drivers first, and academy-tagged drivers come home when their contract allows."><span style="font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--tx3);text-transform:uppercase">Junior Team</span>${(()=>{
+            // Show the EFFECTIVE link: an explicit id, or the built-in default (marked), or None.
+            // Previously an unset Red Bull showed "None" while the sim still used the
+            // redbull→racingbulls default — the mismatch RuleImpossible3362 reported (v3.0.4).
+            const _def=JUNIOR_TEAM_DEFAULTS[team.id]||'';
+            const _eff=team.juniorTeamId==='none'?'':(team.juniorTeamId||_def);
+            const _isDef=!team.juniorTeamId&&!!_def;
+            return `<select onchange="Editor.updateTeamField('${team.id}','juniorTeamId',this.value)" style="font-size:12px;padding:8px 10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg2)"><option value="" ${_eff?'':'selected'}>None</option>${teams.filter(t=>t.id!==team.id).map(t=>`<option value="${escapeHtml(t.id)}" ${_eff===t.id?'selected':''}>${escapeHtml(t.name)}${_isDef&&_def===t.id?' (default)':''}</option>`).join('')}</select>`;
+          })()}</label>
         </div>
         <details style="margin-top:10px" ${Editor._openSections?.sponsors?'open':''} ontoggle="Editor.setSectionOpen('sponsors',this.open)">
           <summary style="cursor:pointer;font-size:11px;font-weight:700;color:var(--tx2);letter-spacing:.5px;text-transform:uppercase;list-style:none">💰 Sponsors</summary>
@@ -24870,8 +24996,20 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const html=`
       <div style="max-height:85vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v3.0.3 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v3.0.4 · Release Notes</div>
         ${[
+    ['v3.0.4','July 2026',[
+            '🌙 The race weekend follows dark mode: the pit wall race viewer was light-only, so watching a race in dark mode meant a white flash and a light screen for the whole weekend — including the race-complete screen. The full pit wall now has a dark skin that follows your theme, switching correctly even mid-save. (Reported by IronicGerman.)',
+            '🌙 The Roster Editor, Live Editor and Guide follow dark mode in Team HQ: these three surfaces were deliberately skinned light to match the (then light-only) new interface, which left dark-mode players staring at white pages. Same skin, dark palette, and the classic interface keeps its existing look. (Reported by IronicGerman.)',
+            '🐛 Junior teams survive roster imports: loading a roster from a file or link silently stripped every team\'s juniorTeamId — the editor showed "None" while the JSON clearly carried the link, exactly as reported. Links are preserved now, the dropdown shows the effective default (Red Bull → its junior team) instead of a misleading "None", and explicitly clearing a default link now actually severs it in the sim. (Reported by RuleImpossible3362.)',
+            '🐛 Winter development results are back: the outcome popup vanished in v3.0.3 for everyone — in Team HQ a layout change broke the modal\'s injection point (it was built but never shown), and in the classic interface a mode flag that never updates suppressed it entirely. Both paths fixed; if your save has an unshown winter result, it will appear once on your next visit to the dashboard. (Reported by MinhKhanh4463.)',
+            '✨ Upgrades en route on the Car page: after submitting an upgrade window the HQ Car page went silent — no sign of when the performance would arrive. It now shows packages en route, expected gains, and the arrival race, matching the classic dashboard\'s notice. (Reported by IronicGerman.)',
+            '✨ The pit wall race feed scrolls: the feed was capped at the handful of events that fit on screen with no way back through the race. It now keeps the last 40 events in a scrollable panel, newest first. (Reported by IronicGerman.)',
+            '⚙️ Late-save plateau addressed: two causes found. Engine ratings only ever went up — every manufacturer converged to 97-99 within ~10 seasons and stayed there — so power-unit and full regulation resets now genuinely reshuffle the engine order with lasting winners and losers. And a team\'s read of new regulations, which was meant to shape its whole era, actually evaporated after one winter — it now keeps influencing development for the first seasons of an era, so eras have real texture instead of everyone snapping back to the same pack. Existing saves benefit from the next regulation change onward. (Reported by Supa_Kam.)',
+            '🐛 Google sign-in tells you when it fails: the Team HQ cloud sign-in button wrapped its error handling around a synchronous call, but sign-in is asynchronous — so the most common failure (a rejected or closed sign-in) produced no toast and no explanation, and the button simply appeared to do nothing. Failures now surface properly, and a successful sign-in confirms itself.',
+            '⚙️ Automatic crash reporting: uncaught errors are now reported anonymously instead of failing silently. Until now the only way a bug reached me was somebody posting a screenshot on r/f1dynasty, which meant quiet breakage in a rarely-visited screen could sit there for weeks. Repeated identical errors are collapsed and each session reports at most a handful, so nothing is spammed.',
+            '⚙️ Anonymous usage stats now cover the modern interface. Team HQ and the Weekly Challenge shipped without any, so basic questions — how many people play the challenge, whether the mini-season format actually shortened a run, whether anyone uses the pit wall\'s manual strategy — were unanswerable. What is recorded is aggregate and anonymous: which actions happen and how long things take. No names, no save contents, nothing that identifies a player.'
+          ]],
     ['v3.0.3','July 2026',[
             '✨ Weekly Challenge 2.0 — fixed-length mini-seasons: every challenge is now exactly five rounds, ending at the real week\'s featured Grand Prix. Previously the challenge ran from Round 1 all the way up to the featured GP, so a late-season week meant playing a near-full season — the Abu Dhabi week would have been all 22 rounds. Now every week costs the same evening, whatever the calendar says. Scoring is unchanged in spirit: every point both cars take across the five rounds, sprints included, on Hard with the featured team. Upgrade windows, board objectives and the season finale all scale to the short calendar, and a completed challenge save can keep playing into a full next season.',
             '⚙️ The new format applies from the Hungarian GP week (July 22). The Belgian GP challenge that was live when this shipped keeps its original run-from-Round-1 rules until it rotates out, so no in-progress run changes under anyone\'s feet — and completed results from earlier weeks remain valid.',
@@ -26323,6 +26461,7 @@ const sponsorInc=sumSponsorIncome(sponsors2);
   // from a clean slate. The reload strips any ?ui= override so the stored preference
   // governs. (v3.0.1, requested by Traditional_Ice_5636.)
   setInterfaceMode(mode){
+    try { if(typeof gtag!=='undefined') gtag('event','interface_switched',{to:mode==='classic'?'classic':'hq',season:(State.game&&State.game.season)||0}); } catch(e){}
     try { localStorage.setItem('f1d_ui', mode==='classic'?'classic':'hq'); } catch(e){}
     try { Storage.autosave(); } catch(e){}
     try { UI.toast(mode==='classic'?'Switching to the classic interface…':'Switching to Team HQ…','info'); } catch(e){}
@@ -27429,8 +27568,13 @@ const GameActions = {
     });
     UI.renderDashboard();
     UI.showView('dashboard');
-    // Show winter development results popup
-    if(devResult && window._hqMode!=='hq') {
+    // Show winter development results popup. The gate must check that the HQ shell
+    // actually EXISTS, not just window._hqMode: _hqMode initialises to 'hq' at load and
+    // never changes when the classic interface is selected (no frame ever mounts), so
+    // the old `_hqMode!=='hq'` check silently suppressed this popup for every classic
+    // player too — no outcome in either UI (v3.0.4, reported by MinhKhanh4463).
+    const _hqShellActive = !!document.getElementById('hq-shell-frame') && window._hqMode==='hq';
+    if(devResult && !_hqShellActive) {
       const b=devResult.spent||{};
       const totalSpent=(b.aero||0)+(b.engine||0)+(b.reliability||0)+(b.facilities||0);
       const label=devResult.label||'as planned';
@@ -28372,6 +28516,15 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       rd.preConstrStandings = _preConstrStandings;
       g.raceIndex++; Storage.autosave();
       if(typeof gtag!=='undefined') gtag('event','race_simulated',{race_name:race.name,season:g.season,is_sprint:!!race.sprint,race_number:g.raceIndex,team:g.teams.find(t=>t.id===g.playerTeamId)?.name||'?'});
+      // Activation. new_game fires when a career is created, but until now nothing marked
+      // the player actually reaching a race — the biggest unmeasured drop-off in the funnel.
+      // Flagged on the save so it counts once per career, not once per session.
+      if(!g._evFirstRace){
+        g._evFirstRace = true;
+        window.__f1dEv && window.__f1dEv('first_race_completed',{season:g.season,
+          team:g.teams.find(t=>t.id===g.playerTeamId)?.name||'?',
+          is_challenge:!!g.weeklyChallenge, difficulty:g.difficulty||'?'});
+      }
       // Check if an upgrade window just unlocked (thresholds scale with calendar length, v2.5.9)
       const _qT=getUpgradeWindowThresholds(g), _rd=g.raceIndex;
       if(_qT.includes(_rd)){
@@ -32126,7 +32279,7 @@ window._pwDecode = function(){
     const row = el('div');
     row.style.cssText = 'display:grid;grid-template-columns:minmax(92px,1fr) minmax(180px,1.8fr);gap:10px;align-items:center';
     const label = el('div');
-    const name = el('div'); name.style.cssText='font:700 12px system-ui;color:#1a1d24'; name.textContent=(car.name||car.code||'Driver').split(' ').pop();
+    const name = el('div'); name.style.cssText='font:700 12px system-ui;color:'+(document.body.classList.contains('pw-dark')?'#dfe3ea':'#1a1d24'); name.textContent=(car.name||car.code||'Driver').split(' ').pop();
     const hint = el('div'); hint.style.cssText='font:600 9px ui-monospace,monospace;color:#8b91a0;text-transform:uppercase;margin-top:2px'; hint.textContent='Independent car mode';
     append(label,name,hint);
     const buttons = el('div'); buttons.style.cssText='display:grid;grid-template-columns:repeat(3,1fr);gap:5px';
@@ -32157,13 +32310,77 @@ window._pwDecode = function(){
     html=html.replace('</style>', '@media(max-width:920px){\n'
       + 'body.pw-call .strat-card{position:fixed;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:90;max-height:58dvh;overflow-y:auto;-webkit-overflow-scrolling:touch;box-shadow:0 18px 60px rgba(0,0,0,.35);border-color:rgba(255,54,80,.5)}\n'
       + 'body.pw-call::after{content:"";position:fixed;inset:0;background:rgba(12,14,20,.32);z-index:70;pointer-events:none}\n'
-      + '}\n</style>');
+      + '}\n'
+      /* Scrollable race feed (v3.0.4, reported by IronicGerman): the feed panel clipped
+         at the visible rows with no way to reach older events — the classic viewer's
+         feed always scrolled. Internal scroll keeps the panel a fixed size. */
+      + '.feed-list{max-height:340px;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-right:4px;scrollbar-width:thin}\n'
+      + '</style>');
     html=html.replace(`function renderStrat() {
   const body  = $('strat-body');
   const auto  = $('strat-auto');`, `function renderStrat() {
   const body  = $('strat-body');
   const auto  = $('strat-auto');
   try { document.body.classList.toggle('pw-call', !!(DATA.pitOpen && !STATE.decision && !DATA.ended && !DATA.awaitStart)); } catch(e){}`);
+    // ── Dark mode (v3.0.4, reported by IronicGerman: "Race not in dark mode") ──────
+    // The pit wall shipped light-only, so a race weekend was a white flash for every
+    // dark-mode player. The skin activates under body.pw-dark, set by the mount code
+    // from the game's theme. Stylesheet colors are overridden by appended rules; the
+    // handful of colors the shell sets as INLINE styles from its render functions are
+    // patched in those functions directly — CSS cannot cleanly beat inline styles.
+    html=html.replace('</style>', ''
+      + 'body.pw-dark{background:#101319;color:#e8eaf0}\n'
+      + 'body.pw-dark #page{background:radial-gradient(1100px 460px at 78% -8%,rgba(232,17,45,.10),transparent 60%),#101319}\n'
+      + 'body.pw-dark #hd{background:rgba(16,19,25,.94);color:#e8eaf0}\n'
+      + 'body.pw-dark .card,body.pw-dark .car-card,body.pw-dark .timing-card{background:#171b23;border-color:rgba(255,255,255,.08)}\n'
+      + 'body.pw-dark .strat-card{background:linear-gradient(180deg,#1a1f29,#151922)}\n'
+      + 'body.pw-dark .seg-wrap,body.pw-dark .icon-btn{background:#1c212b;border-color:rgba(255,255,255,.10);color:#aab0bd}\n'
+      + 'body.pw-dark .seg-btn{color:#9aa1af}\n'
+      + 'body.pw-dark .seg-btn.on{background:#e8112d;color:#fff}\n'
+      + 'body.pw-dark .seg-sep{background:rgba(255,255,255,.14)}\n'
+      + 'body.pw-dark .progress-track,body.pw-dark .rel-bar{background:rgba(255,255,255,.12)}\n'
+      + 'body.pw-dark .strat-chip,body.pw-dark .end-my-card,body.pw-dark .end-line{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.09);color:#c9cedb}\n'
+      + 'body.pw-dark .btn-stay,body.pw-dark .btn-undo{border-color:rgba(255,255,255,.24);color:#e8eaf0}\n'
+      + 'body.pw-dark .btn-stay:hover,body.pw-dark .btn-undo:hover{border-color:rgba(255,255,255,.4)}\n'
+      + 'body.pw-dark .tri-btn.off{border-color:rgba(255,255,255,.12);color:#9aa1af}\n'
+      + 'body.pw-dark .hd-title,body.pw-dark .car-name,body.pw-dark .timing-name,body.pw-dark .strat-name,body.pw-dark .end-title{color:#eef1f6}\n'
+      + 'body.pw-dark .feed-text,body.pw-dark .timing-pos{color:#c9cedb}\n'
+      + 'body.pw-dark .hd-sub,body.pw-dark .rel-label,body.pw-dark .feed-sec-label,body.pw-dark .strat-sub,body.pw-dark .end-sub,body.pw-dark .live-lbl{color:#9aa1af}\n'
+      + 'body.pw-dark .feed-meta,body.pw-dark .feed-lap{color:#8e95a3}\n'
+      + 'body.pw-dark .timing-hd{border-bottom-color:rgba(255,255,255,.08)}\n'
+      + 'body.pw-dark .car-tyre{border-top-color:rgba(255,255,255,.08)}\n'
+      + 'body.pw-dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.18)}\n'
+      /* Stragglers found by luminance-scanning the live DOM (v3.0.4): big position
+         numbers, lap counter, tyre names, team-order rows, and the strategy/end-screen
+         text classes whose real names are strat-dname/strat-rname/end-pos etc. */
+      + 'body.pw-dark .strat-dname,body.pw-dark .strat-rname,body.pw-dark .end-pos,body.pw-dark .car-pos,body.pw-dark .hd-progress-val{color:#eef1f6}\n'
+      + 'body.pw-dark .strat-dsub,body.pw-dark .strat-text,body.pw-dark .strat-idle,body.pw-dark .strat-rsub,body.pw-dark .strat-stop-label,body.pw-dark .end-name,body.pw-dark .end-note,body.pw-dark .ord-driver{color:#c9cedb}\n'
+      + 'body.pw-dark .tyre-name{color:#aab0bd}\n'
+      + '</style>');
+    // Inline-style sites — each needle is the verbatim expression from the shell JS.
+    html=html.replace("'1px solid ' + (car.alert ? 'rgba(255,54,80,.45)' : 'rgba(0,0,0,.08)')",
+                      "'1px solid ' + (car.alert ? 'rgba(255,54,80,.45)' : (document.body.classList.contains('pw-dark')?'rgba(255,255,255,.10)':'rgba(0,0,0,.08)'))");
+    html=html.replace("{ color: car.alert ? '#d31430' : '#6b7080' }",
+                      "{ color: car.alert ? '#ff5468' : (document.body.classList.contains('pw-dark')?'#9aa1af':'#6b7080') }");
+    html=html.replace("NOTE: { c:'#6b7080', bg:'rgba(0,0,0,.08)' }",
+                      "NOTE: { c:document.body.classList.contains('pw-dark')?'#aab0bd':'#6b7080', bg:document.body.classList.contains('pw-dark')?'rgba(255,255,255,.09)':'rgba(0,0,0,.08)' }");
+    html=html.replace("? 'rgba(255,194,75,.07)' : 'rgba(0,0,0,.02)'",
+                      "? 'rgba(255,194,75,.09)' : (document.body.classList.contains('pw-dark')?'rgba(255,255,255,.04)':'rgba(0,0,0,.02)')");
+    // (Whitespace-safe tail anchor — the rowBorder ternary is line-wrapped in the shell,
+    // so a needle spanning the '?' arm never matches. Unique because the other
+    // 'rgba(0,0,0,.06)' site ends in a comma, not a semicolon.)
+    html=html.replace(": 'rgba(0,0,0,.06)';",
+                      ": (document.body.classList.contains('pw-dark')?'rgba(255,255,255,.09)':'rgba(0,0,0,.06)');");
+    html=html.replace("{ background: 'rgba(0,0,0,.06)', color: '#0b0c10' }",
+                      "(document.body.classList.contains('pw-dark') ? { background: 'rgba(255,255,255,.08)', color: '#f2f4f8' } : { background: 'rgba(0,0,0,.06)', color: '#0b0c10' })");
+    html=html.replace("const intColor = isLeader ? '#b07d12' : (isYou ? '#0b0c10' : '#4a4e5a');",
+                      "const PWDT = document.body.classList.contains('pw-dark'); const intColor = isLeader ? (PWDT?'#e0a52e':'#b07d12') : (isYou ? (PWDT?'#f2f4f8':'#0b0c10') : (PWDT?'#aab0bd':'#4a4e5a'));");
+    html=html.replace("{ background: isYou ? 'rgba(0,0,0,.035)' : 'transparent' }",
+                      "{ background: isYou ? (PWDT?'rgba(255,255,255,.05)':'rgba(0,0,0,.035)') : 'transparent' }");
+    // Silent-no-op guard (the winterHtml regression proved these fail invisibly).
+    if(html.indexOf('PWDT')===-1 || html.indexOf('body.pw-dark{')===-1){
+      try { window.__f1dReportError && window.__f1dReportError('shell patch no-op: pitwall dark mode','_pwDecode',false); } catch(e){}
+    }
     return html;
   }
   catch(e){ return null; }
@@ -32264,11 +32481,12 @@ window._wrBuildPitwallData = function(){
   const feedEl = document.getElementById('wr-feed');
   if(feedEl){
     const kids = Array.from(feedEl.children).filter(k=>!/pit-decision-card|weather-decision/.test(k.id||''));
-    // Newest first: the classic feed appends to the bottom and auto-scrolls, but the pit
-    // wall doesn't scroll — so the latest event must lead. Also strip the classic cards'
-    // embedded label words (NOTE/MOVE/…): the pit wall renders its own type badge, so the
-    // leaked word doubled up as "NOTEP2: …" / "MOVE⭐ …" in the feed text.
-    feed = kids.slice(-7).map(k=>{
+    // Newest first, with real history: the feed panel now scrolls internally (v3.0.4,
+    // IronicGerman), so send the last 40 events instead of the 7 that fit unscrolled —
+    // older laps are reachable again like the classic viewer. Also strip the classic
+    // cards' embedded label words (NOTE/MOVE/…): the pit wall renders its own type
+    // badge, so the leaked word doubled up as "NOTEP2: …" / "MOVE⭐ …" in the feed text.
+    feed = kids.slice(-40).map(k=>{
       const raw=(k.textContent||'').trim().replace(/\s+/g,' ');
       const m=raw.match(/^L(\d+)/i)||raw.match(/Lap (\d+)/i); const lap=m?('L'+m[1]):'';
       // Strip list covers every classic feed label (TIMING/PENALTY/YOU were missing, so
@@ -32414,8 +32632,18 @@ window._wrPitwallInit = function(){
     frame.addEventListener('load', function(){
       const rc = frame.contentWindow && frame.contentWindow.RaceControl; if(!rc) return;
       window._pwRC=rc; window._pwReady=true;
+      // Follow the game theme (v3.0.4, IronicGerman): the pit wall was light-only.
+      // data-theme on the parent <html> is the resolved theme in both interfaces.
+      try {
+        const _dk = document.documentElement.getAttribute('data-theme')==='dark' || (localStorage.getItem('f1d_theme')==='dark');
+        frame.contentDocument.body.classList.toggle('pw-dark', _dk);
+      } catch(e){}
       rc.on('startRace', () => { const WR=window._WR; if(!WR || !WR._awaitStart) return;
         WR._awaitStart = false;
+        // Reset the per-race command flag. Engine/order fire many times a race, so they are
+        // reported once per race as "live commands were used" rather than per press —
+        // enough to answer whether the pit wall is driven manually, without flooding GA.
+        window.__f1dRaceCmd = false;
         if(WR.timer){ clearTimeout(WR.timer); }
         WR.timer = setTimeout(window._wrTick, 250);
         window._pwLastSync = 0; window._wrSyncPitwall(); });
@@ -32425,14 +32653,19 @@ window._wrPitwallInit = function(){
         WR.paused=p; if(WR.timer){clearTimeout(WR.timer);WR.timer=null;} if(!p){WR.timer=setTimeout(window._wrTick,100);} window._wrSyncPitwall(); });
       rc.on('speed', s => { const map={'1×':600,'2×':250,'4×':80}; const ms=map[s]||600; const el=document.getElementById('wr-speed'); if(el){ el.value=ms; } try{ State.game.watchRaceSpeed=ms; }catch(e){} });
       rc.on('close', () => { try{ UI.closeWatchRace(); }catch(e){ modal.style.display='none'; } });
-      rc.on('engine', p => { const map={Conserve:'conserve',Normal:'normal',Push:'push'}; const mode=(p&&p.mode)||p; if(window._wrSetEngineMode){ if(p&&typeof p==='object')window._wrSetEngineMode(p.driverId,map[mode]||'normal');else window._wrSetEngineMode(map[mode]||'normal'); } window._wrSyncPitwall(); });
-      rc.on('order', (code,val) => { window._pwHandleOrder && window._pwHandleOrder(code,val); window._wrSyncPitwall(); });
+      rc.on('engine', p => { const map={Conserve:'conserve',Normal:'normal',Push:'push'}; const mode=(p&&p.mode)||p;
+        if(!window.__f1dRaceCmd){ window.__f1dRaceCmd=true; window.__f1dEv('race_commands_used',(window.__f1dEvCtx?window.__f1dEvCtx({first:'engine'}):{first:'engine'})); } if(window._wrSetEngineMode){ if(p&&typeof p==='object')window._wrSetEngineMode(p.driverId,map[mode]||'normal');else window._wrSetEngineMode(map[mode]||'normal'); } window._wrSyncPitwall(); });
+      rc.on('order', (code,val) => {
+        if(!window.__f1dRaceCmd){ window.__f1dRaceCmd=true; window.__f1dEv('race_commands_used',(window.__f1dEvCtx?window.__f1dEvCtx({first:'order'}):{first:'order'})); }
+        window._pwHandleOrder && window._pwHandleOrder(code,val); window._wrSyncPitwall(); });
+      // Pit/weather calls are bounded (a handful per race), so each one is reported.
+      const _evPit = (call,kind) => { try { window.__f1dEv('pit_call',(window.__f1dEvCtx?window.__f1dEvCtx({call:call,kind:kind}):{call:call,kind:kind})); } catch(e){} };
       rc.on('box', () => {
-        const pi=window._wrPendingDecisionIndex('pit'); if(pi>=0){ window._wrPitDecision(pi,true); window._wrSyncPitwall(); return; }
-        const wi=window._wrPendingDecisionIndex('weather'); if(wi>=0){ window._wrWeatherDecision(wi,true); window._wrSyncPitwall(); } });
+        const pi=window._wrPendingDecisionIndex('pit'); if(pi>=0){ _evPit('box','pit'); window._wrPitDecision(pi,true); window._wrSyncPitwall(); return; }
+        const wi=window._wrPendingDecisionIndex('weather'); if(wi>=0){ _evPit('box','weather'); window._wrWeatherDecision(wi,true); window._wrSyncPitwall(); } });
       rc.on('stay', () => {
-        const pi=window._wrPendingDecisionIndex('pit'); if(pi>=0){ window._wrPitDecision(pi,false); window._wrSyncPitwall(); return; }
-        const wi=window._wrPendingDecisionIndex('weather'); if(wi>=0){ window._wrWeatherDecision(wi,false,false,false); window._wrSyncPitwall(); } });
+        const pi=window._wrPendingDecisionIndex('pit'); if(pi>=0){ _evPit('stay','pit'); window._wrPitDecision(pi,false); window._wrSyncPitwall(); return; }
+        const wi=window._wrPendingDecisionIndex('weather'); if(wi>=0){ _evPit('stay','weather'); window._wrWeatherDecision(wi,false,false,false); window._wrSyncPitwall(); } });
       rc.on('continue', () => {
         try{ UI.closeWatchRace(); }catch(e){ modal.style.display='none'; }
         // Always show the native HQ race summary before returning to the dashboard.
@@ -32448,6 +32681,15 @@ window._wrPitwallInit = function(){
       window._wrSyncPitwall();
     });
   } else { frame.style.display='block'; window._pwReady = !!window._pwRC; window._wrSyncPitwall(); }
+  // Re-sync the theme on EVERY open, not only on first mount (v3.0.4): the frame is
+  // reused across races, so a theme switch between weekends left a stale pw-dark class
+  // — the load handler only ever runs once.
+  try {
+    if(frame.contentDocument && frame.contentDocument.body){
+      const _dk2 = document.documentElement.getAttribute('data-theme')==='dark' || (localStorage.getItem('f1d_theme')==='dark');
+      frame.contentDocument.body.classList.toggle('pw-dark', _dk2);
+    }
+  } catch(e){}
   return true;
 };
 
@@ -33066,7 +33308,14 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       _hq = _hq.replace("    var wcHtml='';", function(){ return String.raw`    var winterHtml='';
     if(D.winterResult){var X=D.winterResult,lbl=String(X.label||'as planned'),bad=/setback|difficult|below/i.test(lbl),great=/breakthrough|ahead/i.test(lbl),col=bad?'var(--red)':great?'var(--grn)':'var(--amb)';var xr=(X.rows||[]).map(function(r){var v=Number(r.value||0);return '<div class="fx jb ac" style="padding:8px 0;border-bottom:1px solid var(--line)"><span class="fs12">'+esc(r.label)+'</span><b class="mono fs13" style="color:'+(v>=0?'var(--grn)':'var(--red)')+'">'+(v>=0?'+':'')+v.toFixed(1)+esc(r.unit||'')+'</b></div>';}).join('');winterHtml='<div style="position:fixed;inset:0;z-index:9999;background:rgba(6,9,14,.72);display:flex;align-items:center;justify-content:center;padding:18px"><div class="card" style="width:min(430px,100%);padding:24px;box-shadow:0 28px 80px rgba(0,0,0,.42)"><div class="hudf fs10 red fw7" style="letter-spacing:.15em">WINTER DEVELOPMENT RESULTS · '+esc(X.season)+'</div><div class="disp fw8" style="font-size:28px;margin:10px 0 4px;color:'+col+'">'+esc(lbl.charAt(0).toUpperCase()+lbl.slice(1))+'</div><div class="fs12 mut" style="margin-bottom:14px">$'+esc(X.spent||0)+'M invested · the values below have now been applied.</div>'+(xr||'<div class="tele fs12 mut">No winter development was allocated.</div>')+'<button class="gcta" data-act="dismissWinterResult" style="margin-top:18px">Continue to Season '+esc(X.season)+' →<span class="shine"></span></button></div></div>';}
     var wcHtml='';`; });
-      _hq = _hq.replace("      + '<div class=\"fx col gap24\">' + wcHtml + objHtml + towerHtml + radioHtml + '</div></div>';", "      + '<div class=\"fx col gap24\">' + wcHtml + objHtml + towerHtml + radioHtml + '</div></div>' + winterHtml;");
+      // Anchor on the TAIL of the layout line only (v3.0.4): the v3.0.3 upgrade-window
+      // banner patch rewrote the front of this line, which silently broke the previous
+      // full-line needle — the winter modal was built but never appended, so nobody saw
+      // a winter outcome in 3.0.3 (reported by MinhKhanh4463). The tail survives edits
+      // to the line's prefix, and the no-op guard below makes any future silent patch
+      // failure visible in crash telemetry instead of costing another release.
+      _hq = _hq.replace("+ wcHtml + objHtml + towerHtml + radioHtml + '</div></div>';", "+ wcHtml + objHtml + towerHtml + radioHtml + '</div></div>' + winterHtml;");
+      if(_hq.indexOf("'</div></div>' + winterHtml;")===-1){ try { window.__f1dReportError && window.__f1dReportError('shell patch no-op: winterHtml concat','_hqDecode',false); } catch(e){} }
       // Archived final standings remain in every modern save; expose them as a native
       // History tab with a season picker instead of forcing the classic screen.
       _hq = _hq.replace("    var gridHtml=emptyState('Race grid data is recorded when a season finishes.');", function(){ return String.raw`    var seasonStandingsHtml=emptyState('Final standings are recorded when a season finishes.');
@@ -33489,10 +33738,10 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
         }
       } catch(e){}
       var landingTheme='light'; try { landingTheme=localStorage.getItem('f1d_theme')==='dark'?'dark':'light'; } catch(e){}
-      return { appearance:{theme:landingTheme}, landing:{ saves:saves, teams:teams, selectedTeam:sel, challenge:challenge, patchVersion:'3.0.3', whatsNew:[
-        {tag:'NEW', text:'Weekly Challenge is now a 5-round mini-season — every week is the same length: five rounds ending at the real week\'s Grand Prix, whether it\'s July or the season finale'},
-        {tag:'NEW', text:'Starts with the Hungarian GP week — this week\'s live Belgian GP challenge keeps its original run-from-Round-1 rules until it rotates'},
-        {tag:'FIX', text:'Realistic qualifying gaps, junior-team promotions and the classic-interface fixes from v3.0.2 are all included'}
+      return { appearance:{theme:landingTheme}, landing:{ saves:saves, teams:teams, selectedTeam:sel, challenge:challenge, patchVersion:(window.__f1dVersion||'3.0.3'), whatsNew:[
+        {tag:'NEW', text:'Dark mode everywhere — the pit wall race viewer, Roster Editor, Live Editor and Guide all follow your theme now instead of flashing white'},
+        {tag:'FIX', text:'Winter development results are back (they vanished in 3.0.3), the race feed scrolls, upgrade arrivals show on the Car page, and roster imports keep junior-team links'},
+        {tag:'FIX', text:'Long-save plateau addressed — regulation eras now produce lasting winners and losers, and engine orders genuinely reshuffle on power-unit resets'}
       ], cloudSave:{
         available: (typeof CloudSave!=='undefined' && CloudSave.isAvailable()),
         signedIn: (typeof CloudSave!=='undefined' && CloudSave.isSignedIn()),
@@ -34060,6 +34309,16 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
         if(!g.newsFeed) g.newsFeed = [];
         g.newsFeed.unshift({ icon:'\ud83c\udfc1', type:'success', msg:'<strong>Weekly Challenge complete:</strong> '+ch.score+' points at the '+ch.gp+'. Share your score on r/f1dynasty!', race:g.raceIndex, ts:Date.now() });
         try { Storage.autosave(); } catch(e){}
+        // Analytics: completions, score distribution, and how long a run actually takes.
+        // minutes_taken is the direct check on "one evening per challenge" — the whole
+        // point of the fixed-length mini-season.
+        try {
+          if(typeof gtag!=='undefined'){
+            gtag('event','challenge_completed',{challenge_id:ch.id||'',gp:ch.gp,team:t.name||ch.teamId,
+              score:ch.score,weekend_pts:ch.weekendPts,format:ch.format||'run-in',rounds:ch.rounds||0,
+              week_key:ch.weekKey||'',minutes_taken:ch.startedAt?Math.round((ch.finishedAt-ch.startedAt)/60000):0});
+          }
+        } catch(e){}
         setTimeout(function(){ try { window._f1dChallenge.showResult(); } catch(e){} }, 700);
       } catch(e){}
     }
@@ -34102,6 +34361,7 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       var g=State.game, ch=g&&g.weeklyChallenge;
       if(!ch || !ch.done) return;
       var text=ch.shareText||('F1 Dynasty Weekly Challenge: '+ch.score+' points');
+      try { if(typeof gtag!=='undefined') gtag('event','challenge_shared',{method:navigator.share?'native':'clipboard',challenge_id:ch.id||'',gp:ch.gp,score:ch.score,format:ch.format||'run-in'}); } catch(e){}
       if(navigator.share){
         navigator.share({ title:'F1 Dynasty Weekly Challenge', text:text }).then(function(){
           if(button) button.textContent='Shared!';
@@ -34111,6 +34371,7 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
     function postReddit(){
       var g=State.game, ch=g&&g.weeklyChallenge;
       if(!ch || !ch.done) return;
+      try { if(typeof gtag!=='undefined') gtag('event','challenge_shared',{method:'reddit',challenge_id:ch.id||'',gp:ch.gp,score:ch.score,format:ch.format||'run-in'}); } catch(e){}
       var title='F1 Dynasty Weekly Challenge — '+ch.score+' points at the '+ch.gp;
       var url='https://www.reddit.com/r/f1dynasty/submit?title='+encodeURIComponent(title)+'&text='+encodeURIComponent(ch.shareText||'');
       window.open(url,'_blank','noopener');
@@ -34724,6 +34985,29 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       var fr=document.getElementById('hq-shell-frame'), doc=fr&&fr.contentDocument;
       if(!doc) return;
       var old=doc.getElementById('hq-car-detail'); if(old) old.remove();
+      // Upgrades en route (v3.0.4, reported by IronicGerman): after submitting an upgrade
+      // window the classic dashboard said "N packages en route · arrives in X races (GP)",
+      // but the HQ Car page went silent — the windows just flipped to COMPLETE with no
+      // hint of when the performance lands. Mirrors the classic card's exact math.
+      var oldEr=doc.getElementById('hq-car-enroute'); if(oldEr) oldEr.remove();
+      var g=State.game; if(!g) return;
+      var done=g.raceIndex||0;
+      var pkgs=(g.pendingUpgrades||[]).filter(function(u){return !u.applied;});
+      if(!pkgs.length) return;
+      var esc=function(v){return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;');};
+      var until=Math.min.apply(null,pkgs.map(function(u){return Math.max(0,(u.arrivesAfterRace||0)-done);}));
+      var first=pkgs.reduce(function(e,u){return (u.arrivesAfterRace||0)<((e&&e.arrivesAfterRace!=null?e.arrivesAfterRace:1e9))?u:e;},null);
+      var gpName=(first&&g.calendar&&g.calendar[first.arrivesAfterRace]&&g.calendar[first.arrivesAfterRace].name)||'';
+      var aero=pkgs.filter(function(u){return u.stat==='carPerformance';}).reduce(function(s,u){return s+(u.value||0);},0);
+      var rel=pkgs.filter(function(u){return u.stat==='reliability';}).reduce(function(s,u){return s+(u.value||0);},0);
+      var when=until===0
+        ? '<b style="color:var(--grn)">arriving this race</b> — fitted before qualifying, so the gains apply this weekend'
+        : 'arrives in <b>'+until+' race'+(until!==1?'s':'')+'</b>'+(gpName?' · '+esc(gpName):'');
+      var gains=[aero>0?'+'+(Math.round(aero*10)/10)+' Car Perf expected':'',rel>0?'+'+(Math.round(rel*10)/10)+' Reliability expected':''].filter(Boolean).join(' · ');
+      var body='<div class="card cardp"><div class="fs13" style="margin-bottom:6px">🚚 '+pkgs.length+' package'+(pkgs.length>1?'s':'')+' en route · '+when+'</div>'
+        +(gains?'<div class="fs12 mut">'+gains+'</div>':'')
+        +'</div>';
+      window._hqAddPanel('car','hq-car-enroute','Upgrades En Route',body,'Upgrade Windows');
     } catch(e){}
   };
   // Detail panels that used to live only in the classic pages.  These are intentionally
@@ -34903,7 +35187,7 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       var host=document.createElement('div'); host.id='hq-guide-host';
       host.style.cssText='position:fixed;inset:0;z-index:100002;background:rgba(10,12,18,.62);overflow:auto;padding:26px 14px;display:flex;justify-content:center;align-items:flex-start';
       var box=document.createElement('div');
-      box.style.cssText='position:relative;width:min(1120px,100%);background:#eceef3;border-radius:18px;padding:20px 22px 26px;box-shadow:0 28px 90px rgba(13,16,22,.4)';
+      box.style.cssText='position:relative;width:min(1120px,100%);background:'+(document.documentElement.getAttribute('data-theme')==='dark'?'#101319':'#eceef3')+';border-radius:18px;padding:20px 22px 26px;box-shadow:0 28px 90px rgba(13,16,22,.4)';
       var closeBtn=document.createElement('button');
       closeBtn.setAttribute('aria-label','Close guide');
       closeBtn.textContent='\u2715';
@@ -35264,6 +35548,18 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
           return false;
         } catch(e){ return true; }
       };
+      // Shared analytics context for weekend actions, so every event carries the same
+      // season/race dimensions and GA needs one registered dimension per name, not twenty.
+      var _evCtx = function(extra){
+        var g=(typeof State!=='undefined'&&State.game)||{};
+        var o={season:g.season||0, race_number:g.raceIndex||0};
+        if(extra) for(var k in extra) o[k]=extra[k];
+        return o;
+      };
+      window.__f1dEvCtx = _evCtx;
+      // Note: the shell handles its own openStrategy button via its native overlay and never
+      // emits the action, so this listener only runs for programmatic callers. Nothing is
+      // tracked here — strategy_set on confirm/auto is the meaningful signal.
       rc.on('openStrategy',_hqOpenStrategy);
       rc.on('confirmStrategyHQ',function(p){
         if(window._hqOffseasonGuard()) return;
@@ -35279,11 +35575,16 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
           Storage.autosave();
           var label=r._chosenStrategy==='split'?'Split Strategy':r._chosenStrategy==='auto'?'Auto Strategy':((DATA.getStrategyOptions(r,r._weatherRisk||0).options.find(function(o){return o.id===r._chosenStrategy;})||{}).label||'Strategy');
           try { rc.toast('Strategy locked: '+label,'success'); } catch(e){}
+          // The manual-vs-auto split: the single clearest signal on whether the pit wall
+          // is a feature people use or one they click past.
+          window.__f1dEv('strategy_set',_evCtx({mode:r._chosenStrategy||'unknown',source:'planner',
+            per_driver:Object.keys(p.driverStrategies||{}).length>0}));
           window._hqScreen='dashboard';window._hqRC.render(window._buildHQAll());window._hqRC.show('dashboard');
         } catch(e){ console.warn(e);try{rc.toast('Could not save that strategy','error');}catch(e2){} }
       });
       rc.on('setAutoStrategy',function(){
         if(window._hqOffseasonGuard()) return;
+        window.__f1dEv('strategy_set',_evCtx({mode:'auto',source:'dashboard',per_driver:false}));
         try { GameActions.setAutoStrategyDash(); } catch(e){}
         try { window._hqRC.render(window._buildHQAll()); window._hqRC.show('dashboard'); } catch(e){}
       });
@@ -35293,6 +35594,7 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
         if(window._hqOffseasonGuard()) return;
         if(!_hqStrategyReady()) return;
         if(window.__hqBusy) return; window.__hqBusy=true; setTimeout(function(){window.__hqBusy=false;},700);
+        window.__f1dEv('weekend_advanced',_evCtx({method:'sim_weekend'}));
         try { if(typeof GameActions!=='undefined' && GameActions.simRace){ GameActions.simRace(); } } catch(e){}
         try { window._hqScreen='raceResult';window._hqRC.render(window._buildHQAll()); window._hqRC.show('raceResult'); } catch(e){}
       };
@@ -35329,6 +35631,7 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       rc.on('simSprint', function(){
         if(window._hqOffseasonGuard()) return;
         if(window.__hqBusy) return; window.__hqBusy=true; setTimeout(function(){window.__hqBusy=false;},700);
+        window.__f1dEv('weekend_advanced',_evCtx({method:'sim_sprint'}));
         try { if(typeof GameActions!=='undefined' && GameActions.simSprint){ GameActions.simSprint(); } } catch(e){}
         try { window._hqScreen='raceResult';window._hqRC.render(window._buildHQAll()); window._hqRC.show('raceResult'); } catch(e){}
       });
@@ -35344,6 +35647,7 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       rc.on('simHalf', function(){
         if(window._hqOffseasonGuard()) return;
         if(window.__hqBusy) return; window.__hqBusy=true; setTimeout(function(){window.__hqBusy=false;},1100);
+        window.__f1dEv('weekend_advanced',_evCtx({method:'sim_half_season'}));
         try { if(typeof GameActions!=='undefined' && GameActions.simHalfSeason){ GameActions.simHalfSeason(); } } catch(e){}
         try {
           setTimeout(window._hqRefresh, 220);
@@ -35352,12 +35656,14 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       rc.on('simQuarter', function(){
         if(window._hqOffseasonGuard()) return;
         if(window.__hqBusy) return; window.__hqBusy=true; setTimeout(function(){window.__hqBusy=false;},1100);
+        window.__f1dEv('weekend_advanced',_evCtx({method:'sim_quarter_season'}));
         try { if(typeof GameActions!=='undefined' && GameActions.simQuarter){ GameActions.simQuarter(); } } catch(e){}
         setTimeout(window._hqRefresh, 220);
       });
       rc.on('simSeasonEnd', function(){
         if(window._hqOffseasonGuard()) return;
         if(window.__hqBusy) return; window.__hqBusy=true; setTimeout(function(){window.__hqBusy=false;},1100);
+        window.__f1dEv('weekend_advanced',_evCtx({method:'sim_season_end'}));
         try { if(typeof GameActions!=='undefined' && GameActions.simRemainingSeason){ GameActions.simRemainingSeason(); } } catch(e){}
         // The season-end prompt is a shared modal; the watchdog lifts it above Team HQ.
         setTimeout(window._hqRefresh, 260);
@@ -35369,10 +35675,11 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
         try {
           if(r && r.sprint){
             if(!r.sprintQualiDone){_hqSimSprintQuali();return;}
-            if(!r.sprintDone){window._hqReveal('race');GameActions.watchSprintFromDash&&GameActions.watchSprintFromDash();return;}
+            if(!r.sprintDone){window.__f1dEv('weekend_advanced',_evCtx({method:'watch_sprint'}));window._hqReveal('race');GameActions.watchSprintFromDash&&GameActions.watchSprintFromDash();return;}
           }
           if(r && !r.qualiDone){_hqSimGpQuali();return;}
           if(!_hqStrategyReady()) return;
+          window.__f1dEv('weekend_advanced',_evCtx({method:'watch_race'}));
           window._hqReveal('race');
           GameActions.watchRaceFromDash && GameActions.watchRaceFromDash();
         } catch(e){ console.warn(e); }
@@ -35410,8 +35717,8 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       });
       rc.on('setComponentFocus', function(p){ try { if(GameActions.setComponentFocus) GameActions.setComponentFocus(p.qi,p.group,p.value); Storage.autosave(); } catch(e){} window._hqRefresh(); });
       rc.on('setQuarterDiversion', function(p){ try { if(GameActions.setQuarterDiversion) GameActions.setQuarterDiversion(p.qi,p.value); Storage.autosave(); } catch(e){} });
-      rc.on('applyQuarterDev', function(p){ try { if(GameActions.applyQuarterDev) GameActions.applyQuarterDev(p.qi); } catch(e){} window._hqRefresh(); });
-      rc.on('takeNewPU', function(){ try { if(GameActions.takeNewPU) GameActions.takeNewPU(); } catch(e){} window._hqRefresh(); });
+      rc.on('applyQuarterDev', function(p){ try { window.__f1dEv('car_dev',window.__f1dEvCtx({action:'apply_upgrade_window',quarter:(p&&p.qi)||0})); if(GameActions.applyQuarterDev) GameActions.applyQuarterDev(p.qi); } catch(e){} window._hqRefresh(); });
+      rc.on('takeNewPU', function(){ try { window.__f1dEv('car_dev',window.__f1dEvCtx({action:'take_new_pu'})); if(GameActions.takeNewPU) GameActions.takeNewPU(); } catch(e){} window._hqRefresh(); });
       rc.on('openCarSetup', function(){
         try {
           window._hqScreen='car';
@@ -35506,17 +35813,17 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       function _hqElevateModal(){ try { var m=document.getElementById('driver-detail-modal'); if(m && !m.classList.contains('hidden')) m.style.zIndex='100000'; } catch(e){} }
       function _hqDriverRef(p){ p=p||{}; var ds=(State.game&&State.game.drivers)||[], d=null; if(p.id!=null) d=ds.find(function(x){return String(x.id)===String(p.id);}); if(!d&&p.name) d=ds.find(function(x){return x.name===p.name;}); return d; }
       function _hqStaffRoleId(t,role){ try { var sf=(t&&t.staff)||{}; if(sf[role]) return role; return Object.keys(sf).find(function(k){ var m=(DATA.staffRoles||[]).find(function(r){return r.id===k;}); return m && m.name===role; })||null; } catch(e){ return null; } }
-      rc.on('releaseDriver', function(p){ if(!hasGame())return; var d=_hqDriverRef(p); if(d&&GameActions.releaseDriver) GameActions.releaseDriver(d.id); window._hqRefresh(); });
+      rc.on('releaseDriver', function(p){ if(!hasGame())return; var d=_hqDriverRef(p); if(d&&GameActions.releaseDriver){ window.__f1dEv('driver_released',window.__f1dEvCtx({driver_name:d.name||'?',rating:Math.round(d.rating||0)})); GameActions.releaseDriver(d.id); } window._hqRefresh(); });
       rc.on('renewDriver', function(p){ if(!hasGame())return; var d=_hqDriverRef(p); if(d&&GameActions.renewDriver){ GameActions.renewDriver(d.id); _hqElevateModal(); } });
       rc.on('openTalks', function(p){ if(!hasGame())return; var d=_hqDriverRef(p); if(d&&GameActions.renewDriver){ GameActions.renewDriver(d.id); _hqElevateModal(); } });
       rc.on('promoteReserve', function(p){ if(!hasGame())return; var d=_hqDriverRef(p); if(d&&GameActions.promoteReserve){ GameActions.promoteReserve(d.id); _hqElevateModal(); } window._hqRefresh(); });
-      rc.on('hireStaff', function(p){ if(!hasGame())return; p=p||{}; try { var idx=(p.index!=null?p.index:(State.game.staffMarket||[]).findIndex(function(m){return m.name===p.name;})); if(idx>=0&&GameActions.hireStaff) GameActions.hireStaff(idx); } catch(e){} window._hqRefresh(); });
-      rc.on('renewStaff', function(p){ if(!hasGame())return; p=p||{}; try { var t=T_(State.game.playerTeamId), roleId=_hqStaffRoleId(t,p.role); if(roleId&&GameActions.renewStaff) GameActions.renewStaff(roleId); } catch(e){} window._hqRefresh(); });
-      rc.on('releaseStaff', function(p){ if(!hasGame())return; p=p||{}; try { var t=T_(State.game.playerTeamId), roleId=_hqStaffRoleId(t,p.role); if(roleId&&GameActions.fireStaff) GameActions.fireStaff(roleId); } catch(e){} window._hqRefresh(); });
-      rc.on('promoteJunior', function(p){ if(!hasGame())return; var d=_hqDriverRef(p); if(d&&GameActions.promoteJunior) GameActions.promoteJunior(d.id,'reserve'); window._hqRefresh(); });
+      rc.on('hireStaff', function(p){ if(!hasGame())return; p=p||{}; try { var idx=(p.index!=null?p.index:(State.game.staffMarket||[]).findIndex(function(m){return m.name===p.name;})); if(idx>=0&&GameActions.hireStaff){ var _sm=(State.game.staffMarket||[])[idx]||{}; window.__f1dEv('staff_change',window.__f1dEvCtx({action:'hire',role:_sm.roleId||'?',rating:Math.round(_sm.rating||0),salary:_sm.salary||0})); GameActions.hireStaff(idx); } } catch(e){} window._hqRefresh(); });
+      rc.on('renewStaff', function(p){ if(!hasGame())return; p=p||{}; try { var t=T_(State.game.playerTeamId), roleId=_hqStaffRoleId(t,p.role); if(roleId&&GameActions.renewStaff){ window.__f1dEv('staff_change',window.__f1dEvCtx({action:'renew',role:p.role||'?'})); GameActions.renewStaff(roleId); } } catch(e){} window._hqRefresh(); });
+      rc.on('releaseStaff', function(p){ if(!hasGame())return; p=p||{}; try { var t=T_(State.game.playerTeamId), roleId=_hqStaffRoleId(t,p.role); if(roleId&&GameActions.fireStaff){ window.__f1dEv('staff_change',window.__f1dEvCtx({action:'release',role:p.role||'?'})); GameActions.fireStaff(roleId); } } catch(e){} window._hqRefresh(); });
+      rc.on('promoteJunior', function(p){ if(!hasGame())return; var d=_hqDriverRef(p); if(d&&GameActions.promoteJunior){ window.__f1dEv('academy_action',window.__f1dEvCtx({action:'promote',driver_name:d.name||'?',rating:Math.round(d.rating||0)})); GameActions.promoteJunior(d.id,'reserve'); } window._hqRefresh(); });
       rc.on('promoteJuniorRace', function(p){ if(!hasGame())return; var d=_hqDriverRef(p); if(!d||!GameActions.promoteJunior)return; if(confirm('Promote '+d.name+' to a race seat? This will displace your second race driver.')) GameActions.promoteJunior(d.id,'race'); window._hqRefresh(); });
-      rc.on('loanJunior', function(p){ if(!hasGame())return; var d=_hqDriverRef(p); if(d&&GameActions.showLoanModal){ GameActions.showLoanModal(d.id); _hqElevateModal(); elevateOpenHQModals(); } });
-      rc.on('upgradeAcademy', function(){ if(!hasGame())return; if(GameActions.upgradeAcademy) GameActions.upgradeAcademy(); window._hqRefresh(); });
+      rc.on('loanJunior', function(p){ if(!hasGame())return; var d=_hqDriverRef(p); if(d&&GameActions.showLoanModal){ window.__f1dEv('academy_action',window.__f1dEvCtx({action:'loan_opened',driver_name:d.name||'?'})); GameActions.showLoanModal(d.id); _hqElevateModal(); elevateOpenHQModals(); } });
+      rc.on('upgradeAcademy', function(){ if(!hasGame())return; if(GameActions.upgradeAcademy){ window.__f1dEv('academy_action',window.__f1dEvCtx({action:'upgrade'})); GameActions.upgradeAcademy(); } window._hqRefresh(); });
       rc.on('releaseJunior', function(p){ if(!hasGame())return; var d=_hqDriverRef(p); if(d&&GameActions.releaseJunior) GameActions.releaseJunior(d.id); window._hqRefresh(); });
       rc.on('signJunior', function(){ if(!hasGame())return; try { if(GameActions.showRecruitJunior){ GameActions.showRecruitJunior(); _hqElevateModal(); } } catch(e){} });
       rc.on('signProspect', function(p){ if(!hasGame())return; var d=_hqDriverRef(p); if(d) window._hqShowDriverProfile({id:d.id,name:d.name}); });
@@ -35534,6 +35841,8 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
         try { GameActions.negotiateSponsor(p&&p.ref); _hqElevateModal(); elevateOpenHQModals(); } catch(e){}
       });
       rc.on('terminateSponsor', function(p){
+        // The churn half of sponsor_signed — previously only acquisitions were visible.
+        try { var _sp=((State.game&&State.game.sponsors)||[])[(p&&p.index)]||{}; window.__f1dEv('sponsor_terminated',window.__f1dEvCtx({sponsor_type:_sp.type||'?',value:_sp.value||0,seasons_left:_sp.seasonsLeft||0})); } catch(e){}
         try { if(GameActions.terminateSponsor) GameActions.terminateSponsor(p&&p.index); } catch(e){}
         window._hqScreen='finance'; setTimeout(window._hqRefresh,40);
       });
@@ -35542,12 +35851,12 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
         try { window._hqScreen='finance'; window._hqRC.render(window._buildHQAll()); window._hqRC.show('finance'); setTimeout(window._hqEnhance,0); } catch(e){}
       });
       rc.on('acceptTeamOffer', function(p){
-        if(!hasGame()||!p)return; if(confirm('Accept the offer from '+p.name+' and leave your current team?')){ try { UI.acceptNewTeamOffer(p.teamId); } catch(e){} window._hqScreen='offseason'; setTimeout(window._hqRefresh,60); }
+        if(!hasGame()||!p)return; if(confirm('Accept the offer from '+p.name+' and leave your current team?')){ window.__f1dEv('career_move',window.__f1dEvCtx({action:'accept_offer',to_team:p.name||'?'})); try { UI.acceptNewTeamOffer(p.teamId); } catch(e){} window._hqScreen='offseason'; setTimeout(window._hqRefresh,60); }
       });
       rc.on('declineTeamOffers', function(){ if(!hasGame())return; State.game.teamOffers=[]; Storage.autosave(); window._hqScreen='offseason'; window._hqRefresh(); });
       rc.on('blockPoach', function(p){ if(!hasGame())return; try { GameActions.blockPoach(p&&p.index); } catch(e){} window._hqScreen='offseason'; window._hqRefresh(); });
       rc.on('allowPoach', function(p){ if(!hasGame())return; try { GameActions.allowPoach(p&&p.index); } catch(e){} window._hqScreen='offseason'; window._hqRefresh(); });
-      rc.on('requestTeamMove', function(p){ if(!hasGame())return; try { GameActions.requestTeamMove(p&&p.teamId); } catch(e){} window._hqScreen='offseason'; setTimeout(window._hqRefresh,60); });
+      rc.on('requestTeamMove', function(p){ if(!hasGame())return; window.__f1dEv('career_move',window.__f1dEvCtx({action:'request_move'})); try { GameActions.requestTeamMove(p&&p.teamId); } catch(e){} window._hqScreen='offseason'; setTimeout(window._hqRefresh,60); });
 
       // ---- landing actions ----
       rc.on('continue', function(saveId){
@@ -35586,8 +35895,8 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
         try { (typeof UI!=='undefined') && UI.showPage && UI.showPage('game'); } catch(e){}
         try { window._hqRC.render(window._buildHQAll()); window._hqRC.show('offseason'); } catch(e){}
       });
-      rc.on('exportSave', function(){ try { (typeof Storage!=='undefined') && Storage.exportSaveFile && Storage.exportSaveFile(); } catch(e){} });
-      rc.on('importSaveData', function(p){ p=p||{}; try { if(p.text && typeof Storage!=='undefined' && Storage.importSaveFile) Storage.importSaveFile(p.text); } catch(e){} });
+      rc.on('exportSave', function(){ window.__f1dEv('save_transfer',{action:'export'}); try { (typeof Storage!=='undefined') && Storage.exportSaveFile && Storage.exportSaveFile(); } catch(e){} });
+      rc.on('importSaveData', function(p){ p=p||{}; window.__f1dEv('save_transfer',{action:'import'}); try { if(p.text && typeof Storage!=='undefined' && Storage.importSaveFile) Storage.importSaveFile(p.text); } catch(e){} });
       rc.on('deleteSave', function(saveId){
         var sid = (typeof saveId==='string') ? parseInt(saveId,10) : saveId;
         if(!Number.isInteger(sid) || sid<0) return;
@@ -35669,6 +35978,15 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
           (typeof UI!=='undefined') && UI.showPage && UI.showPage('game');
           try { window._hqRC.render(window._buildHQAll()); window._hqRC.show('offseason'); } catch(e){}
           try { UI.toast('\ud83c\udfc1 Weekly Challenge started — '+(State.game.weeklyChallenge.format==='mini'?('a '+State.game.weeklyChallenge.rounds+'-round run to the '+ch.gp+' with '+((State.getPlayerTeam()||{}).name||'your team')):('take '+(State.getPlayerTeam()||{}).name+' to the '+ch.gp))+'!','success'); } catch(e){}
+          // Analytics: challenge take-up. Paired with challenge_completed this gives the
+          // completion rate, which is the metric the v3.0.3 mini-season format is meant to move.
+          try {
+            if(typeof gtag!=='undefined'){
+              var _wc=State.game.weeklyChallenge;
+              gtag('event','challenge_started',{challenge_id:_wc.id,gp:_wc.gp,team:(State.getPlayerTeam()||{}).name||ch.teamId,
+                format:_wc.format,rounds:_wc.rounds||0,week_key:_wc.weekKey||'',offseason:!!ch.offseason});
+            }
+          } catch(e){}
         } catch(e){}
       });
       // ---- race result actions ----
@@ -35699,20 +36017,48 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       rc.on('switchEngine', function(p){ p=p||{}; try { if(typeof GameActions!=='undefined' && GameActions.switchEngine && p.id) GameActions.switchEngine(p.id); } catch(e){} refreshOffseason(); });
       rc.on('allocateWinterDev', function(p){ p=p||{}; try { var g=State.game; if(!g.offseasonBudget) g.offseasonBudget={aero:0,engine:0,reliability:0,facilities:0}; var area=p.area, delta=p.delta||0; if(['aero','engine','reliability','facilities'].indexOf(area)<0) return; var t=(g.teams||[]).find(function(x){return String(x.id)===String(g.playerTeamId);})||{}; var budget=Math.max(5, Math.round((t.revenue||0)*0.35/5)*5); var spent=(g.offseasonBudget.aero||0)+(g.offseasonBudget.engine||0)+(g.offseasonBudget.reliability||0)+(g.offseasonBudget.facilities||0); var remaining=budget-spent; var cur=g.offseasonBudget[area]||0; var next=Math.max(0, cur+delta); if(delta>0 && delta>remaining) next=cur+remaining; g.offseasonBudget[area]=next; Storage.autosave(); } catch(e){} refreshOffseason(); });
       rc.on('investRegs', function(p){ p=p||{}; try { State.game.regsInvestment = Math.max(0,Math.min(100,p.pct||0))/100; } catch(e){} refreshOffseason(); });
-      rc.on('beginSeason', function(){ try { (typeof GameActions!=='undefined') && GameActions.beginSeason && GameActions.beginSeason(); } catch(e){} setTimeout(function(){ try { window._hqRC.render(window._buildHQAll()); window._hqRC.show('dashboard'); } catch(e){} window._hqRestore(); }, 100); });
+      rc.on('beginSeason', function(){
+        // Winter dev and regs investment are slider-driven, so the per-press handlers would
+        // emit hundreds of meaningless events. The allocation that actually matters is the
+        // one locked in when the season starts, so it is reported once, here.
+        try {
+          var _g=State.game||{}, _b=_g.offseasonBudget||{};
+          window.__f1dEv('winter_dev_locked',{season:_g.season||0,
+            aero:_b.aero||0, engine:_b.engine||0, reliability:_b.reliability||0, facilities:_b.facilities||0,
+            total:(_b.aero||0)+(_b.engine||0)+(_b.reliability||0)+(_b.facilities||0),
+            regs_investment:Math.round((_g.regsInvestment||0)*100)});
+        } catch(e){}
+        try { (typeof GameActions!=='undefined') && GameActions.beginSeason && GameActions.beginSeason(); } catch(e){} setTimeout(function(){ try { window._hqRC.render(window._buildHQAll()); window._hqRC.show('dashboard'); } catch(e){} window._hqRestore(); }, 100); });
 
 
-      rc.on('community', function(){ try { window.open('https://www.reddit.com/r/f1dynasty/','_blank','noopener'); } catch(e){} });
+      rc.on('community', function(){ window.__f1dEv('outbound_click',{target:'reddit'}); try { window.open('https://www.reddit.com/r/f1dynasty/','_blank','noopener'); } catch(e){} });
       // Full release notes from the new landing (v3.0.2) — the classic changelog dialog
       // already renders above Team HQ since the v3.0.1 modal layering fix.
-      rc.on('showChangelog', function(){ try { (typeof UI!=='undefined') && UI.showChangelog && UI.showChangelog(); } catch(e){} });
-      rc.on('discord', function(){ try { window.open('https://discord.gg/w3R97uTBW','_blank','noopener'); } catch(e){} });
-      rc.on('rosterEditor', function(){ window._hqReveal('nav'); try { (typeof UI!=='undefined') && UI.openEditor && UI.openEditor(hasGame()?'game':'landing'); } catch(e){} });
-      rc.on('createTeam', function(){ window._hqReveal('nav'); try { (typeof UI!=='undefined') && UI.openEditor && UI.openEditor(hasGame()?'game':'landing'); } catch(e){} });
+      rc.on('showChangelog', function(){ window.__f1dEv('changelog_opened',{version:(window.__f1dVersion||'')}); try { (typeof UI!=='undefined') && UI.showChangelog && UI.showChangelog(); } catch(e){} });
+      rc.on('discord', function(){ window.__f1dEv('outbound_click',{target:'discord'}); try { window.open('https://discord.gg/w3R97uTBW','_blank','noopener'); } catch(e){} });
+      rc.on('rosterEditor', function(){ window.__f1dEv('editor_opened',{source:'roster',in_game:hasGame()}); window._hqReveal('nav'); try { (typeof UI!=='undefined') && UI.openEditor && UI.openEditor(hasGame()?'game':'landing'); } catch(e){} });
+      rc.on('createTeam', function(){ window.__f1dEv('editor_opened',{source:'create_team',in_game:hasGame()}); window._hqReveal('nav'); try { (typeof UI!=='undefined') && UI.openEditor && UI.openEditor(hasGame()?'game':'landing'); } catch(e){} });
       rc.on('cloudSignInGoogle', function(){
-        try { CloudSave.signInWithGoogle(); } catch(e){ try { rc.toast && rc.toast('Google sign-in failed: '+e.message, 'error'); } catch(e2){} }
+        // Attempt and failure are reported separately: a large gap between the two is the
+        // only way to notice OAuth breaking for a subset of players, which previously
+        // surfaced only as a toast the player saw and nobody else did.
+        window.__f1dEv('cloud_signin',{step:'attempt',source:'hq'});
+        var _fail = function(err){
+          var msg = String((err&&err.message)||err||'unknown');
+          window.__f1dEv('cloud_signin',{step:'failed',source:'hq',reason:msg.slice(0,100)});
+          try { rc.toast && rc.toast('Google sign-in failed: '+msg, 'error'); } catch(e2){}
+        };
+        // signInWithGoogle() is async, so a rejected promise never reached the old
+        // sync catch — the failure toast could not fire for the most likely failure mode.
+        try {
+          var _p = CloudSave.signInWithGoogle();
+          if(_p && typeof _p.then==='function'){
+            _p.then(function(){ window.__f1dEv('cloud_signin',{step:'success',source:'hq'}); }, _fail);
+          }
+        } catch(e){ _fail(e); }
       });
       rc.on('cloudSignOut', function(){
+        window.__f1dEv('cloud_signout',{source:'hq'});
         try { CloudSave.signOut().then(function(){ try { rc.render(window._buildHQLandingData()); } catch(e){} }); } catch(e){}
       });
       rc.on('cloudLoadSaves', async function(){
