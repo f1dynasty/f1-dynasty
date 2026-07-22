@@ -49,7 +49,7 @@
   gtag('config', 'G-6B4MBFG3FX');
   // Single source of truth for the build number. The HQ landing reads this rather than
   // carrying its own literal, so a release bump touches the same number of places as before.
-  window.__f1dVersion = '3.0.4';
+  window.__f1dVersion = '3.0.5';
   // Analytics helper. Every call site is fire-and-forget: a missing gtag (ad blocker,
   // offline, file:// testing) or a bad param must never break gameplay, so the guard and
   // the try/catch live here once rather than being repeated at ~40 call sites.
@@ -954,12 +954,12 @@ body.hq-skin #driver-detail-modal .modal-box:has(.le-head)::before{display:none}
         </div>
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:16px;max-width:560px;padding:16px 18px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
-          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v3.0.4: What's New</div>
-          <div style="font-size:14px;font-weight:900;color:#111;margin-bottom:10px">Dark mode everywhere + the community fix batch</div>
+          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v3.0.5: What's New</div>
+          <div style="font-size:14px;font-weight:900;color:#111;margin-bottom:10px">Long careers, fairer racing and smoother comebacks</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 16px">
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🌙</span><span><strong>Dark mode everywhere</strong>: the pit wall race viewer, Roster Editor, Live Editor and Guide now follow your theme — no more white flash on race day.</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🔧</span><span><strong>Community fixes</strong>: winter results are back, the race feed scrolls, upgrade arrivals show on the Car page, roster imports keep junior-team links, and long saves get real regulation shake-ups.</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:#888;font-weight:800;flex-shrink:0">🏁</span><span><strong>Plus Weekly Challenge 2.0 from this week</strong>: every challenge is a fixed 5-round mini-season ending at the real week's Grand Prix — full notes below.</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>Your career continues after a sacking</strong>: see your offers, join a new team and get straight back to work. Thanks PurpleHead.</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🏁</span><span><strong>More believable racing and records</strong>: impossible 20-second gap jumps are gone and the All-Time Ladder shows full career stats. Thanks IronicGerman.</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:#888;font-weight:800;flex-shrink:0">⚖️</span><span><strong>Healthier long saves</strong>: morale, development budgets and regulation resets have been rebalanced, and interface switching now protects your latest save. Thanks Hennersw1.</span></div>
           </div>
           <button onclick="UI.showChangelog()" style="margin-top:10px;width:100%;padding:7px;background:none;border:1.5px solid rgba(192,57,43,.3);border-radius:7px;font-size:11px;font-weight:700;color:var(--red);cursor:pointer">Full release notes →</button>
         </div>
@@ -1090,7 +1090,7 @@ body.hq-skin #driver-detail-modal .modal-box:has(.le-head)::before{display:none}
       </div>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v3.0.4</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">Reddit</a> · <a href="https://discord.gg/w3R97uTBW" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">Discord</a></div>
+        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v3.0.5</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">Reddit</a> · <a href="https://discord.gg/w3R97uTBW" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">Discord</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -3730,6 +3730,30 @@ function getUpgradeWindowThresholds(g){
   if(w2 > total - 2) w2 = total - 2;
   if(w2 <= w1) w2 = null;
   return [w1, w2];
+}
+
+// Development allowance is based on both available resources and the team's annual
+// commercial income. Older difficulty logic repeatedly multiplied the whole bank balance
+// every winter, which eventually forced Nightmare saves to the $40M floor and left every
+// upgrade window stuck at $6M despite healthy $200M+ income. Difficulty now reduces the
+// yearly allowance without destroying accumulated capital, and this helper self-heals saves
+// that have already reached the old floor. (v3.0.5, reported by Hennersw1.)
+function getDevelopmentWindowBudget(team, g){
+  if(!team) return 0;
+  const cashAllowance = Math.max(0, Number(team.revenue)||0) * 0.15;
+  let annualIncome = 0;
+  try {
+    const sponsors = sumSponsorIncome((g && g.sponsors)||[]);
+    const pos = Math.max(1, State.getConstructorSeasonPos(team.id)||10);
+    const prize = 42 + Math.round((11-pos)*3.5);
+    const merchandise = Math.round((team.prestige||0)*0.3);
+    const works = _liveEngines().some(e=>(e.worksTeams||[]).includes(team.id)) ? 20 : 0;
+    const extras = ((g && g.lastObjBonus)||0) + (team._loanIncomeThisSeason||0);
+    annualIncome = sponsors + prize + merchandise + works + extras;
+  } catch(e){}
+  const diff = getDiff(g||{});
+  const incomeAllowance = annualIncome * 0.15 * (diff.budgetMult||1);
+  return Math.max(10, Math.round(Math.max(cashAllowance, incomeAllowance)));
 }
 
 // Combined in-season window effectiveness for the player's performance packages
@@ -7830,7 +7854,9 @@ const Sim = {
         - _teamWkndRace * 0.165
         - ((driver.racePace||70) - (driver._formDip?driver._formDip.pacePenalty:0)) * 0.064
         - ((driver.consistency||70) - (driver._formDip?driver._formDip.consPenalty:0)) * 0.018
-        - ((driver.morale || 75) - 70) * 0.02
+        // Morale matters, but cannot outweigh several points of driver ability every lap.
+        // At the extremes its race-pace effect is capped at roughly +/-0.15s per lap.
+        - clamp(((driver.morale || 75) - 70) * 0.006, -0.16, 0.14)
         + setupPenalty
         + setupBonus
         + _nmTop3Edge
@@ -8189,9 +8215,13 @@ const Sim = {
               const st = gsorted[_k], ahead = gsorted[_k-1];
               const paceDelta = (st.baseLap||0) - (ahead.baseLap||0); // >0 = st is slower
               const curGap = st.cumulativeTime - _lead.cumulativeTime;
-              if(paceDelta <= 0.12 && curGap > _bFloor){
-                // Well-matched: pull into a tight, racy interval (still strictly ordered).
-                const battleGap = Math.min(curGap, _bFloor + randFloat(0.35, 1.7));
+              const intervalToAhead = curGap - _bFloor;
+              if(paceDelta <= 0.12 && intervalToAhead > 0 && intervalToAhead <= 3.5){
+                // Only compress a battle that already exists. The previous implementation could
+                // turn a 20-second deficit into less than two seconds in a single lap. A matched
+                // car may now close at most 0.75s per lap and never jumps into an artificial fight.
+                const targetGap = _bFloor + randFloat(0.35, 1.7);
+                const battleGap = Math.max(_bFloor + 0.12, Math.min(curGap, Math.max(targetGap, curGap - 0.75)));
                 st.cumulativeTime = _lead.cumulativeTime + battleGap;
                 st._prevGap = battleGap;
                 _bFloor = battleGap;
@@ -10699,13 +10729,14 @@ events.push({lap:r.dnfLap||laps-5, type:'dnf', driverId:r.driverId, text:`⭐ ${
           const mate = pair.find(p => p.d.id !== d.id);
           if(mate) {
             const gap = (mate.d.seasonPoints||0) - (d.seasonPoints||0);
-            if(gap >= 90) delta -= 1.6;
-            else if(gap >= 45) delta -= 1.0;
-            else if(gap >= 20) delta -= 0.5;
+            if(gap >= 90) delta -= 0.8;
+            else if(gap >= 45) delta -= 0.5;
+            else if(gap >= 20) delta -= 0.2;
             if(!r.dnf && !mate.r.dnf && (r.position||99) < (mate.r.position||99)) delta += 0.4;
           }
           // Gentle pull toward a sustainable baseline — stops morale pinning at 98 all season
-          delta += (72 - (d.morale||75)) * 0.02;
+          // Stronger low-morale recovery prevents teammate-gap feedback loops.
+          delta += (72 - (d.morale||75)) * 0.05;
           d.morale = clamp((d.morale||75) + stochRound(delta), 25, 98);
         });
       });
@@ -13214,6 +13245,9 @@ const spons=sumSponsorIncome(g.sponsors||[]);
       ];
       const regsType = regsTypes[randInt(0, regsTypes.length-1)];
       const avgPerf = g.teams.reduce((s,t)=>s+getTeamOverallCar(t),0)/g.teams.length;
+      // Reset the technology baseline as well as compressing the order. Pulling teams only
+      // toward the existing average preserved a 92-rated field at 92 forever in long saves.
+      const resetCentre = regsType.fullReset ? 78 : regsType.aeroShift ? 80 : regsType.powerShift ? 82 : 83;
 
       // Each team draws a regs aptitude: how well they interpret the new rules.
       // This persists as their structural advantage/disadvantage for the whole era.
@@ -13237,7 +13271,11 @@ const spons=sumSponsorIncome(g.sponsors||[]);
         const dominanceGap = Math.max(0, getTeamOverallCar(team) - avgPerf);
         const elitePenalty = Math.max(0, (team.carPerformance||0) - 90) * 0.24;
         const dominancePenalty = dominanceGap * 0.26 + elitePenalty;
-        const compression = (avgPerf - getTeamOverallCar(team)) * compressionStrength - dominancePenalty;
+        const currentOverall = getTeamOverallCar(team);
+        const centredOverall = currentOverall + (resetCentre - avgPerf);
+        const compression = (centredOverall - currentOverall)
+          + (resetCentre - centredOverall) * compressionStrength
+          - dominancePenalty;
         // Aptitude spreads teams after compression — good readers recover faster
         const infraMitigation = clamp((((team.developmentRate||70)-72) * 0.010) + (((team.facilities||70)-72) * 0.007), -0.15, 0.24);
         const aptitudeEffect = team._regsAptitude * spreadSd + infraMitigation * spreadSd * 0.45;
@@ -17678,7 +17716,7 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
     const racesDone = g.calendar.filter(r=>r.raceDone).length;
     const totalRaces = g.calendar.length;
     const seasonProgress = racesDone/totalRaces; // 0-1
-    const inSeasonBudget = Math.round(team.revenue * 0.15); // 15% for in-season
+    const inSeasonBudget = getDevelopmentWindowBudget(team, g);
     const offseasonBudget = Math.max(5, Math.round(team.revenue * 0.35 / 5) * 5); // 35% for offseason — match allocator (rounded to nearest $5M)
     // Pre-seed the true ideal offset so the setup quality label is correct before qualifying
     const _currentRaceForSetup = State.getCurrentRace();
@@ -17720,7 +17758,7 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
     // the season, [7, 14] on the default 24-race calendar
     const qThresholds = getUpgradeWindowThresholds(g);
     const currentQ = qThresholds.reduce((q,t,i)=>t!=null && racesDone>=t?i:q, -1);
-    const qBudget = Math.round(team.revenue * 0.15); // 15% per window
+    const qBudget = getDevelopmentWindowBudget(team, g);
 
     const qLabels = [
       'Mid-Season Upgrade Window',
@@ -18159,7 +18197,7 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
         const _annualExpenses = _dSals + _rSals + _scC + _opsB + _engC + _staffC + _marketingC + _totalDevSpend;
         const _netAnnual = _annualIncome - _annualExpenses;
         const _netColor = _netAnnual >= 20 ? 'var(--grn)' : _netAnnual >= 0 ? 'var(--amber)' : 'var(--red)';
-        const _upgradeWindowBudget = Math.round(team.revenue * 0.15);
+        const _upgradeWindowBudget = getDevelopmentWindowBudget(team, g);
         return `<div style="background:var(--bg2);border:1px solid var(--bd);border-radius:9px;padding:10px 14px;margin-bottom:10px">
           <div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);margin-bottom:6px">💰 Financial Position</div>
           <div style="display:flex;gap:16px;flex-wrap:wrap">
@@ -18179,7 +18217,7 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
     const g = State.game;
     val = parseInt(val);
     const team=State.getPlayerTeam();
-    const qBudget = Math.round(team.revenue*0.15); // matches 2-window budget
+    const qBudget = getDevelopmentWindowBudget(team, g);
     const offseasonBudget = Math.max(5, Math.round(team.revenue*0.35/5)*5); // match allocator
 
     if(section.startsWith('q')){
@@ -18240,7 +18278,7 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
       if(lbl) lbl.textContent=val===0?'No investment':`${val} package${val!==1?'s':''} · ${inImpacts[key]||''}`;
       const dev=g.inSeasonDev;
       let cost=0; for(const k in dev) if(typeof dev[k]==='number') cost+=dev[k]*(costPers[k]||0);
-      const budget=Math.round(team.revenue*0.15);
+      const budget=getDevelopmentWindowBudget(team, g);
       const disp=document.getElementById(`${section}-cost-display`);
       if(disp){disp.textContent=`${formatMoney(cost)} / ${formatMoney(budget)}`;disp.style.color=cost>budget?'var(--red)':'var(--grn)';}
     }
@@ -24258,8 +24296,22 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     const perfBar=this._ownerMoodBar(mood.performance,'Performance');
     const finBar=this._ownerMoodBar(mood.finances,'Finances');
     const total=(mood.performance+mood.finances).toFixed(1);
-    const standings=State.getConstructorStandings();
-    const playerConstrPos = standings.findIndex(s=>s.team.id===g.playerTeamId)+1;
+    let standings=State.getConstructorStandings();
+    // Restore the completed order for offer selection too. All live points are zero after
+    // processOffseason(), but the season archive retains every constructor's final position.
+    try {
+      const archived=(g.history?.seasonStandings||[]).slice(-1)[0];
+      if(archived && Array.isArray(archived.constructors)){
+        const posByTeam={};
+        archived.constructors.forEach(r=>{ posByTeam[String(r.teamId)]=r.position||99; });
+        standings=standings.slice().sort((a,b)=>(posByTeam[String(a.team.id)]||99)-(posByTeam[String(b.team.id)]||99));
+      }
+    } catch(e){}
+    // Offseason processing has already zeroed live points here. Use the completed-season
+    // snapshot; the live table at this point otherwise falls back to team-array order.
+    const snapshotPos = Number(snap.position)||0;
+    const livePos = standings.findIndex(s=>s.team.id===g.playerTeamId)+1;
+    const playerConstrPos = snapshotPos || livePos;
     const totalTeams = (g.teams||[]).length;
     const isBottomTeam = playerConstrPos >= totalTeams - 1; // last or second-to-last
 
@@ -24355,11 +24407,61 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">${teamOfferCards}</div>
         </div>
         <div style="text-align:center;margin-bottom:4px;font-size:11px;color:var(--tx3)">or</div>
-        <button class="btn" style="width:100%;margin-top:4px;background:var(--bg3);color:var(--tx2);border:1px solid var(--bd)" onclick="UI.showPage('landing')">Start a New Game</button>`;
+        <button class="btn" style="width:100%;margin-top:4px;background:var(--bg3);color:var(--tx2);border:1px solid var(--bd)" onclick="UI._firedNewGame()">Start a New Game</button>`;
     }
     document.getElementById('offseason-transfers').innerHTML='';
     document.getElementById('offseason-team-actions').innerHTML='';
-    this.showPage('offseason');
+    // The fired screen used to render only into the classic offseason page. In Team HQ that
+    // page sits BEHIND the HQ iframe (z 99998), so a sacked HQ player saw only the "Resolve
+    // your job situation" toast and could never reach the offers or the New Game button — a
+    // permanent offseason soft-lock (reported by PurpleHead). The fix keeps everything in the
+    // new UI: render the same content as an HQ overlay floating ABOVE the frame (the pattern
+    // the Guide already uses), never dropping the player into the old interface. Classic-UI
+    // players (old UI selected in Settings) still get the original in-page flow. (v3.0.5)
+    var _hqActive = false;
+    try {
+      _hqActive = !!document.getElementById('hq-shell-frame')
+        && localStorage.getItem('f1d_ui')!=='classic'
+        && !/[?&]ui=classic\b/.test(location.search);
+    } catch(e){}
+    if(_hqActive){
+      this._showHQFiredOverlay(document.getElementById('offseason-summary').innerHTML);
+    } else {
+      this.showPage('offseason');
+    }
+  },
+  // HQ-native fired screen: a modal overlay above the Team HQ frame (z 100050 > frame 99998),
+  // so the sacking decision stays in the new UI instead of revealing the classic pages.
+  // Reuses the classic fired-screen markup (its inline UI.acceptNewTeamOffer / New Game /
+  // endCareer handlers work globally); those handlers close this overlay on their way out.
+  _showHQFiredOverlay(bodyHtml){
+    try {
+      var old=document.getElementById('hq-fired-host'); if(old) old.remove();
+      var host=document.createElement('div');
+      host.id='hq-fired-host';
+      host.style.cssText='position:fixed;inset:0;z-index:100050;background:rgba(10,12,18,.72);overflow:auto;padding:26px 14px;display:flex;justify-content:center;align-items:flex-start';
+      var box=document.createElement('div');
+      box.style.cssText='position:relative;width:min(560px,100%);background:var(--bg2,#fff);color:var(--tx,#111);border-radius:16px;padding:22px 22px 26px;box-shadow:0 28px 90px rgba(13,16,22,.5)';
+      box.innerHTML=bodyHtml;
+      host.appendChild(box);
+      document.body.appendChild(host);
+    } catch(e){}
+  },
+  _closeHQFiredOverlay(){ try { var h=document.getElementById('hq-fired-host'); if(h) h.remove(); } catch(e){} },
+  // "Start a New Game" from the fired overlay: close it and return to the HQ landing (team
+  // picker) rather than the classic landing page, keeping the player in the new UI. (v3.0.5)
+  _firedNewGame(){
+    this._closeHQFiredOverlay();
+    try {
+      if(document.getElementById('hq-shell-frame') && window._hqRC && typeof window._buildHQLandingData==='function'){
+        window._hqScreen='landing';
+        window._hqRC.render(window._buildHQLandingData());
+        window._hqRC.show('landing');
+        if(typeof window._hqRestore==='function') window._hqRestore();
+        return;
+      }
+    } catch(e){}
+    this.showPage('landing'); if(typeof this.renderLanding==='function') this.renderLanding();
   },
 
   // Terminal end-of-career for a bottom-team sacking. Deletes the now-unplayable save
@@ -24367,11 +24469,24 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
   // returns to the landing page. (Fix for Snappers5: a fired bottom-team career could
   // otherwise be resumed indefinitely with no offers ever arriving.)
   endCareer(){
+    try { this._closeHQFiredOverlay(); } catch(e){}
     try {
       const slot = Storage._currentSlot();
       if(slot !== -1) Storage.deleteGame(slot);
     } catch(e) { console.warn('endCareer cleanup error:', e); }
     State.game = null;
+    // Return to the HQ landing if the new UI is active, otherwise the classic landing (v3.0.5).
+    var _hqActive=false;
+    try { _hqActive = !!document.getElementById('hq-shell-frame') && localStorage.getItem('f1d_ui')!=='classic' && !/[?&]ui=classic\b/.test(location.search); } catch(e){}
+    if(_hqActive && window._hqRC && typeof window._buildHQLandingData==='function'){
+      try {
+        window._hqScreen='landing';
+        window._hqRC.render(window._buildHQLandingData());
+        window._hqRC.show('landing');
+        if(typeof window._hqRestore==='function') window._hqRestore();
+        return;
+      } catch(e){}
+    }
     this.showPage('landing');
     if(typeof this.renderLanding === 'function') this.renderLanding();
   },
@@ -24504,8 +24619,19 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     try { this.updateHeaderBadges(); } catch(e){}
     this.showPage('offseason');
     this.renderOffseasonPlanning();
+    // The fired overlay's offer cards call this directly. Close the HQ overlay and refresh
+    // Team HQ to the new team's offseason, so the player lands back in the new UI rather than
+    // the classic page (v3.0.5). Fired flags are already cleared above, so HQ renders clean.
+    try { this._closeHQFiredOverlay(); } catch(e){}
+    try {
+      var _prefHQ = (function(){ try { if(/[?&]ui=classic\b/.test(location.search)) return false; return localStorage.getItem('f1d_ui')!=='classic'; } catch(e){ return true; } })();
+      if(_prefHQ && document.getElementById('hq-shell-frame') && typeof window._hqRestore==='function'){
+        window._hqScreen='offseason';
+        window._hqRestore();
+      }
+    } catch(e){}
     const toast=document.createElement('div');
-    toast.style.cssText='position:fixed;top:70px;left:50%;transform:translateX(-50%);background:var(--grn);color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;font-weight:700;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,.3)';
+    toast.style.cssText='position:fixed;top:70px;left:50%;transform:translateX(-50%);background:var(--grn);color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;font-weight:700;z-index:100060;box-shadow:0 4px 12px rgba(0,0,0,.3)';
     const newTeam=State.getTeam(newTeamId);
     toast.textContent=`Welcome to ${newTeam?.name||'your new team'}. Time to prove yourself.`;
     document.body.appendChild(toast);
@@ -24996,8 +25122,17 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const html=`
       <div style="max-height:85vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v3.0.4 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v3.0.5 · Release Notes</div>
         ${[
+    ['v3.0.5','July 2026',[
+            '🐛 Your career can continue after a sacking: the job-offer screen no longer hides behind Team HQ. Accept a new team, start fresh, or end a last-place career cleanly. The game also uses your real final championship position when deciding whether offers are available, rather than zeroed offseason standings. (Reported by PurpleHead.)',
+            '🏁 Drivers no longer "fly" across impossible gaps: evenly matched cars can still close up and fight, but the race simulation can no longer erase a 20-second deficit in a single lap. Closing is limited to realistic steps and battle compression only begins when cars are already near one another. (Reported by IronicGerman.)',
+            '📊 All-Time Ladder records are restored: wins, podiums, poles and points now come from each driver\'s real career totals instead of missing legacy field names, so champions no longer appear with rows of zeroes. (Reported by IronicGerman.)',
+            '⚖️ Morale has been rebalanced: confidence still matters, but extreme morale can no longer overpower several points of driver ability every lap. Low morale also recovers more naturally instead of creating a self-reinforcing teammate-gap spiral. (Reported by Hennersw1.)',
+            '💰 Long-career development budgets have been repaired: Hard and Nightmare now reduce each year\'s development allowance without repeatedly destroying the team\'s entire bank balance. Upgrade windows consider annual commercial income too, automatically freeing existing saves trapped at the old $40M balance / $6M window floor. (Reported by Hennersw1.)',
+            '🔧 Regulation changes create genuine new eras: resets now lower the field toward a fresh technology baseline instead of preserving an already-inflated 90+ average forever. Team preparation and regulation aptitude still decide the winners and losers. (Reported by Hennersw1.)',
+            '💾 Switching between Team HQ and the classic interface is now save-safe: the game confirms your latest progress was written successfully before it reloads. If browser storage is full, the switch is cancelled with a clear warning instead of returning you to an older save. (Reported by Hennersw1.)',
+          ]],
     ['v3.0.4','July 2026',[
             '🌙 The race weekend follows dark mode: the pit wall race viewer was light-only, so watching a race in dark mode meant a white flash and a light screen for the whole weekend — including the race-complete screen. The full pit wall now has a dark skin that follows your theme, switching correctly even mid-save. (Reported by IronicGerman.)',
             '🌙 The Roster Editor, Live Editor and Guide follow dark mode in Team HQ: these three surfaces were deliberately skinned light to match the (then light-only) new interface, which left dark-mode players staring at white pages. Same skin, dark palette, and the classic interface keeps its existing look. (Reported by IronicGerman.)',
@@ -26461,9 +26596,19 @@ const sponsorInc=sumSponsorIncome(sponsors2);
   // from a clean slate. The reload strips any ?ui= override so the stored preference
   // governs. (v3.0.1, requested by Traditional_Ice_5636.)
   setInterfaceMode(mode){
+    // Confirm the current state is actually on disk before reloading. Autosave intentionally
+    // swallows quota errors, which made a failed interface switch look like a three-race rollback.
+    let saveOk = true;
+    try { if(State.game) saveOk = Storage.saveGame(); } catch(e){ saveOk = false; }
+    if(!saveOk){
+      try { UI.toast('Interface not changed because your latest progress could not be saved. Free some browser storage and try again.','error'); } catch(e){}
+      return;
+    }
+    try { localStorage.setItem('f1d_ui', mode==='classic'?'classic':'hq'); } catch(e){
+      try { UI.toast('Could not save the interface preference.','error'); } catch(err){}
+      return;
+    }
     try { if(typeof gtag!=='undefined') gtag('event','interface_switched',{to:mode==='classic'?'classic':'hq',season:(State.game&&State.game.season)||0}); } catch(e){}
-    try { localStorage.setItem('f1d_ui', mode==='classic'?'classic':'hq'); } catch(e){}
-    try { Storage.autosave(); } catch(e){}
     try { UI.toast(mode==='classic'?'Switching to the classic interface…':'Switching to Team HQ…','info'); } catch(e){}
     // Reload so the right shell mounts cleanly. If the URL carries a ?ui= override it
     // must be stripped (it would outrank the stored preference); otherwise a plain
@@ -27270,18 +27415,8 @@ const GameActions = {
       return;
     }
     if(typeof gtag!=='undefined'){ const _bg=State.game; gtag('event','offseason_completed',{season:_bg.season,sponsors:((_bg.sponsors||[]).length),drivers:(_bg.drivers||[]).filter(d=>d.teamId===_bg.playerTeamId&&!d.isReserve&&!d.retired).length}); }
-    // Ongoing difficulty budget penalty (v2.6.3): previously the Hard/Nightmare budget cut only
-    // applied once, at game creation, so normal season income washed it out within a year or two
-    // and the difficulty setting stopped mattering (player feedback: "the modes aren't that
-    // different"). The penalty now reapplies every season, so it's a persistent financial squeeze
-    // for the whole career rather than a one-time starting hit.
-    (function(){
-      const _sdiff = getDiff(g);
-      if(_sdiff.budgetMult < 1.0){
-        const _spt = State.getPlayerTeam();
-        if(_spt) _spt.revenue = Math.max(40, Math.round(_spt.revenue * _sdiff.budgetMult));
-      }
-    })();
+    // Difficulty now reduces the annual development allowance instead of repeatedly multiplying
+    // the entire bank balance. The old compounding path trapped long Nightmare saves at $40M.
     g._seasonEndProcessing = false;
     const status=this._syncOffseasonPending();
     const drivers=status.drivers;
@@ -28156,7 +28291,7 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     if(!g.quarterDev) return;
     const qd=g.quarterDev[qi];
     if(!qd || qd.applied){UI.toast('Already applied this quarter!','warning');return;}
-    const qBudget=Math.round(team.revenue*0.15);
+    const qBudget=getDevelopmentWindowBudget(team, g);
     const cost=qd.aero*6+qd.reliability*4+qd.engine*10;
     if(cost>qBudget){UI.toast('Over quarterly budget!','error');return;}
     if(qd.aero===0&&qd.reliability===0&&qd.engine===0){UI.toast('No upgrades selected.','warning');return;}
@@ -28207,7 +28342,7 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     const g=State.game, team=State.getPlayerTeam();
     const dev=g.inSeasonDev||{aero:0,reliability:0,engine:0};
     const cost=dev.aero*8+dev.reliability*5+dev.engine*12;
-    const budget=Math.round(team.revenue*0.15);
+    const budget=getDevelopmentWindowBudget(team, g);
     if(cost>budget){UI.toast('Over in-season budget!','error');return;}
     if(dev.aero===0&&dev.reliability===0&&dev.engine===0){UI.toast('No upgrades selected — adjust the sliders first.','warning');return;}
     const roll=Math.random();
@@ -28523,7 +28658,7 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
         g._evFirstRace = true;
         window.__f1dEv && window.__f1dEv('first_race_completed',{season:g.season,
           team:g.teams.find(t=>t.id===g.playerTeamId)?.name||'?',
-          is_challenge:!!g.weeklyChallenge, difficulty:g.difficulty||'?'});
+          is_challenge:!!g.weeklyChallenge, difficulty:g.gameDifficulty||'?'});
       }
       // Check if an upgrade window just unlocked (thresholds scale with calendar length, v2.5.9)
       const _qT=getUpgradeWindowThresholds(g), _rd=g.raceIndex;
@@ -32175,7 +32310,10 @@ document.addEventListener('DOMContentLoaded', () => {
     Storage.saveGame();
     if(typeof gtag!=='undefined'){
       const t=State.getTeam(teamId);
-      gtag('event','new_game',{team_id:teamId,team_name:t?t.name:'?',start_year:startYear,difficulty:t?t.difficulty:'?'});
+      // `difficulty` is the TEAM's tier (Ferrari = medium) and is left as-is so its
+      // historical meaning holds; game_difficulty is the player's chosen setting, which
+      // was never recorded — so the Hard/Normal/Easy split was invisible (v3.0.4).
+      gtag('event','new_game',{team_id:teamId,team_name:t?t.name:'?',start_year:startYear,difficulty:t?t.difficulty:'?',game_difficulty:State.game&&State.game.gameDifficulty||'?'});
     }
     UI.showPage('game'); UI.showView('offseason');
     UI.toast(`Welcome to ${State.getTeam(teamId).name}, ${escapeHtml(managerName)}!`,'success');
@@ -33739,9 +33877,9 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       } catch(e){}
       var landingTheme='light'; try { landingTheme=localStorage.getItem('f1d_theme')==='dark'?'dark':'light'; } catch(e){}
       return { appearance:{theme:landingTheme}, landing:{ saves:saves, teams:teams, selectedTeam:sel, challenge:challenge, patchVersion:(window.__f1dVersion||'3.0.3'), whatsNew:[
-        {tag:'NEW', text:'Dark mode everywhere — the pit wall race viewer, Roster Editor, Live Editor and Guide all follow your theme now instead of flashing white'},
-        {tag:'FIX', text:'Winter development results are back (they vanished in 3.0.3), the race feed scrolls, upgrade arrivals show on the Car page, and roster imports keep junior-team links'},
-        {tag:'FIX', text:'Long-save plateau addressed — regulation eras now produce lasting winners and losers, and engine orders genuinely reshuffle on power-unit resets'}
+        {tag:'FIX', text:'Your career continues after a sacking — job offers appear properly, use your real final standing, and return you smoothly to your new team (thanks PurpleHead)'},
+        {tag:'FIX', text:'Race gaps no longer collapse impossibly and the All-Time Ladder shows every driver\'s real wins, podiums, poles and points (thanks IronicGerman)'},
+        {tag:'BALANCE', text:'Morale, long-save development budgets and regulation resets are healthier, while interface switching now confirms your progress is saved first (thanks Hennersw1)'}
       ], cloudSave:{
         available: (typeof CloudSave!=='undefined' && CloudSave.isAvailable()),
         signedIn: (typeof CloudSave!=='undefined' && CloudSave.isSignedIn()),
@@ -34384,9 +34522,9 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
     var ladder=[];
     try {
       ladder=(g.drivers||[]).slice()
-        .sort(function(a,b){ return ((b.championships||0)*600+(b.careerWins||0)*30+(b.careerPodiums||0)*6+(b.careerPoints||0)*0.4)-((a.championships||0)*600+(a.careerWins||0)*30+(a.careerPodiums||0)*6+(a.careerPoints||0)*0.4); })
+        .sort(function(a,b){ return ((b.championships||0)*600+((b.totalWins||0)+(b.wins||0))*30+((b.totalPodiums||0)+(b.podiums||0))*6+(b.totalPoints||0)*0.4)-((a.championships||0)*600+((a.totalWins||0)+(a.wins||0))*30+((a.totalPodiums||0)+(a.podiums||0))*6+(a.totalPoints||0)*0.4); })
         .slice(0,20)
-        .map(function(d,i){ return { rank:i+1, name:d.name||'', nat:(d.nationality||''), wdc:d.championships||0, wins:d.careerWins||0, podiums:d.careerPodiums||0, poles:d.careerPoles||0, points:Math.round(d.careerPoints||0), status:(d.retired?'Retired':'Active'), you:String(d.teamId)===String(g.playerTeamId)&&!d.retired };
+        .map(function(d,i){ return { rank:i+1, name:d.name||'', nat:(d.nationality||''), wdc:d.championships||0, wins:(d.totalWins||0)+(d.wins||0), podiums:(d.totalPodiums||0)+(d.podiums||0), poles:(d.totalPoles||0)+(d.poles||0), points:Math.round(d.totalPoints||0), status:(d.retired?'Retired':'Active'), you:String(d.teamId)===String(g.playerTeamId)&&!d.retired };
         });
     } catch(e){}
     var cs=(g.careerStats&&g.careerStats.seasons)||[];
