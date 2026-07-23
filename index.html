@@ -49,7 +49,7 @@
   gtag('config', 'G-6B4MBFG3FX');
   // Single source of truth for the build number. The HQ landing reads this rather than
   // carrying its own literal, so a release bump touches the same number of places as before.
-  window.__f1dVersion = '3.0.5';
+  window.__f1dVersion = '3.0.6';
   // Analytics helper. Every call site is fire-and-forget: a missing gtag (ad blocker,
   // offline, file:// testing) or a bad param must never break gameplay, so the guard and
   // the try/catch live here once rather than being repeated at ~40 call sites.
@@ -954,12 +954,12 @@ body.hq-skin #driver-detail-modal .modal-box:has(.le-head)::before{display:none}
         </div>
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:16px;max-width:560px;padding:16px 18px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
-          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v3.0.5: What's New</div>
-          <div style="font-size:14px;font-weight:900;color:#111;margin-bottom:10px">Long careers, fairer racing and smoother comebacks</div>
+          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v3.0.6: What's New</div>
+          <div style="font-size:14px;font-weight:900;color:#111;margin-bottom:10px">Race integrity, Team HQ parity and healthier eras</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 16px">
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🐛</span><span><strong>Your career continues after a sacking</strong>: see your offers, join a new team and get straight back to work. Thanks PurpleHead.</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🏁</span><span><strong>More believable racing and records</strong>: impossible 20-second gap jumps are gone and the All-Time Ladder shows full career stats. Thanks IronicGerman.</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:#888;font-weight:800;flex-shrink:0">⚖️</span><span><strong>Healthier long saves</strong>: morale, development budgets and regulation resets have been rebalanced, and interface switching now protects your latest save. Thanks Hennersw1.</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🏁</span><span><strong>No finish-line teleporting</strong>: a car must enter attacking range before it can pass, at every position. Thanks IronicGerman.</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🧭</span><span><strong>Team HQ parity</strong>: car values, component gains, staff caps, dark tables and Paddock scrolling now agree with the classic UI.</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:#888;font-weight:800;flex-shrink:0">⚖️</span><span><strong>Healthier long eras</strong>: minor technical directives can gently shift car performance between major resets without hard-coding any named driver or team.</span></div>
           </div>
           <button onclick="UI.showChangelog()" style="margin-top:10px;width:100%;padding:7px;background:none;border:1.5px solid rgba(192,57,43,.3);border-radius:7px;font-size:11px;font-weight:700;color:var(--red);cursor:pointer">Full release notes →</button>
         </div>
@@ -1090,7 +1090,7 @@ body.hq-skin #driver-detail-modal .modal-box:has(.le-head)::before{display:none}
       </div>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v3.0.5</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">Reddit</a> · <a href="https://discord.gg/w3R97uTBW" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">Discord</a></div>
+        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v3.0.6</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">Reddit</a> · <a href="https://discord.gg/w3R97uTBW" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">Discord</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -3372,14 +3372,28 @@ const LiveEditor = {
 
   setEngine(teamId, engId){
     const team = State.getTeam(teamId); if(!team) return;
+    const g = State.game;
+    const oldEngId = team.engineManufacturer;
+    if(oldEngId === engId) return;
     const wasWorks = this.isTeamWorks(teamId);
+    const wasPlayerOwned = !!(g && g.playerEngineId && teamIdsEqual(teamId, g.playerTeamId) && oldEngId === g.playerEngineId);
     team.engineManufacturer = engId;
-    if(wasWorks){ // a works deal follows the team to its new supplier
+    if(wasPlayerOwned){
+      // Leaving a manufacturer you own is a divestment, not a works deal that magically
+      // follows the team to another supplier. The old PU remains available to any customers,
+      // but the player is free to found another programme later.
+      this._clearTeamWorks(teamId);
+      g.playerEngineId = null;
+      team.engineContractYears = 3;
+    } else if(wasWorks){ // a normal works deal follows the team to its new supplier
       this._clearTeamWorks(teamId);
       const eng = this._engineDefs().find(e=>e.id===engId);
       if(eng){ if(!Array.isArray(eng.worksTeams)) eng.worksTeams=[]; if(!eng.worksTeams.includes(teamId)) eng.worksTeams.push(teamId); }
     }
+    // Never carry the internal 99-year ownership sentinel onto an external supplier.
+    if(!(g && g.playerEngineId && engId === g.playerEngineId)) team.engineContractYears = 3;
     team.engineContractCost = getEngineContractCost(teamId, engId);
+    if(wasPlayerOwned && typeof UI!=='undefined') UI.toast('Owned power-unit programme divested. New supplier contract set to 3 years.', 'success');
     this._refresh();
   },
 
@@ -7978,7 +7992,7 @@ const Sim = {
       const runningOrderBefore = entries
         .filter(s => !s.dnf)
         .sort((a,b)=>a.cumulativeTime-b.cumulativeTime)
-        .map((s, idx)=>({ state:s, pos:idx+1 }));
+        .map((s, idx)=>({ state:s, pos:idx+1, preTime:s.cumulativeTime }));
       runningOrderBefore.forEach(({state, pos}, idx) => {
         if(state.dnf) return;
         const team = State.getTeam(state.teamId);
@@ -7991,7 +8005,7 @@ const Sim = {
         let plannedWindow = null;
         const life = state.tyreLife[state.compound] || race.laps;
         const nextPitLap = state.plannedPitLaps[state.stintIndex] || null;
-        const gapAhead = idx === 0 ? null : Math.max(0, state.cumulativeTime - runningOrderBefore[idx-1].state.cumulativeTime);
+        const gapAhead = idx === 0 ? null : Math.max(0, runningOrderBefore[idx].preTime - runningOrderBefore[idx-1].preTime);
         let targetCompound = null;
         let weatherPit = false;
         if(wetness >= 0.78 && state.compound !== 'wet') {
@@ -8159,6 +8173,37 @@ const Sim = {
           state.cumulativeTime += 9999 + lap;
         }
       });
+      // Universal closure guard (v3.0.6, IronicGerman): the old clamp only limited a
+      // driver's gap GROWING. A single favourable lap-time roll could still erase four
+      // seconds and create a pass at the finish line, including well outside the top four.
+      // Compare every pre-lap adjacent pair and cap ordinary closure before sorting the new
+      // order. Real pit stops, retirements, severe tyre cliffs and wrong-tyre weather calls
+      // remain free to create large swings.
+      if(!scActive && runningOrderBefore.length > 1) {
+        const _prevScActive = !!(scStartLap && scEndLap && (lap-1) >= scStartLap && (lap-1) <= scEndLap);
+        if(!_prevScActive) {
+          for(let _i=1; _i<runningOrderBefore.length; _i++) {
+            const _aheadRec = runningOrderBefore[_i-1], _followRec = runningOrderBefore[_i];
+            const _ahead = _aheadRec.state, _follow = _followRec.state;
+            if(!_ahead || !_follow || _ahead.dnf || _follow.dnf) continue;
+            const _am = _ahead._lastLapMeta||{}, _fm = _follow._lastLapMeta||{};
+            if(_am.pitThisLap || _fm.pitThisLap) continue;
+            const _preInterval = Math.max(0, _followRec.preTime - _aheadRec.preTime);
+            if(_preInterval <= 0) continue;
+            const _postInterval = _follow.cumulativeTime - _ahead.cumulativeTime;
+            const _tyreAgeEdge = Math.max(0, (_ahead.tyreAge||0) - (_follow.tyreAge||0));
+            const _exceptional = (_am.wrongTirePenalty||0) >= 1.6 || (_am.tyrePenalty||0) >= 2.7;
+            const _maxClose = _exceptional
+              ? 4.5
+              : clamp(1.45 + _tyreAgeEdge*0.055 + Math.max(0, (_ahead.baseLap||0)-(_follow.baseLap||0))*0.35, 1.35, 2.35);
+            const _minInterval = _preInterval - _maxClose;
+            // A pass must be launched from genuine attacking range. Outside that range,
+            // even a very strong lap may close the gap but cannot teleport through the car.
+            const _attackFloor = (!_exceptional && _preInterval > 1.8) ? Math.max(0.12, _minInterval) : _minInterval;
+            if(_postInterval < _attackFloor) _follow.cumulativeTime = _ahead.cumulativeTime + _attackFloor;
+          }
+        }
+      }
       const activeStates = entries.filter(s => !s.dnf).sort((a,b)=>a.cumulativeTime-b.cumulativeTime);
       if(scActive && activeStates.length) {
         // Bunch the field in the order it held at the START of this lap, not by raw lap time —
@@ -13379,6 +13424,59 @@ const spons=sumSponsorIncome(g.sponsors||[]);
       });
     }
 
+    // -- MID-ERA TECHNICAL DIRECTIVES (v3.0.6) -------------------------------
+    // Community rosters exposed a second long-save failure mode: a major reset could
+    // establish one leading car and leave it there until the next reset, allowing one
+    // driver to balloon even when the roster ratings were carefully balanced. Every
+    // second stable-regulation season now gets a SMALL clarification. It compresses
+    // the field without changing driver ability or hard-coding any named team.
+    if(!regsThisSeason && !regsNextSeason){
+      const _newSeasonYear = g.season + 1;
+      const _lastMajorRegs = (g.regsHistory&&g.regsHistory.length)
+        ? g.regsHistory[g.regsHistory.length-1].season
+        : (g.season - 3);
+      const _minorEraYear = Math.max(0, _newSeasonYear - _lastMajorRegs);
+      if(_minorEraYear >= 2 && _minorEraYear % 2 === 0 && g._lastMinorRegsYear !== _newSeasonYear){
+        const _directiveNames = [
+          'Floor-edge clarification',
+          'Flexible-aero test revision',
+          'Cooling and bodywork directive',
+          'Ride-height measurement update'
+        ];
+        const _directive = _directiveNames[Math.abs(_newSeasonYear) % _directiveNames.length];
+        const _fieldAverage = g.teams.reduce((s,t)=>s+getTeamOverallCar(t),0) / Math.max(1,g.teams.length);
+        const _minorMoves = [];
+        g.teams.forEach(team=>{
+          const _before = getTeamOverallCar(team);
+          const _gap = _before - _fieldAverage;
+          // Leaders have more mature concepts to rework; backmarkers get a small chance
+          // to interpret the clarification well. The cap keeps this a directive, not a
+          // disguised major regulation reset.
+          const _delta = clamp(-_gap * 0.14 + randNorm(0,0.48), -1.8, 1.35);
+          if(team.components){
+            COMP_KEYS.forEach(ck=>{
+              team.components[ck] = clamp((team.components[ck]||70) + _delta*randFloat(0.88,1.12), 40, 98);
+            });
+            deriveSubStats(team);
+          } else {
+            team.carPerformance = clamp((team.carPerformance||70) + _delta, 40, 98);
+          }
+          _minorMoves.push({team:team,delta:getTeamOverallCar(team)-_before});
+        });
+        g._lastMinorRegsYear = _newSeasonYear;
+        if(!g.minorRegsHistory) g.minorRegsHistory=[];
+        g.minorRegsHistory.push({season:_newSeasonYear,type:_directive});
+        const _affected = _minorMoves.slice().sort((a,b)=>Math.abs(b.delta)-Math.abs(a.delta)).slice(0,3)
+          .map(x=>`${x.team.name} ${x.delta>=0?'+':''}${x.delta.toFixed(1)}`).join(', ');
+        if(!g.newsFeed) g.newsFeed=[];
+        g.newsFeed.unshift({
+          icon:'\uD83D\uDCCF', type:'info',
+          msg:`<strong>TECHNICAL DIRECTIVE \u2014 ${_directive.toUpperCase()}:</strong> A minor FIA rules clarification has forced teams to revise their cars for ${_newSeasonYear}. The field has compressed slightly without a full regulation reset. Biggest early movements: ${_affected}.`,
+          race:undefined
+        });
+      }
+    }
+
     // ── AI team development ──────────────────────────────────────────────────
     // How many seasons has the current regulation era been running?
     // Longer eras = more design secrets become public knowledge = backmarkers catch up faster.
@@ -18100,8 +18198,10 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
           return `P${powerRank} in power, ${Math.abs(gap)} behind ${powerLeader.shortName}. ${ersRank===1?'ERS is the standout strength.':ersRank<=2?'Strong ERS deployment.':'Development programme targeting both power and ERS recovery.'}`;
         })()}</div>
         <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid var(--bd)">
-          <div style="font-size:12px">Contract: <strong>${team.engineContractYears||0}yr${(team.engineContractYears||0)!==1?'s':''} remaining</strong>${team.engineContractCost?` · ${formatMoney(team.engineContractCost||0)}/yr`:' · Works team'}</div>
-          ${(team.engineContractYears||0)<=1?`<button onclick="GameActions.showEngineMarket()" class="btn btn-outline btn-sm" style="border-color:var(--amber);color:var(--amber)">🔄 Review Options</button>`:`<span style="font-size:10px;color:var(--tx3)">Renewable in ${(team.engineContractYears||3)-1}yr</span>`}
+          ${g.playerEngineId && team.engineManufacturer===g.playerEngineId
+            ? `<div style="font-size:12px">Status: <strong>Owned manufacturer · no expiry</strong> · Works supply</div><span style="font-size:10px;color:var(--tx3)">Developed through your winter Power Unit budget</span>`
+            : `<div style="font-size:12px">Contract: <strong>${team.engineContractYears||0}yr${(team.engineContractYears||0)!==1?'s':''} remaining</strong>${team.engineContractCost?` · ${formatMoney(team.engineContractCost||0)}/yr`:' · Works team'}</div>
+               ${(team.engineContractYears||0)<=1?`<button onclick="GameActions.showEngineMarket()" class="btn btn-outline btn-sm" style="border-color:var(--amber);color:var(--amber)">🔄 Review Options</button>`:`<span style="font-size:10px;color:var(--tx3)">Renewable in ${(team.engineContractYears||3)-1}yr</span>`}`}
         </div>
         ${g._engineBreakthroughMsg?`<div style="margin-top:8px;padding:8px 10px;background:rgba(249,115,22,.1);border-radius:6px;border-left:3px solid #f97316;font-size:11px;color:#f97316;display:flex;justify-content:space-between;align-items:center"><span>${g._engineBreakthroughMsg}</span><button onclick="State.game._engineBreakthroughMsg=null;UI.renderCar()" style="background:none;border:none;cursor:pointer;color:#f97316;font-size:14px;padding:0 4px">×</button></div>`:''}
       </div>
@@ -23514,6 +23614,8 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       <p>Finance lists your current deals and a Sponsor Offers panel. When an offer arrives you can <strong>NEGOTIATE</strong> the term and value, or <strong>⚡ AUTO</strong>-sign it instantly at a 10% discount if you don't want to haggle.</p>
       <h4>Tools</h4>
       <p>The <strong>⋯ More</strong> menu opens Settings, the save-file tools, the Live Roster Editor (edit this save's teams, drivers, engines and next season's calendar — it floats over the HQ) and this guide.</p>
+      <h4>Car and staff snapshots</h4>
+      <p>The Car page uses the same overall-performance calculation as the rest of the game and shows each component's change from the season-start snapshot. The Staff page shows your total staff wage bill beside its budget cap, so you can judge a renewal or hire before committing.</p>
     `)}
 
     ${sec('🏎️','Car Development — The Core Loop',`
@@ -23532,7 +23634,7 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       ${tip('Financial position on Car page', 'A compact income/costs/net summary appears above the upgrade windows on the Car page — check it before allocating your upgrade budget so you know exactly where you stand without navigating to Finance.')}
       ${tip('Facilities first if you\'re rebuilding', 'Investing in Facilities in the offseason improves your development rate — meaning every subsequent R&D dollar goes further. If you\'re a mid-field team trying to close the gap, facilities investment compounds over time. Pick the department that matches your rebuild: Wind Tunnel if the car is the problem, Simulator if you\'re building around young drivers, Factory if DNFs are costing you points.')}
       <h4>Regulation changes</h4>
-      <p>Every 4–7 seasons the FIA introduces major technical regulation changes. When this happens, car performance is compressed toward midfield and randomised across the field — dominant teams can lose big, backmarkers can gain big. No dynasty is safe from a regulation reset.</p>
+      <p>Every 3–5 seasons the FIA introduces major technical regulation changes. When this happens, car performance is compressed toward midfield and randomised across the field — dominant teams can lose big, backmarkers can gain big. In longer stable eras, small mid-cycle technical directives can also shift the order without becoming a full reset. No dynasty is completely safe.</p>
       <p>You will get <strong>one season of warning</strong> before regulations change: an amber banner in the offseason screen and a Paddock News item. Use that year wisely.</p>
       <h4>Preparing for new regulations</h4>
       <p>In the season before regulations change, two things unlock:</p>
@@ -23639,6 +23741,7 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       <p>New title sponsor offers only appear once you have <strong>at least 1 Constructor Championship</strong>. If you already have a title sponsor, renewal offers can still be accepted when they appear.</p>
       <h4>Costs to manage</h4>
       <p>Driver salaries are your biggest controllable expense. Elite drivers (85+ rated) command high wages but deliver more results. The calculus is whether their salary increase is offset by improved results revenue.</p>
+      <p>Staff have a separate wage guide shown on the Staff page: <strong>20% of annual team revenue, with a $45M minimum</strong>. It is not a hard hiring lock, but being above it makes an out-of-contract staff member much more likely to leave at the offseason. Successful top-five seasons can also raise staff salaries, so check the total before renewing several departments.</p>
       ${warn('Overspending on driver salaries at the expense of car development is the most common mistake. A $25M driver in a 68-rated car will underperform vs a $12M driver in a 78-rated car.')}
     `)}
 
@@ -23662,7 +23765,8 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       <h4>Results heatmap</h4>
       <p>The <strong>Standings → Results</strong> tab shows a finishing position frequency grid for all drivers across the current season — Grand Prix and Sprint shown separately. Gold for P1, silver for P2, bronze for P3, green shades for the points, grey for midfield, red for DNFs. Useful for spotting consistency patterns across the field.</p>
       <h4>Safety car</h4>
-      <p>When a safety car is deployed the field bunches up and position changes stop — no overtaking is possible under the SC. Use it to pit cheaply: pit stop loss is roughly halved under SC conditions. The SC pit opportunity prompt fires if your next planned stop is within 8 laps — a much wider window than before, so you will now get the prompt for most realistic undercut opportunities. The safety car lifts after 2–4 laps and racing resumes.</p>
+      <p>When a safety car is deployed the field bunches up and position changes stop — no overtaking is possible under the SC. Pitting is <strong>cheaper in elapsed time</strong> because the cars on track are circulating slowly, but it is not a free stop: cars that stay out can still pass you while you are in the pit lane. You usually recover those places only when they make their own stop later. Judge the call by net strategy, not the position shown immediately after boxing.</p>
+      <p>The SC pit opportunity prompt fires if your next planned stop is within 8 laps, covering most realistic undercut opportunities. Pit stop loss is roughly halved under SC conditions, and the safety car lifts after 2–4 laps before racing resumes.</p>
       ${tip('Speed settings', 'Use Very Fast for routine races and Normal/Slow when you\'re in a tight championship battle and want to savour the moment. Speed is set per-session and remembered.')}
       ${tip('Auto settings', 'If you prefer to sim without decisions, turn on Auto Strategy and Auto Aero in Settings. Auto Strategy applies a small pace penalty — engineers are more conservative than a human calling the shots, and their pit timing is never perfectly optimised.')}
     `)}
@@ -23688,6 +23792,7 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       <p><strong>Pit windows</strong> — strategy now matters as a true timing problem. An early stop can unlock an undercut, a long first stint can enable an overcut, and a bad stop window can trap you in traffic or on the wrong tyre. The pre-race strategy screen shows the <strong>forecast</strong> degradation — but each race the real wear can run above or below it. Watch the feed early in the race: if the pit wall reports tyres holding better than forecast, you can stretch stints or decline your second stop at the prompt; if wear is running high, stops come forward and one-stop plans get caught by the cliff.</p>
       <p><strong>Weather</strong> — in changing conditions, wet-weather skill matters and crossover timing can swing several places. A strong driver can survive longer; a weak one will bleed time quickly.</p>
       <p><strong>Safety car and traffic</strong> — bunching, cheap pit stops, and dirty-air traffic can all reshape the race even when the raw pace hierarchy is unchanged.</p>
+      <p><strong>Overtaking and gap closure</strong> — ordinary lap-to-lap gains are bounded across the whole field. A following car normally needs to close into roughly 1.8 seconds of attack range before it can complete a pass, so a driver several seconds behind cannot jump ahead at the finish line. Pit stops, a DNF, severe tyre-cliff pace or the wrong tyre for the weather can still create larger legitimate swings.</p>
       <p><strong>Variance</strong> — launch quality, race rhythm, and small lap-level randomness keep seasons believable. The idea is to produce understandable race stories, not coin flips.</p>
       ${tip('P11-15 tyre advantage', 'Drivers starting 11th or lower begin on hard tyres. This gives you genuine pit flexibility — a longer first stint lets you undercut rivals who started on softs and will need to pit earlier.')}
     `)}
@@ -23734,6 +23839,8 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       <h4>Paddock events</h4>
       <p>Every so often a <strong>paddock event</strong> fires mid-season — a story moment that breaks up the routine. Most appear straight in the feed with a small effect: a wind-tunnel breakthrough, a commercial windfall, a supplier quality issue, a rival protest against a dominant car. They're deliberately uncommon — roughly one every few races, capped per season — so they stay special, and every effect is bounded so nothing is ever save-breaking.</p>
       <p>A few events are <strong>decisions</strong>: a pop-up presents a situation with two choices and a genuine trade-off — back an unhappy star driver publicly (morale up, development nudged back) versus telling them to focus on driving; gamble the mid-season budget on an unproven aero concept versus playing it safe; match a rival's offer to keep poached staff versus letting them walk. Your choice is applied immediately and recorded in the feed. During batch sims (Sim Quarter / Half / Rest of Season) these resolve automatically with a sensible default so a long sim is never interrupted.</p>
+      <h4>Team Radio on the dashboard</h4>
+      <p>The compact Team Radio panel keeps up to 20 recent entries. Once it fills, scroll inside the panel to review older items instead of losing them below the card. Technical-directive stories also appear here, including the teams with the largest interpretation gains and losses.</p>
       <h4>Pre-season approaches</h4>
       <p>During the season, if a driver is in their final contract year, a <strong>📋 Approach for Next Season</strong> button appears on their profile. Tap it to make a pre-contract offer — if the driver is interested (based on your car, salary offer, and their morale) they will commit to joining you when the season ends. AI teams do the same, so the best expiring drivers get snapped up mid-season.</p>
       <p>Watch the Transfers tab in Paddock News for confirmed moves and rumours. Pre-contract announcements appear there as they happen.</p>
@@ -23761,6 +23868,9 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       <h4>Engine manufacturers</h4>
       <p>Each team has a power unit supplier — Mercedes, Ferrari, Honda, Renault, or Audi — under a multi-year contract. Your engine supplier's <strong>Power</strong> rating directly influences your top speed sub-stat, their <strong>ERS</strong> rating affects energy deployment quality, and their <strong>Reliability</strong> compounds with your chassis reliability to set your DNF risk.</p>
       <p>Manufacturers develop independently each offseason — Honda may close the gap on Mercedes, or Audi's aggressive development rate could make them a dark horse by mid-career. When your contract expires, the Engine Market opens on the Car page. Switching suppliers costs a year-1 integration penalty (−3 top speed) and requires the supplier to have a free customer slot.</p>
+      <h4>Founding and divesting your own power unit</h4>
+      <p>After winning a Constructors' Championship, you can found a manufacturer for a one-off <strong>$180M</strong> once your current supplier contract has expired. It begins around the upper midfield, gives your team free works supply, develops through the winter Power Unit budget, and can earn customer fees when rival teams use it.</p>
+      <p>An owned manufacturer has <strong>no expiry</strong>. If you later want out, open the Engine Market and select another supplier at any time: the game divests your programme and signs a normal three-year supply deal. The replacement supplier does not become your property or inherit a permanent works contract, and the usual first-year integration penalty applies.</p>
       <h4>Car sub-stats</h4>
       <p>Car performance is broken into five pillars: <strong>Top Speed</strong> (driven by engine power and low-drag aero), <strong>Cornering</strong> (mechanical grip and aero), <strong>Tyre Management</strong> (suspension and floor design), <strong>Dirty Air</strong> (ability to follow other cars), and <strong>Aero Efficiency</strong>. Each circuit type weights these differently — Monza rewards top speed, Monaco rewards cornering, Silverstone rewards aero efficiency. Your development investments shift the sub-stats rather than a single OVR number, so you can build a car specifically strong on the circuits you care about.</p>
       <h4>ERS deployment</h4>
@@ -23777,13 +23887,16 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     `)}
 
     ${sec('📋','Regulation Changes — Era Resets & Convergence',`
-      <p>Every 4–7 seasons the FIA introduces major new technical regulations. This is the most disruptive event in the game — the field can shuffle dramatically and your preparation matters.</p>
+      <p>Every 3–5 seasons the FIA introduces major new technical regulations. This is the most disruptive event in the game — the field can shuffle dramatically and your preparation matters. Between major resets, small technical directives may gently compress the field and create minor interpretation gains or losses.</p>
       <h4>What happens at a regulation change</h4>
       <p>All teams are pulled toward the midfield (strong compression), then separated by their <strong>regulation aptitude</strong> — how well they interpreted the new rules. A team that nails the regs can jump from P5 to P2. A team that misses it can drop from P1 to P6. This aptitude persists as their structural advantage for the entire era, not just one season. Dev rate takes a hit across the board (new parts are unfamiliar), and reliability resets harder than usual.</p>
       <h4>Your regs investment</h4>
       <p>During a regulation warning year (one season before new regs land) you can allocate budget toward the next-generation concept on the Car page. Higher investment shifts your aptitude draw toward positive — you're more likely to nail the regs — but luck still plays a role. 100% investment does not guarantee a good outcome; it just improves your odds.</p>
       <h4>Era convergence</h4>
       <p>The longer the same regulations run, the more backmarker teams benefit from copying proven designs. In year 1 of new regs the catch-up boost is zero. By year 4 it's meaningful — teams below field average develop noticeably faster as the technical secrets of the fast car become public knowledge. This resets to zero when new regs fire.</p>
+      <h4>Minor technical directives</h4>
+      <p>During a stable era, a smaller directive can arrive every second season once there has been enough time since the last major reset. It is skipped in both a major-regulation season and its warning year. The directive compares each active car with the field average, mildly compresses the strongest concepts, can give slower concepts a small gain, and adds limited interpretation variance. Individual component changes are capped at roughly <strong>−1.8 to +1.35</strong>, so this is a nudge rather than a new-regulation lottery.</p>
+      <p>Directives affect <strong>car components only</strong>. They do not edit driver ratings, hidden potential, contracts, morale, teammate strength or points already scored, and they contain no named-team or named-driver balancing. This means a long-running dominant car may be brought closer to the field, but a particular driver is never directly nerfed. Paddock News reports the largest gains and losses when one fires.</p>
       <h4>Reading the news item</h4>
       <p>When regs fire, a news item names the 3 teams that adapted best and the 3 that are behind the curve — plus a specific note on your own team's position. Check the car performance ratings immediately after to understand the new order before the season starts.</p>
       ${tip('Prepare two seasons out', 'The regulation warning fires one full season before new rules arrive. That is your window to allocate regs investment. If you miss the warning year, you go into the reset with no preparation bonus.')}
@@ -23850,6 +23963,10 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       <p>Editor changes apply to <strong>new careers only</strong> — they don't affect saves already in progress. Changes are saved automatically to your browser. Use <strong>Copy JSON</strong> or <strong>Download JSON</strong> to share or back up your custom grid, and <strong>Import</strong> to load one.</p>
       <h4>Importing a roster</h4>
       <p>The Import screen accepts a roster three ways: <strong>upload a file</strong> (a <code>.json</code> saved on your device), <strong>load from a web link</strong> (paste a direct link to a roster file — handy for community rosters hosted online), or <strong>paste the JSON</strong> directly. All three replace your current editor template and apply to new careers. Community-made rosters — including recreations of real-world grids — are shared this way; they are created and distributed by players, not bundled with the game.</p>
+      <h4>How a custom roster evolves</h4>
+      <p>Importing a roster creates the <strong>starting snapshot</strong> for a new career. Once that career begins, it is an independent save: normal driver development and aging, team R&amp;D, engine development, winter variance, major regulation resets and minor technical directives all continue from the imported values. The source JSON and the saved Roster Editor template are never rewritten by those career events.</p>
+      <p>Major regulations and minor directives operate on the <strong>active save's car components</strong>, including cars that came from a community roster. They do not change a roster author's driver ratings or potential, target a real driver by name, force a teammate to take points, or guarantee a particular championship result. If one driver dominates because their team remains the best car, a directive may reduce that team's car advantage; it will not directly weaken the driver.</p>
+      <p>To compare balance against the roster author's original setup, start another new career from the same imported template. That gives you the untouched starting grid again while leaving the evolved save intact.</p>
       <h4>What a roster file looks like</h4>
       <p>A roster file is plain JSON exported from this editor. The easiest way to get a valid template is to click <strong>Download JSON</strong> here — that gives you the current grid as a file you can edit and re-import, so you never have to write one from scratch. The top-level structure looks like this:</p>
       <pre style="background:var(--bg3);border:1px solid var(--bd);border-radius:8px;padding:12px;font-size:11px;overflow-x:auto;line-height:1.5"><code>{
@@ -25122,8 +25239,18 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const html=`
       <div style="max-height:85vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v3.0.5 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v3.0.6 · Release Notes</div>
         ${[
+    ['v3.0.6','July 2026',[
+            '🏁 Finish-line overtakes are physically gated across the whole field: the race model now compares every adjacent pair before and after each lap, caps ordinary gap closure, and requires a car to enter attacking range before it can pass. Pit stops, retirements, severe tyre cliffs and wrong-tyre weather calls still create genuine big swings. (Reported by IronicGerman.)',
+            '📰 Paddock News is scrollable and keeps up to 20 meaningful entries instead of silently cutting the panel off at six. (Reported by IronicGerman.)',
+            '📊 Team HQ Car data now uses the same component-derived overall as the classic UI, and every component shows its gain or loss versus the season-start snapshot. (Reported by IronicGerman.)',
+            '💼 Team HQ Staff now restores the missing total wage bill, staff budget cap, headroom and over-budget warning. (Reported by IronicGerman.)',
+            '⚡ Owned power units no longer become 99-year external contracts in the Live Editor. Switching away divests the programme, removes the old works link and creates a normal three-year supplier deal; owned-PU screens now say “no expiry” rather than exposing the internal 99-year sentinel. (Reported by ExtremeTruck7626.)',
+            '🌙 Remaining light-only Team HQ table headers and inactive controls now follow dark mode on Drivers, Scouting, Standings and Car. (Reported by IronicGerman.)',
+            '🚗 Safety Car pit calls now explain the trade-off clearly: the stop costs less time under yellow, but cars that stay out pass while you are in the lane; the benefit arrives only if they pit later. (Feedback from SHADOWFIGHTER1016.)',
+            '⚖️ Long eras now include small mid-cycle technical directives between major regulation resets. They gently compress and perturb active car performance without changing driver ability or hard-coding any named driver or team, reducing the chance that one post-reset car/driver combination balloons forever. (Feedback from ExtremeTruck7626 and RuleImpossible3362.)',
+          ]],
     ['v3.0.5','July 2026',[
             '🐛 Your career can continue after a sacking: the job-offer screen no longer hides behind Team HQ. Accept a new team, start fresh, or end a last-place career cleanly. The game also uses your real final championship position when deciding whether offers are available, rather than zeroed offseason standings. (Reported by PurpleHead.)',
             '🏁 Drivers no longer "fly" across impossible gaps: evenly matched cars can still close up and fight, but the race simulation can no longer erase a 20-second deficit in a single lap. Closing is limited to realistic steps and battle compression only begins when cars are already near one another. (Reported by IronicGerman.)',
@@ -27864,6 +27991,7 @@ const GameActions = {
     const team=State.getPlayerTeam(); if(!team)return;
     const manufacturers = _liveEngines();
     const current = manufacturers.find(e=>e.id===team.engineManufacturer)||manufacturers[0];
+    const ownsCurrentPU = !!(g.playerEngineId && team.engineManufacturer===g.playerEngineId);
     const _sortedPower = manufacturers.slice().sort((a,b)=>b.powerRating-a.powerRating);
     const _sortedErs = manufacturers.slice().sort((a,b)=>b.ersRating-a.ersRating);
     const rows = manufacturers.map(eng=>{
@@ -27874,7 +28002,7 @@ const GameActions = {
       const effectiveMax = getEngineEffectiveMax(eng, g.season);
       const atCapacity = usersCount >= effectiveMax && !isCurrent;
       const switchPenalty = isCurrent ? '' : ' · <span style="color:var(--amber)">Year 1 integration dip: −3 topSpeed</span>';
-      const canSwitch = !isCurrent && !atCapacity && (team.engineContractYears||0)===0;
+      const canSwitch = !isCurrent && !atCapacity && ((team.engineContractYears||0)===0 || ownsCurrentPU);
       const _pRank = _sortedPower.findIndex(e=>e.id===eng.id)+1;
       const _eRank = _sortedErs.findIndex(e=>e.id===eng.id)+1;
       const _pDelta = _pRank===1?'':` <span style="font-size:8px;color:#dc2626">${(eng.powerRating-_sortedPower[0].powerRating).toFixed(1)}</span>`;
@@ -27907,7 +28035,9 @@ const GameActions = {
         ${canSwitch
           ? `<button onclick="GameActions.switchEngine('${eng.id}')" class="btn btn-outline btn-sm" style="width:100%">🔄 Switch to ${eng.shortName} (3yr deal · ${dealCost?formatMoney(dealCost)+'/yr':'works rate'})</button>`
           : isCurrent
-          ? (team.engineContractYears===0
+          ? (ownsCurrentPU
+              ? `<div style="font-size:10px;color:var(--grn);text-align:center;font-weight:700">Owned manufacturer · no expiry · free to divest at any time</div>`
+              : team.engineContractYears===0
               ? `<button onclick="GameActions.renewEngine()" class="btn btn-success btn-sm" style="width:100%">✅ Renew ${eng.shortName} contract (3yr)</button>`
               : `<div style="font-size:10px;color:var(--tx3);text-align:center">Contract expires in ${team.engineContractYears}yr</div>`)
           : `<div style="font-size:10px;color:var(--tx3);text-align:center;padding:4px 0">${atCapacity?'No capacity available':'Contract locked — '+((team.engineContractYears||0))+' year'+(team.engineContractYears!==1?'s':'')+' remaining'}</div>`}
@@ -27915,7 +28045,7 @@ const GameActions = {
     }).join('');
     const html=`<div>
       <div style="font-size:16px;font-weight:900;margin-bottom:2px">Engine Market</div>
-      <div style="font-size:11px;color:var(--tx3);margin-bottom:16px">Switching suppliers carries a year-1 integration penalty. Available only when your current contract expires.</div>
+      <div style="font-size:11px;color:var(--tx3);margin-bottom:16px">Switching suppliers carries a year-1 integration penalty. Supplier contracts must expire first; an owned manufacturer can be divested at any time.</div>
       ${(()=>{
         // ── Build your own power unit (Feature request) ──────────────────────
         // Unlocked after winning a Constructors' Championship ("after certain achievements
@@ -27931,7 +28061,7 @@ const GameActions = {
           const lastRev = g._lastPuRevenue?.revenue || 0;
           return `<div style="background:linear-gradient(135deg,rgba(192,57,43,.1),rgba(249,115,22,.06));border:1px solid rgba(192,57,43,.35);border-radius:12px;padding:14px;margin-bottom:14px">
             <div style="font-size:13px;font-weight:900;color:var(--red);margin-bottom:4px">⚡ ${pEng?escapeHtml(pEng.name):'Your Power Unit'} — Your Manufacturer</div>
-            <div style="font-size:11px;color:var(--tx2);line-height:1.4">You own this power unit. Your team runs it at works rate (free). <strong>${custCount}</strong> customer team${custCount!==1?'s':''} currently buy your supply${lastRev?` — last year that earned <strong>$${lastRev}M</strong>`:''}. Develop it like any PU via your winter Power Unit budget on the Car page.</div>
+            <div style="font-size:11px;color:var(--tx2);line-height:1.4">You own this power unit. Your team runs it at works rate (free). <strong>${custCount}</strong> customer team${custCount!==1?'s':''} currently buy your supply${lastRev?` — last year that earned <strong>$${lastRev}M</strong>`:''}. Develop it through your winter Power Unit budget, or choose another supplier below to divest the programme and sign a normal three-year deal.</div>
           </div>`;
         }
         if(constrTitles < 1){
@@ -29811,7 +29941,8 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
   },
   switchEngine(manufacturerId){
     const g=State.game; const team=State.getPlayerTeam(); if(!team)return;
-    if((team.engineContractYears||0)>0){UI.toast('Engine contract still active — cannot switch yet.','warning');return;}
+    const leavingOwnedPU = !!(g.playerEngineId && team.engineManufacturer===g.playerEngineId);
+    if((team.engineContractYears||0)>0 && !leavingOwnedPU){UI.toast('Engine contract still active — cannot switch yet.','warning');return;}
     const eng=_liveEngines().find(e=>e.id===manufacturerId);
     if(!eng){UI.toast('Manufacturer not found.','warning');return;}
     const usersCount=getEngineUserCount(manufacturerId, g.teams);
@@ -29819,6 +29950,12 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     if(usersCount>=effectiveMax){UI.toast(`${eng.shortName} is at capacity — no supply slots available.`,'warning');return;}
     const oldEng=team.engineManufacturer;
     const contractCost = getEngineContractCost(team.id, manufacturerId);
+    if(leavingOwnedPU){
+      // Divest rather than transferring ownership/works status to the supplier.
+      const oldOwned = _liveEngines().find(e=>e.id===g.playerEngineId);
+      if(oldOwned && Array.isArray(oldOwned.worksTeams)) oldOwned.worksTeams = oldOwned.worksTeams.filter(id=>!teamIdsEqual(id,team.id));
+      g.playerEngineId = null;
+    }
     team.engineManufacturer=manufacturerId;
     team.engineContractYears=3;
     team.engineContractCost=contractCost;
@@ -29832,7 +29969,7 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     g._engineContractExpiring=false;
     g._engineBreakthroughMsg=null;
     UI.closeModal();
-    UI.toast(`Switched to ${eng.name} — 3yr deal at ${contractCost?formatMoney(contractCost)+'/yr':'works rate'}. Integration penalty applies in year 1.`,'success');
+    UI.toast(`${leavingOwnedPU?'Power-unit programme divested. ':''}Switched to ${eng.name} — 3yr deal at ${contractCost?formatMoney(contractCost)+'/yr':'works rate'}. Integration penalty applies in year 1.`,'success');
     Storage.autosave(); UI.renderCar();
     if(typeof gtag!=='undefined') gtag('event','engine_switch',{from:oldEng,to:manufacturerId,season:g.season});
   },
@@ -29862,6 +29999,12 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     const id = 'player_pu';
     const baseName = (team.name||'Your Team').replace(/\s+(F1|GP|Racing|Team).*$/i,'').trim() || team.name;
     const puName = baseName + ' Power';
+    // Founding a manufacturer ends any previous supplier's works relationship. Without
+    // this cleanup the old supplier could still consider the team its works operation,
+    // later turning a normal return into a free/99-year hybrid contract.
+    (g.engineManufacturers||[]).forEach(e=>{
+      if(Array.isArray(e.worksTeams)) e.worksTeams = e.worksTeams.filter(id=>!teamIdsEqual(id,team.id));
+    });
     g.engineManufacturers.push({
       id, name: puName, shortName: baseName,
       powerRating: 86, ersRating: 84, reliability: 84, devRate: 9,
@@ -31317,7 +31460,7 @@ window._wrTick = function() {
     const headerCol = isSCPit ? '#d97706' : isForcedPit ? '#dc2626' : '#c0392b';
     const headerLabel = isSCPit ? '🚗 SAFETY CAR — FREE PIT WINDOW' : isForcedPit ? '⚠️ TYRE CLIFF — URGENT CALL' : 'PIT CALL — Stop '+ev.stopNum+' of '+ev.totalStops;
     const windowDetail = isSCPit ? '· Minimal time loss under yellow flags' : isForcedPit ? '· Tyres are over the limit now' : '· Window: L'+ev.windowOpen+'–L'+ev.windowClose;
-    const noteText = isSCPit ? 'Box now for a free stop — rivals who stay out will need to pit under green flag later at full cost.' : isForcedPit ? 'Stay out only if you want to gamble on surviving one more lap.' : contextNote;
+    const noteText = isSCPit ? 'The stop costs less time under the Safety Car, but cars that stay out will pass while you are in the pit lane. You gain that track position back only if they pit later.' : isForcedPit ? 'Stay out only if you want to gamble on surviving one more lap.' : contextNote;
     const noteCol = isSCPit ? '#d97706' : isForcedPit ? '#dc2626' : 'var(--tx3)';
     card.innerHTML =
       '<div style="font-size:10px;font-weight:700;letter-spacing:1px;color:'+headerCol+';margin-bottom:6px">L'+ev.lap+' · '+headerLabel+'</div>'
@@ -32592,7 +32735,7 @@ window._wrBuildPitwallData = function(){
     const ev = WR.pitDecisions[pi].ev||{};
     const lapsIn = (ev.lap||0)-(ev.windowOpen||0), win = Math.max(1,(ev.windowClose||0)-(ev.windowOpen||0));
     const pct = lapsIn/win;
-    const note = ev.isSafetyCarPit ? 'Safety car out — box now for a near-free stop before rivals pit under green.'
+    const note = ev.isSafetyCarPit ? 'The stop is cheaper under the Safety Car, but cars staying out will pass while you pit. The gain arrives when they stop later.'
       : ev.isForcedPit ? 'Tyres are over the cliff. Staying out is a gamble on one more lap.'
       : pct<0.3 ? 'Early in the window. Staying out another lap risks the undercut.'
       : pct>0.75 ? 'Window is closing and the tyres are dropping off.'
@@ -33685,7 +33828,7 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
               if(_win && String(_win.teamId)!==String(teamId) && radio.length<6 && !_seen['win'+_i]){ radio.push({icon:'\uD83C\uDFCE\uFE0F',color:'var(--blu)',text:(_win.driverName||'')+' won the '+_rn+' for '+(_win.teamName||'')+'.',tag:_tag}); _seen['win'+_i]=1; }
             }
           }
-          radio=radio.slice(0,6);
+          radio=radio.slice(0,20);
         } catch(e){}
 
         // -- telemetry from car stats + rank --
@@ -34071,8 +34214,9 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
              })(), history:history, market:market };
   };
   window._buildHQCar = function(){
-    var t=T_(State.game.playerTeamId), R=function(v){return Math.round(v||0);};
-    var stats=[['Performance',t.carPerformance],['Top Speed',t.topSpeed],['Cornering',t.cornering],['Tyre Mgmt',t.tyreManagement],['Dirty Air',t.dirtyAir],['Aero',t.aeroEfficiency],['Downforce',t.downforce],['Reliability',t.reliability]].filter(function(s){ return s[1]!=null; }).map(function(s){return {label:s[0],value:R(s[1])};});
+    var g0=State.game, t=T_(g0.playerTeamId), R=function(v){return Math.round(v||0);};
+    var overall=(typeof getTeamOverallCar==='function'?getTeamOverallCar(t):(t.carPerformance||0));
+    var stats=[['Performance',overall],['Top Speed',t.topSpeed],['Cornering',t.cornering],['Tyre Mgmt',t.tyreManagement],['Dirty Air',t.dirtyAir],['Aero',t.aeroEfficiency],['Downforce',t.downforce],['Reliability',t.reliability]].filter(function(s){ return s[1]!=null; }).map(function(s){return {label:s[0],value:R(s[1])};});
     // Round display gains to 2dp — raw float math produced "+5.8500000000000005" on the
     // Upgrade Projects cards (v3.0.3, reported by IronicGerman).
     var ups=[]; try { ups=(State.game.pendingUpgrades||[]).map(function(u){ var gn=u.gain||u.value||0; return { name:u.name||u.area||'Upgrade', area:u.area||'', status:u.status||'planned', gain:(typeof gn==='number'?('+'+(Math.round(gn*100)/100)):gn) }; }); } catch(e){}
@@ -34082,7 +34226,7 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
     // -- aero setup for the current weekend (restores the classic Car page's tuning controls) --
     var setup=null;
     try {
-      var g0=State.game, race=State.getCurrentRace&&State.getCurrentRace();
+      var race=State.getCurrentRace&&State.getCurrentRace();
       var _df=t.downforce||50, _auto=!!g0.autoAero;
       var _locked=!!(race&&(race.qualiDone||race.raceDone));
       var _low=null,_high=null,_know=null,_knowLbl='',_badge='',_ctip='',_ideal=null;
@@ -34109,7 +34253,7 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
     try { _facUnits = (FACILITY_UNIT_KEYS||[]).map(function(k){ return { label:(FACILITY_UNIT_META[k]&&FACILITY_UNIT_META[k].label)||k, value:R(getFacilityUnit(t,k)), color:k==='windTunnel'?'var(--vio)':k==='simulator'?'var(--blu)':'var(--amb)' }; }); } catch(e) {}
     var _compMeta = {frontWing:['🔽','Front Wing','Aero','var(--vio)'],rearWing:['🔼','Rear Wing','Aero','var(--blu)'],floor:['⬛','Floor','Aero','var(--amb)'],chassis:['🏗️','Chassis','Mechanical','var(--blu)'],sidepods:['🌡️','Sidepods','Mechanical','var(--grn)'],suspension:['🔧','Suspension','Mechanical','var(--red)']};
     var _components = [];
-    try { Object.keys(_compMeta).forEach(function(k){ var m=_compMeta[k]; _components.push({icon:m[0],label:m[1],group:m[2],color:m[3],value:R(t.components&&t.components[k])}); }); } catch(e) {}
+    try { Object.keys(_compMeta).forEach(function(k){ var m=_compMeta[k], cur=Number(t.components&&t.components[k]), snap=Number(g0._componentSnapshot&&g0._componentSnapshot[k]); _components.push({icon:m[0],label:m[1],group:m[2],color:m[3],value:R(cur),delta:Number.isFinite(cur)&&Number.isFinite(snap)?Math.round((cur-snap)*10)/10:null}); }); } catch(e) {}
     var _power = null;
     try { var _eng=(_liveEngines()||[]).find(function(e){return e.id===t.engineManufacturer;}); var _pw=State.game.puWear||{ice:0,turbo:0,ers:0}; if(_eng) _power={name:_eng.name,stats:[{label:'Power',value:R(_eng.powerRating),display:Number(_eng.powerRating||0).toFixed(1),color:'var(--amb)'},{label:'ERS',value:R(_eng.ersRating),display:Number(_eng.ersRating||0).toFixed(1),color:'var(--vio)'},{label:'Reliability',value:R(_eng.reliability),display:Number(_eng.reliability||0).toFixed(1),color:'var(--grn)'}],components:[{icon:'🔥',label:'ICE wear',wear:R(_pw.ice),display:R(_pw.ice)+'%'},{icon:'💨',label:'Turbo wear',wear:R(_pw.turbo),display:R(_pw.turbo)+'%'},{icon:'⚡',label:'ERS wear',wear:R(_pw.ers),display:R(_pw.ers)+'%'}]}; } catch(e) {}
     var _income=R(t.revenue), _costs=0; try { var _fin=_buildHQFinance(); _income=(_fin.income||[]).reduce(function(s,x){return s+(x.amount||0);},0); _costs=-(_fin.costs||[]).reduce(function(s,x){return s+(x.amount||0);},0); } catch(e) {}
@@ -34133,8 +34277,8 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
         _winterDev={budget:_wb,remaining:Math.max(0,_wb-_ws),spent:_ws,areas:['aero','engine','reliability','facilities'].map(function(k){return {id:k,label:k.charAt(0).toUpperCase()+k.slice(1),spent:_wd[k]||0,effect:_effects[k]||''};})};
       }
     } catch(e){}
-    var detail={summary:[{label:'Car Performance',value:R(t.carPerformance),display:Number(t.carPerformance||0).toFixed(1),color:'var(--red)'},{label:'Reliability',value:R(t.reliability),display:Number(t.reliability||0).toFixed(1),color:'var(--grn)'},{label:'Development Rate',value:R(t.developmentRate),display:Number(t.developmentRate||0).toFixed(1),color:'var(--blu)'},{label:'Facilities',value:R(t.facilities),display:Number(t.facilities||0).toFixed(1),color:'var(--amb)'}],facilities:_facUnits,components:_components,trackName:_race&&_race.name?String(_race.name).replace(' Grand Prix',''):'',subStats:stats.map(function(s,i){return {label:s.label,value:s.value,display:s.value+' · '+(['P1','P1','P1','P1','P1'][i]||''),color:['var(--amb)','var(--vio)','var(--blu)','var(--grn)','var(--red)'][i]};}),power:_power,finance:_finance,windows:_windows,windowBudget:_qBudget,racesDone:_racesDone,winterDev:_winterDev};
-    return { ovr:R(t.carPerformance), stats:stats, upgrades:ups, setup:setup, detail:detail, development:{ budget:'$'+R(t.revenue)+'M', allocations:alloc } };
+    var detail={summary:[{label:'Car Performance',value:R(overall),display:Number(overall||0).toFixed(1),color:'var(--red)'},{label:'Reliability',value:R(t.reliability),display:Number(t.reliability||0).toFixed(1),color:'var(--grn)'},{label:'Development Rate',value:R(t.developmentRate),display:Number(t.developmentRate||0).toFixed(1),color:'var(--blu)'},{label:'Facilities',value:R(t.facilities),display:Number(t.facilities||0).toFixed(1),color:'var(--amb)'}],facilities:_facUnits,components:_components,trackName:_race&&_race.name?String(_race.name).replace(' Grand Prix',''):'',subStats:stats.map(function(s,i){return {label:s.label,value:s.value,display:s.value+' · '+(['P1','P1','P1','P1','P1'][i]||''),color:['var(--amb)','var(--vio)','var(--blu)','var(--grn)','var(--red)'][i]};}),power:_power,finance:_finance,windows:_windows,windowBudget:_qBudget,racesDone:_racesDone,winterDev:_winterDev};
+    return { ovr:R(overall), stats:stats, upgrades:ups, setup:setup, detail:detail, development:{ budget:'$'+R(t.revenue)+'M', allocations:alloc } };
   };
   window._buildHQFinance = function(){
     var g=State.game, t=T_(g.playerTeamId);
@@ -34215,7 +34359,8 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
     var t=T_(State.game.playerTeamId), roles=[];
     try { var sf=t.staff||{}; Object.keys(sf).forEach(function(k){ var s=sf[k]||{}, role=(DATA.staffRoles||[]).find(function(r){return r.id===k;})||{}, aspect={td:'dev',rs:'strategy',cm:'reliability',pcc:'pit'}[k]||'dev', bonus=0; try { bonus=State.getStaffBonus(t.id,aspect); } catch(e){} var bonusText=k==='td'?'+'+bonus.toFixed(1)+' dev efficiency':k==='rs'?'+'+(bonus*0.5).toFixed(1)+' strategy pace':k==='cm'?'+'+(bonus*0.5).toFixed(1)+' reliability · −'+(bonus*0.25).toFixed(2)+' DNF risk':'+'+(bonus*0.20).toFixed(2)+' pit execution'; roles.push({ id:k, role:role.name||ROLE[k]||k.toUpperCase(), icon:role.icon||'', name:s.name||'', rating:Math.round(s.rating||0), years:s.contract||0, salary:s.salary||0, detail:role.desc||'Provides a specialist performance bonus for the team.', bio:s.desc||'', bonus:bonusText, bonusLabel:role.bonusLabel||'Team effect' }); }); } catch(e){}
     var market=[]; try { market=(State.game.staffMarket||[]).map(function(s,idx){ var role=(DATA.staffRoles||[]).find(function(r){return r.id===s.roleId;})||{}, current=(t.staff||{})[s.roleId], delta=current?Math.round((s.rating||0)-(current.rating||0)):null; return { index:idx, roleId:s.roleId||'', icon:role.icon||'', name:s.name||'', role:role.name||ROLE[s.roleId]||s.roleId||s.role||'', rating:Math.round(s.rating||0), years:s.contract||0, askingSalary:s.salary||s.askingSalary||0, detail:role.desc||'', bio:s.desc||'', bonusLabel:role.bonusLabel||'Team effect', delta:delta }; }); } catch(e){}
-    return { roles:roles, market:market };
+    var totalSalary=0,budgetCap=0; try { totalSalary=getTeamStaffSalaryCost(t); budgetCap=getTeamStaffBudgetCap(t); } catch(e){}
+    return { roles:roles, market:market, totalSalary:totalSalary, budgetCap:budgetCap, overBudget:totalSalary>budgetCap };
   };
   window._buildHQScouting = function(){
     var g=State.game;
@@ -35123,6 +35268,29 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       var fr=document.getElementById('hq-shell-frame'), doc=fr&&fr.contentDocument;
       if(!doc) return;
       var old=doc.getElementById('hq-car-detail'); if(old) old.remove();
+      // Add the classic page's season-gain badges to the native HQ component rows.
+      var carData=window._hqRC&&window._hqRC.data&&window._hqRC.data.car;
+      var components=carData&&carData.detail&&carData.detail.components||[];
+      var labels=doc.querySelectorAll('[data-screen="car"] .sec .lbl'), componentHost=null;
+      for(var _li=0;_li<labels.length;_li++){
+        if((labels[_li].textContent||'').trim()==='Car Components'){
+          var _sec=labels[_li].closest('.sec');
+          componentHost=_sec&&_sec.nextElementSibling;
+          break;
+        }
+      }
+      if(componentHost){
+        var rows=componentHost.querySelectorAll('.trow');
+        Array.prototype.forEach.call(rows,function(row,index){
+          var c=components[index], value=row.querySelector('.tv');
+          if(!c||!value||c.delta==null||value.querySelector('.hq-component-delta')) return;
+          var d=Number(c.delta)||0, badge=doc.createElement('span');
+          badge.className='hq-component-delta';
+          badge.style.cssText='display:block;font-size:9px;font-weight:800;margin-top:1px;color:'+(d>0?'var(--grn)':d<0?'var(--red)':'var(--mut)');
+          badge.textContent=(d>0?'\u25B2 +':d<0?'\u25BC ':'')+d.toFixed(1)+(d===0?' this season':'');
+          value.appendChild(badge);
+        });
+      }
       // Upgrades en route (v3.0.4, reported by IronicGerman): after submitting an upgrade
       // window the classic dashboard said "N packages en route · arrives in X races (GP)",
       // but the HQ Car page went silent — the windows just flipped to COMPLETE with no
@@ -35207,7 +35375,14 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
         'html[data-theme="dark"] .hq-profile{background:var(--panel);border-color:var(--line)}'+
         'html[data-theme="dark"] .hq-profile[open] summary{background:#141923;border-bottom-color:var(--line)}'+
         'html[data-theme="dark"] .conr.me,html[data-theme="dark"] .drvr.me{background:rgba(232,17,45,.16)!important}'+
-        'html[data-theme="dark"] .rnd.done.hq-race-link:hover{box-shadow:0 8px 18px rgba(0,0,0,.45)}';
+        'html[data-theme="dark"] .rnd.done.hq-race-link:hover{box-shadow:0 8px 18px rgba(0,0,0,.45)}'+
+        /* v3.0.6 dark parity: native table headers and inactive controls on Drivers,
+           Scouting, Standings and Car still carried light-only fills (IronicGerman). */
+        'html[data-theme="dark"] .fam.hd{background:#202631!important}'+
+        'html[data-theme="dark"] .setbtn:not(.on),html[data-theme="dark"] select{background:#202631!important;color:var(--ink)!important;border-color:var(--line)!important}'+
+        'html[data-theme="dark"] .ladtbl thead,html[data-theme="dark"] .ladtbl th{background:#202631!important;color:var(--fnt)!important}'+
+        'html[data-theme="dark"] .subtab:not(.on){background:var(--panel)!important;color:var(--mut)!important}'+
+        '.screen[data-screen="dashboard"] .radio{max-height:330px;overflow-y:auto;overscroll-behavior:contain;padding-right:3px}';
       doc.head.appendChild(style);
     } catch(e){}
   };
@@ -35276,8 +35451,11 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
   // themselves in the shell's renderStaff — this hook only clears the legacy panel.
   window._hqEnrichStaff=function(){
     try {
-      var fr=frame(), doc=fr&&fr.contentDocument; if(!doc) return;
+      var fr=frame(), doc=fr&&fr.contentDocument, S=window._hqRC&&window._hqRC.data&&window._hqRC.data.staff; if(!doc||!S) return;
       var el=doc.getElementById('hq-staff-detail'); if(el) el.remove();
+      var salary=Math.round(S.totalSalary||0), cap=Math.round(S.budgetCap||0), over=!!S.overBudget;
+      var body='<div class="hq-insight"><div class="hq-insight-grid"><div><div class="hq-insight-k">Total staff wages</div><div class="hq-insight-v" style="color:'+(over?'var(--red)':'var(--ink)')+'">$'+salary+'M/yr</div></div><div><div class="hq-insight-k">Staff budget cap</div><div class="hq-insight-v">$'+cap+'M/yr</div></div><div><div class="hq-insight-k">Headroom</div><div class="hq-insight-v" style="color:'+(over?'var(--red)':'var(--grn)')+'">'+(over?'\u2212':'')+'$'+Math.abs(cap-salary)+'M</div></div><div><div class="hq-insight-k">Status</div><div class="hq-insight-v" style="font-size:14px;color:'+(over?'var(--red)':'var(--grn)')+'">'+(over?'Over budget':'Within cap')+'</div></div></div></div>';
+      window._hqAddPanel('staff','hq-staff-detail','Staff Wage Control',body,'Leadership \u00B7 Departments');
     } catch(e){}
   };
   window._hqEnrichStandings=function(){
