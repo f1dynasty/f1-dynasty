@@ -49,7 +49,7 @@
   gtag('config', 'G-6B4MBFG3FX');
   // Single source of truth for the build number. The HQ landing reads this rather than
   // carrying its own literal, so a release bump touches the same number of places as before.
-  window.__f1dVersion = '3.0.6';
+  window.__f1dVersion = '3.0.7';
   // Analytics helper. Every call site is fire-and-forget: a missing gtag (ad blocker,
   // offline, file:// testing) or a bad param must never break gameplay, so the guard and
   // the try/catch live here once rather than being repeated at ~40 call sites.
@@ -954,12 +954,12 @@ body.hq-skin #driver-detail-modal .modal-box:has(.le-head)::before{display:none}
         </div>
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:16px;max-width:560px;padding:16px 18px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
-          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v3.0.6: What's New</div>
-          <div style="font-size:14px;font-weight:900;color:#111;margin-bottom:10px">Race integrity, Team HQ parity and healthier eras</div>
+          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v3.0.7: What's New</div>
+          <div style="font-size:14px;font-weight:900;color:#111;margin-bottom:10px">A cleaner, more consistent mobile Team HQ</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 16px">
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🏁</span><span><strong>No finish-line teleporting</strong>: a car must enter attacking range before it can pass, at every position. Thanks IronicGerman.</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🧭</span><span><strong>Team HQ parity</strong>: car values, component gains, staff caps, dark tables and Paddock scrolling now agree with the classic UI.</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:#888;font-weight:800;flex-shrink:0">⚖️</span><span><strong>Healthier long eras</strong>: minor technical directives can gently shift car performance between major resets without hard-coding any named driver or team.</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">☰</span><span><strong>Mobile Team HQ navigation</strong>: quick-access tabs and a grouped side menu keep every management screen within easy reach.</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">↕</span><span><strong>Consistent mobile screen sizing</strong>: Dashboard, Car, Finance and Race Result now share a compact phone-scale layout.</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:#888;font-weight:800;flex-shrink:0">▣</span><span><strong>Narrow layouts repaired</strong>: save cards, career actions and large result panels no longer squeeze, overlap or dominate the screen.</span></div>
           </div>
           <button onclick="UI.showChangelog()" style="margin-top:10px;width:100%;padding:7px;background:none;border:1.5px solid rgba(192,57,43,.3);border-radius:7px;font-size:11px;font-weight:700;color:var(--red);cursor:pointer">Full release notes →</button>
         </div>
@@ -1090,7 +1090,7 @@ body.hq-skin #driver-detail-modal .modal-box:has(.le-head)::before{display:none}
       </div>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v3.0.6</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">Reddit</a> · <a href="https://discord.gg/w3R97uTBW" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">Discord</a></div>
+        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v3.0.7</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">Reddit</a> · <a href="https://discord.gg/w3R97uTBW" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">Discord</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -23606,6 +23606,8 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
 
     ${sec('🏢','Team HQ — Finding Your Way Around',`
       <p>Team HQ is the redesigned interface for running your team. The navigation on the left covers everything: <strong>Dashboard</strong> for the current race weekend, then <strong>Car</strong>, <strong>Drivers</strong>, <strong>Finance</strong>, <strong>Scouting</strong>, <strong>Staff</strong>, <strong>Academy</strong>, <strong>Schedule</strong>, <strong>Teams</strong>, <strong>Standings</strong> and <strong>History</strong>.</p>
+      <h4>Using Team HQ on mobile</h4>
+      <p>On phones, the desktop sidebar becomes a five-button navigation bar. <strong>Home</strong>, <strong>Car</strong> and <strong>Drivers</strong> take you to the most-used pages, while <strong>Menu</strong> opens a side drawer organised like the desktop navigation: Team, Development, World and Tools. The raised red <strong>Next</strong> button advances the same guarded game flow as the desktop Next button: it takes you to the next session, race or offseason step without bypassing required decisions.</p>
       <h4>Tabs and sorting</h4>
       <p>Bigger pages are split into tabs along the top — Drivers has <em>Race Drivers / Free Agents / Results</em>, Car has <em>Race Setup / Car &amp; Power Unit / Upgrades &amp; Finance</em>, History has <em>Honours / GOAT / Records / Hall of Fame / All-Time Ladder</em>. In the Free Agents, Scouting shortlist and All-Time Ladder tables you can click any column header to re-sort the list.</p>
       <h4>Pre-season checklist</h4>
@@ -23613,7 +23615,7 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       <h4>Sponsors</h4>
       <p>Finance lists your current deals and a Sponsor Offers panel. When an offer arrives you can <strong>NEGOTIATE</strong> the term and value, or <strong>⚡ AUTO</strong>-sign it instantly at a 10% discount if you don't want to haggle.</p>
       <h4>Tools</h4>
-      <p>The <strong>⋯ More</strong> menu opens Settings, the save-file tools, the Live Roster Editor (edit this save's teams, drivers, engines and next season's calendar — it floats over the HQ) and this guide.</p>
+      <p>The <strong>Menu</strong> drawer opens Settings, the save-file tools, the Live Roster Editor (edit this save's teams, drivers, engines and next season's calendar — it floats over the HQ) and this guide.</p>
       <h4>Car and staff snapshots</h4>
       <p>The Car page uses the same overall-performance calculation as the rest of the game and shows each component's change from the season-start snapshot. The Staff page shows your total staff wage bill beside its budget cap, so you can judge a renewal or hire before committing.</p>
     `)}
@@ -25239,8 +25241,15 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const html=`
       <div style="max-height:85vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v3.0.6 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v3.0.7 · Release Notes</div>
         ${[
+    ['v3.0.7','July 2026',[
+            '📱 Team HQ now has a purpose-built phone navigation layout: Home, Car and Drivers remain one tap away, the raised Next button uses the normal guarded progression flow, and Menu opens a grouped side drawer that mirrors the desktop sections.',
+            '📐 Dashboard, Car, Finance and Race Result now share one compact mobile hero scale, keeping the important information visible without oversized panels taking over the screen.',
+            '🏁 The mobile Dashboard and post-race result have been tightened substantially: championship, event, setup, strategy, winner and result information now use phone-sized spacing and controls.',
+            '💾 Saved-career cards no longer squeeze long team names between Continue and Delete. Actions move beneath the career details on narrow screens, and Start Career no longer covers saved games while scrolling.',
+            '🧭 Shared mobile overflow, touch-target and content-shrinking safeguards improve narrow layouts throughout Team HQ while leaving the desktop sidebar and wide-screen layouts unchanged. (Based on community mobile screenshots and feedback.)',
+          ]],
     ['v3.0.6','July 2026',[
             '🏁 Finish-line overtakes are physically gated across the whole field: the race model now compares every adjacent pair before and after each lap, caps ordinary gap closure, and requires a car to enter attacking range before it can pass. Pit stops, retirements, severe tyre cliffs and wrong-tyre weather calls still create genuine big swings. (Reported by IronicGerman.)',
             '📰 Paddock News is scrollable and keeps up to 20 meaningful entries instead of silently cutting the panel off at six. (Reported by IronicGerman.)',
@@ -33009,6 +33018,139 @@ window._pwHandleOrder = function(code, val){
   window._hqDecode = function(){
     try {
       var _hq = new TextDecoder().decode(Uint8Array.from(atob(window.__HQ_B64), c=>c.charCodeAt(0)));
+      // Mobile app-shell pass: use a thumb-friendly five-slot navigation pattern
+      // without touching the desktop sidebar or its >=980px layouts. The centre control emits
+      // the existing guarded `next` action, so race/offseason progression keeps one code path.
+      _hq = _hq.replace('</style>', String.raw`
+/* F1 Dynasty mobile app shell */
+.gmobilectx{min-width:0;align-items:center;gap:10px}
+.gmobilecopy{min-width:0}
+.gmobiletitle{font:800 14px/1.1 system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gmobilesub{font:700 8.5px/1.25 'Segoe UI',system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--fnt);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gtb svg{width:21px;height:21px;display:block;flex:none}
+.gtb-primary{overflow:visible!important;z-index:2;flex-direction:column;gap:2px}
+.gtb-orb{width:52px;height:52px;margin-top:-23px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#ff3348,#d80f29);color:#fff;border:5px solid var(--hud);box-shadow:0 7px 20px rgba(232,17,45,.42)}
+.gtb-primary .gtl{font-weight:800;color:#fff;margin-top:1px}
+@keyframes gdrawerIn{from{transform:translateX(-102%)}to{transform:translateX(0)}}
+@media(max-width:979px){
+  html,body{height:100%;overscroll-behavior:none}
+  input,select,textarea{font-size:16px}
+  button,[role="button"]{touch-action:manipulation}
+  .gtop{min-height:58px;padding:9px 13px;position:relative;z-index:4}
+  .gtop>.noshrink{display:none}
+  .gmobilectx{display:flex;flex:1}
+  .gmobilectx .glogo{width:32px;height:32px;font-size:12px;box-shadow:0 5px 14px rgba(232,17,45,.22)}
+  .gresbar{min-height:48px;padding-left:13px;scroll-snap-type:x proximity}
+  .gres{padding:7px 17px 7px 0;margin-right:17px;scroll-snap-align:start}
+  .gresl{font-size:8px}.gresv{font-size:13px}
+  .gtabbar{min-height:66px;grid-template-columns:repeat(5,minmax(0,1fr));align-items:stretch;padding-top:3px;box-shadow:0 -7px 24px rgba(5,8,13,.22)}
+  .gtb{min-width:0;min-height:62px;padding:8px 3px 6px;flex-direction:column;gap:4px;color:#7c8290}
+  .gtb .gtl{font-size:10px;line-height:1}
+  .gtb.on{color:#fff}
+  .gtb.on::before{top:auto;bottom:0;left:28%;right:28%;height:3px;border-radius:3px 3px 0 0}
+  .gtb-primary::before{display:none}
+  .gsheetwrap.open{display:block;position:fixed;inset:0;z-index:70}
+  .gshade{position:absolute;inset:0;width:100%;height:100%;border:0;padding:0;background:rgba(5,8,13,.62);backdrop-filter:blur(2px)}
+  .gsheet{top:0;bottom:0;left:0;right:auto;width:min(86vw,330px);max-height:none;overflow-y:auto;overscroll-behavior:contain;padding:0 0 calc(84px + env(safe-area-inset-bottom,0px));border-radius:0 20px 20px 0;box-shadow:18px 0 42px rgba(0,0,0,.48);animation:gdrawerIn .2s ease-out}
+  .gdrawerhead{position:sticky;top:0;z-index:3;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 15px 14px;background:linear-gradient(180deg,var(--hud) 78%,rgba(13,16,22,.94));border-bottom:1px solid rgba(255,255,255,.08)}
+  .gdrawerbrand{display:flex;align-items:center;gap:10px;min-width:0}
+  .gdrawerbrand .glogo{width:34px;height:34px;font-size:12px}
+  .gdrawerbrand .gword{font-size:16px}
+  .gdrawerclose{appearance:none;width:42px;height:42px;display:flex;align-items:center;justify-content:center;flex:none;border:1px solid rgba(255,255,255,.12);border-radius:10px;background:rgba(255,255,255,.05);color:#fff;font-size:23px;line-height:1;cursor:pointer}
+  .gsheetg{display:block;padding:8px 10px}
+  .gdrawergroup{padding:9px 0 7px}
+  .gdrawergroup+.gdrawergroup{border-top:1px solid rgba(255,255,255,.08)}
+  .gdrawergrouplabel{padding:4px 11px 8px;font:700 8.5px/1 'Segoe UI',system-ui,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:#666e7d}
+  .gdrawerlinks{display:flex;flex-direction:column;gap:3px}
+  .gsm{min-height:46px;padding:9px 11px;border-color:transparent;border-radius:10px;display:flex;flex-direction:row;align-items:center;justify-content:flex-start;gap:10px}
+  .gsmco{width:34px;flex:none;font-size:8.5px}.gsmcl{font-size:13.5px}
+  .gsm.on{border-left:3px solid var(--red);border-top-color:transparent;border-right-color:transparent;border-bottom-color:transparent;border-radius:3px 10px 10px 3px}
+}
+@media(max-width:380px){
+  .gmobiletitle{font-size:13px}
+  .gmobilesub{max-width:225px}
+  .gtb .gtl{font-size:9.5px}
+  .gtb-orb{width:50px;height:50px}
+  .gsheet{width:min(89vw,320px)}
+  .gsm{padding:9px 10px}
+}
+</style>`);
+      _hq = _hq.replace(
+        '<div class="m-only fx ac gap10"><span class="glogo">F1</span><span class="gword">DYNASTY<span>//</span></span></div>',
+        '<div class="m-only gmobilectx"><span class="glogo" aria-hidden="true">F1</span><div class="gmobilecopy"><div class="gmobiletitle" id="mscTitle">Dashboard</div><div class="gmobilesub" id="mscSub">Season overview</div></div></div>'
+      );
+      _hq = _hq.replace(/<div class="gtabbar">[\s\S]*?<\/div>\s*<div class="gsheetwrap"/, String.raw`<div class="gtabbar" role="navigation" aria-label="Primary navigation">
+<button class="gtb" data-nav="dashboard" aria-label="Home">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+<span class="gtl">Home</span></button>
+<button class="gtb" data-nav="car" aria-label="Car">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+<span class="gtl">Car</span></button>
+<button class="gtb gtb-primary" data-act="next" aria-label="Continue to the next event">
+<span class="gtb-orb"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="7 4 19 12 7 20 7 4"/></svg></span>
+<span class="gtl">Next</span></button>
+<button class="gtb" data-nav="drivers" aria-label="Drivers">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+<span class="gtl">Drivers</span></button>
+<button class="gtb" data-act="toggleMore" aria-label="Open Team HQ navigation">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
+<span class="gtl">Menu</span></button>
+</div>
+
+<div class="gsheetwrap"`);
+      // Turn the former bottom sheet into a mobile navigation drawer that mirrors the
+      // desktop sidebar's hierarchy. Existing data-nav/data-act hooks are retained.
+      _hq = _hq.replace(
+        '<div class="gshade" data-act="closeMore"></div>\n<div class="gsheet">\n<div class="gshandle"></div>\n<div class="fx ac jb mb12"><span class="hudf fs11 fnt" style="letter-spacing:.14em">ALL SECTIONS</span><span class="hudf fs11 fnt pointer" style="letter-spacing:.06em" data-act="closeMore">CLOSE ✕</span></div>',
+        '<button class="gshade" data-act="closeMore" aria-label="Close Team HQ navigation"></button>\n<aside class="gsheet" role="dialog" aria-modal="true" aria-label="Team HQ navigation">\n<div class="gdrawerhead"><div class="gdrawerbrand"><span class="glogo" aria-hidden="true">F1</span><span class="gword">DYNASTY<span>//</span></span></div><button class="gdrawerclose" data-act="closeMore" aria-label="Close navigation">×</button></div>'
+      );
+      _hq = _hq.replace(
+        '<div class="gsheetg">\n<button class="gsm" data-nav="dashboard">',
+        '<div class="gsheetg gdrawerbody">\n<section class="gdrawergroup"><div class="gdrawergrouplabel">Team</div><div class="gdrawerlinks">\n<button class="gsm" data-nav="dashboard">'
+      );
+      _hq = _hq.replace(
+        '<button class="gsm" data-nav="scouting">',
+        '</div></section>\n<section class="gdrawergroup"><div class="gdrawergrouplabel">Development</div><div class="gdrawerlinks">\n<button class="gsm" data-nav="scouting">'
+      );
+      _hq = _hq.replace(
+        '<button class="gsm" data-nav="schedule">',
+        '</div></section>\n<section class="gdrawergroup"><div class="gdrawergrouplabel">World</div><div class="gdrawerlinks">\n<button class="gsm" data-nav="schedule">'
+      );
+      _hq = _hq.replace(
+        '<button class="gsm" data-act="exportSave">',
+        '</div></section>\n<section class="gdrawergroup"><div class="gdrawergrouplabel">Tools</div><div class="gdrawerlinks">\n<button class="gsm" data-act="exportSave">'
+      );
+      _hq = _hq.replace(
+        '<button class="gsm" data-act="mainMenu"><span class="gsmco">MNU</span><span class="gsmcl">Main Menu</span></button>\n</div>\n</div>\n</div>',
+        '<button class="gsm" data-act="mainMenu"><span class="gsmco">MNU</span><span class="gsmcl">Main Menu</span></button>\n</div></section>\n</div>\n</aside>\n</div>'
+      );
+      _hq = _hq.replace(
+        "var PRIMARY = ['dashboard','car','drivers','finance']; // bottom-tab slots; rest live in \"More\"",
+        "var PRIMARY = ['dashboard','car','drivers']; // mobile bottom tabs; finance and secondary sections live in Menu"
+      );
+      _hq = _hq.replace(
+        `    var t = $('#scTitle'), s = $('#scSub');
+    if (t) t.textContent = META[name][0];
+    if (s) s.textContent = META[name][1];`,
+        `    var t = $('#scTitle'), s = $('#scSub'), mt = $('#mscTitle'), ms = $('#mscSub');
+    if (t) t.textContent = META[name][0];
+    if (s) s.textContent = META[name][1];
+    if (mt) mt.textContent = META[name][0];
+    if (ms) ms.textContent = META[name][1];`
+      );
+      // The title block occurs in both metadata refresh and direct screen navigation.
+      // Apply the same scoped replacement once more so either path keeps the compact
+      // mobile header in sync.
+      _hq = _hq.replace(
+        `    var t = $('#scTitle'), s = $('#scSub');
+    if (t) t.textContent = META[name][0];
+    if (s) s.textContent = META[name][1];`,
+        `    var t = $('#scTitle'), s = $('#scSub'), mt = $('#mscTitle'), ms = $('#mscSub');
+    if (t) t.textContent = META[name][0];
+    if (s) s.textContent = META[name][1];
+    if (mt) mt.textContent = META[name][0];
+    if (ms) ms.textContent = META[name][1];`
+      );
       _hq = _hq.replace(/<div style="margin-top:14px">\s*<button class="lcom" data-act="community">[\s\S]*?<\/button>\s*<\/div>/, String.raw`<div style="margin-top:14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px">
 <button class="lcom" data-act="community" aria-label="Open the F1 Dynasty Reddit community">
 <span class="lcomico">r/</span>
@@ -33045,6 +33187,79 @@ window._pwHandleOrder = function(code, val){
       _hq = _hq.replace('<div style="display:flex;flex-direction:column"><div class="hudf" style="font-size:9.5px;letter-spacing:.16em;color:#8b91a3;margin-bottom:3px">POSITION</div>', '<div class="hq-champ-stat"><div class="hudf" style="font-size:9.5px;letter-spacing:.16em;color:#8b91a3;margin-bottom:3px">POSITION</div>');
       _hq = _hq.replace('<div style="padding-top:2px"><div class="hudf" style="font-size:9.5px;letter-spacing:.16em;color:#8b91a3;margin-bottom:3px">POINTS</div>', '<div class="hq-champ-stat"><div class="hudf" style="font-size:9.5px;letter-spacing:.16em;color:#8b91a3;margin-bottom:3px">POINTS</div>');
       _hq = _hq.replace('</style>', '.hq-champ-row{display:grid!important;grid-template-columns:92px minmax(130px,1fr)!important;gap:26px!important;align-items:start!important;margin-top:8px}.hq-champ-stat{display:flex;flex-direction:column;align-items:flex-start;min-width:0}.lsaveactions{display:flex;align-items:stretch;gap:7px;flex:none}.lsavedel{appearance:none;border:1px solid rgba(232,17,45,.25);background:#fff;color:#b5152a;border-radius:8px;padding:9px 11px;font:700 11px system-ui,-apple-system,Segoe UI,sans-serif;cursor:pointer}.lsavedel:hover{background:#fff1f3;border-color:#e8112d}.hqsharebtn{width:100%;margin-top:13px;padding:10px 12px;border:1px solid rgba(232,17,45,.24);border-radius:8px;background:#fff;color:var(--red);font:800 12px system-ui,-apple-system,Segoe UI,sans-serif;cursor:pointer}.hqsharebtn:hover{background:#fff2f4}@media(max-width:600px){.lsave{align-items:flex-start!important;flex-wrap:wrap}.lsavein{min-width:calc(100% - 18px)!important}.lsaveactions{width:100%;padding-left:12px}.lsaveactions .lsavego{flex:1}.lsavedel{padding-left:14px;padding-right:14px}}.screen[data-screen="standings"] .tower{background:#fff!important;border:1px solid #dfe3e9!important}.screen[data-screen="standings"] .tower .conr,.screen[data-screen="standings"] .tower .drvr{color:#151922!important;border-color:#e3e6eb!important}.screen[data-screen="standings"] .tower .conr:not(.me) .fw7,.screen[data-screen="standings"] .tower .drvr:not(.me) .fw7{color:#151922!important}.screen[data-screen="standings"] .tower .mono{color:#4d5563!important}.screen[data-screen="finance"] .mkr{grid-template-columns:minmax(180px,1fr) minmax(96px,130px) minmax(110px,130px) 82px!important;gap:14px!important}.screen[data-screen="finance"] .mkr>*{min-width:0}.screen[data-screen="finance"] .mkr .fs11{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}</style>');
+      // Narrow-width safety: the save cards used a three-column desktop grid, so the
+      // team name was squeezed between Continue and Delete. Stack actions below the
+      // metadata, remove the sticky Start overlay on phones, and give shared content
+      // containers a reliable shrink boundary without changing desktop sizing.
+      _hq = _hq.replace('</style>', String.raw`
+@media(max-width:979px){
+  .gm,.glayout,.gmain,.pgwrap,.screen,.screen>*{min-width:0;max-width:100%}
+  .cols,.cols2,.pgrid,.card,.tele,.objcard,.tower{min-width:0;max-width:100%}
+  .gm img,.gm video,.gm canvas{max-width:100%;height:auto}
+}
+@media(max-width:600px){
+  .gm.landing-mode,.land,.lbody,.lsaves{min-width:0;max-width:100%;overflow-x:hidden}
+  .lbody{padding-left:14px;padding-right:14px}
+  .lsec{min-width:0}.lsec .lbl{white-space:normal;line-height:1.35}
+  .lsaves{width:100%}
+  .lsave{width:100%;grid-template-columns:5px minmax(0,1fr)!important;grid-template-rows:auto auto;align-items:stretch!important}
+  .lsavebar{grid-column:1;grid-row:1/3;width:5px;height:100%}
+  .lsavein{grid-column:2;grid-row:1;min-width:0!important;padding:14px 14px 9px}
+  .lsaveteam{overflow-wrap:anywhere}
+  .lsaveactions{grid-column:2;grid-row:2;width:auto!important;padding:0 12px 12px!important;display:grid!important;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:stretch}
+  .lsaveactions .lsavego{min-width:0;min-height:44px;padding:0 12px;justify-content:center;border:1px solid var(--line);border-radius:8px;background:rgba(15,18,24,.025)}
+  .lsavedel{min-height:44px;padding-left:14px;padding-right:14px}
+  .lstart{position:static;bottom:auto}
+  .ldiff{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+  .lact,.lact>div{min-width:0}
+}
+/* One mobile hero scale for Dashboard, Car, Finance and post-race screens. */
+@media(max-width:600px){
+  .screen .hero{margin-bottom:14px;border-radius:14px}
+  .screen .hero .hl{padding:16px 16px 13px 20px!important}
+  .screen .hero .hr{padding:12px 16px 15px 20px!important}
+  .screen .hero .eye{margin-bottom:9px}
+  .screen .hero .hbig{font-size:clamp(32px,10vw,40px)!important;line-height:.88!important}
+  .screen .hero .hr>.disp{font-size:clamp(24px,7.5vw,30px)!important;line-height:1!important;margin:8px 0 7px!important}
+  .screen .hero .gcta{padding:13px!important;font-size:14px!important}
+  .screen .hero .gcta2{padding:10px!important;font-size:11.5px!important}
+}
+@media(max-width:600px){
+  .screen[data-screen="raceResult"] .hero{margin-bottom:14px;border-radius:14px}
+  .screen[data-screen="raceResult"] .hl{padding:16px 16px 13px 20px!important}
+  .screen[data-screen="raceResult"] .hl .eye{margin-bottom:9px}
+  .screen[data-screen="raceResult"] .hl .disp{font-size:clamp(32px,10vw,40px)!important;line-height:.9!important;margin-top:7px!important}
+  .screen[data-screen="raceResult"] .hl .fx.ac.gap8.wrap{margin-top:11px!important}
+  .screen[data-screen="raceResult"] .hr{padding:11px 16px 15px 20px!important}
+  .screen[data-screen="raceResult"] .hr>.fx.ac.jb:first-child{display:none}
+  .screen[data-screen="raceResult"] .hr>.fx.gap8.wrap{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:0!important}
+  .screen[data-screen="raceResult"] .hr>.fx.gap8.wrap .putile{min-width:0!important;padding:8px 10px}
+  .screen[data-screen="raceResult"] .hr>.fx.gap8.wrap .putile:last-child{grid-column:1/-1}
+  .screen[data-screen="raceResult"] .hr>.fx.gap8.wrap .putile:last-child .v{font-size:13px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .screen[data-screen="raceResult"] .hr>.f1{display:none}
+  .screen[data-screen="raceResult"] .gcta{margin-top:11px!important;padding:13px!important;font-size:14px!important}
+  .screen[data-screen="raceResult"] .gcta2{margin-top:7px!important;padding:10px!important;font-size:11.5px!important}
+}
+@media(max-width:600px){
+  .screen[data-screen="dashboard"] .hq-champ-row{grid-template-columns:54px minmax(0,1fr)!important;gap:15px!important;margin-top:6px!important}
+  .screen[data-screen="dashboard"] .hq-champ-stat .disp{font-size:32px!important}
+  .screen[data-screen="dashboard"] .hq-champ-stat .hudf.grn{font-size:11px;line-height:1.3;margin-top:4px}
+  .screen[data-screen="dashboard"] .hl>div[style*="margin-top:24px"]{display:none}
+  .screen[data-screen="dashboard"] .hr>.disp{font-size:clamp(23px,7.2vw,29px)!important}
+  .screen[data-screen="dashboard"] .hr>.fx.ac.gap8.wrap{gap:5px!important;margin-bottom:8px!important}
+  .screen[data-screen="dashboard"] .cpill,.screen[data-screen="dashboard"] .ccz{font-size:9px;padding:3px 7px}
+  .screen[data-screen="dashboard"] .ccrow{gap:5px;margin-bottom:0}
+  .screen[data-screen="dashboard"] .cctip{display:none}
+  .screen[data-screen="dashboard"] .hr>.fx.ac.gap8.mb16{margin-top:7px!important;margin-bottom:8px!important}
+  .screen[data-screen="dashboard"] .hq-setup-shortcut{margin:6px 0 2px!important;padding:9px!important}
+  .screen[data-screen="dashboard"] .hq-strategy-card{margin:7px 0 8px!important;padding:8px 10px!important}
+  .screen[data-screen="dashboard"] .hq-strategy-card>.fs11{display:none}
+  .screen[data-screen="dashboard"] .hr>.f1{display:none}
+  .screen[data-screen="dashboard"] .hr>.fx.gap8[style*="margin-top:9px"]{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px!important;margin-top:6px!important}
+  .screen[data-screen="dashboard"] .hr>.fx.gap8[style*="margin-top:9px"] .gcta3{min-width:0;padding:8px 3px;font-size:8.5px;letter-spacing:0}
+  .screen[data-screen="dashboard"] .gcta{font-size:13px!important;letter-spacing:.05em}
+}
+</style>`);
       _hq = _hq.replace('</head>','<style id="hq-type-lock">.gm,.gm button,.gm input,.gm select,.gm textarea{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}.gm .objlbl{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-weight:650}.gm .objst,.gm .objrw{font-family:"Segoe UI",system-ui,-apple-system,sans-serif}</style></head>');
       // Qualifying is a complete result, so keep every driver visible instead of hiding the
       // lower half behind an inner scrollbar. Desktop uses the card width for two ordered
@@ -33259,7 +33474,7 @@ window._pwHandleOrder = function(code, val){
     var _S=N.strategy;
     var strategyHtml='';
     if(_S&&_S.available){
-      strategyHtml='<div style="margin:12px 0 14px;padding:10px 12px;border:1px solid '+(_S.ready?'rgba(91,227,154,.35)':'rgba(255,184,77,.42)')+';border-radius:9px;background:'+(_S.ready?'rgba(31,170,94,.10)':'rgba(232,150,26,.10)')+'">'
+      strategyHtml='<div class="hq-strategy-card" style="margin:12px 0 14px;padding:10px 12px;border:1px solid '+(_S.ready?'rgba(91,227,154,.35)':'rgba(255,184,77,.42)')+';border-radius:9px;background:'+(_S.ready?'rgba(31,170,94,.10)':'rgba(232,150,26,.10)')+'">'
         +'<div class="fx ac jb gap10"><div style="min-width:0"><div class="hudf fs10 fw7" style="letter-spacing:.12em;color:'+(_S.ready?'#5be39a':'#ffbd62')+'">RACE STRATEGY</div><div class="fw7 fs13" style="margin-top:3px;color:#fff">'+esc(_S.label||'No strategy set')+'</div></div>'
         +'<button data-act="openStrategy" style="flex:none;border:1px solid rgba(255,255,255,.22);border-radius:7px;background:rgba(255,255,255,.08);color:#fff;padding:6px 9px;font:700 10px system-ui;cursor:pointer">'+(_S.ready?'CHANGE':'SET PLAN')+'</button></div>'
         +'<div class="fs11" style="color:#aeb4c0;line-height:1.45;margin-top:5px">'+esc(_S.detail||'')+'</div></div>';
@@ -33582,7 +33797,7 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       // Dashboard parity: setup was technically reachable through small telemetry links,
       // but the prominent old-dashboard setup action was lost. Restore an explicit shortcut
       // and always land on the Race Setup subtab.
-      _hq = _hq.replace("    var _S=N.strategy;\n    var strategyHtml='';", "    var _S=N.strategy;\n    var setupShortcut=(!N.offseason&&N.circuit)?'<button class=\"gcta2\" data-act=\"openCarSetup\" style=\"margin:10px 0 2px\">View &amp; Edit Car Setup</button>':'';\n    var strategyHtml='';");
+      _hq = _hq.replace("    var _S=N.strategy;\n    var strategyHtml='';", "    var _S=N.strategy;\n    var setupShortcut=(!N.offseason&&N.circuit)?'<button class=\"gcta2 hq-setup-shortcut\" data-act=\"openCarSetup\" style=\"margin:10px 0 2px\">View &amp; Edit Car Setup</button>':'';\n    var strategyHtml='';");
       _hq = _hq.replace("      + strategyHtml\n      + '<div class=\"f1\"></div>'", "      + setupShortcut + strategyHtml\n      + '<div class=\"f1\"></div>'");
       // Winter development outcomes used to be rendered behind the fixed HQ iframe. Show the
       // persisted result as a native HQ modal and require a clear acknowledgement.
@@ -33646,7 +33861,13 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       _hq = _hq.replace('<button class="gcta2" data-act="applyQuarterDev"', '<button class="gcta2 hq-apply-dev" data-act="applyQuarterDev"');
       _hq = _hq.replace('</head>', '<style id="hq-apply-dev-style">.gcta2.hq-apply-dev{background:#e8112d;border-color:#e8112d;color:#fff;font-weight:800;letter-spacing:.05em}.gcta2.hq-apply-dev:hover{background:#c60e26}.gcta2.hq-apply-dev[disabled]{background:#9aa1ad;border-color:#9aa1ad;color:#fff;opacity:1!important}</style></head>');
       return _hq;
-    } catch(e){ return null; }
+    } catch(e){
+      try {
+        window.__HQ_DECODE_ERROR = e && (e.stack || e.message) ? String(e.stack || e.message) : String(e);
+        console.error('Team HQ failed to initialise', e);
+      } catch(ignore){}
+      return null;
+    }
   };
   window._hqRC = null;
 
@@ -34019,7 +34240,7 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
         }
       } catch(e){}
       var landingTheme='light'; try { landingTheme=localStorage.getItem('f1d_theme')==='dark'?'dark':'light'; } catch(e){}
-      return { appearance:{theme:landingTheme}, landing:{ saves:saves, teams:teams, selectedTeam:sel, challenge:challenge, patchVersion:(window.__f1dVersion||'3.0.3'), whatsNew:[
+      return { appearance:{theme:landingTheme}, landing:{ saves:saves, teams:teams, selectedTeam:sel, challenge:challenge, patchVersion:(window.__f1dVersion||'3.0.7'), whatsNew:[
         {tag:'FIX', text:'Your career continues after a sacking — job offers appear properly, use your real final standing, and return you smoothly to your new team (thanks PurpleHead)'},
         {tag:'FIX', text:'Race gaps no longer collapse impossibly and the All-Time Ladder shows every driver\'s real wins, podiums, poles and points (thanks IronicGerman)'},
         {tag:'BALANCE', text:'Morale, long-save development budgets and regulation resets are healthier, while interface switching now confirms your progress is saved first (thanks Hennersw1)'}
