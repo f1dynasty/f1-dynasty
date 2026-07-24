@@ -6789,14 +6789,23 @@ nextRegsYear: startYear + randInt(3,5), regsHistory: [],
   },
   ensureRaceEngineerAssignments(team) {
     if(!team || !team.staff) return;
-    const driverIds = (team.driverIds||[]).slice(0,2);
+    const driverIds = [...new Set((team.driverIds||[]).slice(0,2))];
+    const used = new Set();
     ['re1','re2'].forEach((roleId,idx)=>{
       const member=team.staff[roleId];
       if(!member) return;
       this._patchStaffMember(member,roleId);
-      if(!driverIds.some(id=>String(id)===String(member.assignedDriverId))) {
-        member.assignedDriverId=driverIds[idx] ?? driverIds.find(id=>!['re1','re2'].some(other=>other!==roleId&&String(team.staff[other]?.assignedDriverId)===String(id))) ?? null;
-      }
+      const current=driverIds.find(id=>String(id)===String(member.assignedDriverId));
+      // A valid assignment is only retained when another race engineer has not already
+      // claimed that driver. This also repairs existing saves created while both engineers
+      // could default to the same driver.
+      const assigned=(current!==undefined && !used.has(String(current)))
+        ? current
+        : (driverIds[idx]!==undefined && !used.has(String(driverIds[idx]))
+          ? driverIds[idx]
+          : driverIds.find(id=>!used.has(String(id))));
+      member.assignedDriverId=assigned??null;
+      if(assigned!==undefined && assigned!==null) used.add(String(assigned));
     });
   },
   getRaceEngineer(teamId, driverId) {
