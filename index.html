@@ -1023,6 +1023,15 @@ body.hq-skin #driver-detail-modal .modal-box:has(.le-head)::before{display:none}
           <button onclick="UI.showLandingGuide('teams')" style="background:none;border:none;font-size:12px;color:#888;cursor:pointer;font-weight:600;padding:0">Not sure? Pick guide →</button>
         </div>
       </div>
+      <a href="https://www.reddit.com/r/f1dynasty/comments/1v0rco1/2026_f1_real_roster_v251_junior_teams_academy/" target="_blank" rel="noopener noreferrer" style="display:flex;align-items:center;gap:13px;margin-bottom:16px;padding:15px 16px;background:linear-gradient(135deg,#11151d,#202633);border:2px solid var(--red);border-radius:12px;color:#fff;text-decoration:none;box-shadow:0 8px 22px rgba(17,21,29,.2)">
+        <span style="width:42px;height:42px;display:flex;align-items:center;justify-content:center;flex-shrink:0;border-radius:10px;background:var(--red);font-size:22px">🏁</span>
+        <span style="flex:1;min-width:0">
+          <span style="display:block;font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#ff8b98">Looking for the real grid?</span>
+          <span style="display:block;font-size:15px;font-weight:900;margin-top:2px">Get the 2026 F1 Real Roster</span>
+          <span style="display:block;font-size:11px;color:#c9ced8;line-height:1.4;margin-top:3px">The built-in teams and drivers are fictionalised. Open the community-made real-world roster before starting your career.</span>
+        </span>
+        <span style="font-size:20px;font-weight:900;color:#ff6678;flex-shrink:0">↗</span>
+      </a>
       <div style="font-size:11px;color:var(--tx3);margin-bottom:8px;line-height:1.4">💡 Want different teams or drivers? <strong>Open the Roster Editor</strong> to rename anything, build your own grid, or import a community roster.</div>
       <button onclick="UI.openEditor('landing')" title="Open the Roster Editor to rename teams and drivers, edit lineups and stats, build a custom grid, or import a community roster (including fan-made real-world grids)." style="width:100%;margin-bottom:12px;padding:16px 18px;border:none;border-radius:12px;background:linear-gradient(135deg, var(--red), #e0563f);color:#fff;cursor:pointer;text-align:left;display:flex;align-items:center;justify-content:space-between;gap:12px;box-shadow:0 4px 16px rgba(192,57,43,.32)">
         <div style="display:flex;align-items:center;gap:13px">
@@ -24569,7 +24578,7 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     `)}
 
     ${sec('🎨','Roster Editor — Custom Grid Setup',`
-      <p>Before starting a new career, the <strong>Roster Editor</strong> lets you customise the entire starting grid — team names, colours, stats, and driver rosters. Access it from the landing page via <strong>Open Roster Editor</strong>.</p>
+      <p>Before starting a new career, the <strong>Roster Editor</strong> lets you customise the entire starting grid — team names, colours, stats, and driver rosters. Access it from the landing page via <strong>Open Roster Editor</strong>. If you simply want current real-world names, the landing page also has a prominent <strong>Get the 2026 F1 Real Roster</strong> shortcut above constructor selection.</p>
       <h4>What you can edit</h4>
       <p>For each team: name, nation, colour, car performance, reliability, dev rate, facilities, revenue, prestige, downforce, and difficulty. For each driver: all attributes, nationality, age, trait, salary, contract length, and an optional <strong>car number</strong> (1–99). Set a car number to give created drivers their preferred number instead of an auto-assigned one — leave it blank to keep the default. Multi-word surnames (e.g. "van Gisbergen") display correctly throughout the game.</p>
       <h4>Driver cards</h4>
@@ -25877,6 +25886,7 @@ const sponsorInc=sumSponsorIncome(sponsors2);
             '📊 Teams can be sorted by tier, overall rating, car, reliability, facilities or development, with visible comparison bars and clickable team/driver profiles.',
             '🏗 Winter development now explains each allocation and previews expected gains; the offseason also shows incumbent PU ratings, keeps Offseason Prep in navigation, moves regulation planning beside winter development, and gives sponsors a wide desktop comparison.',
             '🧑‍🔧 Staff management has been expanded with role-specific abilities, age, potential, yearly development and retirement. Two Race Engineers are assigned directly to the race drivers and influence morale support, strategy pace, pit timing, one-lap preparation and ERS usage. Engine modes can be delegated with a small ability-based trade-off, rival staff can be scouted and approached, and AI teams now recruit staff too. Every value is editable in the new-game Roster Editor and its uploaded/downloaded JSON, while the Live Editor Staff tab changes active careers and preserves those staff when exporting a career back to a roster. (Requested by IronicGerman and halobeni.)',
+            '🏁 New players can now find the community-made 2026 F1 Real Roster directly on the homepage. A prominent notice explains that the built-in grid is fictionalised and links to the real teams-and-drivers roster before constructor selection.',
           ]],
     ['v3.0.7','July 2026',[
             '📱 Team HQ now has a purpose-built phone navigation layout: Home, Car and Drivers remain one tap away, the raised Next button uses the normal guarded progression flow, and Menu opens a grouped side drawer that mirrors the desktop sections.',
@@ -33775,6 +33785,16 @@ window._pwHandleOrder = function(code, val){
       // without touching the desktop sidebar or its >=980px layouts. The centre control emits
       // the existing guarded `next` action, so race/offseason progression keeps one code path.
       _hq = _hq.replace('</style>', String.raw`
+/* Real-roster onboarding: visible before a new player judges the fictionalised default grid. */
+.lreal{appearance:none;width:100%;display:flex;align-items:center;gap:13px;margin:4px 0 18px;padding:15px 16px;border:2px solid var(--red);border-radius:13px;background:linear-gradient(135deg,#10141c,#202633);color:#fff;text-align:left;cursor:pointer;box-shadow:0 10px 26px rgba(15,18,24,.2);transition:transform .15s ease,box-shadow .15s ease}
+.lreal:hover{transform:translateY(-1px);box-shadow:0 13px 30px rgba(15,18,24,.27)}
+.lrealico{width:44px;height:44px;display:flex;align-items:center;justify-content:center;flex:none;border-radius:10px;background:var(--red);font-size:22px}
+.lrealcopy{display:block;flex:1;min-width:0}
+.lrealk{display:block;font:800 9px/1.2 'Segoe UI',system-ui,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#ff8b98}
+.lrealt{display:block;font:800 16px/1.2 'Arial Narrow','Helvetica Neue',system-ui,sans-serif;letter-spacing:.02em;margin-top:3px}
+.lreals{display:block;font:500 11.5px/1.45 'Segoe UI',system-ui,sans-serif;color:#c9ced8;margin-top:4px}
+.lrealarr{flex:none;color:#ff6678;font-size:21px;font-weight:900}
+@media(max-width:520px){.lreal{padding:13px}.lrealico{width:40px;height:40px}.lrealt{font-size:15px}.lreals{font-size:11px}.lrealarr{display:none}}
 /* F1 Dynasty mobile app shell */
 .gmobilectx{min-width:0;align-items:center;gap:10px}
 .gmobilecopy{min-width:0}
@@ -33933,6 +33953,10 @@ window._pwHandleOrder = function(code, val){
     if (s) s.textContent = META[name][1];
     if (mt) mt.textContent = META[name][0];
     if (ms) ms.textContent = META[name][1];`
+      );
+      _hq = _hq.replace(
+        /<div class="lsec"><i><\/i><span class="lbl">Choose Your Constructor<\/span><span class="ln"><\/span><\/div>/,
+        '<div class="lsec"><i></i><span class="lbl">Choose Your Constructor</span><span class="ln"></span></div><button class="lreal" data-act="realRoster" aria-label="Open the community-made 2026 F1 Real Roster"><span class="lrealico" aria-hidden="true">🏁</span><span class="lrealcopy"><span class="lrealk">Looking for the real grid?</span><span class="lrealt">Get the 2026 F1 Real Roster</span><span class="lreals">The built-in teams and drivers are fictionalised. Open the community-made real-world roster before starting your career.</span></span><span class="lrealarr" aria-hidden="true">↗</span></button>'
       );
       _hq = _hq.replace(/<div style="margin-top:14px">\s*<button class="lcom" data-act="community">[\s\S]*?<\/button>\s*<\/div>/, String.raw`<div style="margin-top:14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px">
 <button class="lcom" data-act="community" aria-label="Open the F1 Dynasty Reddit community">
@@ -37434,6 +37458,7 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
 
 
       rc.on('community', function(){ window.__f1dEv('outbound_click',{target:'reddit'}); try { window.open('https://www.reddit.com/r/f1dynasty/','_blank','noopener'); } catch(e){} });
+      rc.on('realRoster', function(){ window.__f1dEv('outbound_click',{target:'2026_real_roster',source:'landing'}); try { window.open('https://www.reddit.com/r/f1dynasty/comments/1v0rco1/2026_f1_real_roster_v251_junior_teams_academy/','_blank','noopener'); } catch(e){} });
       // Full release notes from the new landing (v3.0.2) — the classic changelog dialog
       // already renders above Team HQ since the v3.0.1 modal layering fix.
       rc.on('showChangelog', function(){ window.__f1dEv('changelog_opened',{version:(window.__f1dVersion||'')}); try { (typeof UI!=='undefined') && UI.showChangelog && UI.showChangelog(); } catch(e){} });
