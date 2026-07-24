@@ -49,7 +49,7 @@
   gtag('config', 'G-6B4MBFG3FX');
   // Single source of truth for the build number. The HQ landing reads this rather than
   // carrying its own literal, so a release bump touches the same number of places as before.
-  window.__f1dVersion = '3.0.7';
+  window.__f1dVersion = '3.0.8';
   // Analytics helper. Every call site is fire-and-forget: a missing gtag (ad blocker,
   // offline, file:// testing) or a bad param must never break gameplay, so the guard and
   // the try/catch live here once rather than being repeated at ~40 call sites.
@@ -954,12 +954,12 @@ body.hq-skin #driver-detail-modal .modal-box:has(.le-head)::before{display:none}
         </div>
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:16px;max-width:560px;padding:16px 18px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
-          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v3.0.7: What's New</div>
-          <div style="font-size:14px;font-weight:900;color:#111;margin-bottom:10px">A cleaner, more consistent mobile Team HQ</div>
+          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v3.0.8: What's New</div>
+          <div style="font-size:14px;font-weight:900;color:#111;margin-bottom:10px">Safer careers and a clearer offseason</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 16px">
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">☰</span><span><strong>Mobile Team HQ navigation</strong>: quick-access tabs and a grouped side menu keep every management screen within easy reach.</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">↕</span><span><strong>Consistent mobile screen sizing</strong>: Dashboard, Car, Finance and Race Result now share a compact phone-scale layout.</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:#888;font-weight:800;flex-shrink:0">▣</span><span><strong>Narrow layouts repaired</strong>: save cards, career actions and large result panels no longer squeeze, overlap or dominate the screen.</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">💾</span><span><strong>Independent save slots</strong>: imported or branched careers can no longer autosave over one another.</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🔀</span><span><strong>Career-move loophole closed</strong>: one team-principal change is allowed per offseason.</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:#888;font-weight:800;flex-shrink:0">📊</span><span><strong>Deeper team management</strong>: staff abilities, driver-assigned race engineers, staff development and scouting join the clearer offseason tools.</span></div>
           </div>
           <button onclick="UI.showChangelog()" style="margin-top:10px;width:100%;padding:7px;background:none;border:1.5px solid rgba(192,57,43,.3);border-radius:7px;font-size:11px;font-weight:700;color:var(--red);cursor:pointer">Full release notes →</button>
         </div>
@@ -1090,7 +1090,7 @@ body.hq-skin #driver-detail-modal .modal-box:has(.le-head)::before{display:none}
       </div>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v3.0.7</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">Reddit</a> · <a href="https://discord.gg/w3R97uTBW" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">Discord</a></div>
+        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v3.0.8</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">Reddit</a> · <a href="https://discord.gg/w3R97uTBW" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">Discord</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -2064,7 +2064,49 @@ const DATA = {
     { id:'pcc', name:'Pit Crew Chief',     icon:'⚡',
       desc:'Leads the pit crew. Elite crews execute faster stops and capitalise on undercut windows, gaining track position.',
       bonusLabel:'Pit execution', salaryBase:3, salaryMax:10 },
+    { id:'re1', name:'Race Engineer · Car 1', icon:'🎧',
+      desc:'Works directly with the first race driver. Communication, pit timing, one-lap preparation and ERS coaching shape the driver\'s weekend.',
+      bonusLabel:'Driver engineering', salaryBase:4, salaryMax:13, raceEngineer:true, driverSlot:0 },
+    { id:'re2', name:'Race Engineer · Car 2', icon:'🎧',
+      desc:'Works directly with the second race driver. Communication, pit timing, one-lap preparation and ERS coaching shape the driver\'s weekend.',
+      bonusLabel:'Driver engineering', salaryBase:4, salaryMax:13, raceEngineer:true, driverSlot:1 },
+    { id:'jre', name:'Junior Race Engineer', icon:'🌱',
+      desc:'A developmental engineering position. Junior engineers gain experience inside the team and can be promoted to either race car.',
+      bonusLabel:'Engineering pipeline', salaryBase:2, salaryMax:7, juniorEngineer:true },
   ],
+  staffAbilityDefs: {
+    td: [
+      {id:'aeroDesign',label:'Aero Design'}, {id:'mechanicalDesign',label:'Mechanical Design'},
+      {id:'resourceEfficiency',label:'Resource Efficiency'}, {id:'innovation',label:'Innovation'}
+    ],
+    rs: [
+      {id:'strategy',label:'Race Strategy'}, {id:'weatherReading',label:'Weather Reading'},
+      {id:'tyreReading',label:'Tyre Reading'}, {id:'safetyCar',label:'Safety-Car Calls'}
+    ],
+    cm: [
+      {id:'reliability',label:'Reliability'}, {id:'setup',label:'Car Setup'},
+      {id:'repairSpeed',label:'Repair Speed'}, {id:'development',label:'Crew Development'}
+    ],
+    pcc: [
+      {id:'pitSpeed',label:'Pit Speed'}, {id:'consistency',label:'Consistency'},
+      {id:'training',label:'Crew Training'}, {id:'pressure',label:'Under Pressure'}
+    ],
+    re1: [
+      {id:'morale',label:'Driver Morale'}, {id:'strategyPace',label:'Strategy Pace'},
+      {id:'pitTiming',label:'Target Pit Time'}, {id:'oneLapPace',label:'One-Lap Pace'},
+      {id:'ersUsage',label:'ERS Usage'}
+    ],
+    re2: [
+      {id:'morale',label:'Driver Morale'}, {id:'strategyPace',label:'Strategy Pace'},
+      {id:'pitTiming',label:'Target Pit Time'}, {id:'oneLapPace',label:'One-Lap Pace'},
+      {id:'ersUsage',label:'ERS Usage'}
+    ],
+    jre: [
+      {id:'morale',label:'Driver Morale'}, {id:'strategyPace',label:'Strategy Pace'},
+      {id:'pitTiming',label:'Target Pit Time'}, {id:'oneLapPace',label:'One-Lap Pace'},
+      {id:'ersUsage',label:'ERS Usage'}
+    ]
+  },
   // Fictional staff name pools — original names, no real people. Bios convey the archetype
   // (legendary designer, ace race engineer, veteran mechanic) without naming real individuals,
   // teams, or series, so the shipped default carries no publicity/trademark exposure. Community
@@ -2104,12 +2146,29 @@ const DATA = {
       {name:'Marco Matassi',    rating:86, salary:8,  desc:'A scuderia\'s pit crew chief. Brings real precision to every stop.'},
       {name:'Lee Stephens',     rating:80, salary:7,  desc:'Dependable pit crew chief known for error-free race weekends.'},
     ],
+    re1: [
+      {name:'Elena Moretti', rating:91, salary:12, desc:'Calm, exact and excellent at translating live race data into clear driver instructions.'},
+      {name:'Daniel Koenig', rating:87, salary:10, desc:'A sharp race engineer known for tyre calls and building driver confidence.'},
+      {name:'Maya Okafor', rating:84, salary:9, desc:'Fast-rising engineer with a strong feel for qualifying preparation and ERS deployment.'}
+    ],
+    re2: [
+      {name:'Lucas Bernard', rating:90, salary:12, desc:'Championship-level communicator with excellent pit-window judgement.'},
+      {name:'Sofia Tanaka', rating:86, salary:10, desc:'Methodical engineer who excels at setup direction and energy management.'},
+      {name:'Noah Whitaker', rating:83, salary:9, desc:'Driver-focused engineer with a reputation for extracting clean one-lap performance.'}
+    ],
+    jre: [
+      {name:'Isla Moreno', rating:68, potential:91, age:24, salary:4, desc:'Promising graduate engineer with strong communication and energy-management instincts.'},
+      {name:'Felix Bauer', rating:65, potential:88, age:23, salary:3, desc:'Junior engineer building experience in qualifying preparation and live strategy.'}
+    ],
   },
   staffFirstNames: {
     td:  ['Adrian','Rory','Julian','Patrick','Michael','Luca','Nikos','Craig','Simon','Gary','Neil','Enzo','Robert','Ben','Paul','Willem','Franz','Stefano','Christian','David'],
     rs:  ['Gian','Hanna','Ruth','Tom','Ali','Jack','Pierre','Marcus','Ciara','Florian','Sven','Nina','Ben','Josh','Liam','Petra','Remi','Kenji','Lars','Sara'],
     cm:  ['Ermano','Mark','Dave','Ciaran','Phil','Stephen','Tony','Mateus','Jens','Rodrigo','Hamish','Brett','Cole','Yannick','Arjan','Piotr','John','Roger','Keith','Brian'],
     pcc: ['Damien','Pete','Gavin','Marco','Lee','Wei','Oliver','Ruben','Glen','Dean','Chris','Andy','Simon','Luke','Tomas','Renaud','Fabio','Henrik','Klaus','Noel'],
+    re1: ['Elena','Daniel','Maya','Alex','Sofia','Noah','Luca','Amira','Jonas','Camille','Ravi','Nina','Oscar','Leila','Mateo','Ava'],
+    re2: ['Lucas','Sofia','Noah','Maya','Daniel','Elena','Amir','Hannah','Theo','Petra','Kenji','Sara','Marco','Chloe','Elias','Zoe'],
+    jre: ['Isla','Felix','Mia','Leo','Aisha','Tom','Nora','Sam','Yuki','Iris','Liam','Marta','Evan','Lina'],
   },
   staffLastNames: ['Vance','Ashworth','Tamberis','Keane','Marsh','Fallow','Ellis','Costa','Vowles','Frey','Sharp','Greene','Hartley','Vasey','Hutson','Matassi','Priestnall','Reddick','Pelham','Marchet','Schmitt','Lamberti','Bonnett','Roquel','Pujol','Cuogi','Spencer'],
 
@@ -3311,6 +3370,96 @@ const LiveEditor = {
       ${libraryHtml}`;
   },
 
+  // Edit the staff attached to the running career. These are the same objects used by
+  // development, race strategy and the offseason staff market, so changes take effect
+  // immediately and survive the normal save/autosave JSON path.
+  setStaffField(teamId, roleId, field, value){
+    const team=State.getTeam(teamId);
+    const role=(DATA.staffRoles||[]).find(r=>r.id===roleId);
+    if(!team || !role) return;
+    if(!team.staff) team.staff={};
+    if(!team.staff[roleId]) team.staff[roleId]=State._generateStaffMember(roleId,60,76,false);
+    const member=State._patchStaffMember(team.staff[roleId],roleId);
+    if(!member) return;
+    if(field==='name' || field==='desc'){
+      const clean=sanitizeUserName(value,field==='name'?40:160);
+      if(field==='name'){ if(clean) member.name=clean; }
+      else member.desc=clean||'';
+    } else if(field==='rating'){
+      const next=clamp(parseInt(value)||member.rating||70,40,99);
+      const old=member.rating||next;
+      const delta=next-old;
+      const defs=State._staffAbilityDefs(roleId);
+      if(defs.length){
+        member.abilities=member.abilities||{};
+        defs.forEach(def=>{ member.abilities[def.id]=clamp(Math.round((Number(member.abilities[def.id])||old)+delta),40,99); });
+      }
+      member.rating=next;
+      State._refreshStaffRating(member);
+      if(member.potential<member.rating) member.potential=member.rating;
+    } else if(field==='salary'){
+      member.salary=clamp(parseInt(value)||member.salary||8,1,60);
+    } else if(field==='contract'){
+      member.contract=clamp(parseInt(value)||1,1,5);
+    } else if(field==='age'){
+      member.age=clamp(parseInt(value)||member.age||38,21,70);
+    } else if(field==='potential'){
+      member.potential=clamp(parseInt(value)||member.potential||member.rating,member.rating||40,99);
+    } else if(field==='assignedDriverId' && role.raceEngineer){
+      const driverId=parseInt(value);
+      if(!(team.driverIds||[]).includes(driverId)){ this.render(); return; }
+      const otherRole=roleId==='re1'?'re2':'re1';
+      const other=team.staff[otherRole];
+      if(other && String(other.assignedDriverId)===String(driverId)){
+        other.assignedDriverId=member.assignedDriverId;
+      }
+      member.assignedDriverId=driverId;
+      State.ensureRaceEngineerAssignments(team);
+    } else if(field.startsWith('ability:')){
+      const abilityId=field.slice(8);
+      if(!State._staffAbilityDefs(roleId).some(a=>a.id===abilityId)) return;
+      member.abilities=member.abilities||{};
+      member.abilities[abilityId]=clamp(parseInt(value)||member.rating||70,40,99);
+      State._refreshStaffRating(member);
+      if(member.potential<member.rating) member.potential=member.rating;
+    }
+    this._refresh();
+  },
+
+  _renderStaffTab(team){
+    const g=State.game;
+    const esc=(typeof escapeHtml==='function')?escapeHtml:(s=>String(s));
+    if(!team.staff) team.staff=State._generateTeamStaff(team.carPerformance||70);
+    State.ensureRaceEngineerAssignments(team);
+    const teams=(g.teams||[]).slice().sort((a,b)=>getTeamOverallCar(b)-getTeamOverallCar(a));
+    const teamTabs=teams.map(t=>`<button onclick="LiveEditor.selectTeam('${t.id}')" style="font-size:11px;font-weight:700;padding:6px 10px;border-radius:8px;border:1px solid ${t.id===team.id?'var(--grn)':'var(--bd)'};background:${t.id===team.id?'var(--bg3)':'var(--bg2)'};color:var(--tx);cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap"><span style="width:9px;height:9px;border-radius:50%;background:${esc(t.color||'#888')};display:inline-block"></span>${esc(t.shortName||t.name)}${t.id===g.playerTeamId?' ★':''}</button>`).join('');
+    const num=(roleId,label,field,value,min,max)=>`<label style="display:flex;flex-direction:column;gap:3px"><span style="font-size:8px;font-weight:700;letter-spacing:.5px;color:var(--tx3);text-transform:uppercase">${label}</span><input type="number" min="${min}" max="${max}" value="${Math.round(value||0)}" onchange="LiveEditor.setStaffField('${team.id}','${roleId}','${field}',this.value)" style="font-size:12px;padding:6px 8px;border:1px solid var(--bd);border-radius:7px;background:var(--bg2);width:100%"></label>`;
+    const cards=(DATA.staffRoles||[]).map(role=>{
+      const member=State._patchStaffMember(team.staff[role.id],role.id);
+      if(!member) return '';
+      const abilities=State._staffAbilityDefs(role.id);
+      const assignment=role.raceEngineer?`<label style="display:flex;flex-direction:column;gap:3px"><span style="font-size:8px;font-weight:700;letter-spacing:.5px;color:var(--tx3);text-transform:uppercase">Assigned Driver</span><select onchange="LiveEditor.setStaffField('${team.id}','${role.id}','assignedDriverId',this.value)" style="font-size:12px;padding:6px 8px;border:1px solid var(--bd);border-radius:7px;background:var(--bg2)">${(team.driverIds||[]).map(id=>{const d=State.getDriver(id);return d?`<option value="${id}" ${String(id)===String(member.assignedDriverId)?'selected':''}>${esc(d.name)}</option>`:'';}).join('')}</select></label>`:'';
+      return `<div style="border:1px solid var(--bd);border-radius:10px;padding:10px 12px;margin-bottom:8px;background:var(--bg2)">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="font-size:16px">${role.icon||'🧑‍🔧'}</span><div style="font-size:12px;font-weight:900;flex:1">${esc(role.name)}</div><div style="font-size:18px;font-weight:900;color:${typeof ratingColor==='function'?ratingColor(member.rating):'var(--tx)'}">${Math.round(member.rating||0)}</div></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));gap:7px">
+          <label style="display:flex;flex-direction:column;gap:3px;grid-column:span 2"><span style="font-size:8px;font-weight:700;letter-spacing:.5px;color:var(--tx3);text-transform:uppercase">Name</span><input value="${esc(member.name||'')}" onchange="LiveEditor.setStaffField('${team.id}','${role.id}','name',this.value)" style="font-size:12px;font-weight:700;padding:6px 8px;border:1px solid var(--bd);border-radius:7px;background:var(--bg2)"></label>
+          ${num(role.id,'Overall','rating',member.rating,40,99)}
+          ${num(role.id,'Potential','potential',member.potential,40,99)}
+          ${num(role.id,'Age','age',member.age,21,70)}
+          ${num(role.id,'Salary ($M)','salary',member.salary,1,60)}
+          ${num(role.id,'Contract (yr)','contract',member.contract||1,1,5)}
+          ${assignment}
+          ${abilities.map(a=>num(role.id,a.label,'ability:'+a.id,member.abilities?.[a.id]??member.rating,40,99)).join('')}
+          <label style="display:flex;flex-direction:column;gap:3px;grid-column:1/-1"><span style="font-size:8px;font-weight:700;letter-spacing:.5px;color:var(--tx3);text-transform:uppercase">Bio / Description</span><input value="${esc(member.desc||'')}" onchange="LiveEditor.setStaffField('${team.id}','${role.id}','desc',this.value)" placeholder="Optional" style="font-size:11px;padding:6px 8px;border:1px solid var(--bd);border-radius:7px;background:var(--bg2)"></label>
+        </div>
+      </div>`;
+    }).join('');
+    return `<div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:10px;margin-bottom:12px;border-bottom:1px solid var(--bd)">${teamTabs}</div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px"><span style="width:14px;height:14px;border-radius:50%;background:${esc(team.color||'#888')};display:inline-block"></span><div style="font-size:15px;font-weight:900">${esc(team.name)} Staff</div></div>
+      <div style="font-size:10px;color:var(--tx3);margin-bottom:10px">Edit the current career's staff, contracts, age, potential and every specialist ability. Overall rating follows the ability average. Race Engineer assignments affect the selected driver immediately.</div>
+      ${cards}`;
+  },
+
 
   _refresh(){
     try { if(typeof Storage!=='undefined' && Storage.autosave) Storage.autosave(); } catch(e){}
@@ -3660,12 +3809,13 @@ const LiveEditor = {
         <button onclick="Editor.exportLiveGameDownload()" style="flex:1;min-width:160px;font-size:11px;font-weight:700;padding:7px 10px;border-radius:7px;border:1px solid var(--bd);background:var(--bg2);color:var(--tx2);cursor:pointer" title="Download this in-progress game as an editor template — drivers, teams, engines, calendar and history snapshot">⬇️ Export game (.json)</button>
         <button onclick="if(confirm('Load the current game state into the new-game Roster Editor? This replaces the editor template you have there.')) Editor.loadLiveGameIntoEditor()" style="flex:1;min-width:160px;font-size:11px;font-weight:700;padding:7px 10px;border-radius:7px;border:1px solid var(--bd);background:var(--bg2);color:var(--tx2);cursor:pointer" title="Send this game to the Roster Editor so you can edit it in detail and start a fresh save from it">✏️ Edit in Roster Editor</button>
       </div>
-      <div style="display:flex;gap:6px;margin-bottom:14px">
-        <button onclick="LiveEditor.selectTab('roster')" style="flex:1;font-size:12px;font-weight:800;padding:8px;border-radius:8px;border:1px solid ${this._tab!=='calendar'&&this._tab!=='engines'?'var(--red)':'var(--bd)'};background:${this._tab!=='calendar'&&this._tab!=='engines'?'rgba(192,57,43,.1)':'var(--bg2)'};color:${this._tab!=='calendar'&&this._tab!=='engines'?'var(--red)':'var(--tx2)'};cursor:pointer">🛠 Teams & Drivers</button>
+      <div style="display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap">
+        <button onclick="LiveEditor.selectTab('roster')" style="flex:1;min-width:135px;font-size:12px;font-weight:800;padding:8px;border-radius:8px;border:1px solid ${this._tab==='roster'?'var(--red)':'var(--bd)'};background:${this._tab==='roster'?'rgba(192,57,43,.1)':'var(--bg2)'};color:${this._tab==='roster'?'var(--red)':'var(--tx2)'};cursor:pointer">🛠 Teams & Drivers</button>
+        <button onclick="LiveEditor.selectTab('staff')" style="flex:1;min-width:110px;font-size:12px;font-weight:800;padding:8px;border-radius:8px;border:1px solid ${this._tab==='staff'?'var(--red)':'var(--bd)'};background:${this._tab==='staff'?'rgba(192,57,43,.1)':'var(--bg2)'};color:${this._tab==='staff'?'var(--red)':'var(--tx2)'};cursor:pointer">🧑‍🔧 Staff</button>
         <button onclick="LiveEditor.selectTab('engines')" style="flex:1;font-size:12px;font-weight:800;padding:8px;border-radius:8px;border:1px solid ${this._tab==='engines'?'var(--red)':'var(--bd)'};background:${this._tab==='engines'?'rgba(192,57,43,.1)':'var(--bg2)'};color:${this._tab==='engines'?'var(--red)':'var(--tx2)'};cursor:pointer">⚡ Power Units</button>
         <button onclick="LiveEditor.selectTab('calendar')" style="flex:1;font-size:12px;font-weight:800;padding:8px;border-radius:8px;border:1px solid ${this._tab==='calendar'?'var(--red)':'var(--bd)'};background:${this._tab==='calendar'?'rgba(192,57,43,.1)':'var(--bg2)'};color:${this._tab==='calendar'?'var(--red)':'var(--tx2)'};cursor:pointer">📅 Next Season Calendar</button>
       </div>
-      ${this._tab==='calendar' ? this._renderCalendarTab() : this._tab==='engines' ? this._renderEnginesTab() : `
+      ${this._tab==='calendar' ? this._renderCalendarTab() : this._tab==='engines' ? this._renderEnginesTab() : this._tab==='staff' ? this._renderStaffTab(team) : `
       <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:10px;margin-bottom:12px;border-bottom:1px solid var(--bd)">${teamTabs}</div>
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
         <span style="width:14px;height:14px;border-radius:50%;background:${esc(team.color||'#888')};display:inline-block"></span>
@@ -4042,8 +4192,10 @@ function getTeamStaffSalaryCost(team) {
   return Object.values(team.staff).reduce((sum, s) => sum + (s && s.salary ? s.salary : 0), 0);
 }
 function getTeamStaffBudgetCap(team) {
-  if(!team) return 45;
-  return Math.max(45, Math.round((team.revenue || 100) * 0.20));
+  if(!team) return 60;
+  // Six core roles now sit under the cap (including two Race Engineers), so the guide
+  // scales with the expanded department rather than making every existing team over budget.
+  return Math.max(60, Math.round((team.revenue || 100) * 0.28));
 }
 const TEAM_ID_ALIASES = Object.freeze({
   rb: 'racingbulls',
@@ -5198,6 +5350,42 @@ const Editor = {
         const _clean = this._sanitizeText(_j, 40, '');
         return _clean ? { juniorTeamId: _clean } : {};
       })(),
+      // Optional per-team starting staff. Blank fields continue to use the normal generated
+      // member, while any supplied name/rating/salary overrides that role for new careers.
+      staffOverrides: (()=>{
+        const src = (team?.staffOverrides && typeof team.staffOverrides==='object')
+          ? team.staffOverrides
+          : ((fallback?.staffOverrides && typeof fallback.staffOverrides==='object') ? fallback.staffOverrides : {});
+        const normalized = {};
+        (DATA.staffRoles||[]).forEach(role=>{
+          const raw = src[role.id];
+          if(!raw || typeof raw!=='object') return;
+          const item = {};
+          const name = this._sanitizeText(raw.name, 40, '');
+          const desc = this._sanitizeText(raw.desc, 160, '');
+          if(name) item.name = name;
+          if(desc) item.desc = desc;
+          if(raw.rating !== '' && raw.rating != null && isFinite(Number(raw.rating))) item.rating = clamp(parseInt(raw.rating),40,99);
+          if(raw.salary !== '' && raw.salary != null && isFinite(Number(raw.salary))) item.salary = clamp(parseInt(raw.salary),1,60);
+          if(raw.contract !== '' && raw.contract != null && isFinite(Number(raw.contract))) item.contract = clamp(parseInt(raw.contract),1,5);
+          if(raw.age !== '' && raw.age != null && isFinite(Number(raw.age))) item.age = clamp(parseInt(raw.age),21,70);
+          if(raw.potential !== '' && raw.potential != null && isFinite(Number(raw.potential))) item.potential = clamp(parseInt(raw.potential),40,99);
+          if(role.raceEngineer && raw.assignedDriverSlot !== '' && raw.assignedDriverSlot != null && isFinite(Number(raw.assignedDriverSlot))) {
+            item.assignedDriverSlot = clamp(parseInt(raw.assignedDriverSlot),0,1);
+          }
+          const defs = (DATA.staffAbilityDefs && DATA.staffAbilityDefs[role.id]) || [];
+          const abilitySrc = raw.abilities && typeof raw.abilities==='object' ? raw.abilities : {};
+          const abilities = {};
+          defs.forEach(def=>{
+            if(abilitySrc[def.id] !== '' && abilitySrc[def.id] != null && isFinite(Number(abilitySrc[def.id]))) {
+              abilities[def.id] = clamp(parseInt(abilitySrc[def.id]),40,99);
+            }
+          });
+          if(Object.keys(abilities).length) item.abilities = abilities;
+          if(Object.keys(item).length) normalized[role.id] = item;
+        });
+        return normalized;
+      })(),
       sponsors: Array.isArray(team?.sponsors) ? team.sponsors.map(sp => ({
         name: this._sanitizeText(sp.name, 40, 'Sponsor') || 'Sponsor',
         value: clamp(parseInt(sp.value) || 10, 1, 200),
@@ -5263,7 +5451,7 @@ const Editor = {
   // Validate/sanitise an imported staff pool. Falls back to defaults per-section so a partial
   // or malformed staffPool can't break the game. Same text sanitisation as other free fields.
   _normalizeStaffPool(src, base) {
-    const ROLES = ['td','rs','cm','pcc'];
+    const ROLES = (DATA.staffRoles||[]).map(r=>r.id);
     const def = base || {
       named: JSON.parse(JSON.stringify(DATA.staffNamedPool)),
       firstNames: JSON.parse(JSON.stringify(DATA.staffFirstNames)),
@@ -5271,16 +5459,27 @@ const Editor = {
     };
     if(!src || typeof src !== 'object') return JSON.parse(JSON.stringify(def));
     const out = { named: {}, firstNames: {}, lastNames: [] };
-    // Named hires per role: {name, rating, salary, desc}
+    // Named hires per role: {name, rating, salary, desc, age, potential, abilities}
     ROLES.forEach(role => {
       const arr = Array.isArray(src.named && src.named[role]) ? src.named[role] : null;
       if(arr) {
-        out.named[role] = arr.slice(0, 40).map(p => ({
-          name: this._sanitizeText(p && p.name, 40, 'Staff Member') || 'Staff Member',
-          rating: clamp(parseInt(p && p.rating) || 70, 40, 99),
-          salary: clamp(parseInt(p && p.salary) || 8, 1, 60),
-          desc: this._sanitizeText(p && p.desc, 160, '')
-        })).filter(p => p.name);
+        out.named[role] = arr.slice(0, 40).map(p => {
+          const rating = clamp(parseInt(p && p.rating) || 70, 40, 99);
+          const abilities = {};
+          ((DATA.staffAbilityDefs&&DATA.staffAbilityDefs[role])||[]).forEach(def=>{
+            const raw = p && p.abilities && p.abilities[def.id];
+            abilities[def.id] = clamp(parseInt(raw) || rating, 40, 99);
+          });
+          return {
+            name: this._sanitizeText(p && p.name, 40, 'Staff Member') || 'Staff Member',
+            rating,
+            salary: clamp(parseInt(p && p.salary) || 8, 1, 60),
+            age: clamp(parseInt(p && p.age) || randInt(28,55), 21, 70),
+            potential: clamp(parseInt(p && p.potential) || Math.max(rating,Math.min(99,rating+randInt(2,12))), 40, 99),
+            abilities,
+            desc: this._sanitizeText(p && p.desc, 160, '')
+          };
+        }).filter(p => p.name);
       } else {
         out.named[role] = JSON.parse(JSON.stringify((def.named && def.named[role]) || []));
       }
@@ -5516,6 +5715,52 @@ const Editor = {
     }
     return this._state.staffPool;
   },
+  getTeamStaffOverrides(teamId) {
+    const team = this.getTeam(teamId);
+    if(!team) return {};
+    if(!team.staffOverrides || typeof team.staffOverrides!=='object') team.staffOverrides={};
+    return team.staffOverrides;
+  },
+  updateTeamStaffField(teamId, role, field, value) {
+    const team = this.getTeam(teamId);
+    if(!team || !(DATA.staffRoles||[]).some(r=>r.id===role)) return;
+    if(!team.staffOverrides || typeof team.staffOverrides!=='object') team.staffOverrides={};
+    if(!team.staffOverrides[role]) team.staffOverrides[role]={};
+    const item=team.staffOverrides[role];
+    if(field==='name' || field==='desc'){
+      const clean=this._sanitizeText(value,field==='name'?40:160,'');
+      if(clean) item[field]=clean; else delete item[field];
+    } else if(field==='rating'){
+      if(String(value).trim()==='') delete item.rating;
+      else item.rating=clamp(parseInt(value)||70,40,99);
+    } else if(field==='salary'){
+      if(String(value).trim()==='') delete item.salary;
+      else item.salary=clamp(parseInt(value)||8,1,60);
+    } else if(field==='contract'){
+      if(String(value).trim()==='') delete item.contract;
+      else item.contract=clamp(parseInt(value)||1,1,5);
+    } else if(field==='age'){
+      if(String(value).trim()==='') delete item.age;
+      else item.age=clamp(parseInt(value)||38,21,70);
+    } else if(field==='potential'){
+      if(String(value).trim()==='') delete item.potential;
+      else item.potential=clamp(parseInt(value)||80,40,99);
+    } else if(field.startsWith('ability:')){
+      const abilityId=field.slice(8);
+      const valid=((DATA.staffAbilityDefs&&DATA.staffAbilityDefs[role])||[]).some(a=>a.id===abilityId);
+      if(!valid) return;
+      if(!item.abilities) item.abilities={};
+      if(String(value).trim()==='') delete item.abilities[abilityId];
+      else item.abilities[abilityId]=clamp(parseInt(value)||70,40,99);
+      if(!Object.keys(item.abilities).length) delete item.abilities;
+    } else if(field==='assignedDriverSlot' && (role==='re1'||role==='re2')){
+      if(String(value).trim()==='') delete item.assignedDriverSlot;
+      else item.assignedDriverSlot=clamp(parseInt(value)||0,0,1);
+    }
+    if(!Object.keys(item).length) delete team.staffOverrides[role];
+    this.setSectionOpen('teamStaff',true);
+    this.persist();
+  },
   updateStaffField(role, index, field, value) {
     const sp = this.getStaffPool();
     const list = sp.named && sp.named[role];
@@ -5526,6 +5771,18 @@ const Editor = {
       list[index].rating = clamp(parseInt(value) || 70, 40, 99);
     } else if(field === 'salary') {
       list[index].salary = clamp(parseInt(value) || 8, 1, 60);
+    } else if(field === 'age') {
+      list[index].age = clamp(parseInt(value) || 38, 21, 70);
+    } else if(field === 'potential') {
+      list[index].potential = clamp(parseInt(value) || list[index].rating || 75, 40, 99);
+    } else if(field.startsWith('ability:')) {
+      const abilityId=field.slice(8);
+      const valid=((DATA.staffAbilityDefs&&DATA.staffAbilityDefs[role])||[]).some(a=>a.id===abilityId);
+      if(!valid) return;
+      if(!list[index].abilities) list[index].abilities={};
+      list[index].abilities[abilityId]=clamp(parseInt(value)||list[index].rating||70,40,99);
+      const vals=Object.values(list[index].abilities).filter(Number.isFinite);
+      if(vals.length) list[index].rating=clamp(Math.round(vals.reduce((a,b)=>a+b,0)/vals.length),40,99);
     }
     this.setSectionOpen('staff', true);
     this.persist();
@@ -5533,7 +5790,9 @@ const Editor = {
   addStaff(role) {
     const sp = this.getStaffPool();
     if(!sp.named[role]) sp.named[role] = [];
-    sp.named[role].push({ name: 'New Staff Member', rating: 75, salary: 10, desc: '' });
+    const abilities={};
+    ((DATA.staffAbilityDefs&&DATA.staffAbilityDefs[role])||[]).forEach(a=>abilities[a.id]=75);
+    sp.named[role].push({ name: 'New Staff Member', rating: 75, potential:85, age:35, salary: 10, abilities, desc: '' });
     this.setSectionOpen('staff', true);
     this.persist();
     if(typeof UI !== 'undefined') UI.renderEditor();
@@ -5950,8 +6209,33 @@ const Editor = {
     if(!g) return null;
     const PICK_D = ['name','nationality','trait','age','rating','potential','qualifying','racePace','consistency','wet','aggression','marketability','morale','salary','contract','feederContract','prospectSeries','series','isWonderkid','academyName'];
     const mapDriver = (d)=>{ const o={}; PICK_D.forEach(k=>{ if(d[k]!==undefined && d[k]!==null) o[k]=d[k]; }); o.rating=Math.round(d.rating||70); return o; };
-    const TEAM_STRIP = new Set(['driverIds','reserveIds','seasonPoints','wins','poles','podiums','sprintWins','_rebrandedFrom']);
-    const mapTeam = (t)=>{ const o=JSON.parse(JSON.stringify(t)); TEAM_STRIP.forEach(k=>delete o[k]); return o; };
+    const TEAM_STRIP = new Set(['driverIds','reserveIds','staff','staffOverrides','seasonPoints','wins','poles','podiums','sprintWins','_rebrandedFrom']);
+    const mapStaff = (t)=>{
+      const out={};
+      (DATA.staffRoles||[]).forEach(role=>{
+        const member=t.staff&&t.staff[role.id];
+        if(!member) return;
+        State._patchStaffMember(member,role.id);
+        const item={
+          name:member.name,
+          rating:Math.round(member.rating||70),
+          salary:Math.round(member.salary||8),
+          contract:clamp(parseInt(member.contract)||1,1,5),
+          age:Math.round(member.age||38),
+          potential:Math.round(member.potential||member.rating||70),
+          abilities:{}
+        };
+        if(member.desc) item.desc=member.desc;
+        State._staffAbilityDefs(role.id).forEach(def=>{ item.abilities[def.id]=Math.round(member.abilities?.[def.id]??member.rating??70); });
+        if(role.raceEngineer){
+          const slot=(t.driverIds||[]).findIndex(id=>String(id)===String(member.assignedDriverId));
+          if(slot>=0) item.assignedDriverSlot=slot;
+        }
+        out[role.id]=item;
+      });
+      return out;
+    };
+    const mapTeam = (t)=>{ const o=JSON.parse(JSON.stringify(t)); TEAM_STRIP.forEach(k=>delete o[k]); o.staffOverrides=mapStaff(t); return o; };
     // Sponsors (v2.5.9, ZareJonathan): export the player team's LIVE sponsor deals (they evolve
     // during a save) and every other team's stored editor sponsor set, trimmed back to editor
     // shape so the importer treats them as definitions rather than mid-contract deals.
@@ -5988,6 +6272,19 @@ const Editor = {
     });
     const namedFreeAgents = (g.drivers||[]).filter(d=>!d.teamId && !d.retired && !d.isProspect && !d.isReserve && !d.isJunior).map(mapDriver);
     const namedProspects = (g.drivers||[]).filter(d=>d.isProspect && !d.retired).map(mapDriver);
+    const exportedStaffPool=JSON.parse(JSON.stringify(g.staffPool || {
+      named:DATA.staffNamedPool, firstNames:DATA.staffFirstNames, lastNames:DATA.staffLastNames
+    }));
+    if(!exportedStaffPool.named) exportedStaffPool.named={};
+    (g.staffMarket||[]).forEach(member=>{
+      if(!member || !(DATA.staffRoles||[]).some(r=>r.id===member.roleId)) return;
+      State._patchStaffMember(member,member.roleId);
+      const list=exportedStaffPool.named[member.roleId]||(exportedStaffPool.named[member.roleId]=[]);
+      if(list.some(x=>String(x.name).toLowerCase()===String(member.name).toLowerCase())) return;
+      const abilities={};
+      State._staffAbilityDefs(member.roleId).forEach(def=>{ abilities[def.id]=Math.round(member.abilities?.[def.id]??member.rating??70); });
+      list.push({name:member.name,rating:Math.round(member.rating||70),salary:Math.round(member.salary||8),age:Math.round(member.age||38),potential:Math.round(member.potential||member.rating||70),abilities,desc:member.desc||''});
+    });
     return {
       teams: (g.teams||[]).filter(t=>!t.retired).map(t=>attachSponsors(mapTeam(t), t)),
       seasonDrivers, reserveDrivers, namedFreeAgents, namedProspects,
@@ -5997,7 +6294,7 @@ const Editor = {
       customSprintPoints: g.customSprintPoints || null,
       scoringRules: g.scoringRules || { fastestLap:false, fastestLapPoints:1, fastestLapTopN:10, polePoints:0, doublePointsFinale:false },
       engineManufacturers: JSON.parse(JSON.stringify(g.engineManufacturers || DATA.engineManufacturers)),
-      staffPool: { named: JSON.parse(JSON.stringify(DATA.staffNamedPool)), firstNames: JSON.parse(JSON.stringify(DATA.staffFirstNames)), lastNames: [...DATA.staffLastNames] },
+      staffPool: exportedStaffPool,
       customCalendar: sanitizeCalendarRounds(g.customCalendar || g.calendar || null),
       customCalendarFull: g.customCalendarFull ? sanitizeCalendarRounds(g.customCalendarFull) : null,
       _exportedFrom: { season: year, manager: (State.getPlayerTeam()||{}).name || null, exportedAt: new Date().toISOString() }
@@ -6351,6 +6648,30 @@ const State = {
     this._pendingStaffPool = _staffPool;
     teams.forEach(team => {
       team.staff = this._generateTeamStaff(team.carPerformance);
+      const overrides = team.staffOverrides || {};
+      Object.keys(overrides).forEach(roleId=>{
+        if(!team.staff[roleId] || !overrides[roleId]) return;
+        const ov=overrides[roleId];
+        if(ov.name) team.staff[roleId].name=ov.name;
+        if(ov.desc) team.staff[roleId].desc=ov.desc;
+        if(ov.rating!=null) team.staff[roleId].rating=clamp(parseInt(ov.rating)||70,40,99);
+        if(ov.salary!=null) team.staff[roleId].salary=clamp(parseInt(ov.salary)||8,1,60);
+        if(ov.contract!=null) team.staff[roleId].contract=clamp(parseInt(ov.contract)||1,1,5);
+        if(ov.age!=null) team.staff[roleId].age=clamp(parseInt(ov.age)||38,21,70);
+        if(ov.potential!=null) team.staff[roleId].potential=clamp(parseInt(ov.potential)||team.staff[roleId].rating,40,99);
+        if(ov.abilities&&typeof ov.abilities==='object') {
+          team.staff[roleId].abilities=this._seedStaffAbilities(roleId,team.staff[roleId].rating,{...(team.staff[roleId].abilities||{}),...ov.abilities});
+          this._refreshStaffRating(team.staff[roleId]);
+        }
+        if((roleId==='re1'||roleId==='re2') && ov.assignedDriverSlot!=null) {
+          team.staff[roleId].assignedDriverId=team.driverIds[clamp(parseInt(ov.assignedDriverSlot)||0,0,1)]??null;
+        }
+        this._patchStaffMember(team.staff[roleId],roleId);
+      });
+      if(team.staff.re1 && team.staff.re2 && String(team.staff.re1.assignedDriverId)===String(team.staff.re2.assignedDriverId)) {
+        team.staff.re2.assignedDriverId=(team.driverIds||[]).find(id=>String(id)!==String(team.staff.re1.assignedDriverId))??team.staff.re2.assignedDriverId;
+      }
+      this.ensureRaceEngineerAssignments(team);
     });
     // Generate a free agent staff market (6-9 people available for hire)
     const allStaff = teams.flatMap(t=>Object.values(t.staff||{})).filter(Boolean);
@@ -6423,12 +6744,160 @@ nextRegsYear: startYear + randInt(3,5), regsHistory: [],
       // _buildTeam previously dropped it, so custom sponsors never entered the save and an
       // exported template fell back to the default 2026 sponsor map on import.
       sponsors: Array.isArray(tDef.sponsors) && tDef.sponsors.length ? JSON.parse(JSON.stringify(tDef.sponsors)) : undefined,
+      staffOverrides: (tDef.staffOverrides && typeof tDef.staffOverrides==='object')
+        ? JSON.parse(JSON.stringify(tDef.staffOverrides))
+        : undefined,
       seasonPoints:0, totalPoints:0, wins:0, sprintWins:0, poles:0, podiums:0, championships:0
     };
     ensureFacilityUnits(_t); // v2.5.8: initialise the three sub-facilities for every new team
     return _t;
   },
   // ── Staff helpers ────────────────────────────────────────────────────────
+  _staffAbilityDefs(roleId) {
+    return (DATA.staffAbilityDefs && DATA.staffAbilityDefs[roleId]) || [];
+  },
+  _seedStaffAbilities(roleId, rating, supplied) {
+    const out = {};
+    const src = supplied && typeof supplied==='object' ? supplied : {};
+    this._staffAbilityDefs(roleId).forEach(def=>{
+      const value = src[def.id];
+      out[def.id] = clamp(
+        value !== '' && value != null && isFinite(Number(value))
+          ? parseInt(value)
+          : Math.round((rating||70) + randFloat(-6,6)),
+        40, 99
+      );
+    });
+    return out;
+  },
+  _refreshStaffRating(member) {
+    if(!member) return 0;
+    const vals = Object.values(member.abilities||{}).filter(v=>isFinite(Number(v))).map(Number);
+    if(vals.length) member.rating = clamp(Math.round(vals.reduce((a,b)=>a+b,0)/vals.length),40,99);
+    return member.rating||0;
+  },
+  _patchStaffMember(member, roleId) {
+    if(!member) return null;
+    member.roleId = roleId || member.roleId;
+    member.rating = clamp(parseInt(member.rating)||70,40,99);
+    member.age = clamp(parseInt(member.age)||randInt(28,55),21,70);
+    member.potential = clamp(parseInt(member.potential)||Math.max(member.rating,Math.min(99,member.rating+randInt(2,12))),40,99);
+    member.abilities = this._seedStaffAbilities(member.roleId, member.rating, member.abilities);
+    this._refreshStaffRating(member);
+    if(member.potential < member.rating) member.potential = member.rating;
+    return member;
+  },
+  ensureRaceEngineerAssignments(team) {
+    if(!team || !team.staff) return;
+    const driverIds = (team.driverIds||[]).slice(0,2);
+    ['re1','re2'].forEach((roleId,idx)=>{
+      const member=team.staff[roleId];
+      if(!member) return;
+      this._patchStaffMember(member,roleId);
+      if(!driverIds.some(id=>String(id)===String(member.assignedDriverId))) {
+        member.assignedDriverId=driverIds[idx] ?? driverIds.find(id=>!['re1','re2'].some(other=>other!==roleId&&String(team.staff[other]?.assignedDriverId)===String(id))) ?? null;
+      }
+    });
+  },
+  getRaceEngineer(teamId, driverId) {
+    const team=this.getTeam(teamId);
+    if(!team || !team.staff) return null;
+    this.ensureRaceEngineerAssignments(team);
+    return ['re1','re2'].map(id=>team.staff[id]).find(m=>m&&String(m.assignedDriverId)===String(driverId)) || null;
+  },
+  getRaceEngineerModifiers(teamId, driverId) {
+    const member=this.getRaceEngineer(teamId,driverId);
+    if(!member) return {member:null,morale:0,strategyPace:0,pitTime:0,oneLapPace:0,ersUsage:0};
+    const a=member.abilities||{};
+    const scale=(value,max)=>clamp(((Number(value)||40)-40)/59,0,1)*max;
+    return {
+      member,
+      morale:scale(a.morale,8),
+      strategyPace:scale(a.strategyPace,1.4),
+      pitTime:scale(a.pitTiming,0.9),
+      oneLapPace:scale(a.oneLapPace,1.25),
+      ersUsage:scale(a.ersUsage,9)
+    };
+  },
+  processStaffOffseason() {
+    const g=this.game; if(!g) return;
+    g.staffMarket=g.staffMarket||[];
+    const playerId=String(g.playerTeamId);
+    (g.staffMarket||[]).forEach(m=>{ this._patchStaffMember(m,m.roleId); m.age=Math.min(70,(m.age||38)+1); });
+    (g.teams||[]).forEach(team=>{
+      if(!team.staff) team.staff=this._generateTeamStaff(team.carPerformance||70);
+      this.ensureRaceEngineerAssignments(team);
+      Object.keys(team.staff).forEach(roleId=>{
+        const member=this._patchStaffMember(team.staff[roleId],roleId); if(!member) return;
+        const beforeRating=member.rating||0;
+        member.age=Math.min(70,(member.age||38)+1);
+        const facilities=clamp((team.facilities||70)/100,0.4,1);
+        const tdRating=(team.staff.td&&team.staff.td.rating)||70;
+        const assigned=member.assignedDriverId!=null ? this.getDriver(member.assignedDriverId) : null;
+        const peopleBoost=assigned ? clamp(((assigned.consistency||70)+(assigned.morale||70)-140)/300,-0.12,0.12) : 0;
+        let change=0;
+        if(member.age<=44 && member.rating<member.potential) change=randFloat(0.15,1.05)*(0.65+facilities*0.45)+(tdRating-70)/220+peopleBoost;
+        else if(member.age<=57) change=randFloat(-0.30,0.40)+(facilities-0.7)*0.25;
+        else change=-randFloat(0.20,0.90)*((member.age-54)/12);
+        Object.keys(member.abilities||{}).forEach(key=>{
+          const room=Math.max(0,member.potential-(member.abilities[key]||40));
+          const abilityChange=change>0 ? Math.min(change*randFloat(0.72,1.25),Math.max(0.05,room)) : change*randFloat(0.65,1.2);
+          member.abilities[key]=clamp((member.abilities[key]||member.rating)+abilityChange,40,99);
+        });
+        this._refreshStaffRating(member);
+        member._lastDevChange=+(member.rating-beforeRating).toFixed(1);
+        if(String(team.id)!==playerId){
+          member.seasonsAtClub=(member.seasonsAtClub||0)+1;
+          member.contract=(member.contract||1)-1;
+          if(member.contract<=0) member.contract=randInt(1,4);
+        }
+        const retireChance=member.age<60?0:member.age<64?0.05:member.age<67?0.18:0.45;
+        if(Math.random()<retireChance){
+          if(String(team.id)===playerId){
+            team.staff[roleId]=null;
+            g.newsFeed=g.newsFeed||[];
+            const role=DATA.staffRoles.find(r=>r.id===roleId);
+            g.newsFeed.unshift({icon:'👋',type:'warning',msg:`<strong>${member.name}</strong> (${role?.name||roleId}) has retired at age ${member.age}. The position is now vacant.`,race:undefined});
+          } else {
+            team.staff[roleId]=this._generateStaffMember(roleId,42,Math.max(58,member.rating-randInt(4,14)),false);
+          }
+        }
+      });
+      this.ensureRaceEngineerAssignments(team);
+    });
+    // AI teams actively improve their departments from the same market the player sees.
+    (g.teams||[]).filter(t=>String(t.id)!==playerId).forEach(team=>{
+      if(Math.random()>0.28 || !g.staffMarket.length) return;
+      const candidates=g.staffMarket.map((m,index)=>({m,index,current:team.staff&&team.staff[m.roleId]}))
+        .filter(x=>x.m&&(!x.current||(x.m.rating||0)>(x.current.rating||0)+4))
+        .sort((a,b)=>((b.m.rating||0)-(b.current?.rating||55))-((a.m.rating||0)-(a.current?.rating||55)));
+      const pick=candidates[0]; if(!pick) return;
+      if(pick.current) g.staffMarket.push({...pick.current,contract:Math.max(1,pick.current.contract||1),_seasonsInMarket:0});
+      team.staff[pick.m.roleId]={...pick.m,contract:randInt(2,4),seasonsAtClub:0};
+      g.staffMarket.splice(pick.index,1);
+      this.ensureRaceEngineerAssignments(team);
+    });
+    // A small number of AI-to-AI poaching moves keep rival departments from staying frozen.
+    if(Math.random()<0.22){
+      const aiTeams=(g.teams||[]).filter(t=>String(t.id)!==playerId&&t.staff);
+      const buyer=aiTeams[Math.floor(Math.random()*aiTeams.length)];
+      if(buyer){
+        const targets=[];
+        aiTeams.filter(t=>t!==buyer).forEach(source=>Object.keys(source.staff||{}).forEach(roleId=>{
+          const m=source.staff[roleId],current=buyer.staff&&buyer.staff[roleId];
+          if(m&&(!current||(m.rating||0)>(current.rating||0)+7)) targets.push({source,roleId,m,current});
+        }));
+        targets.sort((a,b)=>(b.m.rating||0)-(a.m.rating||0));
+        const move=targets[0];
+        if(move){
+          if(move.current) g.staffMarket.push({...move.current,contract:Math.max(1,move.current.contract||1),_seasonsInMarket:0});
+          buyer.staff[move.roleId]={...move.m,contract:randInt(2,4),seasonsAtClub:0};
+          move.source.staff[move.roleId]=this._generateStaffMember(move.roleId,44,Math.max(60,(move.m.rating||70)-randInt(5,13)),false);
+          this.ensureRaceEngineerAssignments(buyer); this.ensureRaceEngineerAssignments(move.source);
+        }
+      }
+    }
+  },
   _generateStaffMember(roleId, ratingMin, ratingMax, useNamedPool) {
     const role = DATA.staffRoles.find(r=>r.id===roleId);
     if(!role) return null;
@@ -6445,13 +6914,17 @@ nextRegsYear: startYear + randInt(3,5), regsHistory: [],
       const viable = namedPool.filter(p => Math.abs(p.rating - rating) <= 15);
       if(viable.length) {
         const pick = viable[Math.floor(Math.random()*viable.length)];
-        return {
+        const member = {
           id: `staff_${roleId}_${Date.now()}_${Math.floor(Math.random()*9999)}`,
           roleId, name: pick.name, rating: pick.rating,
           salary: pick.salary, contract: randInt(1,3),
           seasonsAtClub: 0, _salaryEscalated: false,
+          age: clamp(parseInt(pick.age)||(roleId==='jre'?randInt(21,29):randInt(30,56)),21,70),
+          potential: clamp(parseInt(pick.potential)||Math.max(pick.rating,Math.min(99,pick.rating+randInt(roleId==='jre'?10:1,roleId==='jre'?24:8))),40,99),
+          abilities: this._seedStaffAbilities(roleId,pick.rating,pick.abilities),
           desc: pick.desc || ''
         };
+        return this._patchStaffMember(member,roleId);
       }
     }
     // Generated staff
@@ -6461,12 +6934,15 @@ nextRegsYear: startYear + randInt(3,5), regsHistory: [],
     const ln = lnPool[Math.floor(Math.random()*lnPool.length)];
     const salaryRange = role.salaryMax - role.salaryBase;
     const salary = Math.round(role.salaryBase + (rating-40)/60 * salaryRange);
-    return {
+    const member = {
       id: `staff_${roleId}_${Date.now()}_${Math.floor(Math.random()*9999)}`,
       roleId, name:`${fn} ${ln}`, rating,
       salary, contract: randInt(1,3),
-      seasonsAtClub: 0, _salaryEscalated: false
+      seasonsAtClub: 0, _salaryEscalated: false,
+      age:roleId==='jre'?randInt(21,29):randInt(27,55), potential:clamp(rating+randInt(roleId==='jre'?10:2,roleId==='jre'?24:14),40,99),
+      abilities:this._seedStaffAbilities(roleId,rating)
     };
+    return this._patchStaffMember(member,roleId);
   },
   _generateTeamStaff(teamCarPerf) {
     // Scale initial staff rating to team strength
@@ -6477,6 +6953,9 @@ nextRegsYear: startYear + randInt(3,5), regsHistory: [],
       rs:  this._generateStaffMember('rs',  clamp(base-spread,42,85), clamp(base+spread,50,93), true),
       cm:  this._generateStaffMember('cm',  clamp(base-spread,42,85), clamp(base+spread,50,92), true),
       pcc: this._generateStaffMember('pcc', clamp(base-spread,42,85), clamp(base+spread,48,92), true),
+      re1: this._generateStaffMember('re1', clamp(base-spread,42,85), clamp(base+spread,50,93), true),
+      re2: this._generateStaffMember('re2', clamp(base-spread,42,85), clamp(base+spread,50,93), true),
+      jre: this._generateStaffMember('jre', clamp(base-spread-8,40,68), clamp(base,52,78), true),
     };
   },
   _generateStaffMarket(existingStaff) {
@@ -6493,7 +6972,7 @@ nextRegsYear: startYear + randInt(3,5), regsHistory: [],
     return market;
   },
   getStaffBonus(teamId, aspect) {
-    // Returns a bonus value based on staff rating
+    // Returns a bonus value based on the abilities relevant to that department.
     // aspect: 'dev' (td), 'strategy' (rs), 'reliability' (cm), 'pit' (pcc)
     const g = this.game;
     if(!g) return 0;
@@ -6502,10 +6981,18 @@ nextRegsYear: startYear + randInt(3,5), regsHistory: [],
     const roleMap = {dev:'td', strategy:'rs', reliability:'cm', pit:'pcc'};
     const roleId = roleMap[aspect];
     if(!roleId) return 0;
-    const member = team.staff[roleId];
+    const member = this._patchStaffMember(team.staff[roleId],roleId);
     if(!member) return 0;
+    const abilityKeys = {
+      dev:['aeroDesign','mechanicalDesign','resourceEfficiency','innovation'],
+      strategy:['strategy','weatherReading','tyreReading','safetyCar'],
+      reliability:['reliability','setup','repairSpeed','development'],
+      pit:['pitSpeed','consistency','training','pressure']
+    };
+    const vals=(abilityKeys[aspect]||[]).map(k=>Number(member.abilities&&member.abilities[k])).filter(Number.isFinite);
+    const effectiveRating=vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:member.rating;
     // t = 0 at rating 40, 1.0 at rating 99
-    const t = (member.rating - 40) / 59;
+    const t = (effectiveRating - 40) / 59;
     // Bonuses are now meaningfully large — visible in the numbers
     if(aspect==='dev')         return t * 15;   // up to +15 dev rate bonus (adds ~1-3 car perf pts/season)
     if(aspect==='strategy')    return t * 5;    // up to +5 raw strategy bonus (applied at 0.5x = +2.5 pace)
@@ -7575,7 +8062,9 @@ const Sim = {
         return -8.5;
       })() : 0;
       const _sqCarScore = getTeamCarScore(team, race?.circuitType||'balanced');
-      const score=((_sqCarScore + autoAeroPenalty)/100*53 + d.qualifying/100*47) + circuitMod + randFloat(-3.5,3.5);
+      const _sqEngineer=State.getRaceEngineerModifiers(team.id,d.id);
+      const _sqMorale=((d.morale||70)+_sqEngineer.morale-70)/45;
+      const score=((_sqCarScore + autoAeroPenalty)/100*53 + d.qualifying/100*47) + circuitMod + _sqEngineer.oneLapPace + _sqMorale + randFloat(-3.5,3.5);
       entries.push({driverId:d.id,driverName:d.name,teamId:team.id,teamName:team.name,score,dnf:false});
     });
     entries.sort((a,b)=>b.score-a.score);
@@ -7656,7 +8145,9 @@ const Sim = {
       // touch lower than the race so a car can qualify out of position then come back (or vice
       // versa) — separating one-lap pace from race pace, as requested by Significant-Care-135.
       const _teamWknd = getTeamWeekendForm(team, race, g);
-      const score = ((_mqCarScore + autoAeroPenalty)/100*55 + (d.qualifying - (d._formDip?d._formDip.qualiPenalty:0))/100*45) + circuitMod + _overdriveVar - _usedTyrePenalty + _teamWknd*0.85 + randNorm(0, 2.5 * (getDiff(State.game).raceVarianceMult||1)) * _qOutlier;
+      const _mqEngineer=State.getRaceEngineerModifiers(team.id,d.id);
+      const _mqMorale=((d.morale||70)+_mqEngineer.morale-70)/45;
+      const score = ((_mqCarScore + autoAeroPenalty)/100*55 + (d.qualifying - (d._formDip?d._formDip.qualiPenalty:0))/100*45) + circuitMod + _overdriveVar - _usedTyrePenalty + _teamWknd*0.85 + _mqEngineer.oneLapPace + _mqMorale + randNorm(0, 2.5 * (getDiff(State.game).raceVarianceMult||1)) * _qOutlier;
       entries.push({driverId:d.id,driverName:d.name,teamId:team.id,teamName:team.name,score,dnf:Math.random()<0.02*(getDiff(State.game).dnfMult||1)});
     });
     entries.sort((a,b)=>{if(a.dnf&&!b.dnf)return 1;if(!a.dnf&&b.dnf)return -1;return b.score-a.score;});
@@ -7863,6 +8354,7 @@ const Sim = {
         }
         if(race._nmTop3Ids.indexOf(team.id) !== -1) _nmTop3Edge = g.gameDifficulty === 'nightmare' ? -0.1 : -0.05;
       }
+      const _raceEngineerMod=State.getRaceEngineerModifiers(team.id,driver.id);
       const baseLap = 97
         - (_circuitCarScore || 70) * 0.182
         - _teamWkndRace * 0.165
@@ -7870,7 +8362,8 @@ const Sim = {
         - ((driver.consistency||70) - (driver._formDip?driver._formDip.consPenalty:0)) * 0.018
         // Morale matters, but cannot outweigh several points of driver ability every lap.
         // At the extremes its race-pace effect is capped at roughly +/-0.15s per lap.
-        - clamp(((driver.morale || 75) - 70) * 0.006, -0.16, 0.14)
+        - clamp((((driver.morale || 75)+_raceEngineerMod.morale) - 70) * 0.006, -0.16, 0.18)
+        - _raceEngineerMod.strategyPace*0.035
         + setupPenalty
         + setupBonus
         + _nmTop3Edge
@@ -7951,7 +8444,13 @@ const Sim = {
         // Used tyre quali bonus: saved fresh rubber for race start
         tyreSavedForRace: !!(race?._usedTyreQuali?.[driver.id]),
         // ERS deployment: player choice stored in race._ersDeployment, AI chooses based on trait
-        ersDeployment: (()=>{
+        ersDeployment: (()=>{ 
+          if(team.id===g.playerTeamId && g.staffEngineDelegate){
+            const ability=(State.getRaceEngineer(team.id,driver.id)?.abilities?.ersUsage)||40;
+            if(ability>=86) return Math.random()<0.45?'aggressive':'balanced';
+            if(ability>=68) return 'balanced';
+            return Math.random()<0.35?'conservative':'balanced';
+          }
           if(team.id === g.playerTeamId && race && race._ersDeployment && race._ersDeployment[driver.id])
             return race._ersDeployment[driver.id];
           // AI: aggressive drivers prefer Aggressive, technical prefer Conservative, others Balanced
@@ -7962,7 +8461,7 @@ const Sim = {
                : 'balanced';
         })(),
         ersRating: getTeamErsRating(team),
-        energyMgmt: driver.energyMgmt || 70,
+        energyMgmt: (()=>{const m=State.getRaceEngineerModifiers(team.id,driver.id);const ability=(m.member?.abilities?.ersUsage)||40;return (driver.energyMgmt||70)+m.ersUsage-(team.id===g.playerTeamId&&g.staffEngineDelegate?Math.max(0,(92-ability)*0.045):0);})(),
         notes: { setup:0, tyres:0, traffic:0, weather:0, pit:0, ers:0, form:randNorm(0, 0.35), safetyCar:0 }
       };
     }).filter(Boolean);
@@ -8024,7 +8523,8 @@ const Sim = {
         const plannedStop = !weatherPit && !justPittedRecently && nextPitLap && lap >= nextPitLap;
         const forcedStop = !weatherPit && !justPittedRecently && cliffLaps >= 3 && state.stintIndex < ((state.strategyOpt?.stints?.length || 1) - 1);
         if((plannedStop || forcedStop || weatherPit) && lap < race.laps - 1) {
-          const pitLoss = scActive ? randFloat(8.5, 11.5) : randFloat(19.5, 23.5);
+          const _pitEngineer=State.getRaceEngineerModifiers(state.teamId,state.driverId);
+          const pitLoss = Math.max(6.5,(scActive ? randFloat(8.5, 11.5) : randFloat(19.5, 23.5))-_pitEngineer.pitTime);
           pitThisLap = true;
           pitType = weatherPit ? 'weather' : (forcedStop ? 'forced' : 'planned');
           pitLossApplied = pitLoss;
@@ -8539,6 +9039,8 @@ const Sim = {
       let stratBonus = 0;
       // RS (Race Strategist) staff bonus — always applies to player team
       if(isPlayerTeamRace) stratBonus += State.getStaffBonus(g.playerTeamId, 'strategy') * 0.5;
+      const _raceEngineer=State.getRaceEngineerModifiers(team.id,driver.id);
+      stratBonus += _raceEngineer.strategyPace + ((driver.morale||70)+_raceEngineer.morale-70)/80;
       if(isPlayerTeamRace && race) {
         const driverStratId = race._driverStrategies && race._driverStrategies[driver.id];
         const chosenId = driverStratId || race._chosenStrategy;
@@ -8644,7 +9146,10 @@ const Sim = {
       const _sCarScore = getTeamCarScore(team, race?.circuitType||'balanced');
       // ERS deployment effect in simple sim — aggressive gives early edge, conservative helps late
       const _sErsDeploy = race?._ersDeployment?.[driver.id] || 'balanced';
-      const _sErsQuality = clamp(((driver.energyMgmt||70)/100) + (getTeamErsRating(team)/200) - 0.3, 0.1, 1.0);
+      const _sErsEngineer=State.getRaceEngineerModifiers(team.id,driver.id);
+      const _sErsAbility=(_sErsEngineer.member?.abilities?.ersUsage)||40;
+      const _sErsDelegatePenalty=(team.id===g.playerTeamId&&g.staffEngineDelegate)?Math.max(0,(92-_sErsAbility)*0.045):0;
+      const _sErsQuality = clamp((((driver.energyMgmt||70)+_sErsEngineer.ersUsage-_sErsDelegatePenalty)/100) + (getTeamErsRating(team)/200) - 0.3, 0.1, 1.0);
       const _sErsBonus = _sErsDeploy==='aggressive' ? _sErsQuality * 0.4
         : _sErsDeploy==='conservative' ? _sErsQuality * 0.2
         : 0;
@@ -13127,13 +13632,16 @@ const spons=sumSponsorIncome(g.sponsors||[]);
           .concat(State.getPlayerDrivers())
       )
         .slice(0,2);
+      // Preserve the reserves the player deliberately signed while a loanee was away. A
+      // returning loan only reclaims an open slot and never silently overwrites a newer reserve.
       const reserveKeep = uniqueById(
-        [...returnedReserveLoanIds]
-          .map(id=>State.getDriver(id))
-          .filter(d=>d && !d.retired && d.teamId===protectedPlayerTeamId && (d.contract||0) > 0)
-          .map(d=>{ d.isReserve=true; d.isFreeAgent=false; return d; })
+        protectedDrivers.filter(d=>d._protectedWasReserve && !raceKeep.some(r=>r.id===d.id)).map(d=>{ d.isReserve=true; return d; })
+          .concat(State.getPlayerReserves().filter(d=>!returnedReserveLoanIds.has(d.id) && !raceKeep.some(r=>r.id===d.id)))
+          .concat([...returnedReserveLoanIds]
+            .map(id=>State.getDriver(id))
+            .filter(d=>d && !d.retired && d.teamId===protectedPlayerTeamId && (d.contract||0) > 0)
+            .map(d=>{ d.isReserve=true; d.isFreeAgent=false; return d; }))
           .concat(protectedDrivers.filter(d=>!raceKeep.some(r=>r.id===d.id)).map(d=>{ d.isReserve=true; return d; }))
-          .concat(State.getPlayerReserves().filter(d=>!raceKeep.some(r=>r.id===d.id)))
       ).slice(0,2);
       raceKeep.forEach(d=>{ d.isReserve=false; d.teamId=protectedPlayerTeamId; d.isFreeAgent=false; d.isProspect=false; d.isJunior=false; d.prospectSeries=null; });
       reserveKeep.forEach(d=>{ d.isReserve=true; d.teamId=protectedPlayerTeamId; d.isFreeAgent=false; d.isProspect=false; d.isJunior=false; d.prospectSeries=null; });
@@ -13156,10 +13664,19 @@ const spons=sumSponsorIncome(g.sponsors||[]);
           d.isJunior = false;
           d.prospectSeries = null;
         } else {
+          const wasReturningLoan = returnedReserveLoanIds.has(d.id);
           d.teamId = null;
           d.isReserve = false;
           d.isFreeAgent = true;
           if((d.contract||0) > 0) d.contract = 0;
+          if(wasReturningLoan){
+            if(!g.newsFeed) g.newsFeed=[];
+            g.newsFeed.unshift({
+              type:'transfers', icon:'📋',
+              msg:`<strong>${d.name}</strong> returned from loan but both reserve seats were occupied, so no contracted driver was displaced. They are now available in the driver market.`,
+              season: nextSeason
+            });
+          }
         }
       });
     }
@@ -14004,6 +14521,9 @@ const spons=sumSponsorIncome(g.sponsors||[]);
     } else {
       g._lastBrainDrain = null;
     }
+    // Staff now age, develop or regress toward their potential, retire, and move between AI
+    // teams. Facilities and the people around them influence their yearly progress.
+    State.processStaffOffseason();
     // ── Staff contract ticking + salary escalation ──────────────────────────
     // Each season: contracts tick down. If contract expires, staff may leave.
     // Successful seasons escalate salary demands. Brain drain threshold: staffCap.
@@ -14056,7 +14576,8 @@ const spons=sumSponsorIncome(g.sponsors||[]);
     g.staffMarket.forEach(s => { s._seasonsInMarket = (s._seasonsInMarket || 0) + 1; });
     g.staffMarket = g.staffMarket.filter(s => (s._seasonsInMarket || 0) < 2);
     // Hard cap any leftover bloat
-    if(g.staffMarket.length > 12) g.staffMarket = g.staffMarket.slice(-9);
+    const _staffMarketCap=Math.max(18,(DATA.staffRoles||[]).length*4);
+    if(g.staffMarket.length > _staffMarketCap) g.staffMarket = g.staffMarket.slice(-Math.max(14,(DATA.staffRoles||[]).length*3));
     // Top up the market to a healthy size each offseason (2-4 per role, with rating variance)
     DATA.staffRoles.forEach(role => {
       const inMarket = g.staffMarket.filter(s=>s.roleId===role.id).length;
@@ -14701,6 +15222,10 @@ const Storage = {
   SAVE_KEY_PREFIX: 'f1gm_save_',
   SAVE_VERSION: 5,
   MAX_SLOTS: 5,
+  // The slot the player explicitly opened. Save ids from old/imported backups are not
+  // guaranteed to be unique, so relying on _saveId alone can make one continued career
+  // autosave over another career with the same ancestry.
+  _activeSlot: null,
 
   _showSaveFailureToast(message){
     const g = State.game;
@@ -14768,6 +15293,13 @@ const Storage = {
     if(!State.game) return -1;
     const gid = State.game._saveId;
     if(!gid) return -1;
+    if(Number.isInteger(this._activeSlot) && this._activeSlot >= 0 && this._activeSlot < this.MAX_SLOTS) {
+      try {
+        const activeRaw = localStorage.getItem(this.SAVE_KEY_PREFIX + this._activeSlot);
+        const activeData = activeRaw ? JSON.parse(activeRaw) : null;
+        if(activeData?.game?._saveId === gid) return this._activeSlot;
+      } catch(e) {}
+    }
     for(let i = 0; i < this.MAX_SLOTS; i++) {
       const raw = localStorage.getItem(this.SAVE_KEY_PREFIX + i);
       if(!raw) continue;
@@ -14801,6 +15333,7 @@ const Storage = {
       if(!State.game._saveId) State.game._saveId = 'sg_' + Date.now();
       let slot = this._currentSlot();
       if(slot === -1) slot = this._newSlot();
+      this._activeSlot = slot;
       const currentRaceIndex = State.game.raceIndex || 0;
       const strippedCal = (State.game.calendar||[]).map((r,i)=>this._compactRaceForSave(r, i, currentRaceIndex));
       const saveNews = (State.game.newsFeed||[]).slice(-50);
@@ -14822,6 +15355,7 @@ const Storage = {
       if(!State.game._saveId) State.game._saveId = 'sg_' + Date.now();
       let slot = this._currentSlot();
       if(slot === -1) slot = this._newSlot();
+      this._activeSlot = slot;
       // Strip the heaviest replay state before serialising. Recent races keep replay data, while
       // older completed races lose it so saves stay compact over long careers.
       const currentRaceIndex = State.game.raceIndex || 0;
@@ -14966,7 +15500,9 @@ const Storage = {
     try {
       const data = JSON.parse(fileText);
       if(!data || !data.game || !data.game.playerTeamId) throw new Error('not a valid F1 Dynasty save file');
-      data.game._saveId = data.game._saveId || ('sg_' + Date.now());
+      // Every import becomes an independent local career, even when two backup files were
+      // branched from the same original save and carry the same historical _saveId.
+      data.game._saveId = 'sg_import_' + Date.now() + '_' + Math.random().toString(36).slice(2,10);
       this._sanitizeImportedNames(data.game);
       const risk = this.overwriteRisk();
       const slot = this._newSlot();
@@ -15022,6 +15558,7 @@ const Storage = {
   _loadSlotAndGo(slot) {
     const data = this.loadGame(slot);
     if(!data || !data.game) { UI.toast('Save not found!', 'error'); return; }
+    this._activeSlot = Number(slot);
     this.restoreGame(data);
     UI.showPage('game'); UI.showView('dashboard');
     if(State.game.darkMode) document.documentElement.setAttribute('data-theme','dark');
@@ -15177,8 +15714,10 @@ const Storage = {
       } else {
         DATA.staffRoles.forEach(role => {
           if(!(role.id in team.staff)) team.staff[role.id] = State._generateStaffMember(role.id, 45, 75);
+          if(team.staff[role.id]) State._patchStaffMember(team.staff[role.id],role.id);
         });
       }
+      State.ensureRaceEngineerAssignments(team);
     });
     if(g.staffMarket.length === 0) {
       const allStaff = (g.teams||[]).flatMap(t=>Object.values(t.staff||{})).filter(Boolean);
@@ -16370,6 +16909,30 @@ const UI = {
           </div>
           <button class="btn btn-outline btn-sm" style="margin-top:8px;font-size:10px" onclick="Editor.addSponsor('${team.id}')">+ Add Sponsor</button>
         </details>
+        <details style="margin-top:10px" ${Editor._openSections?.teamStaff?'open':''} ontoggle="Editor.setSectionOpen('teamStaff',this.open)">
+          <summary style="cursor:pointer;font-size:11px;font-weight:700;color:var(--tx2);letter-spacing:.5px;text-transform:uppercase;list-style:none">🧑‍🔧 Starting Staff</summary>
+          <div style="font-size:10px;color:var(--tx3);margin:6px 0 8px">Set this team's starting staff, age, potential and specialist abilities for new careers. Leave a field blank to keep the generated value.</div>
+          <div style="display:flex;flex-direction:column;gap:7px">
+            ${(()=>{
+              const overrides=Editor.getTeamStaffOverrides(team.id);
+              const labels={td:'Technical Director',rs:'Race Strategist',cm:'Chief Mechanic',pcc:'Pit Crew Chief'};
+              return (DATA.staffRoles||[]).map(role=>{
+                const p=overrides[role.id]||{};
+                return `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:6px;align-items:end;background:var(--bg3);border:1px solid var(--bd);border-radius:8px;padding:8px">
+                  <div style="font-size:11px;font-weight:800;padding-bottom:7px">${labels[role.id]||role.name}</div>
+                  <label style="display:flex;flex-direction:column;gap:3px"><span style="font-size:9px;font-weight:700;color:var(--tx3)">NAME</span><input value="${escapeHtml(p.name||'')}" placeholder="Generated" onchange="Editor.updateTeamStaffField('${team.id}','${role.id}','name',this.value)" style="font-size:11px;padding:6px 8px;border:1px solid var(--bd);border-radius:6px;background:var(--bg2);min-width:0"></label>
+                  <label style="display:flex;flex-direction:column;gap:3px"><span style="font-size:9px;font-weight:700;color:var(--tx3)">RATING</span><input type="number" min="40" max="99" value="${p.rating??''}" placeholder="Auto" onchange="Editor.updateTeamStaffField('${team.id}','${role.id}','rating',this.value)" style="font-size:11px;padding:6px 8px;border:1px solid var(--bd);border-radius:6px;background:var(--bg2);width:100%"></label>
+                  <label style="display:flex;flex-direction:column;gap:3px"><span style="font-size:9px;font-weight:700;color:var(--tx3)">SALARY</span><input type="number" min="1" max="60" value="${p.salary??''}" placeholder="$M" onchange="Editor.updateTeamStaffField('${team.id}','${role.id}','salary',this.value)" style="font-size:11px;padding:6px 8px;border:1px solid var(--bd);border-radius:6px;background:var(--bg2);width:100%"></label>
+                  <label style="display:flex;flex-direction:column;gap:3px"><span style="font-size:9px;font-weight:700;color:var(--tx3)">CONTRACT</span><input type="number" min="1" max="5" value="${p.contract??''}" placeholder="Auto" onchange="Editor.updateTeamStaffField('${team.id}','${role.id}','contract',this.value)" style="font-size:11px;padding:6px 8px;border:1px solid var(--bd);border-radius:6px;background:var(--bg2);width:100%"></label>
+                  <label style="display:flex;flex-direction:column;gap:3px"><span style="font-size:9px;font-weight:700;color:var(--tx3)">AGE</span><input type="number" min="21" max="70" value="${p.age??''}" placeholder="Auto" onchange="Editor.updateTeamStaffField('${team.id}','${role.id}','age',this.value)" style="font-size:11px;padding:6px 8px;border:1px solid var(--bd);border-radius:6px;background:var(--bg2);width:100%"></label>
+                  <label style="display:flex;flex-direction:column;gap:3px"><span style="font-size:9px;font-weight:700;color:var(--tx3)">POTENTIAL</span><input type="number" min="40" max="99" value="${p.potential??''}" placeholder="Auto" onchange="Editor.updateTeamStaffField('${team.id}','${role.id}','potential',this.value)" style="font-size:11px;padding:6px 8px;border:1px solid var(--bd);border-radius:6px;background:var(--bg2);width:100%"></label>
+                  ${role.raceEngineer?`<label style="display:flex;flex-direction:column;gap:3px"><span style="font-size:9px;font-weight:700;color:var(--tx3)">DRIVER ASSIGNMENT</span><select onchange="Editor.updateTeamStaffField('${team.id}','${role.id}','assignedDriverSlot',this.value)" style="font-size:11px;padding:6px 8px;border:1px solid var(--bd);border-radius:6px;background:var(--bg2);width:100%"><option value="" ${p.assignedDriverSlot==null?'selected':''}>Default</option><option value="0" ${p.assignedDriverSlot===0?'selected':''}>Driver / seat 1</option><option value="1" ${p.assignedDriverSlot===1?'selected':''}>Driver / seat 2</option></select></label>`:''}
+                  ${((DATA.staffAbilityDefs&&DATA.staffAbilityDefs[role.id])||[]).map(a=>`<label style="display:flex;flex-direction:column;gap:3px"><span style="font-size:9px;font-weight:700;color:var(--tx3)">${a.label.toUpperCase()}</span><input type="number" min="40" max="99" value="${p.abilities?.[a.id]??''}" placeholder="Auto" onchange="Editor.updateTeamStaffField('${team.id}','${role.id}','ability:${a.id}',this.value)" style="font-size:11px;padding:6px 8px;border:1px solid var(--bd);border-radius:6px;background:var(--bg2);width:100%"></label>`).join('')}
+                </div>`;
+              }).join('');
+            })()}
+          </div>
+        </details>
       </div>
       <div class="panel" style="margin-bottom:12px">
         <div style="margin-bottom:12px">
@@ -16461,11 +17024,11 @@ const UI = {
 
       <details class="panel" style="margin-bottom:12px" ${Editor._openSections?.staff?'open':''} ontoggle="Editor.setSectionOpen('staff',this.open)">
         <summary style="cursor:pointer;font-weight:800;color:var(--tx);list-style:none">🧑‍🔧 Staff</summary>
-        <div style="font-size:12px;color:var(--tx3);margin-top:8px;margin-bottom:12px">Edit the named staff who can appear for hire (Technical Directors, Race Strategists, Chief Mechanics, Pit Crew Chiefs) and the name pools used to generate other staff. Applies to new careers. Community rosters can supply their own — or real — staff here.</div>
+        <div style="font-size:12px;color:var(--tx3);margin-top:8px;margin-bottom:12px">Edit the named staff who can appear for hire, including age, potential and the specialist abilities that affect the simulation. Applies to new careers. Community rosters can supply their own — or real — staff here.</div>
         ${(()=>{
           const sp = Editor.getStaffPool();
-          const roleLabels = { td:'Technical Directors', rs:'Race Strategists', cm:'Chief Mechanics', pcc:'Pit Crew Chiefs' };
-          return ['td','rs','cm','pcc'].map(role=>`
+          const roleLabels = Object.fromEntries((DATA.staffRoles||[]).map(r=>[r.id,r.name+(r.name.endsWith('s')?'':'s')]));
+          return (DATA.staffRoles||[]).map(roleDef=>{const role=roleDef.id;return `
             <div style="margin-bottom:14px">
               <div style="font-size:12px;font-weight:800;color:var(--tx);margin-bottom:6px">${roleLabels[role]}</div>
               <div style="display:flex;flex-direction:column;gap:8px">
@@ -16474,12 +17037,15 @@ const UI = {
                     <label style="display:flex;flex-direction:column;gap:3px"><span style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--tx3)">Name</span><input value="${escapeHtml(p.name||'')}" onchange="Editor.updateStaffField('${role}',${i},'name',this.value)" style="font-size:11px;padding:6px 8px;border:1px solid var(--bd);border-radius:6px;background:var(--bg2)"></label>
                     <label style="display:flex;flex-direction:column;gap:3px"><span style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--tx3)">Rating (40-99)</span><input type="number" min="40" max="99" value="${p.rating}" onchange="Editor.updateStaffField('${role}',${i},'rating',this.value)" style="font-size:11px;padding:6px 8px;border:1px solid var(--bd);border-radius:6px;background:var(--bg2)"></label>
                     <label style="display:flex;flex-direction:column;gap:3px"><span style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--tx3)">Salary ($M)</span><input type="number" min="1" max="60" value="${p.salary}" onchange="Editor.updateStaffField('${role}',${i},'salary',this.value)" style="font-size:11px;padding:6px 8px;border:1px solid var(--bd);border-radius:6px;background:var(--bg2)"></label>
+                    <label style="display:flex;flex-direction:column;gap:3px"><span style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--tx3)">Age</span><input type="number" min="21" max="70" value="${p.age||38}" onchange="Editor.updateStaffField('${role}',${i},'age',this.value)" style="font-size:11px;padding:6px 8px;border:1px solid var(--bd);border-radius:6px;background:var(--bg2)"></label>
+                    <label style="display:flex;flex-direction:column;gap:3px"><span style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--tx3)">Potential</span><input type="number" min="40" max="99" value="${p.potential||p.rating}" onchange="Editor.updateStaffField('${role}',${i},'potential',this.value)" style="font-size:11px;padding:6px 8px;border:1px solid var(--bd);border-radius:6px;background:var(--bg2)"></label>
+                    ${((DATA.staffAbilityDefs&&DATA.staffAbilityDefs[role])||[]).map(a=>`<label style="display:flex;flex-direction:column;gap:3px"><span style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--tx3)">${a.label}</span><input type="number" min="40" max="99" value="${p.abilities?.[a.id]??p.rating}" onchange="Editor.updateStaffField('${role}',${i},'ability:${a.id}',this.value)" style="font-size:11px;padding:6px 8px;border:1px solid var(--bd);border-radius:6px;background:var(--bg2)"></label>`).join('')}
                     <label style="display:flex;flex-direction:column;gap:3px;grid-column:1/-1"><span style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--tx3)">Bio</span><input value="${escapeHtml(p.desc||'')}" onchange="Editor.updateStaffField('${role}',${i},'desc',this.value)" style="font-size:11px;padding:6px 8px;border:1px solid var(--bd);border-radius:6px;background:var(--bg2)"></label>
                     <button onclick="Editor.removeStaff('${role}',${i})" style="font-size:10px;color:var(--red);background:none;border:1px solid var(--red);border-radius:5px;padding:5px 8px;cursor:pointer;align-self:center;justify-self:start">🗑 Remove</button>
                   </div>`).join('')}
               </div>
               <button class="btn btn-outline btn-sm" style="margin-top:8px;border-color:var(--grn);color:var(--grn);font-size:11px" onclick="Editor.addStaff('${role}')">+ Add ${roleLabels[role].replace(/s$/,'')}</button>
-            </div>`).join('');
+            </div>`;}).join('');
         })()}
         <div style="font-size:11px;color:var(--tx3);margin-top:6px;padding-top:10px;border-top:1px solid var(--bd)">Other staff who appear over time are generated from name pools. You can edit those pools by exporting your roster (Download JSON) and adjusting <code>staffPool.firstNames</code> / <code>staffPool.lastNames</code>, then re-importing.</div>
       </details>
@@ -20253,6 +20819,9 @@ const personalSlots = getPersonalSponsorSlots(d);
     const team = State.getPlayerTeam();
     const staff = team.staff || {};
     const market = g.staffMarket || [];
+    State.ensureRaceEngineerAssignments(team);
+    Object.keys(staff).forEach(roleId=>{if(staff[roleId])State._patchStaffMember(staff[roleId],roleId);});
+    market.forEach(s=>State._patchStaffMember(s,s.roleId));
     const budgetCap = getTeamStaffBudgetCap(team);
     const totalSalary = getTeamStaffSalaryCost(team);
     const overBudget = totalSalary > budgetCap;
@@ -20261,25 +20830,39 @@ const personalSlots = getPersonalSponsorSlots(d);
       `<div style="height:5px;background:var(--bd);border-radius:3px;margin-top:4px"><div style="width:${val}%;height:100%;background:${color};border-radius:3px"></div></div>`;
 
     const ratingColor = r => r >= 85 ? '#16a34a' : r >= 70 ? '#d97706' : '#dc2626';
+    const abilityHtml=(member,roleId,hidden=false)=>{
+      const defs=(DATA.staffAbilityDefs&&DATA.staffAbilityDefs[roleId])||[];
+      if(!defs.length)return'';
+      if(hidden)return `<div style="font-size:11px;color:var(--tx3);padding:8px;background:var(--bg3);border-radius:7px">Scout to reveal abilities and potential.</div>`;
+      return `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:7px;margin-top:10px">${defs.map(def=>{
+        const v=Math.round(member.abilities?.[def.id]||member.rating||70);
+        return `<div><div style="display:flex;justify-content:space-between;gap:8px;font-size:10px"><span style="color:var(--tx3)">${def.label}</span><strong style="color:${ratingColor(v)}">${v}</strong></div>${ratingBar(v,ratingColor(v))}</div>`;
+      }).join('')}</div>`;
+    };
 
     const staffCard = (roleId, member) => {
       const role = DATA.staffRoles.find(r => r.id === roleId);
       if(!role) return '';
       const aspectMap = {td:'dev', rs:'strategy', cm:'reliability', pcc:'pit'};
-      const bonus = State.getStaffBonus(team.id, aspectMap[roleId] || 'dev');
+      const bonus = aspectMap[roleId]?State.getStaffBonus(team.id,aspectMap[roleId]):0;
       const bonusLabel = roleId === 'td'  ? `+${bonus.toFixed(1)} dev efficiency`
         : roleId === 'rs'  ? `+${(bonus*0.5).toFixed(1)} strategy pace`
         : roleId === 'cm'  ? `+${(bonus*0.5).toFixed(1)} reliability · −${(bonus*0.5*0.5).toFixed(2)} DNF risk`
-        : `+${(bonus*0.20).toFixed(2)} pit execution`;
+        : roleId === 'pcc' ? `+${(bonus*0.20).toFixed(2)} pit execution`
+        : roleId === 'jre' ? `Development prospect · ${Math.max(0,(member.potential||member.rating)-member.rating)} rating points of headroom`
+        : (()=>{const m=State.getRaceEngineerModifiers(team.id,member.assignedDriverId);return `+${m.oneLapPace.toFixed(2)} quali · +${m.strategyPace.toFixed(2)} race · −${m.pitTime.toFixed(2)}s pit`;})();
       const contractColor = (member.contract||0) <= 1 ? 'var(--red)' : (member.contract||0) <= 2 ? 'var(--amber)' : 'var(--tx3)';
+      const assigned=role.raceEngineer?State.getDriver(member.assignedDriverId):null;
+      const assignment=role.raceEngineer?`<label style="display:block;margin-top:10px;font-size:10px;font-weight:700;color:var(--tx3)">ASSIGNED DRIVER<select onchange="GameActions.assignRaceEngineer('${roleId}',this.value)" style="display:block;width:100%;margin-top:4px;padding:7px 9px;border:1px solid var(--bd);border-radius:7px;background:var(--bg3);color:var(--tx)">${(team.driverIds||[]).map(id=>{const d=State.getDriver(id);return d?`<option value="${id}" ${String(id)===String(member.assignedDriverId)?'selected':''}>${escapeHtml(d.name)}</option>`:'';}).join('')}</select></label>`:'';
       return `
         <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:10px;padding:14px;margin-bottom:10px">
           <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
             <div style="flex:1;min-width:0">
               <div style="font-size:11px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">${role.icon} ${role.name}</div>
               <div style="font-size:15px;font-weight:800;color:var(--tx)">${escapeHtml(member.name)}</div>
-              <div style="font-size:11px;color:var(--tx3);margin-top:2px">${formatMoney(member.salary)}/yr · <span style="color:${contractColor};font-weight:700">${member.contract||0}yr left</span></div>
+              <div style="font-size:11px;color:var(--tx3);margin-top:2px">Age ${member.age} · Potential ${member.potential} · ${formatMoney(member.salary)}/yr · <span style="color:${contractColor};font-weight:700">${member.contract||0}yr left</span></div>
               <div style="font-size:11px;color:var(--grn);font-weight:600;margin-top:2px">${bonusLabel}</div>
+              ${assigned?`<div style="font-size:10px;color:var(--blu);font-weight:700;margin-top:3px">Working with ${escapeHtml(assigned.name)}</div>`:''}
               ${member.desc ? `<div style="font-size:10px;color:var(--tx3);margin-top:4px;font-style:italic">"${escapeHtml(member.desc)}"</div>` : ''}
             </div>
             <div style="text-align:right;flex-shrink:0">
@@ -20289,6 +20872,9 @@ const personalSlots = getPersonalSponsorSlots(d);
           </div>
           ${ratingBar(member.rating, ratingColor(member.rating))}
           <div style="font-size:11px;color:var(--tx3);margin-top:8px">${role.desc}</div>
+          ${abilityHtml(member,roleId)}
+          ${assignment}
+          ${roleId==='jre'?`<div style="display:flex;gap:6px;margin-top:10px"><button class="btn btn-outline btn-sm" onclick="GameActions.promoteJuniorEngineer('re1')">Promote to Car 1</button><button class="btn btn-outline btn-sm" onclick="GameActions.promoteJuniorEngineer('re2')">Promote to Car 2</button></div>`:''}
           <div style="display:flex;gap:8px;margin-top:10px">
             <button class="btn btn-outline btn-sm" style="font-size:11px;border-color:var(--grn);color:var(--grn)" onclick="GameActions.renewStaff('${roleId}')">Renew Contract</button>
             <button class="btn btn-danger btn-sm" style="font-size:11px" onclick="GameActions.fireStaff('${roleId}')">Release</button>
@@ -20303,11 +20889,12 @@ const personalSlots = getPersonalSponsorSlots(d);
       const upgrade = currentMember ? s.rating - currentMember.rating : s.rating - 60;
       const upgradeLabel = upgrade > 0 ? `<span style="color:var(--grn);font-weight:700">▲${upgrade}</span>` : upgrade < 0 ? `<span style="color:var(--red);font-weight:700">▼${Math.abs(upgrade)}</span>` : '<span style="color:var(--tx3)">Same</span>';
       return `
-        <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:10px;padding:12px;margin-bottom:8px;display:flex;align-items:center;gap:12px">
+        <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:10px;padding:12px;margin-bottom:8px">
+          <div style="display:flex;align-items:center;gap:12px">
           <div style="flex:1;min-width:0">
             <div style="font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.5px">${role.icon} ${role.name}</div>
             <div style="font-size:14px;font-weight:800">${escapeHtml(s.name)}</div>
-            <div style="font-size:11px;color:var(--tx3);margin-top:1px">${formatMoney(s.salary)}/yr · ${s.contract||1}yr deal</div>
+            <div style="font-size:11px;color:var(--tx3);margin-top:1px">Age ${s.age} · Potential ${s.potential} · ${formatMoney(s.salary)}/yr · ${s.contract||1}yr deal</div>
             ${s.desc ? `<div style="font-size:10px;color:var(--tx3);margin-top:3px;font-style:italic">"${escapeHtml(s.desc)}"</div>` : ''}
           </div>
           <div style="text-align:center;flex-shrink:0">
@@ -20315,6 +20902,8 @@ const personalSlots = getPersonalSponsorSlots(d);
             <div style="font-size:9px;color:var(--tx3)">${upgradeLabel}</div>
           </div>
           <button class="btn btn-outline btn-sm" style="flex-shrink:0;border-color:var(--grn);color:var(--grn)" onclick="GameActions.hireStaff(${idx})">Hire</button>
+          </div>
+          ${abilityHtml(s,s.roleId)}
         </div>`;
     };
 
@@ -20331,21 +20920,38 @@ const personalSlots = getPersonalSponsorSlots(d);
     const marketHtml = market.length
       ? market.map((s, i) => marketCard(s, i)).join('')
       : '<div style="font-size:12px;color:var(--tx3);padding:10px">No candidates available right now. Check back after the next offseason.</div>';
+    const rivalStaff=(g.teams||[]).filter(t=>String(t.id)!==String(team.id)).flatMap(t=>Object.keys(t.staff||{}).map(roleId=>({team:t,roleId,member:t.staff[roleId]})))
+      .filter(x=>x.member).map(x=>{State._patchStaffMember(x.member,x.roleId);return x;})
+      .sort((a,b)=>(b.member.rating||0)-(a.member.rating||0)).slice(0,24);
+    const rivalHtml=rivalStaff.map(x=>{
+      const role=DATA.staffRoles.find(r=>r.id===x.roleId)||{name:x.roleId,icon:'👤'};
+      const scouted=!!(g.scoutedStaffIds&&g.scoutedStaffIds[x.member.id]);
+      return `<div style="background:var(--bg2);border:1px solid var(--bd);border-radius:10px;padding:12px;margin-bottom:8px">
+        <div style="display:flex;align-items:center;gap:10px"><div style="flex:1"><div style="font-size:10px;font-weight:800;color:var(--tx3)">${role.icon} ${escapeHtml(role.name)} · ${escapeHtml(x.team.name)}</div><div style="font-size:14px;font-weight:800;margin-top:2px">${escapeHtml(x.member.name)}</div><div style="font-size:10px;color:var(--tx3);margin-top:2px">Age ${x.member.age} · ${formatMoney(x.member.salary)}/yr · ${x.member.contract||1}yr left${scouted?` · Potential ${x.member.potential}`:''}</div></div><div style="font-size:20px;font-weight:900;color:${ratingColor(x.member.rating)}">${x.member.rating}</div><button class="btn btn-outline btn-sm" onclick="${scouted?`GameActions.poachStaff('${x.team.id}','${x.roleId}')`:`GameActions.scoutStaff('${x.team.id}','${x.roleId}')`}">${scouted?'Approach':'Scout'}</button></div>
+        ${abilityHtml(x.member,x.roleId,!scouted)}
+      </div>`;
+    }).join('')||'<div style="font-size:12px;color:var(--tx3)">No rival staff available.</div>';
 
     el.innerHTML = `
       <div class="panel" style="margin-bottom:12px">
         <div class="panel-title">Your Technical Team</div>
-        <div style="font-size:12px;color:var(--tx3);margin-bottom:12px">Staff bonuses apply every race. Contracts expire at offseason — renew early or risk losing key people.</div>
+        <div style="font-size:12px;color:var(--tx3);margin-bottom:12px">Staff abilities affect development and every race weekend. Staff now age, develop toward their potential, regress and eventually retire.</div>
         <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:${overBudget?'rgba(192,57,43,.08)':'var(--bg3)'};border-radius:8px;margin-bottom:12px;border:1px solid ${overBudget?'rgba(192,57,43,.3)':'var(--bd)'}">
           <span style="font-size:12px;font-weight:700;color:${overBudget?'var(--red)':'var(--tx2)'}">Staff wages: ${formatMoney(totalSalary)}/yr</span>
           <span style="font-size:11px;color:var(--tx3)">Budget cap: ${formatMoney(budgetCap)}${overBudget?' — <strong style="color:var(--red)">over budget</strong>':''}</span>
         </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;background:var(--bg3);border:1px solid var(--bd);border-radius:8px;margin-bottom:12px"><div><div style="font-size:12px;font-weight:800">Engineer-managed engine modes</div><div style="font-size:10px;color:var(--tx3);margin-top:2px">Race engineers choose Conserve, Normal or Push. Automation carries a small execution penalty that shrinks with ERS Usage ability.</div></div><button class="btn btn-outline btn-sm" style="border-color:${g.staffEngineDelegate?'var(--grn)':'var(--bd)'};color:${g.staffEngineDelegate?'var(--grn)':'var(--tx2)'}" onclick="GameActions.toggleStaffEngineDelegate()">${g.staffEngineDelegate?'Enabled':'Enable'}</button></div>
         ${currentRoles}
       </div>
-      <div class="panel">
+      <div class="panel" style="margin-bottom:12px">
         <div class="panel-title">Available Candidates</div>
         <div style="font-size:12px;color:var(--tx3);margin-bottom:10px">Hiring replaces your current staff in that role. Market refreshes each offseason.</div>
         ${marketHtml}
+      </div>
+      <div class="panel">
+        <div class="panel-title">Scout & Poach Rival Staff</div>
+        <div style="font-size:12px;color:var(--tx3);margin-bottom:10px">Scout a rival employee to reveal their potential and specialist abilities. An approach can be rejected, especially when they are under a long contract or your team has lower prestige.</div>
+        ${rivalHtml}
       </div>`;
   },
 
@@ -23615,7 +24221,7 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       <h4>Sponsors</h4>
       <p>Finance lists your current deals and a Sponsor Offers panel. When an offer arrives you can <strong>NEGOTIATE</strong> the term and value, or <strong>⚡ AUTO</strong>-sign it instantly at a 10% discount if you don't want to haggle.</p>
       <h4>Tools</h4>
-      <p>The <strong>Menu</strong> drawer opens Settings, the save-file tools, the Live Roster Editor (edit this save's teams, drivers, engines and next season's calendar — it floats over the HQ) and this guide.</p>
+      <p>The <strong>Menu</strong> drawer opens Settings, the save-file tools, the Live Roster Editor (edit this save's teams, drivers, staff, engines and next season's calendar — it floats over the HQ) and this guide.</p>
       <h4>Car and staff snapshots</h4>
       <p>The Car page uses the same overall-performance calculation as the rest of the game and shows each component's change from the season-start snapshot. The Staff page shows your total staff wage bill beside its budget cap, so you can judge a renewal or hire before committing.</p>
     `)}
@@ -23743,7 +24349,7 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       <p>New title sponsor offers only appear once you have <strong>at least 1 Constructor Championship</strong>. If you already have a title sponsor, renewal offers can still be accepted when they appear.</p>
       <h4>Costs to manage</h4>
       <p>Driver salaries are your biggest controllable expense. Elite drivers (85+ rated) command high wages but deliver more results. The calculus is whether their salary increase is offset by improved results revenue.</p>
-      <p>Staff have a separate wage guide shown on the Staff page: <strong>20% of annual team revenue, with a $45M minimum</strong>. It is not a hard hiring lock, but being above it makes an out-of-contract staff member much more likely to leave at the offseason. Successful top-five seasons can also raise staff salaries, so check the total before renewing several departments.</p>
+      <p>Staff have a separate wage guide shown on the Staff page: <strong>28% of annual team revenue, with a $60M minimum</strong>. It covers all six core roles, including both Race Engineers. It is not a hard hiring lock, but being above it makes an out-of-contract staff member much more likely to leave at the offseason. Successful top-five seasons can also raise staff salaries, so check the total before renewing several departments.</p>
       ${warn('Overspending on driver salaries at the expense of car development is the most common mistake. A $25M driver in a 68-rated car will underperform vs a $12M driver in a 78-rated car.')}
     `)}
 
@@ -23999,7 +24605,10 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       </ul>
       <p>Imports are validated and sanitised automatically: unknown fields are ignored, missing sections are backfilled, and any text is cleaned, so a malformed or hand-edited file won't break the game — at worst a field falls back to its default.</p>
       <h4>Editing staff</h4>
-      <p>The <strong>Staff</strong> section lets you edit the named staff who can appear for hire — Technical Directors, Race Strategists, Chief Mechanics and Pit Crew Chiefs — including their name, rating, salary and bio, and you can add or remove them. These carry into new careers and feed the in-season hiring market. In the exported JSON they live under <code>staffPool</code> (with <code>named</code> per role, plus <code>firstNames</code> and <code>lastNames</code> pools used to generate other staff over time), so community rosters can supply their own — or real — staff alongside drivers and teams.</p>
+      <p>Each <strong>team card</strong> has a Starting Staff section where you can set names, ratings, salaries, contract length, ages, potential, role-specific abilities and each Race Engineer's starting driver assignment. The staff structure includes a Technical Director, Race Strategist, Chief Mechanic, Pit Crew Chief, two Race Engineers assigned to the team’s race drivers and a Junior Race Engineer who can be developed and promoted. Leave any field blank to keep the normal generated value.</p>
+      <p>Race Engineer abilities affect Driver Morale, Strategy Pace, Target Pit Time, One-Lap Pace and ERS Usage. During a career, every staff member ages, develops toward their potential, can regress and eventually retires. Facilities and the people they work with influence development. The Staff screen also lets you scout and approach employees at rival teams, while AI teams recruit and poach staff of their own.</p>
+      <p>In exported JSON, team assignments live under <code>team.staffOverrides</code>; the wider market lives under <code>staffPool</code>. Team staff entries support <code>name</code>, <code>rating</code>, <code>salary</code>, <code>contract</code>, <code>age</code>, <code>potential</code>, <code>abilities</code> and, for Race Engineers, <code>assignedDriverSlot</code> (0 or 1). The normal Upload, paste and URL imports all use the same validator, so these fields round-trip through downloaded roster files.</p>
+      <p>The <strong>Live Roster Editor</strong> also has a Staff tab for changing those values inside the current career. Live edits autosave immediately; exporting that career converts the active team staff and engineer assignments back into roster-compatible <code>staffOverrides</code>.</p>
       ${tip('Start fresh to see your changes', "If you edited the roster but your running save looks unchanged, that's expected — editor changes only apply when you click Start Career on the landing page.")}
     `)}
     ${sec('💾','Saves & Multiple Dynasties',`
@@ -24613,6 +25222,12 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
   _renderSeekMovePanel(playerTeam){
     const g = State.game;
     if(!g || g.playerFired) return '';
+    if(g._managerMoveCommittedSeason === g.season) {
+      return `<div class="offseason-section" style="border-left:4px solid var(--grn)">
+        <div class="offseason-section-title">🔀 Team Move Confirmed</div>
+        <div class="offseason-section-sub">You have committed to your new constructor for this handover. Team interest reopens after you manage the coming season.</div>
+      </div>`;
+    }
     const evals = (g.teams||[])
       .filter(t=>t.id !== g.playerTeamId)
       .map(t=>GameActions.evaluateTeamInterest(t.id))
@@ -24667,6 +25282,9 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     }
     const oldTeamId=g.playerTeamId;
     g.playerTeamId=newTeamId;
+    // Lock the decision for this handover. Without this, the newly joined team's stronger
+    // position immediately recalculated rival interest and allowed several moves in one winter.
+    g._managerMoveCommittedSeason=g.season;
     // Record the manager's tenure history so the Greatest Constructors table can mark every
     // team you've run (current as "You", former teams noted with their seasons) — keeping the
     // team ranking honest while showing your fingerprints across the grid.
@@ -25241,8 +25859,16 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const html=`
       <div style="max-height:85vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v3.0.7 · Release Notes</div>
-        ${[
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v3.0.8 · Release Notes</div>
+         ${[
+    ['v3.0.8','July 2026',[
+            '💾 Imported and branched careers now receive independent save identities, and Continue binds autosave to the exact slot selected. One career can no longer overwrite another just because both backups came from the same original save.',
+            '🔀 Team-principal moves are limited to one constructor change per offseason, closing the chain-move loophole that could take a backmarker manager to a front-running team without completing another season.',
+            '📋 Returning reserve loanees no longer displace reserves signed while they were away. If both reserve seats are occupied, the returnee enters the driver market with a clear transfer notice.',
+            '📊 Teams can be sorted by tier, overall rating, car, reliability, facilities or development, with visible comparison bars and clickable team/driver profiles.',
+            '🏗 Winter development now explains each allocation and previews expected gains; the offseason also shows incumbent PU ratings, keeps Offseason Prep in navigation, moves regulation planning beside winter development, and gives sponsors a wide desktop comparison.',
+            '🧑‍🔧 Staff management has been expanded with role-specific abilities, age, potential, yearly development and retirement. Two Race Engineers are assigned directly to the race drivers and influence morale support, strategy pace, pit timing, one-lap preparation and ERS usage. Engine modes can be delegated with a small ability-based trade-off, rival staff can be scouted and approached, and AI teams now recruit staff too. Every value is editable in the new-game Roster Editor and its uploaded/downloaded JSON, while the Live Editor Staff tab changes active careers and preserves those staff when exporting a career back to a roster. (Requested by IronicGerman and halobeni.)',
+          ]],
     ['v3.0.7','July 2026',[
             '📱 Team HQ now has a purpose-built phone navigation layout: Home, Car and Drivers remain one tap away, the raised Next button uses the normal guarded progression flow, and Menu opens a grouped side drawer that mirrors the desktop sections.',
             '📐 Dashboard, Car, Finance and Race Result now share one compact mobile hero scale, keeping the important information visible without oversized panels taking over the screen.',
@@ -26859,6 +27485,9 @@ const GameActions = {
     const tPos = (standings.findIndex(s=>s.team.id===teamId) + 1) || N;
     const playerPos = (g.lastSeasonSnapshot && g.lastSeasonSnapshot.position)
       || State.getConstructorSeasonPos(g.playerTeamId) || Math.ceil(N/2);
+    if(g._managerMoveCommittedSeason === g.season) {
+      return { teamId, team, tPos, playerPos, posGap:tPos-playerPos, traj:0, interest:0, tier:'closed', moveCommitted:true };
+    }
     const posGap = tPos - playerPos; // <0 better (higher) team, >0 worse (lower) team
     const rep = this._playerRep();
     const upReach   = 2.5 + rep * 3.8; // how many places UP you can credibly reach in one move
@@ -26881,6 +27510,10 @@ const GameActions = {
   requestTeamMove(teamId){
     const g = State.game;
     if(g.playerFired){ UI.toast('You have no team to leave right now.','warning'); return; }
+    if(g._managerMoveCommittedSeason === g.season){
+      UI.toast('You have already committed to a new team this offseason. Manage a full season before seeking another move.','warning');
+      return;
+    }
     const ev = this.evaluateTeamInterest(teamId);
     if(!ev){ UI.toast('That move is not available.','warning'); return; }
     if(ev.tier === 'closed'){ UI.toast(`${ev.team.name} aren't entertaining an approach from a P${ev.playerPos} manager — that's too big a jump in one move.`,'error'); return; }
@@ -27048,6 +27681,102 @@ const GameActions = {
     member._salaryEscalated = false; // reset so the post-season escalation can still apply once
     Storage.autosave();
     UI.toast(`${member.name} re-signed on a ${_signYears}-year deal at ${formatMoney(_signSalary)}/yr.`, 'success');
+    UI.renderStaff();
+  },
+
+  assignRaceEngineer(roleId, driverId){
+    const team=State.getPlayerTeam(); if(!team||!team.staff||!['re1','re2'].includes(roleId)) return;
+    const member=team.staff[roleId]; if(!member) return;
+    const valid=(team.driverIds||[]).some(id=>String(id)===String(driverId));
+    if(!valid){ UI.toast('Race engineers can only be assigned to a current race driver.','warning'); return; }
+    const otherId=roleId==='re1'?'re2':'re1',other=team.staff[otherId];
+    if(other&&String(other.assignedDriverId)===String(driverId)){
+      const previous=member.assignedDriverId;
+      other.assignedDriverId=previous;
+    }
+    member.assignedDriverId=driverId;
+    State.ensureRaceEngineerAssignments(team);
+    Storage.autosave();
+    UI.toast(`${member.name} assigned to ${State.getDriver(driverId)?.name||'the selected driver'}.`,'success');
+    UI.renderStaff();
+  },
+
+  promoteJuniorEngineer(targetRole){
+    const g=State.game,team=State.getPlayerTeam();if(!g||!team||!team.staff||!['re1','re2'].includes(targetRole))return;
+    const junior=team.staff.jre;if(!junior)return;
+    const current=team.staff[targetRole];
+    if(!junior._promoteConfirm){
+      junior._promoteConfirm=targetRole;
+      setTimeout(()=>{if(junior)delete junior._promoteConfirm;},4500);
+      UI.toast(`Tap "Promote" again to put ${junior.name} on ${targetRole==='re1'?'Car 1':'Car 2'}. The current engineer will enter the market.`,'warning');
+      return;
+    }
+    if(junior._promoteConfirm!==targetRole){junior._promoteConfirm=targetRole;UI.toast('Tap the same promotion option again to confirm.','warning');return;}
+    delete junior._promoteConfirm;
+    if(current){g.staffMarket=g.staffMarket||[];g.staffMarket.push({...current,contract:Math.max(1,current.contract||1),_seasonsInMarket:0});}
+    junior.roleId=targetRole;
+    junior.salary=Math.max(junior.salary||3,DATA.staffRoles.find(r=>r.id===targetRole)?.salaryBase||4);
+    junior.contract=Math.max(2,junior.contract||0);
+    junior.assignedDriverId=(team.driverIds||[])[targetRole==='re1'?0:1]??null;
+    team.staff[targetRole]=junior;
+    team.staff.jre=null;
+    State.ensureRaceEngineerAssignments(team);
+    Storage.autosave();UI.toast(`${junior.name} promoted to ${targetRole==='re1'?'Car 1':'Car 2'} Race Engineer.`,'success');UI.renderStaff();
+  },
+
+  toggleStaffEngineDelegate(){
+    const g=State.game;if(!g)return;
+    g.staffEngineDelegate=!g.staffEngineDelegate;
+    Storage.autosave();
+    UI.toast(g.staffEngineDelegate?'Race engineers will manage engine modes with a small execution trade-off.':'Manual engine-mode control restored.','info');
+    UI.renderStaff();
+  },
+
+  scoutStaff(teamId,roleId){
+    const g=State.game;if(!g)return;
+    const source=State.getTeam(teamId),member=source&&source.staff&&source.staff[roleId];
+    if(!member)return;
+    State._patchStaffMember(member,roleId);
+    g.scoutedStaffIds=g.scoutedStaffIds||{};
+    g.scoutedStaffIds[member.id]=true;
+    Storage.autosave();
+    UI.toast(`Scouting report completed for ${member.name}. Abilities and potential revealed.`,'success');
+    UI.renderStaff();
+  },
+
+  poachStaff(teamId,roleId){
+    const g=State.game;if(!g)return;
+    const source=State.getTeam(teamId),team=State.getPlayerTeam();
+    const member=source&&source.staff&&source.staff[roleId];
+    if(!source||!team||!member||String(source.id)===String(team.id))return;
+    g.scoutedStaffIds=g.scoutedStaffIds||{};
+    if(!g.scoutedStaffIds[member.id]){ UI.toast('Scout this staff member before making an approach.','warning'); return; }
+    const role=DATA.staffRoles.find(r=>r.id===roleId);
+    const salary=Math.min(role?.salaryMax||30,Math.max((member.salary||5)+1,Math.round((member.salary||5)*1.22)));
+    const prestigeGap=(team.prestige||70)-(source.prestige||70);
+    const chance=clamp(0.48+prestigeGap/180-((member.contract||1)-1)*0.08,0.20,0.80);
+    if(!member._poachConfirm){
+      member._poachConfirm=true;member._poachSalary=salary;member._poachChance=chance;
+      setTimeout(()=>{if(member){delete member._poachConfirm;delete member._poachSalary;delete member._poachChance;}},5000);
+      UI.toast(`Tap "Approach" again to offer ${formatMoney(salary)}/yr. Estimated acceptance: ${Math.round(chance*100)}%.`,'warning');
+      return;
+    }
+    delete member._poachConfirm;delete member._poachSalary;delete member._poachChance;
+    if(Math.random()>chance){
+      member.contract=Math.min(5,(member.contract||1)+1);
+      UI.toast(`${member.name} rejected the approach and renewed with ${source.name}.`,'warning');
+      Storage.autosave();UI.renderStaff();return;
+    }
+    team.staff=team.staff||{};
+    const current=team.staff[roleId];
+    if(current){g.staffMarket=g.staffMarket||[];g.staffMarket.push({...current,contract:Math.max(1,current.contract||1),_seasonsInMarket:0});}
+    team.staff[roleId]={...member,salary,contract:randInt(2,4),seasonsAtClub:0};
+    source.staff[roleId]=State._generateStaffMember(roleId,44,Math.max(58,(member.rating||70)-randInt(5,13)),false);
+    State.ensureRaceEngineerAssignments(team);State.ensureRaceEngineerAssignments(source);
+    g.newsFeed=g.newsFeed||[];
+    g.newsFeed.unshift({icon:'🧑‍💼',type:'success',msg:`<strong>${member.name}</strong> has joined from ${source.name} as ${role?.name||roleId}.`,race:undefined});
+    Storage.autosave();
+    UI.toast(`${member.name} has joined from ${source.name}.`,'success');
     UI.renderStaff();
   },
 
@@ -31059,6 +31788,21 @@ window._wrProcessEngineMode = function(race, evLap) {
   var relFactor=0.7+(engReliability-65)*(0.6/33),g=State.game,avgWear=0;
   if(g&&g.puWear)avgWear=((g.puWear.ice||0)+(g.puWear.turbo||0)+(g.puWear.ers||0))/3;
   var wearFactor=1+Math.max(0,avgWear-50)*0.015,share=1/Math.max(1,playerIds.length);
+  if(g&&g.staffEngineDelegate){
+    var lapRatio=evLap/Math.max(1,race.laps||58);
+    playerIds.forEach(function(pid){
+      var mod=State.getRaceEngineerModifiers(g.playerTeamId,pid),ability=Math.round((mod.member&&mod.member.abilities&&mod.member.abilities.ersUsage)||40);
+      var stress=(WR._engineStressByDriver[String(pid)]||0),mode='normal';
+      if(stress>0.58||avgWear>78) mode='conserve';
+      else if(lapRatio>0.76&&ability>=68&&avgWear<68) mode='push';
+      else if(lapRatio<0.18&&ability>=86&&avgWear<55) mode='push';
+      else if(avgWear>62&&ability>=72) mode='conserve';
+      if(ability<70&&Math.random()<(70-ability)/260) mode=mode==='push'?'normal':'conserve';
+      WR.engineModes[String(pid)]=mode;
+      WR.driverDecisionScores[pid]=(WR.driverDecisionScores[pid]||0)-Math.max(0,(92-ability)/92)*0.0015;
+    });
+    WR._engineDelegated=true;
+  } else WR._engineDelegated=false;
   playerIds.forEach(function(pid){
     var key=String(pid),mode=WR.engineModes[key]||'normal',stress=WR._engineStressByDriver[key]||0;
     var pushTotal=WR._pushScoreByDriver[key]||0,conserveTotal=WR._conservePenaltyByDriver[key]||0;
@@ -33128,6 +33872,36 @@ window._pwHandleOrder = function(code, val){
         "var PRIMARY = ['dashboard','car','drivers','finance']; // bottom-tab slots; rest live in \"More\"",
         "var PRIMARY = ['dashboard','car','drivers']; // mobile bottom tabs; finance and secondary sections live in Menu"
       );
+      // Keep the season-handover screen reachable after visiting another management page.
+      _hq = _hq.replace(
+        '<button class="gsi" data-nav="dashboard"><span class="gco">DSH</span><span class="gcl">Dashboard</span></button>',
+        '<button class="gsi" data-nav="dashboard"><span class="gco">DSH</span><span class="gcl">Dashboard</span></button><button class="gsi" data-nav="offseason" data-offseason-nav><span class="gco">OFF</span><span class="gcl">Offseason Prep</span></button>'
+      );
+      _hq = _hq.replace(
+        '<button class="gsm" data-nav="dashboard"><span class="gsmco">DSH</span><span class="gsmcl">Dashboard</span></button>',
+        '<button class="gsm" data-nav="dashboard"><span class="gsmco">DSH</span><span class="gsmcl">Dashboard</span></button><button class="gsm" data-nav="offseason" data-offseason-nav><span class="gsmco">OFF</span><span class="gsmcl">Offseason Prep</span></button>'
+      );
+      _hq = _hq.replace(
+        '  function renderScreens(){\n    renderStandings();',
+        "  function renderScreens(){\n    $all('[data-offseason-nav]').forEach(function(n){n.style.display=((TeamHQ.data.offseason||{}).active?'':'none');});\n    renderStandings();"
+      );
+      // Show the incumbent power unit's ratings before the player compares renew/switch options.
+      _hq = _hq.replace(
+        '      var engBody = head;',
+        "      var engBody = head+'<div class=\"fx gap8 wrap mt12\">'+tile('Power',E.power!=null?E.power:'—','')+tile('ERS',E.ers!=null?E.ers:'—','')+tile('Reliability',E.reliability!=null?E.reliability:'—','')+tile('Dev Rate',E.dev!=null?E.dev+'/10':'—','')+'</div>';"
+      );
+      // Put regulation planning immediately below winter development, where its trade-off is made.
+      _hq = _hq.replace(
+        "<div>'+secH('Winter Development')+dev+'</div></div>'",
+        "<div>'+secH('Winter Development')+dev+regs+'</div></div>'"
+      );
+      _hq = _hq.replace("      + regs + footer;", "      + footer;");
+      // On desktop, current sponsor commitments and available offers use the full page width
+      // side-by-side instead of being stacked inside the driver-market column.
+      _hq = _hq.replace(
+        "      + '<div class=\"cols2\" style=\"margin-bottom:24px\"><div>'+secH('Driver Market')+'<div class=\"card cardp scrolly\">'+mrows+'</div></div>'\n      + '<div>'+secH('Sponsors')+'<div class=\"card cardp mb16\"><div class=\"fs10 fnt hudf mb8\" style=\"letter-spacing:.12em\">CURRENT DEALS</div>'+scur+'</div><div class=\"card cardp\"><div class=\"fs10 fnt hudf mb8\" style=\"letter-spacing:.12em\">OFFERS ON THE TABLE</div>'+soff+'</div></div></div>'",
+        "      + '<div style=\"margin-bottom:24px\">'+secH('Driver Market')+'<div class=\"card cardp scrolly\">'+mrows+'</div></div>'\n      + '<div style=\"margin-bottom:24px\">'+secH('Sponsors')+'<div class=\"cols2\"><div class=\"card cardp\"><div class=\"fs10 fnt hudf mb8\" style=\"letter-spacing:.12em\">CURRENT DEALS</div>'+scur+'</div><div class=\"card cardp\"><div class=\"fs10 fnt hudf mb8\" style=\"letter-spacing:.12em\">OFFERS ON THE TABLE</div>'+soff+'</div></div></div>'"
+      );
       _hq = _hq.replace(
         `    var t = $('#scTitle'), s = $('#scSub');
     if (t) t.textContent = META[name][0];
@@ -33287,6 +34061,33 @@ window._pwHandleOrder = function(code, val){
     el.innerHTML=head+secH('Junior Programme · '+slots.used+' / '+slots.total+' Slots')+'<div class="pgrid" style="margin-bottom:20px">'+js+'</div>'+(slots.used<slots.total?'<button class="gcta2" data-act="signJunior">+ Sign Junior Driver</button>':'<div class="tele mut tc">All academy slots are filled.</div>')+(loans?secH('Loan Programme')+'<div class="card">'+loans+'</div>':'');
   }
 `; });
+      // Team comparison parity: sortable paddock, visible stat bars and team/profile drill-down.
+      _hq = _hq.replace(/  function renderTeamsScreen\(\)\{[\s\S]*?(?=\n  function renderHistory\(\))/, function(){ return String.raw`  function renderTeamsScreen(){
+    var el=body('teams');if(!el)return;var T=TeamHQ.data.teamsScreen||{},key=TeamHQ._teamSort||'tier';
+    var tierRank={Top:5,Upper:4,Mid:3,Midfield:3,Lower:2,Back:1,Backmarker:1};
+    var cmp={
+      tier:function(a,b){return (tierRank[b.tier]||0)-(tierRank[a.tier]||0)||(b.ovr||0)-(a.ovr||0);},
+      ovr:function(a,b){return (b.ovr||0)-(a.ovr||0);},
+      car:function(a,b){return (b.car||0)-(a.car||0);},
+      reliability:function(a,b){return (b.reliability||0)-(a.reliability||0);},
+      facilities:function(a,b){return (b.facilities||0)-(a.facilities||0);},
+      development:function(a,b){return (b.development||0)-(a.development||0);}
+    };
+    var teams=(T.teams||[]).slice().sort(cmp[key]||cmp.tier);
+    var controls=[['tier','Top Tier'],['ovr','Overall'],['car','Car'],['reliability','Reliability'],['facilities','Facilities'],['development','Development']].map(function(s){return '<button class="setbtn'+(key===s[0]?' on':'')+'" data-teamsort="'+s[0]+'">'+s[1]+'</button>';}).join('');
+    function bar(label,val,col){return '<div style="display:grid;grid-template-columns:72px minmax(80px,1fr) 28px;gap:7px;align-items:center;margin-top:6px"><span class="fs10 mut">'+label+'</span><div class="smeter lite" style="height:6px"><div class="smf" style="width:'+Math.max(0,Math.min(100,val||0))+'%;background:'+col+'"></div></div><b class="mono fs10" style="text-align:right">'+(val||0)+'</b></div>';}
+    var cards=teams.map(function(t,index){
+      var c=t.color||'#9aa3b4',badge=TIER[t.tier]||'chipN';
+      var drv=(t.drivers||[]).map(function(d){return '<span class="lteamdtag"><span class="lteamdot" style="background:'+c+'"></span>'+esc(d.name)+' · '+d.rating+'</span>';}).join('');
+      return '<button class="lteam'+(t.isPlayer?' sel':'')+'" data-act="viewTeam" data-arg=\''+argOf({id:t.id})+'\' style="text-align:left"><span class="lselmark">✓</span><div class="lteamtop"><div class="lteamring" style="background:conic-gradient('+c+' '+t.ovr+'%,#e8eaef 0)"><div class="in"><span class="n">'+t.ovr+'</span><span class="l">OVR</span></div></div><div class="lteaminfo"><div class="fx ac jb gap8"><div class="lteamnm"><span class="mono fs10 mut" style="margin-right:6px">P'+(index+1)+'</span>'+esc(t.name)+'</div><span class="'+badge+'">'+esc(t.tier)+' Tier</span></div><div class="lteamdrv">'+drv+'</div>'+bar('Car',t.car,c)+bar('Reliability',t.reliability,'var(--grn)')+bar('Facilities',t.facilities,'var(--blu)')+bar('Development',t.development,'var(--amb)')+'<div class="fs10 red fw7 mt8">OPEN TEAM PROFILE →</div></div></div></button>';
+    }).join('')||emptyState('No teams on the grid.');
+    el.innerHTML=secH('Rival Paddock'+(TeamHQ.data.team&&TeamHQ.data.team.season?' · '+TeamHQ.data.team.season+' Grid':''))+'<div class="fx ac gap8 wrap mb16"><span class="fs10 fnt hudf">SORT BY</span>'+controls+'</div><div class="lteams">'+cards+'</div>';
+  }
+`; });
+      _hq = _hq.replace(
+        "    var lsrt = e.target.closest('[data-ladsort]');",
+        "    var tsrt=e.target.closest('[data-teamsort]');if(tsrt){TeamHQ._teamSort=tsrt.getAttribute('data-teamsort');renderTeamsScreen();return;}\n    var lsrt = e.target.closest('[data-ladsort]');"
+      );
       // Offseason parity: team-principal offers, poaching decisions, owner confidence,
       // pre-contracts and proactive moves were all absent from the first HQ handover screen.
       _hq = _hq.replace('    el.innerHTML = rail\n', function(){ return String.raw`    var careerHtml='';
@@ -33295,7 +34096,7 @@ window._pwHandleOrder = function(code, val){
     if((O.preContracts||[]).length){careerHtml+=secH('Pre-Contract Agreements')+'<div class="card cardp">'+(O.preContracts||[]).map(function(p){return '<div class="mkr"><b>'+esc(p.driver)+'</b><span class="fs11 mut">'+esc(p.from)+' → '+esc(p.to)+'</span><b class="mono">$'+p.salary+'M/yr</b><span class="chipN">'+p.years+'YR</span></div>';}).join('')+'</div>';}
     var own=O.owner||{}, ownerHtml=secH('Season Goals & Owner Confidence')+'<div class="card cardp"><div class="fx ac jb gap12 wrap"><div><div class="fs10 fnt hudf">OWNER EXPECTATION</div><div class="fw8 fs17 mt4">'+esc(own.goal||'—')+'</div></div><span class="chipN" style="color:'+(own.total<=-0.5?'var(--red)':own.total>0.2?'var(--grn)':'var(--amb)')+'">'+esc(own.status||'—')+'</span></div><div class="fx gap8 wrap mt16">'+tile('Performance',(own.performance>=0?'+':'')+Number(own.performance||0).toFixed(1),'')+tile('Finances',(own.finances>=0?'+':'')+Number(own.finances||0).toFixed(1),'')+tile('Combined',(own.total>=0?'+':'')+Number(own.total||0).toFixed(1),own.total<=-0.5?'amb':'grn')+'</div>'+(own.total<=-0.5?'<div class="termwarn mt12">The board is watching closely. Strong results and sound finances are essential.</div>':'')+'</div>';
     var moveRows=(O.moveOptions||[]).map(function(m){var closed=m.tier==='closed';return '<div class="upr"><div class="fx ac gap8"><span style="width:10px;height:10px;border-radius:50%;background:'+esc(m.color)+'"></span><div><b>'+esc(m.name)+'</b><div class="fs11 mut mt4">P'+m.position+' · Car '+m.car+' · '+m.interest+'% interest'+(m.trajectory?(' · trajectory '+(m.trajectory>0?'▲':'▼')+Math.abs(m.trajectory)):'')+'</div></div></div><span class="chipN">'+esc(String(m.tier).toUpperCase())+'</span><button class="renew ghost" data-act="requestTeamMove" data-arg=\''+argOf({teamId:m.teamId})+'\''+(closed?' disabled':'')+'>APPROACH</button></div>';}).join('');
-    var movesHtml=moveRows?secH('Seek a Move')+'<div class="card cardp"><div class="fs12 mut mb12">Approach another constructor about its team-principal seat. Reputation and recent trajectory determine interest.</div>'+moveRows+'</div>':'';
+    var movesHtml=moveRows?secH('Seek a Move')+'<div class="card cardp"><div class="fs12 mut mb12">'+(O.moveLocked?'You have committed to a new constructor for this handover. Team interest reopens after you manage the coming season.':'Approach another constructor about its team-principal seat. Reputation and recent trajectory determine interest.')+'</div>'+moveRows+'</div>':'';
     el.innerHTML = rail + careerHtml + '<div class="cols2" style="margin-bottom:24px"><div>'+ownerHtml+'</div><div>'+movesHtml+'</div></div>'
 `; });
       // Restore the classic Dynasty, Race Grid and Achievements history sections natively.
@@ -33860,6 +34661,23 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       // (v3.0.1, reported by MinhKhanh4463) — give Apply a clearly active solid style.
       _hq = _hq.replace('<button class="gcta2" data-act="applyQuarterDev"', '<button class="gcta2 hq-apply-dev" data-act="applyQuarterDev"');
       _hq = _hq.replace('</head>', '<style id="hq-apply-dev-style">.gcta2.hq-apply-dev{background:#e8112d;border-color:#e8112d;color:#fff;font-weight:800;letter-spacing:.05em}.gcta2.hq-apply-dev:hover{background:#c60e26}.gcta2.hq-apply-dev[disabled]{background:#9aa1ad;border-color:#9aa1ad;color:#fff;opacity:1!important}</style></head>');
+      // Extended staff system: specialist abilities, age/potential, driver-assigned race
+      // engineers, delegated engine modes and rival scouting/poaching.
+      _hq = _hq.replace(/function renderStaff\(\)\{[\s\S]*?\n  \}\n\n  function renderAcademy/, function(){ return String.raw`function renderStaff(){
+    var el=body('staff');if(!el)return;var S=TeamHQ.data.staff||{};
+    function abilities(list,hidden){if(hidden)return '<div class="tele fs11 mut">Scout to reveal specialist abilities and potential.</div>';return '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:8px">'+(list||[]).map(function(a){return '<div><div class="fx jb fs10"><span class="mut">'+esc(a.label)+'</span><b>'+esc(a.value)+'</b></div><div class="smeter lite" style="height:5px;margin-top:4px"><div class="smf" style="width:'+Math.max(0,Math.min(100,a.value||0))+'%;background:'+(a.value>=85?'var(--grn)':a.value>=70?'var(--amb)':'var(--red)')+'"></div></div></div>';}).join('')+'</div>';}
+    function roleCard(r){var assign=(r.driverOptions||[]).length?'<div style="margin-top:4px"><div class="fs10 mut fw7 mb8">ASSIGNED DRIVER</div><div class="fx gap6 wrap">'+r.driverOptions.map(function(d){var on=String(d.id)===String(r.assignedDriverId);return '<button class="setbtn'+(on?' on':'')+'" data-act="assignRaceEngineer" data-arg=\''+argOf({role:r.id,driverId:d.id})+'\'>'+esc(d.name)+'</button>';}).join('')+'</div></div>':'';var promote=r.juniorEngineer?'<div class="fx gap6 wrap"><button class="renew ghost" data-act="promoteJuniorEngineer" data-arg=\''+argOf({target:'re1'})+'\'>PROMOTE TO CAR 1</button><button class="renew ghost" data-act="promoteJuniorEngineer" data-arg=\''+argOf({target:'re2'})+'\'>PROMOTE TO CAR 2</button></div>':'';return '<div class="card cardp" style="display:flex;flex-direction:column;gap:10px"><div class="fx jb gap10"><div><div class="fs10 fnt hudf">'+esc(((r.icon?r.icon+' ':'')+r.role).toUpperCase())+'</div><div class="fw8 fs16 mt4">'+esc(r.name)+'</div><div class="fs11 mut mt4">Age '+esc(r.age)+' · Potential '+esc(r.potential)+' · $'+esc(r.salary)+'M/yr · '+esc(r.years)+'yr left</div></div><div class="tc"><span class="mono fw8" style="font-size:22px">'+esc(r.rating)+'</span><div class="fs10 mut">RATING</div></div></div>'+bar(r.rating)+'<div class="fs11 grn fw7">'+esc(r.bonus||'')+'</div>'+abilities(r.abilities||[],false)+assign+promote+(r.bio?'<div class="fs11 mut" style="font-style:italic">“'+esc(r.bio)+'”</div>':'')+'<div class="fx gap6" style="margin-top:auto"><button class="renew" data-act="renewStaff" data-arg=\''+argOf({role:r.id})+'\'>RENEW</button><button class="renew ghost" data-act="releaseStaff" data-arg=\''+argOf({role:r.id})+'\'>✕ RELEASE</button></div></div>';}
+    function marketCard(m){var diff=m.delta==null?'':(m.delta>0?'+':'')+m.delta+' VS CURRENT';return '<div class="card cardp" style="display:flex;flex-direction:column;gap:10px"><div class="fx jb gap10"><div><div class="fs10 fnt hudf">'+esc(((m.icon?m.icon+' ':'')+m.role).toUpperCase())+'</div><div class="fw8 fs16 mt4">'+esc(m.name)+'</div><div class="fs11 mut mt4">Age '+esc(m.age)+' · Potential '+esc(m.potential)+' · $'+esc(m.askingSalary)+'M/yr</div></div><div class="tc"><span class="mono fw8" style="font-size:22px">'+esc(m.rating)+'</span><div class="fs10 mut">'+esc(diff||'RATING')+'</div></div></div>'+bar(m.rating)+abilities(m.abilities||[],false)+'<button class="renew" data-act="hireStaff" data-arg=\''+argOf({index:m.index,name:m.name})+'\'>HIRE</button></div>';}
+    function rivalCard(r){return '<div class="card cardp" style="display:flex;flex-direction:column;gap:10px"><div class="fx jb gap10"><div><div class="fs10 fnt hudf">'+esc((r.role+' · '+r.team).toUpperCase())+'</div><div class="fw8 fs16 mt4">'+esc(r.name)+'</div><div class="fs11 mut mt4">Age '+esc(r.age)+' · $'+esc(r.salary)+'M/yr · '+esc(r.years)+'yr left'+(r.scouted?' · Potential '+esc(r.potential):'')+'</div></div><div class="mono fw8" style="font-size:22px">'+esc(r.rating)+'</div></div>'+bar(r.rating)+abilities(r.abilities||[],!r.scouted)+'<button class="renew" data-act="'+(r.scouted?'poachStaff':'scoutStaff')+'" data-arg=\''+argOf({teamId:r.teamId,role:r.roleId})+'\'>'+(r.scouted?'APPROACH':'SCOUT')+'</button></div>';}
+    var delegate='<div class="card cardp mb16"><div class="fx jb ac gap12 wrap"><div><div class="fw8 fs15">Engineer-managed engine modes</div><div class="fs11 mut mt4">Race engineers manage Conserve, Normal and Push with a small ability-based execution trade-off.</div></div><button class="renew'+(S.engineDelegate?'':' ghost')+'" data-act="toggleStaffEngineDelegate">'+(S.engineDelegate?'ENABLED':'ENABLE')+'</button></div></div>';
+    var roles=(S.roles||[]).map(roleCard).join('')||emptyState('No staff hired.');
+    var market=(S.market||[]).map(marketCard).join('')||emptyState('No candidates on the market.');
+    var rivals=(S.rivals||[]).map(rivalCard).join('')||emptyState('No rival staff available.');
+    var summary='<div class="tele fs12 mb16"><b>Staff wages $'+esc(S.totalSalary||0)+'M/yr</b> · Budget cap $'+esc(S.budgetCap||0)+'M'+(S.overBudget?' · <b style="color:var(--red)">OVER BUDGET</b>':'')+'</div>';
+    el.innerHTML=subtabs('staff',[['roles','Your Team',(S.roles||[]).length],['market','Hire Market',(S.market||[]).length],['rivals','Scout & Poach',(S.rivals||[]).length]])+tabpanel('staff','roles',summary+delegate+secH('Leadership · Departments')+'<div class="pgrid">'+roles+'</div>')+tabpanel('staff','market',secH('Available Candidates')+'<div class="pgrid">'+market+'</div>')+tabpanel('staff','rivals',secH('Rival Staff')+'<div class="fs12 mut" style="margin:-8px 0 16px">Scout a rival employee to reveal their potential and abilities before making an approach.</div><div class="pgrid">'+rivals+'</div>');
+  }
+
+  function renderAcademy`; });
       return _hq;
     } catch(e){
       try {
@@ -34240,10 +35058,10 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
         }
       } catch(e){}
       var landingTheme='light'; try { landingTheme=localStorage.getItem('f1d_theme')==='dark'?'dark':'light'; } catch(e){}
-      return { appearance:{theme:landingTheme}, landing:{ saves:saves, teams:teams, selectedTeam:sel, challenge:challenge, patchVersion:(window.__f1dVersion||'3.0.7'), whatsNew:[
-        {tag:'FIX', text:'Your career continues after a sacking — job offers appear properly, use your real final standing, and return you smoothly to your new team (thanks PurpleHead)'},
-        {tag:'FIX', text:'Race gaps no longer collapse impossibly and the All-Time Ladder shows every driver\'s real wins, podiums, poles and points (thanks IronicGerman)'},
-        {tag:'BALANCE', text:'Morale, long-save development budgets and regulation resets are healthier, while interface switching now confirms your progress is saved first (thanks Hennersw1)'}
+      return { appearance:{theme:landingTheme}, landing:{ saves:saves, teams:teams, selectedTeam:sel, challenge:challenge, patchVersion:(window.__f1dVersion||'3.0.8'), whatsNew:[
+        {tag:'FIX', text:'Continued and imported careers stay bound to their own save slot, and a team principal can make only one constructor move per offseason.'},
+        {tag:'FIX', text:'Returning reserve loanees no longer overwrite the reserves you signed while they were away.'},
+        {tag:'NEW', text:'Staff now have specialist abilities, age and potential, with two driver-assigned race engineers, development, retirement, scouting and poaching.'}
       ], cloudSave:{
         available: (typeof CloudSave!=='undefined' && CloudSave.isAvailable()),
         signedIn: (typeof CloudSave!=='undefined' && CloudSave.isSignedIn()),
@@ -34572,16 +35390,21 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
   window._buildHQTeams = function(){
     var g=State.game, pid=g.playerTeamId, selectedId=g._hqViewedTeamId||pid;
     var tierMap=TIER_BY_CAR((g.teams||[]).map(function(t){ var c=0; try { c=getTeamOverallCar(t); } catch(e){ c=t.carPerformance||0; } return { id:t.id, car:c }; }));
-    var teams=(g.teams||[]).map(function(t){ var drv=(t.driverIds||[]).map(function(id){ var d=(g.drivers||[]).find(function(x){return x.id===id;}); return { name:(d&&d.name)||'', rating:Math.round((d&&d.rating)||0) }; }).filter(function(x){return x.name;}); return { id:t.id, name:t.name, color:t.color||'#888', ovr:Math.round(t.carPerformance||0), prestige:t.prestige||0, tier:tierMap[String(t.id)]||TIER2(t.prestige||0), drivers:drv, isPlayer:String(t.id)===String(pid), reliability:Math.round(t.reliability||0), facilities:Math.round(t.facilities||0), development:Math.round(t.developmentRate||0) }; });
+    var teams=(g.teams||[]).map(function(t){
+      var overall=0; try { overall=getTeamOverallCar(t); } catch(e){ overall=t.carPerformance||0; }
+      var drv=(t.driverIds||[]).map(function(id){ var d=(g.drivers||[]).find(function(x){return String(x.id)===String(id);}); return { id:d&&d.id, name:(d&&d.name)||'', rating:Math.round((d&&d.rating)||0) }; }).filter(function(x){return x.name;});
+      return { id:t.id, name:t.name, color:t.color||'#888', ovr:Math.round(overall||0), car:Math.round(t.carPerformance||overall||0), prestige:t.prestige||0, tier:tierMap[String(t.id)]||TIER2(t.prestige||0), drivers:drv, isPlayer:String(t.id)===String(pid), reliability:Math.round(t.reliability||0), facilities:Math.round(t.facilities||0), development:Math.round(t.developmentRate||0) };
+    });
     var selected=teams.filter(function(t){return String(t.id)===String(selectedId);})[0]||teams[0]||null;
     return { teams:teams, selected:selected };
   };
   window._buildHQStaff = function(){
     var t=T_(State.game.playerTeamId), roles=[];
-    try { var sf=t.staff||{}; Object.keys(sf).forEach(function(k){ var s=sf[k]||{}, role=(DATA.staffRoles||[]).find(function(r){return r.id===k;})||{}, aspect={td:'dev',rs:'strategy',cm:'reliability',pcc:'pit'}[k]||'dev', bonus=0; try { bonus=State.getStaffBonus(t.id,aspect); } catch(e){} var bonusText=k==='td'?'+'+bonus.toFixed(1)+' dev efficiency':k==='rs'?'+'+(bonus*0.5).toFixed(1)+' strategy pace':k==='cm'?'+'+(bonus*0.5).toFixed(1)+' reliability · −'+(bonus*0.25).toFixed(2)+' DNF risk':'+'+(bonus*0.20).toFixed(2)+' pit execution'; roles.push({ id:k, role:role.name||ROLE[k]||k.toUpperCase(), icon:role.icon||'', name:s.name||'', rating:Math.round(s.rating||0), years:s.contract||0, salary:s.salary||0, detail:role.desc||'Provides a specialist performance bonus for the team.', bio:s.desc||'', bonus:bonusText, bonusLabel:role.bonusLabel||'Team effect' }); }); } catch(e){}
-    var market=[]; try { market=(State.game.staffMarket||[]).map(function(s,idx){ var role=(DATA.staffRoles||[]).find(function(r){return r.id===s.roleId;})||{}, current=(t.staff||{})[s.roleId], delta=current?Math.round((s.rating||0)-(current.rating||0)):null; return { index:idx, roleId:s.roleId||'', icon:role.icon||'', name:s.name||'', role:role.name||ROLE[s.roleId]||s.roleId||s.role||'', rating:Math.round(s.rating||0), years:s.contract||0, askingSalary:s.salary||s.askingSalary||0, detail:role.desc||'', bio:s.desc||'', bonusLabel:role.bonusLabel||'Team effect', delta:delta }; }); } catch(e){}
+    try { State.ensureRaceEngineerAssignments(t); var sf=t.staff||{}; Object.keys(sf).forEach(function(k){ var s=sf[k]; if(!s)return; State._patchStaffMember(s,k); var role=(DATA.staffRoles||[]).find(function(r){return r.id===k;})||{}, aspect={td:'dev',rs:'strategy',cm:'reliability',pcc:'pit'}[k], bonus=0; try { if(aspect)bonus=State.getStaffBonus(t.id,aspect); } catch(e){} var bonusText=k==='td'?'+'+bonus.toFixed(1)+' dev efficiency':k==='rs'?'+'+(bonus*0.5).toFixed(1)+' strategy pace':k==='cm'?'+'+(bonus*0.5).toFixed(1)+' reliability · −'+(bonus*0.25).toFixed(2)+' DNF risk':k==='pcc'?'+'+(bonus*0.20).toFixed(2)+' pit execution':k==='jre'?'Development prospect · '+Math.max(0,(s.potential||s.rating)-s.rating)+' points of headroom':(function(){var m=State.getRaceEngineerModifiers(t.id,s.assignedDriverId);return '+'+m.oneLapPace.toFixed(2)+' quali · +'+m.strategyPace.toFixed(2)+' race · −'+m.pitTime.toFixed(2)+'s pit';})(); var assigned=State.getDriver(s.assignedDriverId); var defs=(DATA.staffAbilityDefs&&DATA.staffAbilityDefs[k])||[]; roles.push({ id:k, role:role.name||ROLE[k]||k.toUpperCase(), icon:role.icon||'', name:s.name||'', rating:Math.round(s.rating||0), potential:Math.round(s.potential||s.rating||0), age:s.age||0, years:s.contract||0, salary:s.salary||0, detail:role.desc||'Provides a specialist performance bonus for the team.', bio:s.desc||'', bonus:bonusText, bonusLabel:role.bonusLabel||'Team effect', assignedDriverId:s.assignedDriverId, assignedDriver:assigned&&assigned.name||'', driverOptions:role.raceEngineer?(t.driverIds||[]).map(function(id){var d=State.getDriver(id);return d?{id:d.id,name:d.name}:null;}).filter(Boolean):[], juniorEngineer:!!role.juniorEngineer, abilities:defs.map(function(a){return {id:a.id,label:a.label,value:Math.round((s.abilities&&s.abilities[a.id])||s.rating||0)};}) }); }); } catch(e){}
+    var market=[]; try { market=(State.game.staffMarket||[]).map(function(s,idx){ State._patchStaffMember(s,s.roleId); var role=(DATA.staffRoles||[]).find(function(r){return r.id===s.roleId;})||{}, current=(t.staff||{})[s.roleId], delta=current?Math.round((s.rating||0)-(current.rating||0)):null; return { index:idx, roleId:s.roleId||'', icon:role.icon||'', name:s.name||'', role:role.name||ROLE[s.roleId]||s.roleId||s.role||'', rating:Math.round(s.rating||0), potential:Math.round(s.potential||s.rating||0), age:s.age||0, years:s.contract||0, askingSalary:s.salary||s.askingSalary||0, detail:role.desc||'', bio:s.desc||'', bonusLabel:role.bonusLabel||'Team effect', delta:delta, abilities:((DATA.staffAbilityDefs&&DATA.staffAbilityDefs[s.roleId])||[]).map(function(a){return {id:a.id,label:a.label,value:Math.round((s.abilities&&s.abilities[a.id])||s.rating||0)};}) }; }); } catch(e){}
+    var rivals=[]; try { rivals=(State.game.teams||[]).filter(function(x){return String(x.id)!==String(t.id);}).flatMap(function(tm){return Object.keys(tm.staff||{}).map(function(k){var s=tm.staff[k];if(!s)return null;State._patchStaffMember(s,k);var role=(DATA.staffRoles||[]).find(function(r){return r.id===k;})||{},scouted=!!(State.game.scoutedStaffIds&&State.game.scoutedStaffIds[s.id]);return {teamId:tm.id,team:tm.name,roleId:k,role:role.name||k,name:s.name,rating:Math.round(s.rating||0),age:s.age||0,potential:scouted?Math.round(s.potential||0):null,years:s.contract||0,salary:s.salary||0,scouted:scouted,abilities:scouted?((DATA.staffAbilityDefs&&DATA.staffAbilityDefs[k])||[]).map(function(a){return {id:a.id,label:a.label,value:Math.round((s.abilities&&s.abilities[a.id])||s.rating||0)};}):[]};}).filter(Boolean);}).sort(function(a,b){return b.rating-a.rating;}).slice(0,24); } catch(e){}
     var totalSalary=0,budgetCap=0; try { totalSalary=getTeamStaffSalaryCost(t); budgetCap=getTeamStaffBudgetCap(t); } catch(e){}
-    return { roles:roles, market:market, totalSalary:totalSalary, budgetCap:budgetCap, overBudget:totalSalary>budgetCap };
+    return { roles:roles, market:market, rivals:rivals, totalSalary:totalSalary, budgetCap:budgetCap, overBudget:totalSalary>budgetCap, engineDelegate:!!State.game.staffEngineDelegate };
   };
   window._buildHQScouting = function(){
     var g=State.game;
@@ -35407,6 +36230,10 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
           });
         }
         engine={ owned:owned, name:curEng.name||'', shortName:curEng.shortName||'', years:(owned?99:yearsE),
+                 power:(curEng.powerRating!=null?Number(curEng.powerRating).toFixed(1):'—'),
+                 ers:(curEng.ersRating!=null?Number(curEng.ersRating).toFixed(1):'—'),
+                 reliability:(curEng.reliability!=null?Number(curEng.reliability).toFixed(1):'—'),
+                 dev:Math.min(10,curEng.devRate||0),
                  cost:(owned?0:(t.engineContractCost!=null?t.engineContractCost:(function(){ try { return getEngineContractCost(pid,t.engineManufacturer); } catch(e){ return 0; } })())),
                  expiring:(!owned&&(yearsE<=0||!!g._engineContractExpiring)), canRenew:canRenewE, locked:(!owned&&yearsE>0), options:options };
       } catch(e){}
@@ -35414,7 +36241,22 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       var dev=g.offseasonBudget||{aero:0,engine:0,reliability:0,facilities:0};
       var budget=Math.max(5, Math.round((t.revenue||0)*0.35/5)*5);
       var spentTot=(dev.aero||0)+(dev.engine||0)+(dev.reliability||0)+(dev.facilities||0);
-      var areas=['aero','engine','reliability','facilities'].map(function(k){ return { id:k, label:k.charAt(0).toUpperCase()+k.slice(1), spent:dev[k]||0, effect:'' }; });
+      var winterEff=1, relEff=1, wtMult=1, facMult=1, facilityEff=1, devRateEff=1;
+      try {
+        winterEff=getWinterDevEfficiency(t.carPerformance||70)*(1+State.getStaffBonus(t.id,'dev')/100)*(getDiff(g).playerDevMult||1);
+        relEff=Math.max(.22,Math.min(1,winterEff+.18));
+        wtMult=clamp(1+(getFacilityUnit(t,'windTunnel')-75)*.004,.86,1.10);
+        facMult=clamp(1+(getFacilityUnit(t,'factory')-75)*.004,.86,1.10);
+        facilityEff=t.facilities>=95?.45:t.facilities>=90?.58:t.facilities>=82?.74:1;
+        devRateEff=t.developmentRate>=90?.45:t.developmentRate>=80?.7:1;
+      } catch(e){}
+      var areaEffects={
+        aero:'Cornering, aero efficiency and tyre management · plan '+((dev.aero||0)*.07*winterEff*wtMult).toFixed(1)+' expected car OVR before winter variance',
+        engine:'Top speed and mechanical performance, plus PU power/ERS recovery · plan '+((dev.engine||0)*.12*winterEff*wtMult).toFixed(1)+' expected car OVR before variance',
+        reliability:'Reliability and mechanical components · plan '+((dev.reliability||0)*.06*relEff*facMult).toFixed(1)+' expected reliability before variance',
+        facilities:'Development rate and your chosen facility focus · plan +'+((dev.facilities||0)*.08*devRateEff).toFixed(1)+' dev / +'+((dev.facilities||0)*.05*facilityEff).toFixed(1)+' facilities before variance'
+      };
+      var areas=['aero','engine','reliability','facilities'].map(function(k){ return { id:k, label:k.charAt(0).toUpperCase()+k.slice(1), spent:dev[k]||0, effect:areaEffects[k]||'' }; });
       // ── checklist: mirrors GameActions._getPreseasonStatus so the Start Season gate always agrees with the game ──
       var expDrv = mine.some(function(d){return (d.contract||0)<=0;});
       var raceN = mine.length;
@@ -35448,6 +36290,7 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       var moveOptions=[]; try { moveOptions=(g.teams||[]).filter(function(x){return String(x.id)!==String(pid);}).map(function(x){var ev=GameActions.evaluateTeamInterest(x.id);return ev?{teamId:x.id,name:x.name||'',color:x.color||'#888',position:ev.tPos,interest:ev.interest,tier:ev.tier,trajectory:ev.traj,car:Math.round(getTeamOverallCar(x)||0)}:null;}).filter(Boolean).sort(function(a,b){return b.interest-a.interest;}); } catch(e){}
       var mood=g.ownerMood||{performance:0,finances:0}, moodTotal=(mood.performance||0)+(mood.finances||0), goal=g.ownerGoal||S.getOwnerGoal(pid), goalLabel=goal===1?'Win the Championship':goal<=3?'Top '+goal+' in Constructors':goal<=6?'Top '+goal+' Finish':'Finish P'+goal+' or Better';
       return {
+        active:!!g.offseasonPending,
         fromSeason:(noPrior?null:finishedSeason), toSeason:toSeasonV,
         steps:steps,
         review:{ position:rvPos, points:rvPts, wins:rvWins, podiums:rvPod, bestFinish:(rvPos!=null?rvPos:''),
@@ -35459,7 +36302,7 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
         engine:engine,
         development:{ budget:budget, remaining:Math.max(0,budget-spentTot), areas:areas },
         regs:{ active:true, note:'Invest early development into the '+((g.nextRegsYear)||((g.season||0)+1))+' regulation reset.', investedPct:Math.round((g.regsInvestment||0)*100) },
-        teamOffers:teamOffers, poachAttempts:poachAttempts, preContracts:preContracts, moveOptions:moveOptions,
+        teamOffers:teamOffers, poachAttempts:poachAttempts, preContracts:preContracts, moveOptions:moveOptions, moveLocked:g._managerMoveCommittedSeason===g.season,
         owner:{goal:goalLabel,performance:mood.performance||0,finances:mood.finances||0,total:moodTotal,status:moodTotal>0.8?'Delighted':moodTotal>0.2?'Satisfied':moodTotal>-0.5?'Concerned':moodTotal>-1?'Worried':'On the Brink'}
       };
     } catch(e){ return {}; }
@@ -35555,7 +36398,15 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       target.insertAdjacentHTML('beforeend',panel);
     }catch(e){}
   };
-  window._hqEnrichTeams=function(){ try {var d=window._hqRC.data.teamsScreen||{},x=d.selected;if(!x)return;var e=function(v){return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;');},drivers=(x.drivers||[]).map(function(a){return '<div class="mkr"><b>'+e(a.name)+'</b><b>'+a.rating+' OVR</b></div>';}).join('');window._hqAddPanel('teams','hq-team-detail','Team Profile · '+e(x.name),'<div class="tele"><div class="statg"><div class="putile"><div class="k">Car Performance</div><div class="v">'+x.ovr+'</div></div><div class="putile"><div class="k">Reliability</div><div class="v">'+x.reliability+'</div></div><div class="putile"><div class="k">Facilities</div><div class="v">'+x.facilities+'</div></div><div class="putile"><div class="k">Development</div><div class="v">'+x.development+'</div></div></div><div class="card" style="margin-top:14px">'+drivers+'</div></div>');}catch(e){} };
+  window._hqEnrichTeams=function(){ try {
+    var d=window._hqRC.data.teamsScreen||{},x=d.selected;if(!x)return;
+    var e=function(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});};
+    var drivers=(x.drivers||[]).map(function(a){
+      var arg=JSON.stringify({id:a.id,name:a.name}).replace(/'/g,'&#39;');
+      return '<button class="mkr" data-act="viewDriver" data-arg=\''+arg+'\' style="width:100%;border:0;border-bottom:1px solid var(--line);background:transparent;text-align:left;cursor:pointer"><b>'+e(a.name)+'</b><b>'+a.rating+' OVR</b><span class="fs10 red fw7">VIEW PROFILE →</span></button>';
+    }).join('');
+    window._hqAddPanel('teams','hq-team-detail','Team Profile · '+e(x.name),'<div class="tele"><div class="statg"><div class="putile"><div class="k">Overall</div><div class="v">'+x.ovr+'</div></div><div class="putile"><div class="k">Reliability</div><div class="v">'+x.reliability+'</div></div><div class="putile"><div class="k">Facilities</div><div class="v">'+x.facilities+'</div></div><div class="putile"><div class="k">Development</div><div class="v">'+x.development+'</div></div></div><div class="card" style="margin-top:14px">'+drivers+'</div></div>');
+  }catch(e){} };
   window._hqEnrichAcademy=function(){
     try {
       var d=window._hqRC&&window._hqRC.data&&window._hqRC.data.academy||{}, esc=window._hqEscape;
@@ -36357,6 +37208,11 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       rc.on('hireStaff', function(p){ if(!hasGame())return; p=p||{}; try { var idx=(p.index!=null?p.index:(State.game.staffMarket||[]).findIndex(function(m){return m.name===p.name;})); if(idx>=0&&GameActions.hireStaff){ var _sm=(State.game.staffMarket||[])[idx]||{}; window.__f1dEv('staff_change',window.__f1dEvCtx({action:'hire',role:_sm.roleId||'?',rating:Math.round(_sm.rating||0),salary:_sm.salary||0})); GameActions.hireStaff(idx); } } catch(e){} window._hqRefresh(); });
       rc.on('renewStaff', function(p){ if(!hasGame())return; p=p||{}; try { var t=T_(State.game.playerTeamId), roleId=_hqStaffRoleId(t,p.role); if(roleId&&GameActions.renewStaff){ window.__f1dEv('staff_change',window.__f1dEvCtx({action:'renew',role:p.role||'?'})); GameActions.renewStaff(roleId); } } catch(e){} window._hqRefresh(); });
       rc.on('releaseStaff', function(p){ if(!hasGame())return; p=p||{}; try { var t=T_(State.game.playerTeamId), roleId=_hqStaffRoleId(t,p.role); if(roleId&&GameActions.fireStaff){ window.__f1dEv('staff_change',window.__f1dEvCtx({action:'release',role:p.role||'?'})); GameActions.fireStaff(roleId); } } catch(e){} window._hqRefresh(); });
+      rc.on('assignRaceEngineer', function(p){ if(!hasGame())return; p=p||{}; try { GameActions.assignRaceEngineer(p.role,p.driverId); } catch(e){} window._hqRefresh(); });
+      rc.on('promoteJuniorEngineer', function(p){ if(!hasGame())return; p=p||{}; try { GameActions.promoteJuniorEngineer(p.target); } catch(e){} window._hqRefresh(); });
+      rc.on('toggleStaffEngineDelegate', function(){ if(!hasGame())return; try { GameActions.toggleStaffEngineDelegate(); } catch(e){} window._hqRefresh(); });
+      rc.on('scoutStaff', function(p){ if(!hasGame())return; p=p||{}; try { GameActions.scoutStaff(p.teamId,p.role); } catch(e){} window._hqRefresh(); });
+      rc.on('poachStaff', function(p){ if(!hasGame())return; p=p||{}; try { GameActions.poachStaff(p.teamId,p.role); } catch(e){} window._hqRefresh(); });
       rc.on('promoteJunior', function(p){ if(!hasGame())return; var d=_hqDriverRef(p); if(d&&GameActions.promoteJunior){ window.__f1dEv('academy_action',window.__f1dEvCtx({action:'promote',driver_name:d.name||'?',rating:Math.round(d.rating||0)})); GameActions.promoteJunior(d.id,'reserve'); } window._hqRefresh(); });
       rc.on('promoteJuniorRace', function(p){ if(!hasGame())return; var d=_hqDriverRef(p); if(!d||!GameActions.promoteJunior)return; if(confirm('Promote '+d.name+' to a race seat? This will displace your second race driver.')) GameActions.promoteJunior(d.id,'race'); window._hqRefresh(); });
       rc.on('loanJunior', function(p){ if(!hasGame())return; var d=_hqDriverRef(p); if(d&&GameActions.showLoanModal){ window.__f1dEv('academy_action',window.__f1dEvCtx({action:'loan_opened',driver_name:d.name||'?'})); GameActions.showLoanModal(d.id); _hqElevateModal(); elevateOpenHQModals(); } });
