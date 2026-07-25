@@ -15648,15 +15648,25 @@ const Storage = {
     try {
       const data = JSON.parse(fileText);
       if(!data || !data.game || !data.game.playerTeamId) throw new Error('not a valid F1 Dynasty save file');
+      // Importing is intentionally stricter than starting a new career. A backup file does not
+      // identify which local slot the player means to replace, and choosing the oldest save can
+      // destroy a long-running dynasty that simply has not been opened recently. When every slot
+      // is occupied, stop before changing localStorage and make the player delete the exact
+      // career they want to replace from the clearly labelled save list first.
+      const risk = this.overwriteRisk();
+      if(risk){
+        UI.toast(`Import cancelled — all ${this.MAX_SLOTS} save slots are full. Delete the career you want to replace, then import again. No saves were changed.`, 'warning');
+        return false;
+      }
       // Every import becomes an independent local career, even when two backup files were
       // branched from the same original save and carry the same historical _saveId.
       data.game._saveId = 'sg_import_' + Date.now() + '_' + Math.random().toString(36).slice(2,10);
       this._sanitizeImportedNames(data.game);
-      const risk = this.overwriteRisk();
       const slot = this._newSlot();
       localStorage.setItem(this.SAVE_KEY_PREFIX + slot, JSON.stringify({ game: data.game, savedAt: Date.now(), version: data.version || this.SAVE_VERSION }));
-      UI.toast('Save imported' + (risk ? ' — the oldest save slot was replaced' : '') + '. Reloading\u2026','success');
+      UI.toast('Save imported into an empty slot. Reloading\u2026','success');
       setTimeout(()=>{ location.reload(); }, 900);
+      return true;
     } catch(e){ UI.toast('Import failed: ' + e.message, 'error'); }
   },
 
@@ -26110,6 +26120,7 @@ const sponsorInc=sumSponsorIncome(sponsors2);
   <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v3.0.9 · Release Notes</div>
          ${[
     ['v3.0.9','July 2026',[
+            '🛡️ Importing a save backup can no longer overwrite the wrong career. If all five local slots are occupied, the import stops before changing anything and asks you to delete the exact career you intend to replace first. Previously it silently chose the least-recently-saved slot, which could destroy a long-running dynasty that simply had not been opened lately. (Reported by ZareJonathan.)',
             '&#10003; Staff identities are now unique across the whole paddock. Fresh careers reserve roster-editor names before filling generated positions, then exclude every active and market name case-insensitively from later generation. Existing careers repair duplicate names on load, preserve the player team\'s copy, refresh any linked scout-report name, and retry even if the incomplete first migration had already marked the save as fixed. Staff moving between teams still keep their identity and scouting history. (Reported by IronicGerman.)',
             '🔭 Scouting a rival staff member is now a real intelligence operation rather than an instant reveal. Your Scout Network sets both the cadence and the accuracy of the report: findings arrive one ability at a time — every race with the Elite network, every three races with no network at all — and each revealed number carries that tier\'s error band, from ±13 unscouted down to ±2 elite. Potential is the last finding to land. Because the rest of the profile stays dark in the meantime, you can approach on a partial report and gamble on the unknowns, or wait for the full picture and risk a rival moving first. Assigning scouts costs a fee. (Requested by IronicGerman.)',
             '🤝 Approaching a rival staff member is no longer free or repeatable. Every approach costs agent and release fees whether or not it lands, a rejection blocks that person for four to seven races, and each rejection permanently lowers your acceptance odds with them until it fades over the winter. Repeatedly tapping "Approach" until someone caves no longer works. (Reported by IronicGerman.)',
