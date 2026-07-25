@@ -963,6 +963,7 @@ body.hq-skin #driver-detail-modal .modal-box:has(.le-head)::before{display:none}
             <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:#888;font-weight:800;flex-shrink:0">📈</span><span><strong>Season development is back</strong> on the Team HQ driver profile, with "vs current" on every staff card.</span></div>
             <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:var(--red);font-weight:800;flex-shrink:0">🏁</span><span><strong>The finale ends like any race</strong>: review the final standings first, then press End Season to start the offseason. Overlapping popup notes and dark-on-dark text in Teams are fixed too.</span></div>
             <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:var(--red);font-weight:800;flex-shrink:0">🔍</span><span><strong>Team HQ parity audit</strong>: contract warnings, track-weighted car stats, power-unit terms, reserve detail, scout accuracy bands and full team cards are all back on the new UI.</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:var(--red);font-weight:800;flex-shrink:0">✓</span><span><strong>One person, one paddock job</strong>: generated staff names are unique across every team and the hire market, and existing careers repair duplicate identities while preserving your own staff.</span></div>
           </div>
           <button onclick="UI.showChangelog()" style="margin-top:10px;width:100%;padding:7px;background:none;border:1.5px solid rgba(192,57,43,.3);border-radius:7px;font-size:11px;font-weight:700;color:var(--red);cursor:pointer">Full release notes →</button>
         </div>
@@ -6658,6 +6659,14 @@ const State = {
       ? JSON.parse(JSON.stringify(template.staffPool))
       : { named: JSON.parse(JSON.stringify(DATA.staffNamedPool)), firstNames: JSON.parse(JSON.stringify(DATA.staffFirstNames)), lastNames: [...DATA.staffLastNames] };
     this._pendingStaffPool = _staffPool;
+    // Track names as they are handed out so no two constructors start with the same person.
+    this._pendingStaffNames = new Set();
+    // Reserve editor-authored identities before generating any other staff. Otherwise a
+    // generated slot on an earlier team can claim a real name that a later team override
+    // is about to use. Duplicate manual overrides are left untouched intentionally.
+    teams.forEach(team=>Object.values(team.staffOverrides||{}).forEach(ov=>{
+      if(ov&&ov.name) this._claimStaffName(ov.name);
+    }));
     teams.forEach(team => {
       team.staff = this._generateTeamStaff(team.carPerformance);
       const overrides = team.staffOverrides || {};
@@ -6689,6 +6698,7 @@ const State = {
     const allStaff = teams.flatMap(t=>Object.values(t.staff||{})).filter(Boolean);
     const staffMarket = this._generateStaffMarket(allStaff);
     this._pendingStaffPool = null;
+    this._pendingStaffNames = null;
     this.game = {
       version:1, managerName, playerTeamId, season:startYear, raceIndex:0, gameDifficulty: this._pendingDifficulty || 'normal',
       teams, drivers:allDrivers, nextDriverId, calendar,
@@ -6982,9 +6992,38 @@ nextRegsYear: startYear + randInt(3,5), regsHistory: [],
       }
     }
   },
+  // Every staff name currently in the world: on a team, in the hire market, or already
+  // handed out during this generation pass. The name pools were sampled independently per
+  // team with no cross-check, so the same person could hold a job at several constructors
+  // at once with different ratings (v3.0.9, reported by IronicGerman).
+  _staffNameKey(name) {
+    return String(name||'').trim().replace(/\s+/g,' ').toLocaleLowerCase();
+  },
+  _staffNamesInUse() {
+    const names = new Set();
+    try {
+      if(this._pendingStaffNames) this._pendingStaffNames.forEach(n=>names.add(n));
+      const g = this.game;
+      if(g){
+        (g.teams||[]).forEach(t=>Object.keys(t.staff||{}).forEach(k=>{
+          const s=t.staff[k], key=this._staffNameKey(s&&s.name); if(key) names.add(key);
+        }));
+        (g.staffMarket||[]).forEach(s=>{ const key=this._staffNameKey(s&&s.name); if(key) names.add(key); });
+      }
+    } catch(e){}
+    return names;
+  },
+  _claimStaffName(name) {
+    if(!name) return name;
+    if(!this._pendingStaffNames) this._pendingStaffNames = new Set();
+    const key=this._staffNameKey(name);
+    if(key) this._pendingStaffNames.add(key);
+    return name;
+  },
   _generateStaffMember(roleId, ratingMin, ratingMax, useNamedPool) {
     const role = DATA.staffRoles.find(r=>r.id===roleId);
     if(!role) return null;
+    const takenNames = this._staffNamesInUse();
     // Read name pools from the active career's staffPool (set from the editor template at new
     // game), or the pending pool during game creation, falling back to DATA for old saves.
     const pool = (this.game && this.game.staffPool) || this._pendingStaffPool || {
@@ -6995,9 +7034,10 @@ nextRegsYear: startYear + randInt(3,5), regsHistory: [],
     const namedPool = pool.named && pool.named[roleId];
     if(useNamedPool && namedPool && namedPool.length && Math.random() < 0.55) {
       // Pick a named person whose rating is in the right ballpark
-      const viable = namedPool.filter(p => Math.abs(p.rating - rating) <= 15);
+      const viable = namedPool.filter(p => Math.abs(p.rating - rating) <= 15 && !takenNames.has(this._staffNameKey(p.name)));
       if(viable.length) {
         const pick = viable[Math.floor(Math.random()*viable.length)];
+        this._claimStaffName(pick.name);
         const member = {
           id: `staff_${roleId}_${Date.now()}_${Math.floor(Math.random()*9999)}`,
           roleId, name: pick.name, rating: pick.rating,
@@ -7012,15 +7052,38 @@ nextRegsYear: startYear + randInt(3,5), regsHistory: [],
       }
     }
     // Generated staff
-    const fnPool = (pool.firstNames && (pool.firstNames[roleId] || pool.firstNames.td)) || DATA.staffFirstNames.td;
-    const lnPool = (pool.lastNames && pool.lastNames.length ? pool.lastNames : DATA.staffLastNames);
-    const fn = fnPool[Math.floor(Math.random()*fnPool.length)];
-    const ln = lnPool[Math.floor(Math.random()*lnPool.length)];
+    const configuredFns = pool.firstNames && (pool.firstNames[roleId] || pool.firstNames.td);
+    const fnPool = Array.isArray(configuredFns) && configuredFns.length ? configuredFns : DATA.staffFirstNames.td;
+    const lnPool = (Array.isArray(pool.lastNames) && pool.lastNames.length) ? pool.lastNames : DATA.staffLastNames;
+    // Draw an unused first/last combination. The pools are large enough that a free pair is
+    // found almost immediately; the counter only guards against a pathologically small
+    // custom pool, where a numeric suffix keeps names distinct rather than duplicated.
+    let fn = fnPool[Math.floor(Math.random()*fnPool.length)];
+    let ln = lnPool[Math.floor(Math.random()*lnPool.length)];
+    let fullName = `${fn} ${ln}`;
+    for(let attempt=0; attempt<60 && takenNames.has(this._staffNameKey(fullName)); attempt++){
+      fn = fnPool[Math.floor(Math.random()*fnPool.length)];
+      ln = lnPool[Math.floor(Math.random()*lnPool.length)];
+      fullName = `${fn} ${ln}`;
+    }
+    if(takenNames.has(this._staffNameKey(fullName))){
+      const initials = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      let n = 0;
+      while(n < initials.length && takenNames.has(this._staffNameKey(`${fn} ${initials[n]}. ${ln}`))) n++;
+      if(n < initials.length) {
+        fullName=`${fn} ${initials[n]}. ${ln}`;
+      } else {
+        let suffix=2;
+        while(takenNames.has(this._staffNameKey(`${fn} ${ln} ${suffix}`))) suffix++;
+        fullName=`${fn} ${ln} ${suffix}`;
+      }
+    }
+    this._claimStaffName(fullName);
     const salaryRange = role.salaryMax - role.salaryBase;
     const salary = Math.round(role.salaryBase + (rating-40)/60 * salaryRange);
     const member = {
       id: `staff_${roleId}_${Date.now()}_${Math.floor(Math.random()*9999)}`,
-      roleId, name:`${fn} ${ln}`, rating,
+      roleId, name:fullName, rating,
       salary, contract: randInt(1,3),
       seasonsAtClub: 0, _salaryEscalated: false,
       age:roleId==='jre'?randInt(21,29):randInt(27,55), potential:clamp(rating+randInt(roleId==='jre'?10:2,roleId==='jre'?24:14),40,99),
@@ -7044,13 +7107,14 @@ nextRegsYear: startYear + randInt(3,5), regsHistory: [],
   },
   _generateStaffMarket(existingStaff) {
     const usedNames = new Set();
-    (existingStaff||[]).forEach(s=>{ if(s) usedNames.add(s.name); });
+    (existingStaff||[]).forEach(s=>{ const key=this._staffNameKey(s&&s.name); if(key) usedNames.add(key); });
     const market = [];
     DATA.staffRoles.forEach(role=>{
       const count = randInt(2,3);
       for(let i=0;i<count;i++){
         const s = this._generateStaffMember(role.id, 46, 82, false);
-        if(s && !usedNames.has(s.name)) { market.push(s); usedNames.add(s.name); }
+        const key=this._staffNameKey(s&&s.name);
+        if(s && key && !usedNames.has(key)) { market.push(s); usedNames.add(key); }
       }
     });
     return market;
@@ -15797,6 +15861,52 @@ const Storage = {
     // exact reports — already-paid-for knowledge is never taken back.
     if(!g.staffScoutReports) g.staffScoutReports = {};
     if(!g.staffApproachLocks) g.staffApproachLocks = {};
+    // Repair saves created before staff names were made unique: the same person could hold
+    // jobs at several constructors at once with different ratings. Keep the player's copy
+    // (or otherwise the first holder) and rename later copies. Version 2 deliberately runs
+    // again for saves touched by the first, incomplete migration, which set its old flag
+    // without actually applying the generated name. (v3.0.9, reported by IronicGerman.)
+    try {
+      if((g._staffNamesDedupedVersion||0)<2){
+        const seen=new Set(), ordered=[];
+        const pt=(g.teams||[]).find(t=>String(t.id)===String(g.playerTeamId));
+        const teamOrder=pt ? [pt].concat((g.teams||[]).filter(t=>t!==pt)) : (g.teams||[]);
+        teamOrder.forEach(t=>Object.keys(t.staff||{}).forEach(k=>{ if(t.staff[k]) ordered.push(t.staff[k]); }));
+        (g.staffMarket||[]).forEach(s=>{ if(s) ordered.push(s); });
+        let renamed=0, unresolved=0;
+        ordered.forEach(s=>{
+          if(!s || !s.name) return;
+          const key=State._staffNameKey(s.name);
+          if(!seen.has(key)){ seen.add(key); return; }
+          const previousPending=State._pendingStaffNames;
+          let fresh=null;
+          try {
+            // Use a copy: _generateStaffMember claims its result in the pending set, and
+            // sharing `seen` directly was why the original migration rejected every result.
+            State._pendingStaffNames=new Set(seen);
+            fresh=State._generateStaffMember(s.roleId||'td',50,60,false);
+          } finally {
+            State._pendingStaffNames=previousPending;
+          }
+          const freshKey=State._staffNameKey(fresh&&fresh.name);
+          if(!freshKey || seen.has(freshKey)){ unresolved++; return; }
+          const oldId=s.id;
+          s.name=fresh.name;
+          // A copied real-person biography can become misleading after the identity changes.
+          if(s.desc) s.desc='';
+          if(oldId!=null && g.staffScoutReports && g.staffScoutReports[String(oldId)]) {
+            g.staffScoutReports[String(oldId)].name=s.name;
+          }
+          seen.add(freshKey);
+          renamed++;
+        });
+        if(!unresolved) {
+          g._staffNamesDeduped=true;
+          g._staffNamesDedupedVersion=2;
+        }
+        if(renamed) console.info('Team staff de-duplicated:', renamed, 'renamed');
+      }
+    } catch(e){}
     (g.teams||[]).forEach(team => {
       if(!team.staff) {
         team.staff = State._generateTeamStaff(team.carPerformance||70);
@@ -26000,6 +26110,7 @@ const sponsorInc=sumSponsorIncome(sponsors2);
   <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v3.0.9 · Release Notes</div>
          ${[
     ['v3.0.9','July 2026',[
+            '&#10003; Staff identities are now unique across the whole paddock. Fresh careers reserve roster-editor names before filling generated positions, then exclude every active and market name case-insensitively from later generation. Existing careers repair duplicate names on load, preserve the player team\'s copy, refresh any linked scout-report name, and retry even if the incomplete first migration had already marked the save as fixed. Staff moving between teams still keep their identity and scouting history. (Reported by IronicGerman.)',
             '🔭 Scouting a rival staff member is now a real intelligence operation rather than an instant reveal. Your Scout Network sets both the cadence and the accuracy of the report: findings arrive one ability at a time — every race with the Elite network, every three races with no network at all — and each revealed number carries that tier\'s error band, from ±13 unscouted down to ±2 elite. Potential is the last finding to land. Because the rest of the profile stays dark in the meantime, you can approach on a partial report and gamble on the unknowns, or wait for the full picture and risk a rival moving first. Assigning scouts costs a fee. (Requested by IronicGerman.)',
             '🤝 Approaching a rival staff member is no longer free or repeatable. Every approach costs agent and release fees whether or not it lands, a rejection blocks that person for four to seven races, and each rejection permanently lowers your acceptance odds with them until it fades over the winter. Repeatedly tapping "Approach" until someone caves no longer works. (Reported by IronicGerman.)',
             '🎧 Race engineers are no longer locked to the car number they happen to be listed under. Any race engineer on the hire market or at a rival team can be placed on Car 1 or Car 2, chosen at the point of hire or approach, and the confirmation names the exact slot so a second tap can never replace the wrong engineer. (Reported by IronicGerman.)',
@@ -35679,6 +35790,7 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       } catch(e){}
       var landingTheme='light'; try { landingTheme=localStorage.getItem('f1d_theme')==='dark'?'dark':'light'; } catch(e){}
       return { appearance:{theme:landingTheme}, landing:{ saves:saves, teams:teams, selectedTeam:sel, challenge:challenge, patchVersion:(window.__f1dVersion||'3.0.9'), whatsNew:[
+        {tag:'FIX', text:'Staff names are unique across teams and the hire market; existing saves repair duplicates while preserving your own staff member.'},
         {tag:'NEW', text:'Rival staff reports now arrive one finding at a time, at your Scout Network’s pace and accuracy — approach on a guess or wait for the full picture.'},
         {tag:'FIX', text:'Approaches cost agent fees win or lose and a rejection blocks that target for several races, so staff can no longer be brute-forced.'},
         {tag:'FIX', text:'Race engineers can be hired or poached onto either car, and the Team HQ driver profile shows season development again.'},
