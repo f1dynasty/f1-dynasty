@@ -49,7 +49,7 @@
   gtag('config', 'G-6B4MBFG3FX');
   // Single source of truth for the build number. The HQ landing reads this rather than
   // carrying its own literal, so a release bump touches the same number of places as before.
-  window.__f1dVersion = '3.0.8';
+  window.__f1dVersion = '3.0.9';
   // Analytics helper. Every call site is fire-and-forget: a missing gtag (ad blocker,
   // offline, file:// testing) or a bad param must never break gameplay, so the guard and
   // the try/catch live here once rather than being repeated at ~40 call sites.
@@ -954,12 +954,15 @@ body.hq-skin #driver-detail-modal .modal-box:has(.le-head)::before{display:none}
         </div>
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:16px;max-width:560px;padding:16px 18px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
-          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v3.0.8: What's New</div>
-          <div style="font-size:14px;font-weight:900;color:#111;margin-bottom:10px">Safer careers and a clearer offseason</div>
+          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v3.0.9: What's New</div>
+          <div style="font-size:14px;font-weight:900;color:#111;margin-bottom:10px">Staff scouting with real intelligence work</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 16px">
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">💾</span><span><strong>Independent save slots</strong>: imported or branched careers can no longer autosave over one another.</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🔀</span><span><strong>Career-move loophole closed</strong>: one team-principal change is allowed per offseason.</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:#888;font-weight:800;flex-shrink:0">📊</span><span><strong>Deeper team management</strong>: staff abilities, driver-assigned race engineers, staff development and scouting join the clearer offseason tools.</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🔭</span><span><strong>Progressive staff reports</strong>: rival abilities arrive one finding at a time, at your Scout Network's pace and accuracy.</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🤝</span><span><strong>Approaches have weight</strong>: agent fees are charged win or lose, and a rejection closes that door for several races.</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:#888;font-weight:800;flex-shrink:0">🎧</span><span><strong>Race engineers unbound</strong>: any race engineer can be hired or poached onto either car.</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:#888;font-weight:800;flex-shrink:0">📈</span><span><strong>Season development is back</strong> on the Team HQ driver profile, with "vs current" on every staff card.</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:var(--red);font-weight:800;flex-shrink:0">🏁</span><span><strong>The finale ends like any race</strong>: review the final standings first, then press End Season to start the offseason. Overlapping popup notes and dark-on-dark text in Teams are fixed too.</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:var(--red);font-weight:800;flex-shrink:0">🔍</span><span><strong>Team HQ parity audit</strong>: contract warnings, track-weighted car stats, power-unit terms, reserve detail, scout accuracy bands and full team cards are all back on the new UI.</span></div>
           </div>
           <button onclick="UI.showChangelog()" style="margin-top:10px;width:100%;padding:7px;background:none;border:1.5px solid rgba(192,57,43,.3);border-radius:7px;font-size:11px;font-weight:700;color:var(--red);cursor:pointer">Full release notes →</button>
         </div>
@@ -1099,7 +1102,7 @@ body.hq-skin #driver-detail-modal .modal-box:has(.le-head)::before{display:none}
       </div>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v3.0.8</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">Reddit</a> · <a href="https://discord.gg/w3R97uTBW" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">Discord</a></div>
+        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v3.0.9</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">Reddit</a> · <a href="https://discord.gg/w3R97uTBW" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">Discord</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -6794,7 +6797,64 @@ nextRegsYear: startYear + randInt(3,5), regsHistory: [],
     member.abilities = this._seedStaffAbilities(member.roleId, member.rating, member.abilities);
     this._refreshStaffRating(member);
     if(member.potential < member.rating) member.potential = member.rating;
+    if(!member.id) member.id = `staff_${member.roleId||'x'}_${Date.now()}_${Math.floor(Math.random()*9999)}`;
     return member;
+  },
+
+  // ── Rival staff scouting (v3.0.9, requested by IronicGerman) ───────────────
+  // Staff reports work like driver reports: the Scout Network tier drives both the
+  // cadence (one finding per interval) and the error band on every revealed number.
+  // Findings land race by race, so a partial report is a real decision point — approach
+  // on a guess now, or wait for the rest of the picture.
+  STAFF_SCOUT_INTERVALS: { none:3, basic:3, standard:2, elite:1 },
+  staffScoutTier(){
+    const g=this.game;
+    return (DATA.scoutingTiers||[]).find(t=>t.id===((g&&g.scoutingTier)||'none'))
+        || (DATA.scoutingTiers||[])[0] || {id:'none',name:'No Scout',accuracy:35};
+  },
+  staffScoutBand(tier){ return Math.max(0,Math.round((100-((tier||this.staffScoutTier()).accuracy||35))/5)); },
+  staffScoutInterval(tier){ const t=tier||this.staffScoutTier(); return this.STAFF_SCOUT_INTERVALS[t.id]||3; },
+  // Reports are keyed by staff id, so a report survives the target moving teams or roles.
+  findStaffById(id){
+    const g=this.game; if(!g||id==null) return null;
+    const teams=g.teams||[];
+    for(let i=0;i<teams.length;i++){
+      const sf=teams[i].staff||{};
+      const roleId=Object.keys(sf).find(k=>sf[k]&&String(sf[k].id)===String(id));
+      if(roleId) return {team:teams[i], roleId, member:sf[roleId]};
+    }
+    return null;
+  },
+  getStaffScoutReport(memberId){
+    const g=this.game; if(!g||memberId==null) return null;
+    const rep=(g.staffScoutReports||{})[String(memberId)];
+    if(rep) return rep;
+    // Saves from before progressive reports recorded a finished, exact report as a boolean.
+    if(g.scoutedStaffIds && g.scoutedStaffIds[memberId]) return {legacy:true, band:0, complete:true, step:99};
+    return null;
+  },
+  // One shared view model for both interfaces: everything the player is allowed to see
+  // about a rival staff member right now, with unrevealed values left null.
+  staffScoutView(member, roleId){
+    const rid=roleId||(member&&member.roleId);
+    const defs=(DATA.staffAbilityDefs&&DATA.staffAbilityDefs[rid])||[];
+    const total=defs.length+1;
+    const rep=member?this.getStaffScoutReport(member.id):null;
+    const blank={started:false,complete:false,band:null,total,step:0,nextIn:null,potential:null,
+      abilities:defs.map(d=>({id:d.id,label:d.label,value:null}))};
+    if(!rep) return blank;
+    if(rep.legacy) return {started:true,complete:true,band:0,total,step:total,nextIn:null,
+      abilities:defs.map(d=>({id:d.id,label:d.label,value:Math.round((member.abilities&&member.abilities[d.id])||member.rating||70)})),
+      potential:Math.round(member.potential||member.rating||0)};
+    return {started:true,complete:!!rep.complete,band:rep.band||0,total,step:rep.step||0,
+      nextIn:rep.complete?null:Math.max(1,rep.racesToNext||1),
+      abilities:defs.map(d=>({id:d.id,label:d.label,value:(rep.revealed&&rep.revealed[d.id]!=null)?rep.revealed[d.id]:null})),
+      potential:rep.potential!=null?rep.potential:null};
+  },
+  // Races remaining before a rejected target's camp will take another call.
+  staffApproachLock(memberId){
+    const g=this.game; if(!g||memberId==null) return 0;
+    return Math.max(0,((g.staffApproachLocks||{})[String(memberId)]||0));
   },
   ensureRaceEngineerAssignments(team) {
     if(!team || !team.staff) return;
@@ -6841,6 +6901,12 @@ nextRegsYear: startYear + randInt(3,5), regsHistory: [],
     const g=this.game; if(!g) return;
     g.staffMarket=g.staffMarket||[];
     const playerId=String(g.playerTeamId);
+    // Rejected approaches cool off over the winter: the block lifts and one grudge fades,
+    // so a target burned by repeated approaches is recoverable but never free to spam.
+    g.staffApproachLocks={};
+    (g.teams||[]).forEach(t=>Object.keys(t.staff||{}).forEach(k=>{
+      const m=t.staff[k]; if(m&&m._poachRejections) m._poachRejections=Math.max(0,m._poachRejections-1);
+    }));
     (g.staffMarket||[]).forEach(m=>{ this._patchStaffMember(m,m.roleId); m.age=Math.min(70,(m.age||38)+1); });
     (g.teams||[]).forEach(team=>{
       if(!team.staff) team.staff=this._generateTeamStaff(team.carPerformance||70);
@@ -15726,6 +15792,11 @@ const Storage = {
     if(!g.reserveLoans) g.reserveLoans=[];
     // ── Staff system patches ──────────────────────────────────────────────────
     if(!g.staffMarket) g.staffMarket = [];
+    // Progressive rival-staff scouting (v3.0.9). Saves made before this carry only the
+    // boolean scoutedStaffIds flags, which State.getStaffScoutReport reads as finished,
+    // exact reports — already-paid-for knowledge is never taken back.
+    if(!g.staffScoutReports) g.staffScoutReports = {};
+    if(!g.staffApproachLocks) g.staffApproachLocks = {};
     (g.teams||[]).forEach(team => {
       if(!team.staff) {
         team.staff = State._generateTeamStaff(team.carPerformance||70);
@@ -20611,7 +20682,9 @@ const personalSlots = getPersonalSponsorSlots(d);
     } else {
       const race=State.getCurrentRace();
       if(!race&&g.raceIndex>=g.calendar.length){
-        btn.textContent='▶ Next'; btn.disabled=false;
+        // The season is run but the offseason has not been entered — name the button for
+        // what it actually does now that the finale no longer boots you there on its own.
+        btn.textContent='▶ End Season'; btn.disabled=false;
       } else if(race&&race.sprint){
         const done=race.raceDone;
         btn.textContent='▶ Next'; btn.disabled=!!done;
@@ -20900,26 +20973,46 @@ const personalSlots = getPersonalSponsorSlots(d);
         </div>`;
     };
 
+    // A race engineer's "current" comparison is whichever of the two you'd realistically
+    // replace — the weaker one — because the candidate can be hired onto either car.
+    const compareAgainst = roleId => {
+      const role = DATA.staffRoles.find(r => r.id === roleId);
+      if(!role) return null;
+      if(!role.raceEngineer) return staff[roleId] || null;
+      return ['re1','re2'].map(id=>staff[id]).filter(Boolean).sort((a,b)=>(a.rating||0)-(b.rating||0))[0] || null;
+    };
+    const vsCurrentLabel = (rating, roleId) => {
+      const cur = compareAgainst(roleId);
+      if(!cur) return '<span style="color:var(--grn);font-weight:700">Vacant</span>';
+      const d = Math.round(rating - cur.rating);
+      return d > 0 ? `<span style="color:var(--grn);font-weight:700">▲${d} vs current</span>`
+           : d < 0 ? `<span style="color:var(--red);font-weight:700">▼${Math.abs(d)} vs current</span>`
+           : '<span style="color:var(--tx3)">Same as current</span>';
+    };
     const marketCard = (s, idx) => {
       const role = DATA.staffRoles.find(r => r.id === s.roleId);
       if(!role) return '';
-      const currentMember = staff[s.roleId];
-      const upgrade = currentMember ? s.rating - currentMember.rating : s.rating - 60;
-      const upgradeLabel = upgrade > 0 ? `<span style="color:var(--grn);font-weight:700">▲${upgrade}</span>` : upgrade < 0 ? `<span style="color:var(--red);font-weight:700">▼${Math.abs(upgrade)}</span>` : '<span style="color:var(--tx3)">Same</span>';
+      const roleLabel = role.raceEngineer ? 'Race Engineer' : role.name;
+      const hireBtns = role.raceEngineer
+        ? `<div style="display:flex;flex-direction:column;gap:5px;flex-shrink:0">
+             <button class="btn btn-outline btn-sm" style="border-color:var(--grn);color:var(--grn);white-space:nowrap" onclick="GameActions.hireStaff(${idx},'re1')">Hire · Car 1</button>
+             <button class="btn btn-outline btn-sm" style="border-color:var(--grn);color:var(--grn);white-space:nowrap" onclick="GameActions.hireStaff(${idx},'re2')">Hire · Car 2</button>
+           </div>`
+        : `<button class="btn btn-outline btn-sm" style="flex-shrink:0;border-color:var(--grn);color:var(--grn)" onclick="GameActions.hireStaff(${idx})">Hire</button>`;
       return `
         <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:10px;padding:12px;margin-bottom:8px">
           <div style="display:flex;align-items:center;gap:12px">
           <div style="flex:1;min-width:0">
-            <div style="font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.5px">${role.icon} ${role.name}</div>
+            <div style="font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.5px">${role.icon} ${roleLabel}</div>
             <div style="font-size:14px;font-weight:800">${escapeHtml(s.name)}</div>
             <div style="font-size:11px;color:var(--tx3);margin-top:1px">Age ${s.age} · Potential ${s.potential} · ${formatMoney(s.salary)}/yr · ${s.contract||1}yr deal</div>
             ${s.desc ? `<div style="font-size:10px;color:var(--tx3);margin-top:3px;font-style:italic">"${escapeHtml(s.desc)}"</div>` : ''}
           </div>
           <div style="text-align:center;flex-shrink:0">
             <div style="font-size:20px;font-weight:900;font-family:var(--fm);color:${ratingColor(s.rating)}">${s.rating}</div>
-            <div style="font-size:9px;color:var(--tx3)">${upgradeLabel}</div>
+            <div style="font-size:9px;color:var(--tx3)">${vsCurrentLabel(s.rating, s.roleId)}</div>
           </div>
-          <button class="btn btn-outline btn-sm" style="flex-shrink:0;border-color:var(--grn);color:var(--grn)" onclick="GameActions.hireStaff(${idx})">Hire</button>
+          ${hireBtns}
           </div>
           ${abilityHtml(s,s.roleId)}
         </div>`;
@@ -20941,12 +21034,39 @@ const personalSlots = getPersonalSponsorSlots(d);
     const rivalStaff=(g.teams||[]).filter(t=>String(t.id)!==String(team.id)).flatMap(t=>Object.keys(t.staff||{}).map(roleId=>({team:t,roleId,member:t.staff[roleId]})))
       .filter(x=>x.member).map(x=>{State._patchStaffMember(x.member,x.roleId);return x;})
       .sort((a,b)=>(b.member.rating||0)-(a.member.rating||0)).slice(0,24);
+    // Rival abilities are drawn from the scout report, not the true values: each finding
+    // lands race by race and carries the Scout Network's error band until then.
+    const scoutAbilityHtml=(view)=>{
+      if(!view.abilities.length) return '';
+      return `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:7px;margin-top:10px">${view.abilities.map(a=>{
+        if(a.value==null) return `<div><div style="display:flex;justify-content:space-between;gap:8px;font-size:10px"><span style="color:var(--tx3)">${a.label}</span><strong style="color:var(--tx3)">—</strong></div>${ratingBar(0,'var(--bd)')}</div>`;
+        const c=ratingColor(a.value);
+        return `<div><div style="display:flex;justify-content:space-between;gap:8px;font-size:10px"><span style="color:var(--tx3)">${a.label}</span><strong style="color:${c}">${view.band?'~':''}${a.value}</strong></div>${ratingBar(a.value,c)}</div>`;
+      }).join('')}</div>`;
+    };
     const rivalHtml=rivalStaff.map(x=>{
       const role=DATA.staffRoles.find(r=>r.id===x.roleId)||{name:x.roleId,icon:'👤'};
-      const scouted=!!(g.scoutedStaffIds&&g.scoutedStaffIds[x.member.id]);
+      const view=State.staffScoutView(x.member,x.roleId);
+      const lock=State.staffApproachLock(x.member.id);
+      const rejections=x.member._poachRejections||0;
+      const roleLabel=role.raceEngineer?'Race Engineer':role.name;
+      const potLabel=view.potential!=null?` · Potential ${view.band?'~':''}${view.potential}`:'';
+      const progress=!view.started
+        ? '<div style="font-size:10px;color:var(--tx3);margin-top:6px">Not scouted — abilities and potential unknown.</div>'
+        : view.complete
+          ? `<div style="font-size:10px;color:var(--grn);font-weight:700;margin-top:6px">🔭 Report complete${view.band?` · ±${view.band} accuracy`:' · exact'}</div>`
+          : `<div style="font-size:10px;color:var(--blu);font-weight:700;margin-top:6px">🔭 Report ${view.step}/${view.total} · next finding in ${view.nextIn} race${view.nextIn===1?'':'s'}${view.band?` · ±${view.band} accuracy`:''}</div>`;
+      const lockNote=lock>0?`<div style="font-size:10px;color:var(--amber);font-weight:700;margin-top:4px">🚫 Rejected your approach — will not talk for ${lock} more race${lock===1?'':'s'}${rejections>1?` · ${rejections} rejections on record`:''}</div>`:'';
+      const approachBtn=(target,label)=>`<button class="btn btn-outline btn-sm" ${lock>0?'disabled style="opacity:.45;cursor:not-allowed"':''} onclick="GameActions.poachStaff('${x.team.id}','${x.roleId}'${target?`,'${target}'`:''})">${label}</button>`;
+      const actions=!view.started
+        ? `<button class="btn btn-outline btn-sm" onclick="GameActions.scoutStaff('${x.team.id}','${x.roleId}')">Scout</button>`
+        : role.raceEngineer
+          ? `<div style="display:flex;flex-direction:column;gap:5px;flex-shrink:0">${approachBtn('re1','Approach · Car 1')}${approachBtn('re2','Approach · Car 2')}</div>`
+          : approachBtn(null,'Approach');
       return `<div style="background:var(--bg2);border:1px solid var(--bd);border-radius:10px;padding:12px;margin-bottom:8px">
-        <div style="display:flex;align-items:center;gap:10px"><div style="flex:1"><div style="font-size:10px;font-weight:800;color:var(--tx3)">${role.icon} ${escapeHtml(role.name)} · ${escapeHtml(x.team.name)}</div><div style="font-size:14px;font-weight:800;margin-top:2px">${escapeHtml(x.member.name)}</div><div style="font-size:10px;color:var(--tx3);margin-top:2px">Age ${x.member.age} · ${formatMoney(x.member.salary)}/yr · ${x.member.contract||1}yr left${scouted?` · Potential ${x.member.potential}`:''}</div></div><div style="font-size:20px;font-weight:900;color:${ratingColor(x.member.rating)}">${x.member.rating}</div><button class="btn btn-outline btn-sm" onclick="${scouted?`GameActions.poachStaff('${x.team.id}','${x.roleId}')`:`GameActions.scoutStaff('${x.team.id}','${x.roleId}')`}">${scouted?'Approach':'Scout'}</button></div>
-        ${abilityHtml(x.member,x.roleId,!scouted)}
+        <div style="display:flex;align-items:center;gap:10px"><div style="flex:1"><div style="font-size:10px;font-weight:800;color:var(--tx3)">${role.icon} ${escapeHtml(roleLabel)} · ${escapeHtml(x.team.name)}</div><div style="font-size:14px;font-weight:800;margin-top:2px">${escapeHtml(x.member.name)}</div><div style="font-size:10px;color:var(--tx3);margin-top:2px">Age ${x.member.age} · ${formatMoney(x.member.salary)}/yr · ${x.member.contract||1}yr left${potLabel}</div></div><div style="text-align:center;flex-shrink:0"><div style="font-size:20px;font-weight:900;color:${ratingColor(x.member.rating)}">${x.member.rating}</div><div style="font-size:9px;color:var(--tx3)">${vsCurrentLabel(x.member.rating,x.roleId)}</div></div>${actions}</div>
+        ${progress}${lockNote}
+        ${scoutAbilityHtml(view)}
       </div>`;
     }).join('')||'<div style="font-size:12px;color:var(--tx3)">No rival staff available.</div>';
 
@@ -20968,7 +21088,7 @@ const personalSlots = getPersonalSponsorSlots(d);
       </div>
       <div class="panel">
         <div class="panel-title">Scout & Poach Rival Staff</div>
-        <div style="font-size:12px;color:var(--tx3);margin-bottom:10px">Scout a rival employee to reveal their potential and specialist abilities. An approach can be rejected, especially when they are under a long contract or your team has lower prestige.</div>
+        <div style="font-size:12px;color:var(--tx3);margin-bottom:10px">Assign scouts to a rival employee and their abilities are revealed one finding at a time, race by race — your Scout Network sets both the pace and the accuracy of every number. You can approach on an incomplete report and gamble on the unknowns, or wait for the full picture. Approaches cost agent fees whether or not they succeed, and a rejection closes that door for several races.</div>
         ${rivalHtml}
       </div>`;
   },
@@ -25877,8 +25997,22 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const html=`
       <div style="max-height:85vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v3.0.8 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v3.0.9 · Release Notes</div>
          ${[
+    ['v3.0.9','July 2026',[
+            '🔭 Scouting a rival staff member is now a real intelligence operation rather than an instant reveal. Your Scout Network sets both the cadence and the accuracy of the report: findings arrive one ability at a time — every race with the Elite network, every three races with no network at all — and each revealed number carries that tier\'s error band, from ±13 unscouted down to ±2 elite. Potential is the last finding to land. Because the rest of the profile stays dark in the meantime, you can approach on a partial report and gamble on the unknowns, or wait for the full picture and risk a rival moving first. Assigning scouts costs a fee. (Requested by IronicGerman.)',
+            '🤝 Approaching a rival staff member is no longer free or repeatable. Every approach costs agent and release fees whether or not it lands, a rejection blocks that person for four to seven races, and each rejection permanently lowers your acceptance odds with them until it fades over the winter. Repeatedly tapping "Approach" until someone caves no longer works. (Reported by IronicGerman.)',
+            '🎧 Race engineers are no longer locked to the car number they happen to be listed under. Any race engineer on the hire market or at a rival team can be placed on Car 1 or Car 2, chosen at the point of hire or approach, and the confirmation names the exact slot so a second tap can never replace the wrong engineer. (Reported by IronicGerman.)',
+            '📈 The Team HQ driver profile shows season development again — the OVR change, verdict, career phase and the attribute behind it — matching the classic driver modal. (Reported by IronicGerman.)',
+            '📊 Every staff card now shows its "vs current" comparison, on rival staff as well as the hire market, so the value of a scouting target is readable at a glance. Race-engineer candidates are compared against whichever of your two engineers they would actually displace. (Requested by IronicGerman.)',
+            '🏁 The final race of a season now ends like every other race. You land on the full race result with the finished standings, history and season review all still browsable, and the offseason begins when you press Next — the same button that starts a Grand Prix, labelled "End Season" once the calendar is complete. Previously the chequered flag threw you straight into the recap and you had to sit through an entire offseason before you could look at how the season actually finished. (Requested by Pyritx.)',
+            '🔔 Popup notes no longer overlap. In Team HQ every message was being drawn twice — once by the shell and once by the classic layer underneath, two pixels apart — which stacked a cascade of half-faded notes across the middle of the screen. Only one copy is drawn now, repeated messages collapse into a single note with a counter, and no more than three are ever on screen at once. Every note is still recorded in the news feed. (Reported by IronicGerman.)',
+            '🔍 Old-UI vs new-UI parity audit. Every Team HQ page was compared against its classic equivalent and the missing information restored. Dashboard: the amber Contracts at Risk panel (Team HQ had no expiring-contract warning at all), plus driver morale and trait on the garage cards. Car: the Performance Envelope showed raw rounded values, so every pillar read the same number — it now shows the real track-weighted figures with their grid rank and how much each pillar is worth at this weekend\'s circuit, alongside the "Car at this circuit" composite; the Power Unit panel regained its supply-contract terms, unit number, remaining free allocations and supplier standing. Teams: cards regained nationality, prestige, budget, engine supplier, per-driver points, facility breakdown and season points — and the "P" number is now the championship position rather than the row\'s place in the current sort, which was wrong for every sort but the default. Drivers: reserve rows regained contract, morale, form and injury state, and the reserve simulator-contribution explainer. Scouting: reports show their ± error band and the ★ standout marker, and a prospect locked into a feeder contract can be pre-signed or given a reserve deal instead of showing a dead LOCKED button. Schedule: rounds show circuit location and type (power, technical, street or balanced). Finance: the net-position verdict. History: the real-world all-time records to chase, with your save\'s progress against each. Offseason: the season finance summary you allocate the winter budget against, the whole grid\'s car-performance ranking with winter deltas, and the notable-grid-changes digest of rival moves, retirements and graduations. Injuries and form dips now show on the driver cards themselves, not only in the medical report, and a reserve in line to substitute is flagged. Verified against the classic UI in a mid-season save, with a populated academy, an injured driver, a loaned junior and an expiring power-unit deal, and through a full season into the offseason handover. (Reported by IronicGerman.)',
+            '🪟 Shared dialogs audited against the classic UI too. Most modals are the same nodes both interfaces open, but three are rebuilt by Team HQ and had drifted. The driver profile regained the career injury history, the personal sponsor slots that high marketability unlocks, and the attribute glossary. The team profile regained its header meta line, the season stats block (points, wins, podiums, poles, budget, titles), per-driver nationality, age, points and results, and the reserve roster. The strategy planner was already at full parity. (Reported by IronicGerman.)',
+            '🚪 Every dialog reachable from Team HQ was opened and checked. The shared modals (renewals, promotions, loans, junior recruitment, pre-signing, reserve offers, settings) all open above the Team HQ frame rather than behind it, and sponsor negotiation, the power-unit market and race strategy turned out to be handled natively in Team HQ with the same options the classic modals offer. The landing screen also regained the manager name, seasons played and last-played time on each saved career — the only things that tell two careers on the same team apart — and the engine supplier on the constructor cards.',
+            '🧱 The offseason page finally uses the two-lane layout it was designed for. The patch that produced it had silently stopped matching the shell some versions ago, so the page had been falling back to paired rows: each pair was as tall as its taller card, leaving roughly 1,600px of blank column space on a 4,350px page — worst of all a 600px hole beside Owner Confidence next to Seek a Move — and the page never widened past 1,180px despite the wide-screen class being applied. Both lanes now flow independently and wide screens get the full 1,520px, cutting about a quarter off the page height. The patch now reports to telemetry if it ever stops matching again.',
+            '🌓 Dark mode no longer renders text black-on-black in the Teams section. Values on the team cards and the driver rows in a team profile sat inside buttons, which kept the browser\'s default black text colour instead of inheriting the dark theme\'s. Buttons now inherit their surrounding text colour throughout Team HQ, which fixes that class of unreadable text everywhere it appeared. (Reported by IronicGerman.)',
+          ]],
     ['v3.0.8','July 2026',[
             '💾 Imported and branched careers now receive independent save identities, and Continue binds autosave to the exact slot selected. One career can no longer overwrite another just because both backups came from the same original save.',
             '🔀 Team-principal moves are limited to one constructor change per offseason, closing the chain-move loophole that could take a backmarker manager to a front-running team without completing another season.',
@@ -27450,9 +27584,33 @@ const matchBadge = race.qualiDone || race.raceDone || race.sprintQualiDone
     return 'Maximum downforce — Monaco, Singapore, Hungary';
   },
   toast(msg, type='', opts){
-    const c=document.getElementById('toast-container'), t=document.createElement('div');
-    t.className='toast '+type; t.textContent=msg; c.appendChild(t);
-    setTimeout(()=>{ t.style.opacity='0'; t.style.transition='opacity .3s'; setTimeout(()=>t.remove(),300); }, 3000);
+    const c=document.getElementById('toast-container');
+    // Toggles and repeated taps used to stack an unbounded column of notes across the middle
+    // of the screen, with fading ones bleeding through the ones behind them (v3.0.9, reported
+    // by IronicGerman). Repeats now collapse into one note with a counter, and the stack is
+    // capped at three — the same cap the Team HQ shell already used.
+    const _dismiss = el => { el._t1&&clearTimeout(el._t1); el._t2&&clearTimeout(el._t2); el.remove(); };
+    const _expire = el => {
+      el._t1=setTimeout(()=>{ el.style.opacity='0'; el.style.transition='opacity .3s';
+        el._t2=setTimeout(()=>el.remove(),300); }, 3000);
+    };
+    // silent: the Team HQ shell already drew this note in its own stack — record it in the
+    // news feed below, but do not draw a second copy on top of the shell's.
+    const last=(opts && opts.silent) ? null : c.lastElementChild;
+    if(opts && opts.silent){ /* no visual note */ }
+    else if(last && last._msg===msg && last._type===type){
+      last._n=(last._n||1)+1;
+      last.textContent=msg+' ×'+last._n;
+      last.style.opacity=''; last.style.transition='';
+      last._t1&&clearTimeout(last._t1); last._t2&&clearTimeout(last._t2);
+      _expire(last);
+    } else {
+      const t=document.createElement('div');
+      t.className='toast '+type; t.textContent=msg; t._msg=msg; t._type=type; t._n=1;
+      c.appendChild(t);
+      _expire(t);
+      while(c.children.length>3) _dismiss(c.firstElementChild);
+    }
     // Persist to news feed and update panel immediately — unless flagged ephemeral. Routine
     // system status (save confirmations, save-failure warnings) is shown as a transient toast
     // only; persisting it turned the Paddock News feed into "Game saved / Save failed" spam
@@ -27618,7 +27776,21 @@ const GameActions = {
     UI.renderScouting();
   },
 
-  hireStaff(marketIdx){
+  // Race engineers are a pool of two interchangeable car slots, not two separate
+  // professions. A candidate listed as "Race Engineer · Car 1" can take either car;
+  // without a stated target, an empty slot wins over overwriting a filled one.
+  // (v3.0.9, reported by IronicGerman.)
+  _staffHireSlot(team, candidateRoleId, targetRole){
+    const role = DATA.staffRoles.find(r => r.id === candidateRoleId);
+    if(!role || !role.raceEngineer) return candidateRoleId;
+    const staff = (team && team.staff) || {};
+    if(targetRole==='re1' || targetRole==='re2') return targetRole;
+    if(!staff.re1) return 're1';
+    if(!staff.re2) return 're2';
+    return candidateRoleId;
+  },
+
+  hireStaff(marketIdx, targetRole){
     const g = State.game; if(!g) return;
     const team = State.getPlayerTeam(); if(!team) return;
     const candidate = g.staffMarket && g.staffMarket[marketIdx];
@@ -27626,12 +27798,16 @@ const GameActions = {
     const role = DATA.staffRoles.find(r => r.id === candidate.roleId);
     if(!role) return;
     if(!team.staff) team.staff = {};
-    const current = team.staff[candidate.roleId];
+    const slotId = this._staffHireSlot(team, candidate.roleId, targetRole);
+    const slotRole = DATA.staffRoles.find(r => r.id === slotId) || role;
+    const current = team.staff[slotId];
     if(current) {
-      if(!current._replaceConfirm) {
-        current._replaceConfirm = true;
-        setTimeout(() => { if(current) delete current._replaceConfirm; }, 3500);
-        UI.toast(`Tap "Hire" again to replace ${current.name} with ${candidate.name}. ${current.name} will be released.`, 'warning');
+      // The confirm is keyed to the slot, so switching from Car 1 to Car 2 re-prompts
+      // rather than silently confirming a replacement the player did not intend.
+      if(current._replaceConfirm !== slotId) {
+        current._replaceConfirm = slotId;
+        setTimeout(() => { if(current && current._replaceConfirm===slotId) delete current._replaceConfirm; }, 3500);
+        UI.toast(`Tap "Hire" again to put ${candidate.name} in as ${slotRole.name}. ${current.name} will be released.`, 'warning');
         return;
       }
       delete current._replaceConfirm;
@@ -27639,11 +27815,13 @@ const GameActions = {
       g.staffMarket.push({ ...current, contract: Math.max(1, (current.contract||1)) });
     }
     // Hire
-    team.staff[candidate.roleId] = { ...candidate, seasonsAtClub: 0, _salaryEscalated: false };
+    team.staff[slotId] = { ...candidate, roleId: slotId, seasonsAtClub: 0, _salaryEscalated: false };
+    if(slotRole.raceEngineer) team.staff[slotId].assignedDriverId = (team.driverIds||[])[slotRole.driverSlot||0] ?? null;
     // Remove from market
     g.staffMarket.splice(marketIdx, 1);
+    if(slotRole.raceEngineer) State.ensureRaceEngineerAssignments(team);
     Storage.autosave();
-    UI.toast(`${candidate.name} hired as ${role.name}.`, 'success');
+    UI.toast(`${candidate.name} hired as ${slotRole.name}.`, 'success');
     UI.renderStaff();
   },
 
@@ -27756,46 +27934,86 @@ const GameActions = {
     const source=State.getTeam(teamId),member=source&&source.staff&&source.staff[roleId];
     if(!member)return;
     State._patchStaffMember(member,roleId);
-    g.scoutedStaffIds=g.scoutedStaffIds||{};
-    g.scoutedStaffIds[member.id]=true;
+    const key=String(member.id);
+    if(State.getStaffScoutReport(member.id)){
+      UI.toast(`Your scouts are already on ${member.name}.`,'info');
+      return;
+    }
+    const team=State.getPlayerTeam();
+    const tier=State.staffScoutTier();
+    const band=State.staffScoutBand(tier), interval=State.staffScoutInterval(tier);
+    const fee=Math.max(1,Math.round((member.salary||5)*0.15));
+    if(team&&(team.revenue||0)<fee){
+      UI.toast(`A scouting assignment on ${member.name} costs ${formatMoney(fee)} — not enough budget.`,'warning');
+      return;
+    }
+    if(!member._scoutConfirm){
+      member._scoutConfirm=true;
+      setTimeout(()=>{if(member)delete member._scoutConfirm;},5000);
+      UI.toast(`Tap "Scout" again to put scouts on ${member.name} for ${formatMoney(fee)}. ${tier.name}: one finding every ${interval} race${interval===1?'':'s'}, ±${band} accuracy.`,'warning');
+      return;
+    }
+    delete member._scoutConfirm;
+    if(team) team.revenue=Math.max(0,(team.revenue||0)-fee);
+    const defs=(DATA.staffAbilityDefs&&DATA.staffAbilityDefs[roleId])||[];
+    g.staffScoutReports=g.staffScoutReports||{};
+    g.staffScoutReports[key]={memberId:key,teamId:source.id,roleId,name:member.name,band,interval,
+      order:defs.map(d=>d.id),revealed:{},potential:null,step:0,racesToNext:interval,complete:false,season:g.season};
     Storage.autosave();
-    UI.toast(`Scouting report completed for ${member.name}. Abilities and potential revealed.`,'success');
+    UI.toast(`Scouts assigned to ${member.name} — ${formatMoney(fee)}. First finding after ${interval} race${interval===1?'':'s'}. You can still approach on an incomplete report.`,'success');
     UI.renderStaff();
   },
 
-  poachStaff(teamId,roleId){
+  // targetRole lets a poached race engineer be placed on either car — the role the rival
+  // happened to list them under is not a constraint (v3.0.9, reported by IronicGerman).
+  poachStaff(teamId,roleId,targetRole){
     const g=State.game;if(!g)return;
     const source=State.getTeam(teamId),team=State.getPlayerTeam();
     const member=source&&source.staff&&source.staff[roleId];
     if(!source||!team||!member||String(source.id)===String(team.id))return;
-    g.scoutedStaffIds=g.scoutedStaffIds||{};
-    if(!g.scoutedStaffIds[member.id]){ UI.toast('Scout this staff member before making an approach.','warning'); return; }
+    if(!State.getStaffScoutReport(member.id)){ UI.toast('Send scouts to this staff member before making an approach.','warning'); return; }
+    const lock=State.staffApproachLock(member.id);
+    if(lock>0){ UI.toast(`${member.name} turned you down recently — their camp will not talk again for ${lock} more race${lock===1?'':'s'}.`,'warning'); return; }
     const role=DATA.staffRoles.find(r=>r.id===roleId);
+    const slotId=GameActions._staffHireSlot(team,roleId,targetRole);
+    const slotRole=DATA.staffRoles.find(r=>r.id===slotId)||role;
     const salary=Math.min(role?.salaryMax||30,Math.max((member.salary||5)+1,Math.round((member.salary||5)*1.22)));
+    // Every approach burns real money in agent and release fees, win or lose, and each
+    // rejection makes the next one harder — approaching is no longer a free re-roll.
+    const fee=Math.max(2,Math.round(salary*0.35));
+    if((team.revenue||0)<fee){ UI.toast(`An approach to ${member.name} costs ${formatMoney(fee)} in agent and release fees — not enough budget.`,'warning'); return; }
     const prestigeGap=(team.prestige||70)-(source.prestige||70);
-    const chance=clamp(0.48+prestigeGap/180-((member.contract||1)-1)*0.08,0.20,0.80);
-    if(!member._poachConfirm){
-      member._poachConfirm=true;member._poachSalary=salary;member._poachChance=chance;
-      setTimeout(()=>{if(member){delete member._poachConfirm;delete member._poachSalary;delete member._poachChance;}},5000);
-      UI.toast(`Tap "Approach" again to offer ${formatMoney(salary)}/yr. Estimated acceptance: ${Math.round(chance*100)}%.`,'warning');
+    const rejections=member._poachRejections||0;
+    const chance=clamp(0.48+prestigeGap/180-((member.contract||1)-1)*0.08-rejections*0.09,0.04,0.80);
+    if(!member._poachConfirm||member._poachSlot!==slotId){
+      member._poachConfirm=true;member._poachSalary=salary;member._poachChance=chance;member._poachSlot=slotId;
+      setTimeout(()=>{if(member){delete member._poachConfirm;delete member._poachSalary;delete member._poachChance;delete member._poachSlot;}},5000);
+      UI.toast(`Tap "Approach" again to offer ${formatMoney(salary)}/yr${slotRole&&slotRole.raceEngineer?` as ${slotRole.name}`:''}. Fees ${formatMoney(fee)} either way · estimated acceptance ${Math.round(chance*100)}%${rejections?` (${rejections} previous rejection${rejections===1?'':'s'})`:''}.`,'warning');
       return;
     }
-    delete member._poachConfirm;delete member._poachSalary;delete member._poachChance;
+    delete member._poachConfirm;delete member._poachSalary;delete member._poachChance;delete member._poachSlot;
+    team.revenue=Math.max(0,(team.revenue||0)-fee);
     if(Math.random()>chance){
       member.contract=Math.min(5,(member.contract||1)+1);
-      UI.toast(`${member.name} rejected the approach and renewed with ${source.name}.`,'warning');
+      member._poachRejections=rejections+1;
+      const cool=randInt(4,7);
+      g.staffApproachLocks=g.staffApproachLocks||{};
+      g.staffApproachLocks[String(member.id)]=cool;
+      UI.toast(`${member.name} rejected the approach and renewed with ${source.name}. ${formatMoney(fee)} in fees is spent and their camp is closed for ${cool} races.`,'warning');
       Storage.autosave();UI.renderStaff();return;
     }
     team.staff=team.staff||{};
-    const current=team.staff[roleId];
+    const current=team.staff[slotId];
     if(current){g.staffMarket=g.staffMarket||[];g.staffMarket.push({...current,contract:Math.max(1,current.contract||1),_seasonsInMarket:0});}
-    team.staff[roleId]={...member,salary,contract:randInt(2,4),seasonsAtClub:0};
+    team.staff[slotId]={...member,roleId:slotId,salary,contract:randInt(2,4),seasonsAtClub:0,_poachRejections:0};
+    delete team.staff[slotId]._poachConfirm;
     source.staff[roleId]=State._generateStaffMember(roleId,44,Math.max(58,(member.rating||70)-randInt(5,13)),false);
+    if(slotRole&&slotRole.raceEngineer) team.staff[slotId].assignedDriverId=(team.driverIds||[])[slotRole.driverSlot||0]??null;
     State.ensureRaceEngineerAssignments(team);State.ensureRaceEngineerAssignments(source);
     g.newsFeed=g.newsFeed||[];
-    g.newsFeed.unshift({icon:'🧑‍💼',type:'success',msg:`<strong>${member.name}</strong> has joined from ${source.name} as ${role?.name||roleId}.`,race:undefined});
+    g.newsFeed.unshift({icon:'🧑‍💼',type:'success',msg:`<strong>${member.name}</strong> has joined from ${source.name} as ${slotRole?.name||slotId}.`,race:undefined});
     Storage.autosave();
-    UI.toast(`${member.name} has joined from ${source.name}.`,'success');
+    UI.toast(`${member.name} has joined from ${source.name} as ${slotRole?.name||slotId} (${formatMoney(fee)} in fees).`,'success');
     UI.renderStaff();
   },
 
@@ -28210,9 +28428,60 @@ const GameActions = {
     if(!g) return;
     this.applyPendingUpgrades(g.raceIndex);
   },
+  // Staff scout reports drip one finding per interval and approach cooldowns tick down,
+  // both driven by race completions rather than a wall clock. Runs before the driver
+  // queues so a race with no driver reports still advances staff scouting.
+  processStaffScouting(){
+    const g=State.game; if(!g) return 0;
+    if(g.staffApproachLocks){
+      Object.keys(g.staffApproachLocks).forEach(k=>{
+        const left=(g.staffApproachLocks[k]||0)-1;
+        if(left>0) g.staffApproachLocks[k]=left; else delete g.staffApproachLocks[k];
+      });
+    }
+    const reports=g.staffScoutReports; if(!reports) return 0;
+    let revealed=0;
+    Object.keys(reports).forEach(k=>{
+      const rep=reports[k]; if(!rep||rep.complete) return;
+      rep.racesToNext=(rep.racesToNext||1)-1;
+      if(rep.racesToNext>0) return;
+      const found=State.findStaffById(k);
+      // Target left the grid (retired, or replaced by the AI) — close the report out.
+      if(!found){ rep.complete=true; rep.stale=true; return; }
+      const m=found.member;
+      rep.teamId=found.team.id; rep.roleId=found.roleId;
+      const band=rep.band||0, order=rep.order||[];
+      const fuzz=v=>clamp(Math.round(v+randInt(-band,band)),40,99);
+      let label='', val=0;
+      if((rep.step||0)<order.length){
+        const aid=order[rep.step||0];
+        const def=((DATA.staffAbilityDefs&&DATA.staffAbilityDefs[found.roleId])||[]).find(d=>d.id===aid);
+        rep.revealed=rep.revealed||{};
+        val=fuzz(Math.round((m.abilities&&m.abilities[aid])||m.rating||70));
+        rep.revealed[aid]=val;
+        label=(def&&def.label)||aid;
+        rep.step=(rep.step||0)+1;
+      } else {
+        val=fuzz(Math.round(m.potential||m.rating||70));
+        rep.potential=val; label='Potential';
+        rep.step=(rep.step||0)+1; rep.complete=true;
+        g.scoutedStaffIds=g.scoutedStaffIds||{};
+        g.scoutedStaffIds[k]=true;
+      }
+      rep.racesToNext=rep.interval||3;
+      revealed++;
+      g.newsFeed=g.newsFeed||[];
+      g.newsFeed.unshift({icon:'🔭',type:'info',race:g.raceIndex,ts:Date.now(),
+        msg:`Scout finding on <strong>${m.name}</strong> (${found.team.name}) — ${label} ≈ ${val}${band?` ±${band}`:''}.${rep.complete?' Report complete.':''}`});
+    });
+    return revealed;
+  },
   processScoutingQueue(){
-    // Call this after each race completes to reveal due reports
+    // Call this after each race completes to reveal due reports. Staff findings run on
+    // their own cadence and announce themselves, so the driver-report count returned
+    // here stays about drivers.
     const g=State.game;
+    this.processStaffScouting();
     const hasProspectQueue = !!(g.scoutingQueue&&g.scoutingQueue.length>0);
     const hasGridQueue = !!(g.gridScoutQueue&&g.gridScoutQueue.length>0);
     if(!hasProspectQueue && !hasGridQueue) return 0;
@@ -29614,7 +29883,7 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       let _evt=null;
       try { _evt = RandomEvents.maybeFire(g, {batch:false}); } catch(e){ console.warn('event error:',e); }
       if(_evt && _evt.kind==='choice' && !_seasonEnding){ setTimeout(()=>{ try{ UI.showEventModal(_evt); }catch(e){} }, 900); }
-      if(_seasonEnding) setTimeout(()=>this._promptSeasonEnd(),1500);
+      if(_seasonEnding) setTimeout(()=>{ try{ GameActions._markSeasonComplete(); }catch(e){} },1500);
     } catch(e) { console.error('simRace error:', e); UI.toast('Race error: '+e.message+' — try starting a new game','error'); }
   },
   _promptSeasonEnd(){
@@ -29805,7 +30074,7 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     const win=last?.raceResult?.find(r=>r&&r.position===1);
     UI.toast(`${label} complete · Last winner: ${win?.driverName||'?'}`,'success');
     UI.renderDashboard(); UI.renderSchedule();
-    if(g.raceIndex>=g.calendar.length) setTimeout(()=>this._promptSeasonEnd(),600);
+    if(g.raceIndex>=g.calendar.length) setTimeout(()=>this._markSeasonComplete(),600);
   },
   simQuarter(){
     const g=State.game;
@@ -29827,9 +30096,27 @@ const _rSponsorInc=sumSponsorIncome(State.game.sponsors||[]);
     Sim.simRemainingSeason();
     g.raceIndex=g.calendar.length;
     Storage.autosave();
-    UI.toast('Season complete!','success');
     UI.renderDashboard(); UI.renderSchedule();
-    setTimeout(()=>this._promptSeasonEnd(),500);
+    setTimeout(()=>this._markSeasonComplete(),500);
+  },
+
+  // The final race now ends like every other race: you land back on the dashboard with the
+  // finished standings, results and history intact, and the offseason starts when you press
+  // Next — the same button that starts a Grand Prix. Previously the last chequered flag threw
+  // you straight into the recap and you had to sit through a whole offseason before you could
+  // look at how the season actually finished. (v3.0.9, requested by Pyritx.)
+  _markSeasonComplete(){
+    const g=State.game; if(!g) return;
+    try { UI.updateNavNext(); } catch(e){}
+    try { UI.renderDashboard(); UI.renderSchedule(); } catch(e){}
+    try { window._hqRefresh && window._hqRefresh(); } catch(e){}
+    const msg=`🏁 ${g.season} season complete — review the final standings and results, then press Next to start the offseason.`;
+    try {
+      g.newsFeed=g.newsFeed||[];
+      if(!g.newsFeed.some(n=>n&&n.msg===msg)) g.newsFeed.unshift({icon:'🏁',type:'success',msg,ts:Date.now(),race:g.raceIndex||0});
+    } catch(e){}
+    try { UI.toast(msg,'success',{ephemeral:true}); } catch(e){}
+    try { Storage.autosave(); } catch(e){}
   },
   startNextSeason(){
     State.game.offseasonPending=true;
@@ -34111,8 +34398,12 @@ window._pwHandleOrder = function(code, val){
     function bar(label,val,col){return '<div style="display:grid;grid-template-columns:72px minmax(80px,1fr) 28px;gap:7px;align-items:center;margin-top:6px"><span class="fs10 mut">'+label+'</span><div class="smeter lite" style="height:6px"><div class="smf" style="width:'+Math.max(0,Math.min(100,val||0))+'%;background:'+col+'"></div></div><b class="mono fs10" style="text-align:right">'+(val||0)+'</b></div>';}
     var cards=teams.map(function(t,index){
       var c=t.color||'#9aa3b4',badge=TIER[t.tier]||'chipN';
-      var drv=(t.drivers||[]).map(function(d){return '<span class="lteamdtag"><span class="lteamdot" style="background:'+c+'"></span>'+esc(d.name)+' · '+d.rating+'</span>';}).join('');
-      return '<button class="lteam'+(t.isPlayer?' sel':'')+'" data-act="viewTeam" data-arg=\''+argOf({id:t.id})+'\' style="text-align:left"><span class="lselmark">✓</span><div class="lteamtop"><div class="lteamring" style="background:conic-gradient('+c+' '+t.ovr+'%,#e8eaef 0)"><div class="in"><span class="n">'+t.ovr+'</span><span class="l">OVR</span></div></div><div class="lteaminfo"><div class="fx ac jb gap8"><div class="lteamnm"><span class="mono fs10 mut" style="margin-right:6px">P'+(index+1)+'</span>'+esc(t.name)+'</div><span class="'+badge+'">'+esc(t.tier)+' Tier</span></div><div class="lteamdrv">'+drv+'</div>'+bar('Car',t.car,c)+bar('Reliability',t.reliability,'var(--grn)')+bar('Facilities',t.facilities,'var(--blu)')+bar('Development',t.development,'var(--amb)')+'<div class="fs10 red fw7 mt8">OPEN TEAM PROFILE →</div></div></div></button>';
+      var drv=(t.drivers||[]).map(function(d){return '<span class="lteamdtag"><span class="lteamdot" style="background:'+c+'"></span>'+esc(d.name)+' · '+d.rating+(d.points!=null?' <span class="mut fw6">'+d.points+'pts</span>':'')+'</span>';}).join('');
+      // P-number is the championship position, not the row's place in the current sort.
+      var posLbl=t.pos?('P'+t.pos):('#'+(index+1));
+      var meta=[t.nationality,'Prestige '+t.prestige,'$'+t.budget+'M',(t.engine?'⚡ '+t.engine:'')].filter(Boolean).join(' · ');
+      var facLine=(t.facilityUnits||[]).length?'<div class="fs10 mut mt4">'+(t.facilityUnits||[]).map(function(f){return esc(f.icon)+' '+f.value;}).join(' · ')+'</div>':'';
+      return '<button class="lteam'+(t.isPlayer?' sel':'')+'" data-act="viewTeam" data-arg=\''+argOf({id:t.id})+'\' style="text-align:left"><span class="lselmark">✓</span><div class="lteamtop"><div class="lteamring" style="background:conic-gradient('+c+' '+t.ovr+'%,#e8eaef 0)"><div class="in"><span class="n">'+t.ovr+'</span><span class="l">OVR</span></div></div><div class="lteaminfo"><div class="fx ac jb gap8"><div class="lteamnm"><span class="mono fs10 mut" style="margin-right:6px">'+posLbl+'</span>'+esc(t.name)+'</div><span class="'+badge+'">'+esc(t.tier)+' Tier</span></div><div class="lteambase" style="margin-top:5px">'+esc(meta)+'</div><div class="lteamdrv">'+drv+'</div>'+bar('Car',t.car,c)+bar('Reliability',t.reliability,'var(--grn)')+bar('Facilities',t.facilities,'var(--blu)')+bar('Development',t.development,'var(--amb)')+facLine+'<div class="fx ac jb gap8 mt8"><span class="fs11 fw7">'+t.seasonPoints+' pts this season</span><span class="fs10 red fw7">OPEN TEAM PROFILE →</span></div></div></div></button>';
     }).join('')||emptyState('No teams on the grid.');
     el.innerHTML=secH('Rival Paddock'+(TeamHQ.data.team&&TeamHQ.data.team.season?' · '+TeamHQ.data.team.season+' Grid':''))+'<div class="fx ac gap8 wrap mb16"><span class="fs10 fnt hudf">SORT BY</span>'+controls+'</div><div class="lteams">'+cards+'</div>';
   }
@@ -34272,7 +34563,7 @@ window._pwHandleOrder = function(code, val){
         : ('Race a fresh <b>Hard</b> career with <b style="color:'+esc(C.teamColor||'#fff')+'">'+esc(C.teamName)+'</b> up to the '+esc(C.gp)+'. Your score is every point the team has scored by the end of that race, sprints included. Post it on r/f1dynasty.'))+'</div>`; });
       // Net Position strip between the ledgers and Sponsors (v3.0.3, IronicGerman) —
       // the classic report's Net Position card, restored above the sponsor list.
-      _hq = _hq.replace(`+ secH('Sponsors') + '<div class="card">'+sp+'</div>';`, function(){ return String.raw`+ (F.net!=null?('<div class="card cardp fx jb ac" style="margin-bottom:22px"><span class="fw7 fs13">Net Position <span class="fs11 mut">· annual estimate</span></span><b class="fs16 '+(F.net>=0?'grn':'red')+'">'+(F.net>=0?'+':'−')+'$'+Math.abs(F.net)+'M</b></div>'):'')
+      _hq = _hq.replace(`+ secH('Sponsors') + '<div class="card">'+sp+'</div>';`, function(){ return String.raw`+ (F.net!=null?('<div class="card cardp" style="margin-bottom:22px"><div class="fx jb ac"><span class="fw7 fs13">Net Position <span class="fs11 mut">· annual estimate</span></span><b class="fs16 '+(F.net>=0?'grn':'red')+'">'+(F.net>=0?'+':'−')+'$'+Math.abs(F.net)+'M</b></div>'+(F.netVerdict?'<div class="fs11 mut" style="margin-top:6px">'+esc(F.netVerdict)+'</div>':'')+'</div>'):'')
       + secH('Sponsors') + '<div class="card">'+sp+'</div>';`; });
       _hq = _hq.replace(/    var canRace = N\.canRace !== false;[\s\S]*?    var C = N\.circuit, circuitHtml='';/, String.raw`    var canRace = N.canRace !== false;
     var _cta;
@@ -34524,9 +34815,14 @@ window._pwHandleOrder = function(code, val){
       // earlier paired grids let a tall card (especially Seek a Move) create a huge empty
       // hole beside it. Give each desktop column its own flow and use more of wide screens.
       _hq = _hq.replace("  function show(name){", "  function show(name){\n    var _offWrap=$('.pgwrap'); if(_offWrap) _offWrap.classList.toggle('offseason-wide',name==='offseason');");
-      _hq = _hq.replace(/    el\.innerHTML = rail \+ careerHtml \+ '<div class="cols2"[\s\S]*?      \+ regs \+ footer;\n    syncMeta\('offseason'\);/, function(){ return String.raw`    var offseasonCss='<style>.offseason-lanes{display:grid;grid-template-columns:minmax(0,1fr);gap:24px;align-items:start}.offseason-lane{display:flex;flex-direction:column;gap:24px;min-width:0}@media(min-width:1040px){.offseason-lanes{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px}}@media(min-width:1440px){.pgwrap.offseason-wide{max-width:1520px}}</style>';
+      // NB: this needle broke when the shell's offseason statement changed (it no longer ends
+      // "+ regs + footer;" — regs moved inside the Winter Development card), so the patch
+      // silently no-opped and the lane layout never shipped. Anchor on the statement's tail
+      // instead, and assert below that it applied. (v3.0.9)
+      var _offBefore = _hq;
+      _hq = _hq.replace(/    el\.innerHTML = rail \+ careerHtml \+ '<div class="cols2"[\s\S]*?\n      \+ footer;\n    syncMeta\('offseason'\);/, function(){ return String.raw`    var offseasonCss='<style>.offseason-lanes{display:grid;grid-template-columns:minmax(0,1fr);gap:24px;align-items:start;margin-top:24px}.offseason-lane{display:flex;flex-direction:column;gap:24px;min-width:0}@media(min-width:1040px){.offseason-lanes{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px}}@media(min-width:1440px){.pgwrap.offseason-wide{max-width:1520px}}</style>';
     var leftLane='<div>'+ownerHtml+'</div>'
-      + '<div>'+secH('Season Review'+(O.fromSeason!=null?' · '+O.fromSeason:''))+review+'</div>'
+      + '<div>'+secH('Season Review'+(O.fromSeason!=null?' · '+O.fromSeason:''))+review+offseasonFinanceBlock()+offseasonGridDigest()+'</div>'
       + scoutBlock
       + '<div>'+secH('Contracts · Drivers')+'<div class="card cardp">'+cdrv+cres+'</div></div>'
       + '<div>'+secH('Driver Market')+'<div class="card cardp scrolly">'+mrows+'</div></div>';
@@ -34537,6 +34833,10 @@ window._pwHandleOrder = function(code, val){
       + '<div>'+secH('Sponsors')+'<div class="card cardp mb16"><div class="fs10 fnt hudf mb8" style="letter-spacing:.12em">CURRENT DEALS</div>'+scur+'</div><div class="card cardp"><div class="fs10 fnt hudf mb8" style="letter-spacing:.12em">OFFERS ON THE TABLE</div>'+soff+'</div></div>';
     el.innerHTML=offseasonCss+rail+careerHtml+'<div class="offseason-lanes"><div class="offseason-lane">'+leftLane+'</div><div class="offseason-lane">'+rightLane+'</div></div>'+regs+footer;
     syncMeta('offseason');`; });
+      if(_hq === _offBefore){
+        try { window.__f1dEv && window.__f1dEv('exception', window.__f1dEvCtx && window.__f1dEvCtx({ description:'hq_patch_noop:offseason_lanes', fatal:false })); } catch(ignore){}
+        console.warn('Team HQ: offseason lane layout patch did not apply');
+      }
       // Route the challenge button into the same visual social-card system used by race
       // and season results. The parent owns that renderer and displays it above Team HQ.
       _hq = _hq.replace('  // ---- public API ----', function(){ return String.raw`
@@ -34546,7 +34846,230 @@ window._pwHandleOrder = function(code, val){
       // Theme parity: the classic preference lives in the save, while Team HQ is an
       // iframe. Mirror that state into the shell and provide dark equivalents for the
       // shell palette plus the few newer panels that still used literal light colours.
+      // History parity: the classic Records tab also lists the real-world all-time marks to
+      // chase, with this save's progress toward each. (v3.0.9, parity audit.)
+      _hq = _hq.replace(
+        "    } else recHtml = secH('All-Time Records') + emptyState('Records will build as seasons complete.');",
+        [ "    } else recHtml = secH('All-Time Records') + emptyState('Records will build as seasons complete.');",
+          "    if (H.historical && ((H.historical.drivers||[]).length || (H.historical.teams||[]).length)){",
+          "      var histRow = function(r){",
+          "        return '<div style=\"padding:9px 0;border-bottom:1px solid var(--line)\">'",
+          "          + '<div class=\"fx jb gap8\" style=\"align-items:baseline\"><b class=\"fs12\">'+esc(r.label)+'</b><b class=\"mono fs13\" style=\"color:'+(r.beaten?'var(--grn)':'var(--ink)')+'\">'+r.value+'</b></div>'",
+          "          + '<div class=\"fx jb gap8\" style=\"align-items:baseline;margin-top:1px\"><span class=\"fs10 mut\">'+esc(r.holder)+' \\u00B7 '+esc(r.note)+'</span>'",
+          "          + '<span class=\"fs10\" style=\"white-space:nowrap;color:'+(r.beaten?'var(--grn)':'var(--mut)')+';font-weight:'+(r.beaten?'700':'400')+'\">'+esc(r.progress)+'</span></div>'",
+          "          + '<div class=\"smeter lite\" style=\"height:4px;margin-top:5px\"><div class=\"smf\" style=\"width:'+r.pct+'%;background:'+(r.beaten?'var(--grn)':'var(--red)')+'\"></div></div>'",
+          "          + '</div>';",
+          "      };",
+          "      recHtml += secH('\\uD83C\\uDFDB All-Time Records \\u00B7 Real-World Marks')",
+          "        + '<div class=\"fs12 mut\" style=\"margin:-8px 0 12px\">Historical benchmarks to chase with your own dynasty.</div>'",
+          "        + '<div class=\"cols2\">'",
+          "        + '<div class=\"card cardp\"><div class=\"fs10 fnt hudf mb8\" style=\"letter-spacing:.12em\">DRIVERS</div>'+(H.historical.drivers||[]).map(histRow).join('')+'</div>'",
+          "        + '<div class=\"card cardp\"><div class=\"fs10 fnt hudf mb8\" style=\"letter-spacing:.12em\">CONSTRUCTORS</div>'+(H.historical.teams||[]).map(histRow).join('')+'</div>'",
+          "        + '</div>';",
+          "    }" ].join("\n")
+      );
+      // Power Unit parity: supply-contract terms, the current unit number and how many free
+      // allocations are left before grid penalties. (v3.0.9, parity audit.)
+      _hq = _hq.replace(
+        "<div class=\"fs11 mut\" style=\"margin-top:8px;text-align:center\">Each driver gets 3 PU allocations per season. Further changes may incur grid penalties.</div>",
+        "<div class=\"fs11 mut\" style=\"margin-top:8px;text-align:center\">Unit #'+(D.power.unitNumber||1)+' this season · '+(D.power.freeLeft||0)+' free allocation'+((D.power.freeLeft||0)===1?'':'s')+' left before grid penalties.</div>'"
+        + "+ (D.power.contract?'<div class=\"fs11\" style=\"margin-top:8px;text-align:center;color:'+(D.power.contractWarn?'var(--amb)':'var(--mut)')+'\">Contract: '+esc(D.power.contract)+'</div>':'')"
+        + "+ (D.power.standing?'<div class=\"fs11 mut\" style=\"margin-top:4px;text-align:center\">'+esc(D.power.standing)+'</div>':'')"
+        + "+ '"
+      );
+      // Landing parity: the classic save card names the manager and says when the slot was
+      // last played — with several careers on the same team those are the only things that
+      // tell them apart. Constructor cards also carried the engine supplier.
+      // (v3.0.9, parity audit.)
+      _hq = _hq.replace(
+        "        + '<div class=\"lsavein\"><div class=\"lsaveteam\">'+esc(s.team)+'</div>'",
+        "        + '<div class=\"lsavein\"><div class=\"lsaveteam\">'+esc(s.team)+'</div>'\n"
+        + "        + ((s.manager||s.lastPlayed) ? '<div class=\"fs11 mut\" style=\"margin-top:2px\">'+[esc(s.manager||''),(s.seasons?esc(s.seasons)+' season'+(s.seasons===1?'':'s'):''),esc(s.lastPlayed||'')].filter(Boolean).join(' \\u00B7 ')+'</div>' : '')"
+      );
+      _hq = _hq.replace(
+        "        +     '<div class=\"lteammeta\"><span class=\"lteambase\">'+esc(t.base)+'</span><span class=\"'+badge+'\">'+esc(t.tier)+' Tier</span></div>'",
+        "        +     '<div class=\"lteammeta\"><span class=\"lteambase\">'+esc(t.base)+'</span><span class=\"'+badge+'\">'+esc(t.tier)+' Tier</span>'+(t.engine?'<span class=\"lteambase\">\\u26A1 '+esc(t.engine)+'</span>':'')+'</div>'"
+      );
+      // Offseason parity: the classic handover has a season finance summary (which you
+      // allocate the winter budget against), a car-performance ranking with winter deltas
+      // for the whole grid, and a rival transfer digest. Team HQ had none of the three.
+      // Both blocks are placed by the lane rewrite above; these are their definitions.
+      // NB: this replacement contains "$'" sequences (e.g. '+$'+F.income), which String
+      // .replace() would treat as the special "text after the match" pattern and splice the
+      // rest of the file in. A function replacement is taken literally — keep it that way.
+      _hq = _hq.replace(
+        "  function refreshMeta(){",
+        function(){ return [ "  function offseasonFinanceBlock(){",
+          "    var O=(TeamHQ.data&&TeamHQ.data.offseason)||{}, F=O.finances; if(!F) return '';",
+          "    return '<div style=\"margin-top:22px\">'+secH('Season Finances')+'<div class=\"card cardp\">'",
+          "      + '<div class=\"statg\" style=\"margin-top:0\">'",
+          "      + '<div class=\"putile\"><div class=\"k\">Income</div><div class=\"v grn\">+$'+F.income+'M</div></div>'",
+          "      + '<div class=\"putile\"><div class=\"k\">Expenses</div><div class=\"v red\">\\u2212$'+F.expenses+'M</div></div>'",
+          "      + '<div class=\"putile\"><div class=\"k\">Net</div><div class=\"v '+(F.net>=0?'grn':'red')+'\">'+(F.net>=0?'+':'\\u2212')+'$'+Math.abs(F.net)+'M</div></div>'",
+          "      + '</div><div class=\"fs11 mut\" style=\"margin-top:10px\">'+esc(F.verdict||'')+'</div></div></div>';",
+          "  }",
+          "  function offseasonGridDigest(){",
+          "    var O=(TeamHQ.data&&TeamHQ.data.offseason)||{}, D=O.carDigest;",
+          "    if(!D || !(D.rows||[]).length) return '';",
+          "    var rows = D.rows.map(function(r){",
+          "      var dl = r.delta==null ? '<span class=\"fs10 mut\">\\u2014</span>'",
+          "        : '<span class=\"fs10 fw8\" style=\"color:'+(r.delta>0?'var(--grn)':'var(--red)')+'\">'+(r.delta>0?'\\u25B2':'\\u25BC')+Math.abs(r.delta).toFixed(1)+'</span>';",
+          "      return '<div style=\"padding:6px 0;border-bottom:1px solid var(--line)\">'",
+          "        + '<div class=\"fx ac gap8\"><span class=\"mono fs10 mut\" style=\"width:16px\">'+r.pos+'</span>'",
+          "        + '<span class=\"f1 fs12'+(r.mine?' fw8':'')+'\">'+esc(r.name)+(r.mine?' \\u25C0':'')+'</span>'+dl",
+          "        + '<b class=\"mono fs11\" style=\"min-width:26px;text-align:right\">'+r.ovr+'</b></div>'",
+          "        + '<div class=\"smeter lite\" style=\"height:3px;margin:3px 0 0 24px\"><div class=\"smf\" style=\"width:'+r.ovr+'%;background:'+(r.mine?'var(--red)':r.color)+'\"></div></div></div>';",
+          "    }).join('');",
+          "    var changes = (O.gridChanges||[]).length",
+          "      ? '<div style=\"margin-top:14px;padding-top:12px;border-top:1px solid var(--line)\"><div class=\"fs10 fnt hudf mb8\" style=\"letter-spacing:.12em\">NOTABLE GRID CHANGES</div>'",
+          "        + O.gridChanges.map(function(c){ return '<div class=\"fx ac gap8\" style=\"padding:5px 0;border-bottom:1px solid var(--line);font-size:12px\"><span>'+c.icon+'</span><span class=\"f1\">'+esc(c.text)+'</span>'+(c.note?'<span class=\"fs10 mut fw7\">'+esc(c.note)+'</span>':'')+'</div>'; }).join('')",
+          "        + '</div>' : '';",
+          "    return '<div style=\"margin-top:22px\">'+secH((O.fromSeason!=null?O.fromSeason+' ':'')+'Season End \\u00B7 Car Performance & Changes')",
+          "      + '<div class=\"card cardp\"><div class=\"fs10 fnt hudf mb8\" style=\"letter-spacing:.12em\">CAR PERFORMANCE RANKING</div>'+rows",
+          "      + '<div class=\"fs11 mut\" style=\"margin-top:8px\">Your team: <b>P'+D.myPos+'</b> in car performance \\u00B7 '+D.myOvr+' OVR</div>'",
+          "      + changes + '</div></div>';",
+          "  }",
+          "  function refreshMeta(){" ].join("\n"); }
+      );
+      // Injury and form state belong on the driver card itself, not only in the Medical
+      // Report block — the classic driver row carries INJURED / OUT OF FORM inline, and a
+      // reserve eligible to substitute is flagged SUB. (v3.0.9, parity audit.)
+      _hq = _hq.replace(
+        "'<div class=\"crow\">'+(d.leavingTo?'<span class=\"chipR\" title=\"Pre-contract agreed with a rival\">→ '+esc(d.leavingTo).toUpperCase()+' NEXT SEASON</span>':'<span class=\"chipT\">◉ '+(d.atRisk?'EXPIRING':'SIGNED')+'</span>')",
+        "'<div class=\"crow\">'+(d.leavingTo?'<span class=\"chipR\" title=\"Pre-contract agreed with a rival\">→ '+esc(d.leavingTo).toUpperCase()+' NEXT SEASON</span>':'<span class=\"chipT\">◉ '+(d.atRisk?'EXPIRING':'SIGNED')+'</span>')"
+        + "+(d.injury?'<span class=\"chipR\" title=\"'+esc(d.injury.type)+'\">🚑 INJURED · '+d.injury.races+'r</span>':'')"
+        + "+(d.formDip?'<span class=\"chipN\" style=\"color:var(--amb)\" title=\"'+esc(d.formDip.severity)+' form dip\">📉 OUT OF FORM · '+d.formDip.races+'r</span>':'')"
+      );
+      // Drivers parity: reserve rows carried no contract, form or injury state, and the
+      // simulator-contribution explainer — the whole reason to keep a strong reserve —
+      // was missing entirely. (v3.0.9, parity audit.)
+      _hq = _hq.replace(
+        "+ '<div style=\"min-width:0\"><div class=\"fw7 fs14\">'+esc(r.name)+'</div><div class=\"fs11 mut\">'+esc(r.nat||'')+' · Age '+r.age+' · OVR '+r.ovr+' · Reserve</div></div>'",
+        "+ '<div style=\"min-width:0\"><div class=\"fw7 fs14\">'+esc(r.name)"
+        + "+ (r.atRisk?' <span class=\"chipR\" style=\"font-size:8px\">'+(r.expired?'EXPIRED':'AT RISK')+'</span>':'')"
+        + "+ (r.formDip?' <span class=\"chipN\" style=\"font-size:8px;color:var(--amb)\" title=\"'+esc(r.formDip.severity)+' form dip\">OUT OF FORM · '+r.formDip.races+'r</span>':'')"
+        + "+ (r.injured?' <span class=\"chipR\" style=\"font-size:8px\">INJURED</span>':'')"
+        + "+ (r.sub&&!r.injured?' <span class=\"chipN\" style=\"font-size:8px;color:var(--amb)\" title=\"In line to substitute for an injured race driver\">SUB</span>':'')"
+        + "+ '</div><div class=\"fs11 mut\">'+esc(r.nat||'')+' · Age '+r.age+' · OVR '+r.ovr+' · Reserve · '+(r.years||0)+'yr'+(r.morale!=null?' · Morale '+r.morale:'')+'</div></div>'"
+      );
+      _hq = _hq.replace(
+        "+ '<div style=\"margin-top:26px\">'+secH('Reserve & Academy Call-ups') + '<div class=\"card\">'+reserve+'</div></div>';",
+        "+ '<div style=\"margin-top:26px\">'+secH('Reserve & Academy Call-ups')"
+        + "+ (D.reserveNote?'<div class=\"tele fs11\" style=\"margin-bottom:10px;color:var(--grn);line-height:1.5\">'+esc(D.reserveNote)+'</div>':'')"
+        + "+ '<div class=\"card\">'+reserve+'</div></div>';"
+      );
+      // Scouting parity: the report's ± error band and the ★ standout marker, and — for a
+      // prospect locked into a feeder contract — the pre-sign and reserve routes the classic
+      // report offers. Team HQ showed only a dead "LOCKED" button. (v3.0.9, parity audit.)
+      _hq = _hq.replace(
+        "+ '<span class=\"mono fs12 tc famh2\" style=\"color:var(--amb)\" title=\"'+(p.potential!=null?'Scouted potential':'Scout to reveal potential')+'\">'+esc(p.potDisplay!=null?p.potDisplay:'?')+'</span>'",
+        "+ '<span class=\"mono fs12 tc famh2\" style=\"color:var(--amb)\" title=\"'+(p.potential!=null?('Scouted potential'+(p.band?' \\u00B1'+p.band:'')):(p.reportRacesLeft!=null?('Report due in '+p.reportRacesLeft+' races'):'Scout to reveal potential'))+'\">'+esc(p.potLabel!=null?p.potLabel:(p.potDisplay!=null?p.potDisplay:'?'))+'</span>'"
+      );
+      _hq = _hq.replace(
+        "text-overflow:ellipsis\">'+esc(p.name)+'</div><div class=\"fs11 mut\">'",
+        "text-overflow:ellipsis\">'+esc(p.name)+(p.standout?' <span style=\"color:var(--amb)\" title=\"Standout prospect\">★</span>':'')+'</div><div class=\"fs11 mut\">'"
+      );
+      _hq = _hq.replace(
+        "+ '<div class=\"fx gap6\" style=\"justify-content:flex-end\"><button class=\"renew ghost\" data-act=\"viewProspect\" data-arg=\\''+argOf({name:p.name})+'\\'>VIEW</button><button class=\"renew\" data-act=\"signProspect\" data-arg=\\''+argOf({name:p.name})+'\\'>SIGN</button></div>'",
+        "+ '<div class=\"fx gap6 wrap\" style=\"justify-content:flex-end\"><button class=\"renew ghost\" data-act=\"viewProspect\" data-arg=\\''+argOf({name:p.name})+'\\'>VIEW</button>'"
+        + "+ (p.feederLocked ? ((p.canPreSign?'<button class=\"renew\" data-act=\"preSignProspect\" data-arg=\\''+argOf({id:p.id,name:p.name})+'\\' title=\"Pre-sign for '+p.availableYear+'\">PRE-SIGN '+p.availableYear+'</button>':'')"
+        + "  + '<button class=\"renew ghost\" data-act=\"signReserveProspect\" data-arg=\\''+argOf({id:p.id,name:p.name})+'\\'>RESERVE</button>')"
+        + "  : '<button class=\"renew\" data-act=\"signProspect\" data-arg=\\''+argOf({name:p.name})+'\\'>SIGN</button>')"
+        + "+ '</div>'"
+      );
+      // Schedule parity: circuit type and location. The card showed the country twice and
+      // never said whether a round was a power, technical, street or balanced circuit —
+      // the single most useful planning fact on the calendar. (v3.0.9, parity audit.)
+      _hq = _hq.replace(
+        "        + '<div class=\"rndname\">'+esc(r.name)+'</div>'+badge+'</div>';",
+        "        + '<div class=\"rndname\">'+esc(r.name)+'</div>'\n" +
+        "        + (r.location||r.circuitLabel ? '<div class=\"fs10 mut\" style=\"margin:2px 0 5px\">'+esc([r.location,r.circuitLabel].filter(Boolean).join(' \\u00B7 '))+(r.sprint?' \\u00B7 SPRINT':'')+'</div>' : '')\n" +
+        "        + badge+'</div>';"
+      );
+      // Dashboard parity: driver morale and trait on the garage cards, and the classic
+      // amber "Contracts at Risk" panel, which Team HQ had no equivalent of at all — a
+      // contract could lapse with nothing on screen to warn you. (v3.0.9, parity audit.)
+      _hq = _hq.replace(
+        "      : '<span class=\"fs11 fnt hudf\" style=\"letter-spacing:.04em\">'+(d.note||'')+'</span>';",
+        "      : '<span class=\"fs11 fnt hudf\" style=\"letter-spacing:.04em\">'+esc(d.note||'')+'</span>';\n" +
+        "    if (d.injury) crow += '<span class=\"chipR\" title=\"'+esc(d.injury.type)+'\">\\uD83D\\uDE91 OUT '+d.injury.races+'r</span>';\n" +
+        "    if (d.morale!=null) crow += '<div class=\"f1\"></div><span class=\"chipN\" title=\"Driver morale\" style=\"color:'+(d.morale>70?'var(--grn)':d.morale>50?'var(--amb)':'var(--red)')+'\">\\u263A '+d.morale+'</span>';"
+      );
+      _hq = _hq.replace(
+        // Anchor on the tail: an earlier patch already rewrote the head of this line to
+        // inject the upgrade-window banner, so the full original line no longer exists.
+        "+ wcHtml + objHtml + towerHtml + radioHtml + '</div></div>';",
+        "+ contractAlertPanel() + wcHtml + objHtml + towerHtml + radioHtml + '</div></div>';"
+      );
+      _hq = _hq.replace(
+        "  function renderGarage(){",
+        [ "  function contractAlertPanel(){",
+          "    var alerts = (TeamHQ.data && TeamHQ.data.contractAlerts) || [];",
+          "    if (!alerts.length) return '';",
+          "    return '<div>' + secH('\\u26A0 Contract'+(alerts.length>1?'s':'')+' at Risk')",
+          "      + '<div class=\"card cardp\" style=\"border-left:4px solid var(--amb)\">'",
+          "      + alerts.map(function(a){",
+          "          return '<div class=\"upr\"><div style=\"min-width:0\"><b>'+esc(a.name)+(a.reserve?' <span class=\"fs10 mut fw6\">(Reserve)</span>':'')+'</b>'",
+          "            + '<div class=\"fs11 fw7 mt4\" style=\"color:'+(a.expired?'var(--red)':'var(--amb)')+'\">'+esc(a.detail)+'</div></div>'",
+          "            + '<button class=\"renew\" data-act=\"openTalks\" data-arg=\\'' + argOf({id:a.id,name:a.name}) + '\\'>RENEW</button></div>';",
+          "        }).join('')",
+          "      + (alerts.urgency ? '<div class=\"fs11 mut\" style=\"margin-top:10px\">'+esc(alerts.urgency)+'</div>' : '')",
+          "      + '</div></div>';",
+          "  }",
+          "  function renderGarage(){" ].join("\n")
+      );
+      // Car page parity with the classic Car view: one-decimal values, the grid rank per
+      // pillar, and the circuit-weight caption that says how much each pillar is worth at
+      // this weekend's track. Plus the "Car at this circuit" track-weighted composite.
+      _hq = _hq.replace(
+        "    var stats = (C.stats||[]).map(function(s){ return '<div class=\"trow\"><span class=\"tn\">'+esc(s.label)+'</span><div class=\"smeter lite\"><div class=\"smf\" style=\"width:'+s.value+'%\"></div></div><span class=\"tv\">'+s.value+'</span></div>'; }).join('') || emptyState('No car data.');",
+        [ "    var stats = (C.stats||[]).map(function(s){",
+          "      var rk = s.rank ? '<span class=\"fs10 fw8\" style=\"margin-left:5px;color:'+(s.rank<=3?'var(--grn)':s.rank>=9?'var(--red)':'var(--amb)')+'\">P'+s.rank+'</span>' : '';",
+          "      var wt = (s.weight!=null&&s.weight>0) ? '<div class=\"fs10 mut\" style=\"margin-top:2px\">'+s.weight+'% weight'+(s.track?' at '+esc(s.track):'')+'</div>' : '';",
+          "      return '<div class=\"trow\" style=\"align-items:flex-start\"><span class=\"tn\">'+esc(s.label)+wt+'</span><div class=\"smeter lite\" style=\"margin-top:5px\"><div class=\"smf\" style=\"width:'+Math.max(0,Math.min(100,s.value))+'%\"></div></div><span class=\"tv\">'+esc(s.display!=null?s.display:s.value)+rk+'</span></div>';",
+          "    }).join('') || emptyState('No car data.');",
+          "    if (C.trackScore!=null){",
+          "      var _trkCol = C.trackRank<=3?'var(--grn)':C.trackRank>=9?'var(--red)':'var(--amb)';",
+          "      stats = '<div class=\"fx ac gap10\" style=\"padding:9px 11px;margin-bottom:10px;border:1px solid var(--line);border-radius:9px\">'",
+          "        + '<b class=\"mono fw8\" style=\"font-size:19px\">'+esc(C.trackScore)+'</b>'",
+          "        + '<div class=\"f1\"><div class=\"fs10 fnt hudf\">CAR AT THIS CIRCUIT</div><div class=\"fs11 mut\">Track-weighted rating for '+esc(C.trackName||'this weekend')+'</div></div>'",
+          "        + '<b class=\"mono fw8\" style=\"font-size:14px;color:'+_trkCol+'\">P'+C.trackRank+'<span class=\"fs10 mut fw6\"> of '+(C.teamCount||0)+'</span></b>'",
+          "        + '</div>' + stats;",
+          "    }" ].join("\n")
+      );
+      // Repeated notes (a toggle tapped several times) stacked as separate cards and filled
+      // the screen. Collapse an immediate repeat into the note already showing, with a
+      // counter, and restart its timer. (v3.0.9, reported by IronicGerman.)
+      _hq = _hq.replace(
+        "      var el = document.createElement('div');\n      el.className = 'hqtoast ' + (type||'info');\n      el.textContent = String(msg==null?'':msg);",
+        "      var _txt = String(msg==null?'':msg), _lastT = host.lastElementChild;\n" +
+        "      if (_lastT && _lastT.__msg === _txt && _lastT.__type === (type||'info')){\n" +
+        "        _lastT.__n = (_lastT.__n||1) + 1;\n" +
+        "        _lastT.textContent = _txt + ' \\u00D7' + _lastT.__n;\n" +
+        "        if (_lastT.__hide) clearTimeout(_lastT.__hide);\n" +
+        "        _lastT.classList.add('on');\n" +
+        "        _lastT.__hide = setTimeout(function(){ _lastT.classList.remove('on'); setTimeout(function(){ try{ host.removeChild(_lastT); }catch(e){} }, 220); }, 4200);\n" +
+        "        return;\n" +
+        "      }\n" +
+        "      var el = document.createElement('div');\n" +
+        "      el.className = 'hqtoast ' + (type||'info');\n" +
+        "      el.textContent = _txt; el.__msg = _txt; el.__type = (type||'info'); el.__n = 1;"
+      );
+      _hq = _hq.replace(
+        "      setTimeout(function(){ el.classList.remove('on'); setTimeout(function(){ try{ host.removeChild(el); }catch(e){} }, 220); }, 4200);",
+        "      el.__hide = setTimeout(function(){ el.classList.remove('on'); setTimeout(function(){ try{ host.removeChild(el); }catch(e){} }, 220); }, 4200);"
+      );
       _hq = _hq.replace('</style>', function(){ return String.raw`
+/* A bare <button> keeps the UA's 'buttontext' colour (black) instead of inheriting, so any
+   text inside a button that did not set its own colour went black-on-dark in dark mode —
+   the Teams grid stat values and the Team Profile driver rows (v3.0.9, reported by
+   IronicGerman). Element-level specificity, so every styled button class still wins. */
+button{color:inherit}
+/* The pre-season checklist was a horizontal scroller with a hidden scrollbar, so on
+   anything but the widest layouts the last step (Regulations) was clipped off the right
+   edge with nothing to show it was there — while the header still said "of 8".
+   A checklist has to show every step, so let it wrap. (v3.0.9, reported by KyleNewZealand.) */
+.orail{flex-wrap:wrap;overflow-x:visible;row-gap:8px}
 html[data-theme="dark"] .gm{--bg:#0d1016;--panel:#171b24;--ink:#f3f5f8;--mut:#a7afbd;--fnt:#788296;--line:rgba(255,255,255,.105);--hud:#090c11;--hud2:#141923;background:var(--bg);color:var(--ink)}
 html[data-theme="dark"] .gtop,html[data-theme="dark"] .gresbar,html[data-theme="dark"] .card,html[data-theme="dark"] .tele,html[data-theme="dark"] .putile,html[data-theme="dark"] .pcard,html[data-theme="dark"] .ocheck,html[data-theme="dark"] .h2hcard{background:var(--panel);color:var(--ink);border-color:var(--line)}
 html[data-theme="dark"] .pgwrap,html[data-theme="dark"] .gmain{background:var(--bg)}
@@ -34700,14 +35223,27 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
     var el=body('staff');if(!el)return;var S=TeamHQ.data.staff||{};
     function abilities(list,hidden){if(hidden)return '<div class="tele fs11 mut">Scout to reveal specialist abilities and potential.</div>';return '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:8px">'+(list||[]).map(function(a){return '<div><div class="fx jb fs10"><span class="mut">'+esc(a.label)+'</span><b>'+esc(a.value)+'</b></div><div class="smeter lite" style="height:5px;margin-top:4px"><div class="smf" style="width:'+Math.max(0,Math.min(100,a.value||0))+'%;background:'+(a.value>=85?'var(--grn)':a.value>=70?'var(--amb)':'var(--red)')+'"></div></div></div>';}).join('')+'</div>';}
     function roleCard(r){var assign=(r.driverOptions||[]).length?'<div style="margin-top:4px"><div class="fs10 mut fw7 mb8">ASSIGNED DRIVER</div><div class="fx gap6 wrap">'+r.driverOptions.map(function(d){var on=String(d.id)===String(r.assignedDriverId);return '<button class="setbtn'+(on?' on':'')+'" data-act="assignRaceEngineer" data-arg=\''+argOf({role:r.id,driverId:d.id})+'\'>'+esc(d.name)+'</button>';}).join('')+'</div></div>':'';var promote=r.juniorEngineer?'<div class="fx gap6 wrap"><button class="renew ghost" data-act="promoteJuniorEngineer" data-arg=\''+argOf({target:'re1'})+'\'>PROMOTE TO CAR 1</button><button class="renew ghost" data-act="promoteJuniorEngineer" data-arg=\''+argOf({target:'re2'})+'\'>PROMOTE TO CAR 2</button></div>':'';return '<div class="card cardp" style="display:flex;flex-direction:column;gap:10px"><div class="fx jb gap10"><div><div class="fs10 fnt hudf">'+esc(((r.icon?r.icon+' ':'')+r.role).toUpperCase())+'</div><div class="fw8 fs16 mt4">'+esc(r.name)+'</div><div class="fs11 mut mt4">Age '+esc(r.age)+' · Potential '+esc(r.potential)+' · $'+esc(r.salary)+'M/yr · '+esc(r.years)+'yr left</div></div><div class="tc"><span class="mono fw8" style="font-size:22px">'+esc(r.rating)+'</span><div class="fs10 mut">RATING</div></div></div>'+bar(r.rating)+'<div class="fs11 grn fw7">'+esc(r.bonus||'')+'</div>'+abilities(r.abilities||[],false)+assign+promote+(r.bio?'<div class="fs11 mut" style="font-style:italic">“'+esc(r.bio)+'”</div>':'')+'<div class="fx gap6" style="margin-top:auto"><button class="renew" data-act="renewStaff" data-arg=\''+argOf({role:r.id})+'\'>RENEW</button><button class="renew ghost" data-act="releaseStaff" data-arg=\''+argOf({role:r.id})+'\'>✕ RELEASE</button></div></div>';}
-    function marketCard(m){var diff=m.delta==null?'':(m.delta>0?'+':'')+m.delta+' VS CURRENT';return '<div class="card cardp" style="display:flex;flex-direction:column;gap:10px"><div class="fx jb gap10"><div><div class="fs10 fnt hudf">'+esc(((m.icon?m.icon+' ':'')+m.role).toUpperCase())+'</div><div class="fw8 fs16 mt4">'+esc(m.name)+'</div><div class="fs11 mut mt4">Age '+esc(m.age)+' · Potential '+esc(m.potential)+' · $'+esc(m.askingSalary)+'M/yr</div></div><div class="tc"><span class="mono fw8" style="font-size:22px">'+esc(m.rating)+'</span><div class="fs10 mut">'+esc(diff||'RATING')+'</div></div></div>'+bar(m.rating)+abilities(m.abilities||[],false)+'<button class="renew" data-act="hireStaff" data-arg=\''+argOf({index:m.index,name:m.name})+'\'>HIRE</button></div>';}
-    function rivalCard(r){return '<div class="card cardp" style="display:flex;flex-direction:column;gap:10px"><div class="fx jb gap10"><div><div class="fs10 fnt hudf">'+esc((r.role+' · '+r.team).toUpperCase())+'</div><div class="fw8 fs16 mt4">'+esc(r.name)+'</div><div class="fs11 mut mt4">Age '+esc(r.age)+' · $'+esc(r.salary)+'M/yr · '+esc(r.years)+'yr left'+(r.scouted?' · Potential '+esc(r.potential):'')+'</div></div><div class="mono fw8" style="font-size:22px">'+esc(r.rating)+'</div></div>'+bar(r.rating)+abilities(r.abilities||[],!r.scouted)+'<button class="renew" data-act="'+(r.scouted?'poachStaff':'scoutStaff')+'" data-arg=\''+argOf({teamId:r.teamId,role:r.roleId})+'\'>'+(r.scouted?'APPROACH':'SCOUT')+'</button></div>';}
+    function vsCurrent(d){return d==null?'VACANT SLOT':(d>0?'+':'')+d+' VS CURRENT';}
+    function marketCard(m){var diff=vsCurrent(m.delta);var hire=m.raceEngineer?'<div class="fx gap6 wrap"><button class="renew" data-act="hireStaff" data-arg=\''+argOf({index:m.index,name:m.name,target:'re1'})+'\'>HIRE · CAR 1</button><button class="renew" data-act="hireStaff" data-arg=\''+argOf({index:m.index,name:m.name,target:'re2'})+'\'>HIRE · CAR 2</button></div>':'<button class="renew" data-act="hireStaff" data-arg=\''+argOf({index:m.index,name:m.name})+'\'>HIRE</button>';return '<div class="card cardp" style="display:flex;flex-direction:column;gap:10px"><div class="fx jb gap10"><div><div class="fs10 fnt hudf">'+esc(((m.icon?m.icon+' ':'')+m.role).toUpperCase())+'</div><div class="fw8 fs16 mt4">'+esc(m.name)+'</div><div class="fs11 mut mt4">Age '+esc(m.age)+' · Potential '+esc(m.potential)+' · $'+esc(m.askingSalary)+'M/yr</div></div><div class="tc"><span class="mono fw8" style="font-size:22px">'+esc(m.rating)+'</span><div class="fs10 mut">'+esc(diff)+'</div></div></div>'+bar(m.rating)+abilities(m.abilities||[],false)+hire+'</div>';}
+    // Rival abilities come from the scout report: unrevealed findings stay dashed out and
+    // revealed ones carry a ~ while the Scout Network's error band still applies.
+    function scoutAbilities(r){var list=r.abilities||[];if(!list.length)return '';return '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:8px">'+list.map(function(a){if(a.value==null)return '<div><div class="fx jb fs10"><span class="mut">'+esc(a.label)+'</span><b class="mut">—</b></div><div class="smeter lite" style="height:5px;margin-top:4px"></div></div>';return '<div><div class="fx jb fs10"><span class="mut">'+esc(a.label)+'</span><b>'+(r.band?'~':'')+esc(a.value)+'</b></div><div class="smeter lite" style="height:5px;margin-top:4px"><div class="smf" style="width:'+Math.max(0,Math.min(100,a.value||0))+'%;background:'+(a.value>=85?'var(--grn)':a.value>=70?'var(--amb)':'var(--red)')+'"></div></div></div>';}).join('')+'</div>';}
+    function rivalCard(r){
+      var progress=!r.scouting?'<div class="fs11 mut">Not scouted — abilities and potential unknown.</div>'
+        :(r.scouted?'<div class="fs11 fw7" style="color:var(--grn)">🔭 Report complete'+(r.band?' · ±'+esc(r.band)+' accuracy':' · exact')+'</div>'
+                   :'<div class="fs11 fw7" style="color:var(--amb)">🔭 Report '+esc(r.step)+'/'+esc(r.total)+' · next finding in '+esc(r.nextIn)+' race'+(r.nextIn===1?'':'s')+(r.band?' · ±'+esc(r.band)+' accuracy':'')+'</div>');
+      var lockNote=r.lock>0?'<div class="fs11 fw7" style="color:var(--red)">🚫 Rejected your approach — closed for '+esc(r.lock)+' more race'+(r.lock===1?'':'s')+(r.rejections>1?' · '+esc(r.rejections)+' rejections on record':'')+'</div>':'';
+      var btn=function(target,label){return '<button class="renew'+(r.lock>0?' ghost':'')+'"'+(r.lock>0?' disabled style="opacity:.45;cursor:not-allowed"':'')+' data-act="poachStaff" data-arg=\''+argOf({teamId:r.teamId,role:r.roleId,target:target})+'\'>'+label+'</button>';};
+      var actions=!r.scouting?'<button class="renew" data-act="scoutStaff" data-arg=\''+argOf({teamId:r.teamId,role:r.roleId})+'\'>SCOUT</button>'
+        :(r.raceEngineer?'<div class="fx gap6 wrap">'+btn('re1','APPROACH · CAR 1')+btn('re2','APPROACH · CAR 2')+'</div>':btn(null,'APPROACH'));
+      return '<div class="card cardp" style="display:flex;flex-direction:column;gap:10px"><div class="fx jb gap10"><div><div class="fs10 fnt hudf">'+esc((r.role+' · '+r.team).toUpperCase())+'</div><div class="fw8 fs16 mt4">'+esc(r.name)+'</div><div class="fs11 mut mt4">Age '+esc(r.age)+' · $'+esc(r.salary)+'M/yr · '+esc(r.years)+'yr left'+(r.potential!=null?' · Potential '+(r.band?'~':'')+esc(r.potential):'')+'</div></div><div class="tc"><span class="mono fw8" style="font-size:22px">'+esc(r.rating)+'</span><div class="fs10 mut">'+esc(vsCurrent(r.delta))+'</div></div></div>'+bar(r.rating)+progress+lockNote+scoutAbilities(r)+actions+'</div>';
+    }
     var delegate='<div class="card cardp mb16"><div class="fx jb ac gap12 wrap"><div><div class="fw8 fs15">Engineer-managed engine modes</div><div class="fs11 mut mt4">Race engineers manage Conserve, Normal and Push with a small ability-based execution trade-off.</div></div><button class="renew'+(S.engineDelegate?'':' ghost')+'" data-act="toggleStaffEngineDelegate">'+(S.engineDelegate?'ENABLED':'ENABLE')+'</button></div></div>';
     var roles=(S.roles||[]).map(roleCard).join('')||emptyState('No staff hired.');
     var market=(S.market||[]).map(marketCard).join('')||emptyState('No candidates on the market.');
     var rivals=(S.rivals||[]).map(rivalCard).join('')||emptyState('No rival staff available.');
     var summary='<div class="tele fs12 mb16"><b>Staff wages $'+esc(S.totalSalary||0)+'M/yr</b> · Budget cap $'+esc(S.budgetCap||0)+'M'+(S.overBudget?' · <b style="color:var(--red)">OVER BUDGET</b>':'')+'</div>';
-    el.innerHTML=subtabs('staff',[['roles','Your Team',(S.roles||[]).length],['market','Hire Market',(S.market||[]).length],['rivals','Scout & Poach',(S.rivals||[]).length]])+tabpanel('staff','roles',summary+delegate+secH('Leadership · Departments')+'<div class="pgrid">'+roles+'</div>')+tabpanel('staff','market',secH('Available Candidates')+'<div class="pgrid">'+market+'</div>')+tabpanel('staff','rivals',secH('Rival Staff')+'<div class="fs12 mut" style="margin:-8px 0 16px">Scout a rival employee to reveal their potential and abilities before making an approach.</div><div class="pgrid">'+rivals+'</div>');
+    el.innerHTML=subtabs('staff',[['roles','Your Team',(S.roles||[]).length],['market','Hire Market',(S.market||[]).length],['rivals','Scout & Poach',(S.rivals||[]).length]])+tabpanel('staff','roles',summary+delegate+secH('Leadership · Departments')+'<div class="pgrid">'+roles+'</div>')+tabpanel('staff','market',secH('Available Candidates')+'<div class="pgrid">'+market+'</div>')+tabpanel('staff','rivals',secH('Rival Staff')+'<div class="fs12 mut" style="margin:-8px 0 16px">Assign scouts and each ability is revealed one finding at a time, race by race — your Scout Network sets the pace and the accuracy of every number. Approach on a partial report and gamble, or wait for the full picture. Agent fees are charged whether or not an approach lands, and a rejection closes that door for several races.</div><div class="pgrid">'+rivals+'</div>');
   }
 
   function renderAcademy`; });
@@ -34744,8 +35280,31 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       var mine = (g.drivers||[]).filter(function(d){ return String(d.teamId)===String(teamId) && !d.isReserve && !d.retired; }).slice(0,2);
       var drivers = mine.map(function(d){
         var parts=(d.name||'').split(' '); var ovr=Math.round(d.rating||d.overall||0);
-        return { first: parts.slice(0,-1).join(' ')||parts[0]||'', last: parts.slice(-1)[0]||'', nat: nat2(d), age: d.age||0, years: d.contract||0, ovr: ovr, tier: ovr>=90?'gold':'', role:'\u25C9 DRIVER', note:'', atRisk:(d.contract||0)<=1, stats:{ Pace: Math.round(d.racePace||d.race||0), Quali: Math.round(d.qualifying||0), Con: Math.round(d.consistency||0) }, form:{ color: ovr>=90?'var(--amb)':'var(--mut)', label:'\u2013' } };
+        // Morale and trait were on the classic dashboard driver card and missing here.
+        // Morale drives race performance and contract demands, so it is decision information.
+        var _tr=null; try { _tr=d.trait&&((typeof DATA!=='undefined'&&DATA.traitDefs)||{})[d.trait]; } catch(e){}
+        return { first: parts.slice(0,-1).join(' ')||parts[0]||'', last: parts.slice(-1)[0]||'', nat: nat2(d), age: d.age||0, years: d.contract||0, ovr: ovr, tier: ovr>=90?'gold':'', role:'\u25C9 DRIVER',
+                 note: _tr?((_tr.icon||'')+' '+(_tr.label||'')):'', morale: d.morale!=null?Math.round(d.morale):null,
+                 injury:(function(){ try{ var inj=State.getActiveInjury&&State.getActiveInjury(d.id); return inj?{type:inj.type||'Injury',races:Math.max(0,(inj.returnsAfterRace||0)-(g.raceIndex||0)+1)}:null; }catch(e){ return null; } })(),
+                 atRisk:(d.contract||0)<=1, stats:{ Pace: Math.round(d.racePace||d.race||0), Quali: Math.round(d.qualifying||0), Con: Math.round(d.consistency||0) }, form:{ color: ovr>=90?'var(--amb)':'var(--mut)', label:'\u2013' } };
       });
+      // Expiring race-driver and reserve contracts \u2014 the classic dashboard's amber warning
+      // panel. Team HQ had no equivalent, so a contract could lapse with no visible notice.
+      var contractAlerts=[];
+      try {
+        var _racesLeft=(g.calendar||[]).filter(function(r){ return !r.raceDone; }).length;
+        var _mine=(State.getPlayerDrivers&&State.getPlayerDrivers())||[];
+        var _res=(State.getPlayerReserves&&State.getPlayerReserves())||[];
+        contractAlerts=_mine.concat(_res).filter(function(d){ return d && (d.contract||0)<=1; }).map(function(d){
+          return { id:d.id, name:d.name||'', reserve:!!d.isReserve, expired:(d.contract||0)===0,
+                   detail:((d.contract||0)===0?'Contract expired':'Final year of contract')+' \u00B7 '+_racesLeft+' race'+(_racesLeft!==1?'s':'')+' left' };
+        });
+        if(contractAlerts.length){
+          contractAlerts.urgency=(_racesLeft<=3&&_racesLeft>0)
+            ? ('Final '+_racesLeft+' race'+(_racesLeft!==1?'s':'')+' of the season. Renew now to avoid losing them to a rival in the offseason.')
+            : 'Rival teams may start circling before the offseason. Renew now to avoid losing them to a rival.';
+        }
+      } catch(e){}
       var fmtM=function(n){ if(n==null) return '$0M'; return (n>=0?'+$':'-$')+Math.abs(Math.round(n))+'M'; };
       var pad2=function(n){ n=Number(n)||0; return (n<10?'0':'')+n; };
 
@@ -35029,6 +35588,7 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
         champ:{ position:(myIdx>=0?('P'+(myIdx+1)):'\u2013'), points:myPts, gap:gapStr },
         nextRace:{ name:nextR.name||'Season complete' },
         drivers:drivers,
+        contractAlerts:contractAlerts,
         dash:dash
       };
     } catch(e){ return {}; }
@@ -35045,7 +35605,14 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
           var t = (g.teams||[]).find(function(x){ return String(x.id)===String(g.playerTeamId); }) || {};
           var total=(g.calendar||[]).length||0, done=(g.calendar||[]).filter(function(r){return r.raceDone;}).length;
           var trophies=0; try { trophies = (g.championships&&g.championships.length)||g.titles||(g.history&&g.history.titles)||0; } catch(e){}
-          return { id: sl.index, team: t.name||g.teamName||'Career', color: t.color||'#e8112d', season: g.season||'', round: total?('Race '+Math.min(done+1,total)+'/'+total):'', trophies: trophies, stars: Math.max(1,Math.round((t.prestige||50)/20)) };
+          // Manager name and when the slot was last played were on the classic save card and
+          // are how you tell two careers with the same team apart. (v3.0.9, parity audit.)
+          var ago=''; try { var ts=sl.savedAt||sl.ts||(sl.data&&sl.data.savedAt)||0;
+            if(ts){ var mins=Math.max(0,Math.round((Date.now()-ts)/60000));
+              ago = mins<1?'just now' : mins<60?(mins+'m ago') : mins<1440?(Math.round(mins/60)+'h ago') : (Math.round(mins/1440)+'d ago'); } } catch(e){}
+          var seasonsPlayed=0; try { seasonsPlayed=((g.careerStats&&g.careerStats.seasons)||[]).length; } catch(e){}
+          return { id: sl.index, team: t.name||g.teamName||'Career', color: t.color||'#e8112d', season: g.season||'', round: total?('Race '+Math.min(done+1,total)+'/'+total):'', trophies: trophies, stars: Math.max(1,Math.round((t.prestige||50)/20)),
+                   manager: g.managerName||'', lastPlayed: ago, seasons: seasonsPlayed };
         });
       } catch(e){}
       var base = [];
@@ -35065,7 +35632,10 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
         var ovr; try { ovr=Math.round((typeof getTeamOverallCar==='function')?getTeamOverallCar(t):((car+rel+dev)/3)); } catch(e){ ovr=Math.round((car+rel+dev)/3); }
         var lineup = seasonDrv[t.id] || t.baseDrivers || [];
         var drv=[]; try { drv=lineup.slice(0,2).map(function(d){ return { name: (typeof d==='string'?d:((d&&d.name)||'')) }; }).filter(function(x){ return x.name; }); } catch(e){}
-        return { id:t.id, name:t.name, color:t.color||'#888', car:car, reliability:rel, dev:dev, ovr:ovr, tier:'Back', base:t.nation||'', drivers:drv };
+        // Engine supplier is on the classic constructor card and matters when picking a team.
+        var _eng=''; try { var _el=(typeof Editor!=='undefined'&&Editor.getState&&Editor.getState().engineManufacturers)||(typeof DATA!=='undefined'&&DATA.engineManufacturers)||[];
+          var _e=_el.filter(function(x){ return x.id===t.engineManufacturer; })[0]; _eng=(_e&&(_e.shortName||_e.name))||''; } catch(e){}
+        return { id:t.id, name:t.name, color:t.color||'#888', car:car, reliability:rel, dev:dev, ovr:ovr, tier:'Back', base:t.nation||'', drivers:drv, engine:_eng };
       });
       // Tier chips follow the same car-strength ranking as the in-game Teams page
       // (v3.0.1) — the static difficulty field disagreed with real car values on
@@ -35091,10 +35661,13 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
         }
       } catch(e){}
       var landingTheme='light'; try { landingTheme=localStorage.getItem('f1d_theme')==='dark'?'dark':'light'; } catch(e){}
-      return { appearance:{theme:landingTheme}, landing:{ saves:saves, teams:teams, selectedTeam:sel, challenge:challenge, patchVersion:(window.__f1dVersion||'3.0.8'), whatsNew:[
-        {tag:'FIX', text:'Continued and imported careers stay bound to their own save slot, and a team principal can make only one constructor move per offseason.'},
-        {tag:'FIX', text:'Returning reserve loanees no longer overwrite the reserves you signed while they were away.'},
-        {tag:'NEW', text:'Staff now have specialist abilities, age and potential, with two driver-assigned race engineers, development, retirement, scouting and poaching.'}
+      return { appearance:{theme:landingTheme}, landing:{ saves:saves, teams:teams, selectedTeam:sel, challenge:challenge, patchVersion:(window.__f1dVersion||'3.0.9'), whatsNew:[
+        {tag:'NEW', text:'Rival staff reports now arrive one finding at a time, at your Scout Network’s pace and accuracy — approach on a guess or wait for the full picture.'},
+        {tag:'FIX', text:'Approaches cost agent fees win or lose and a rejection blocks that target for several races, so staff can no longer be brute-forced.'},
+        {tag:'FIX', text:'Race engineers can be hired or poached onto either car, and the Team HQ driver profile shows season development again.'},
+        {tag:'NEW', text:'The last race of a season no longer boots you into the offseason — review the finish, then press End Season when you are ready.'},
+        {tag:'FIX', text:'Popup notes no longer draw twice and overlap, and dark-on-dark text in the Teams section is readable again.'},
+        {tag:'NEW', text:'Every Team HQ page audited against the classic UI — contract warnings, track-weighted car stats, PU terms, reserve detail, scout accuracy and more are back.'}
       ], cloudSave:{
         available: (typeof CloudSave!=='undefined' && CloudSave.isAvailable()),
         signedIn: (typeof CloudSave!=='undefined' && CloudSave.isSignedIn()),
@@ -35227,7 +35800,7 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
   };
   window._buildHQSchedule = function(){
     var g=State.game, races=[], firstNext=true;
-    try { races=(g.calendar||[]).map(function(r,i){ var status=r.raceDone?'done':(firstNext?(firstNext=false,'next'):'upcoming'); var w=null; try { w=(r.raceResult||[]).find(function(x){ return !x.dnf && x.position===1; })||null; } catch(e){} var res=w?{winner:'\u2605 '+(w.driverName||w.name||''),winnerTeam:w.teamName||''}:null; return { round:i+1, index:i, name:r.name||'', country:r.country||r.location||'', flag:r.country||'', sprint:!!r.sprint, status:status, result:res }; }); } catch(e){}
+    try { races=(g.calendar||[]).map(function(r,i){ var status=r.raceDone?'done':(firstNext?(firstNext=false,'next'):'upcoming'); var w=null; try { w=(r.raceResult||[]).find(function(x){ return !x.dnf && x.position===1; })||null; } catch(e){} var res=w?{winner:'\u2605 '+(w.driverName||w.name||''),winnerTeam:w.teamName||''}:null; var _ct=r.circuitType||''; var _ci={power:'⚡',technical:'⚙️',street:'🏙️',balanced:'⚖️'}[_ct]||''; return { round:i+1, index:i, name:r.name||'', country:r.country||r.location||'', flag:r.country||'', location:r.location||'', sprint:!!r.sprint, circuitType:_ct, circuitLabel:_ct?((_ci?_ci+' ':'')+_ct):'', status:status, result:res }; }); } catch(e){}
     return { season:g.season||'', races:races };
   };
   window._buildHQDrivers = function(){
@@ -35270,8 +35843,26 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
         return Object.assign({ id:d.id, name:d.name||'', age:d.age||0, nat:nat2(d), ovr:R(d.rating), pace:R(d.racePace), quali:R(d.qualifying), consistency:R(d.consistency), wet:R(d.wet), aggression:R(d.aggression), marketability:R(d.marketability), points:R(d.seasonPoints), team:tm&&tm.name||'', teamColor:tm&&tm.color||'#8b91a0', reserve:!!d.isReserve, freeAgent:!d.teamId, mine:String(d.teamId)===String(pid), years:d.contract||0, traitIcon:td?td.icon:'', traitLabel:td?td.label:'' },preFields(d));
       });
     } catch(e){}
-    return { race: mine.slice(0,2).map(function(d){ var m=preOf(d); return Object.assign({ id:d.id, name:d.name||'', code:dcode(d.name), nat:nat2(d), age:d.age||0, ovr:R(d.rating), potential:R(d.potential), pace:R(d.racePace), quali:R(d.qualifying), consistency:R(d.consistency), wet:R(d.wet), aggression:R(d.aggression), marketability:R(d.marketability), trait:d.trait||'', years:d.contract||0, salary:d.salary||0, morale:R(d.morale), points:R(d.seasonPoints), wins:R(d.wins), podiums:R(d.podiums), poles:R(d.poles), atRisk:(d.contract||0)<=1, leavingTo:(m&&String(m.fromTeamId)===String(pid)&&String(m.toTeamId)!==String(pid))?(m.toTeamName||''):null }, preFields(d)); }),
-             reserve: res.map(function(d){ return { id:d.id, name:d.name||'', code:dcode(d.name), nat:nat2(d), age:d.age||0, ovr:R(d.rating), potential:R(d.potential), pace:R(d.racePace), quali:R(d.qualifying), consistency:R(d.consistency), wet:R(d.wet), aggression:R(d.aggression), marketability:R(d.marketability), trait:d.trait||'', years:d.contract||0, salary:d.salary||0, morale:R(d.morale) }; }),
+    return { race: mine.slice(0,2).map(function(d){ var m=preOf(d); return Object.assign({ id:d.id, name:d.name||'', code:dcode(d.name), nat:nat2(d), age:d.age||0, ovr:R(d.rating), potential:R(d.potential), pace:R(d.racePace), quali:R(d.qualifying), consistency:R(d.consistency), wet:R(d.wet), aggression:R(d.aggression), marketability:R(d.marketability), trait:d.trait||'', years:d.contract||0, salary:d.salary||0, morale:R(d.morale), points:R(d.seasonPoints), wins:R(d.wins), podiums:R(d.podiums), poles:R(d.poles), atRisk:(d.contract||0)<=1, leavingTo:(m&&String(m.fromTeamId)===String(pid)&&String(m.toTeamId)!==String(pid))?(m.toTeamName||''):null,
+               injury:(function(){ try{ var inj=State.getActiveInjury&&State.getActiveInjury(d.id); if(!inj) return null;
+                 return { type:inj.type||'Injury', races:Math.max(0,(inj.returnsAfterRace||0)-(g.raceIndex||0)+1) }; }catch(e){ return null; } })(),
+               formDip:(d._formDip?{races:d._formDip.racesLeft||0,severity:d._formDip.severity||''}:null) }, preFields(d)); }),
+             reserve: res.map(function(d){ return { id:d.id, name:d.name||'', code:dcode(d.name), nat:nat2(d), age:d.age||0, ovr:R(d.rating), potential:R(d.potential), pace:R(d.racePace), quali:R(d.qualifying), consistency:R(d.consistency), wet:R(d.wet), aggression:R(d.aggression), marketability:R(d.marketability), trait:d.trait||'', years:d.contract||0, salary:d.salary||0, morale:R(d.morale),
+               atRisk:(d.contract||0)<=1, expired:(d.contract||0)===0,
+               formDip:(d._formDip?{races:d._formDip.racesLeft||0,severity:d._formDip.severity||''}:null),
+               injured:(function(){ try{ return !!(State.getActiveInjury&&State.getActiveInjury(d.id)); }catch(e){ return false; } })(),
+               sub:(function(){ try{ return (g.injuries||[]).some(function(inj){ return !inj.cleared && g.raceIndex<=inj.returnsAfterRace && String(inj.teamId)===String(pid); }); }catch(e){ return false; } })() }; }),
+             // The classic Reserves tab explains what reserves are actually worth — the
+             // simulator feedback that raises next season's dev rate, and the elite (82+)
+             // reserves that also feed the aero programme. (v3.0.9, parity audit.)
+             reserveNote: (function(){ try {
+               var bonus=res.reduce(function(s,rv){ var r=rv.rating||60; return r<65?s:s+((r-65)/35)*0.6; },0);
+               var elite=res.filter(function(rv){ return (rv.rating||0)>=82; });
+               var aero=elite.reduce(function(s,rv){ return s+((Math.min(99,rv.rating)-82)/17)*0.115; },0);
+               if(bonus<0.1 && !elite.length) return '';
+               return '🧪 Reserve simulator contribution: +'+bonus.toFixed(2)+' Dev Rate next offseason (reserves rated 65+ contribute).'
+                 + (elite.length?(' ⭐ Elite reserve'+(elite.length>1?'s':'')+' (82+ OVR): '+elite.map(function(rv){ return (typeof lastNameOf==='function')?lastNameOf(rv.name):rv.name; }).join(', ')+' also feeding aero — approx +'+aero.toFixed(2)+' car performance per offseason.'):'');
+             } catch(e){ return ''; } })(),
              all: all,
              medical: med,
              h2h: (function(){
@@ -35288,7 +35879,38 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
   window._buildHQCar = function(){
     var g0=State.game, t=T_(g0.playerTeamId), R=function(v){return Math.round(v||0);};
     var overall=(typeof getTeamOverallCar==='function'?getTeamOverallCar(t):(t.carPerformance||0));
-    var stats=[['Performance',overall],['Top Speed',t.topSpeed],['Cornering',t.cornering],['Tyre Mgmt',t.tyreManagement],['Dirty Air',t.dirtyAir],['Aero',t.aeroEfficiency],['Downforce',t.downforce],['Reliability',t.reliability]].filter(function(s){ return s[1]!=null; }).map(function(s){return {label:s[0],value:R(s[1])};});
+    // The envelope used to show raw, rounded sub-stats, so every pillar read the same "90"
+    // and none of the classic page's decision information came across. Carry the real values:
+    // effective top speed (car + engine power, as the sim uses), the grid rank per pillar, and
+    // how much that pillar is worth at THIS circuit. (v3.0.9, old-vs-new UI parity audit.)
+    var _teamsAll=(g0.teams||[]);
+    var _engList=function(){ try { return (typeof _liveEngines==='function')?_liveEngines():(g0.engineManufacturers||[]); } catch(e){ return []; } };
+    var _pwOf=function(tm){ var l=_engList(),e=l&&l.filter(function(x){return x.id===tm.engineManufacturer;})[0]; return (e&&e.powerRating!=null)?e.powerRating:88; };
+    var _effTop=function(tm){ return (tm.topSpeed||tm.carPerformance||70)*0.6 + _pwOf(tm)*0.4; };
+    var _valOf=function(tm,key){ return key==='topSpeed'?_effTop(tm):(tm[key]||tm.carPerformance||70); };
+    var _rankOf=function(key){ return _teamsAll.slice().sort(function(a,b){ return _valOf(b,key)-_valOf(a,key); }).findIndex(function(x){ return String(x.id)===String(t.id); })+1; };
+    var _raceNow=null; try { _raceNow=State.getCurrentRace&&State.getCurrentRace(); } catch(e){}
+    var _cTypeNow=(_raceNow&&_raceNow.circuitType)||'balanced';
+    var _cwNow=(DATA.circuitWeights&&(DATA.circuitWeights[_cTypeNow]||DATA.circuitWeights.balanced))||{};
+    var _trackShort=_raceNow?String(_raceNow.name||'').split(' ')[0]:'';
+    var _d1=function(v){ return (Math.round((v||0)*10)/10).toFixed(1); };
+    var _pillars=[['Top Speed','topSpeed'],['Cornering','cornering'],['Tyre Mgmt','tyreManagement'],['Dirty Air','dirtyAir'],['Aero Eff.','aeroEfficiency']];
+    var stats=[{label:'Performance',value:R(overall),display:_d1(overall)}]
+      .concat(_pillars.map(function(p){
+        var v=_valOf(t,p[1]);
+        return {label:p[0], value:R(v), display:_d1(v), rank:_rankOf(p[1]), of:_teamsAll.length,
+                weight:Math.round((_cwNow[p[1]]||0)*100), track:_trackShort};
+      }))
+      .concat([{label:'Reliability',value:R(t.reliability),display:_d1(t.reliability),rank:_rankOf('reliability'),of:_teamsAll.length}]);
+    if(t.downforce!=null) stats.push({label:'Downforce',value:R(t.downforce),display:String(R(t.downforce))});
+    // Track-weighted composite for the current circuit, ranked against the grid.
+    var _trackScore=null,_trackRank=null;
+    try {
+      if(_raceNow && typeof getTeamCarScore==='function'){
+        _trackScore=_d1(getTeamCarScore(t,_cTypeNow));
+        _trackRank=_teamsAll.slice().sort(function(a,b){ return getTeamCarScore(b,_cTypeNow)-getTeamCarScore(a,_cTypeNow); }).findIndex(function(x){ return String(x.id)===String(t.id); })+1;
+      }
+    } catch(e){}
     // Round display gains to 2dp — raw float math produced "+5.8500000000000005" on the
     // Upgrade Projects cards (v3.0.3, reported by IronicGerman).
     var ups=[]; try { ups=(State.game.pendingUpgrades||[]).map(function(u){ var gn=u.gain||u.value||0; return { name:u.name||u.area||'Upgrade', area:u.area||'', status:u.status||'planned', gain:(typeof gn==='number'?('+'+(Math.round(gn*100)/100)):gn) }; }); } catch(e){}
@@ -35327,7 +35949,27 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
     var _components = [];
     try { Object.keys(_compMeta).forEach(function(k){ var m=_compMeta[k], cur=Number(t.components&&t.components[k]), snap=Number(g0._componentSnapshot&&g0._componentSnapshot[k]); _components.push({icon:m[0],label:m[1],group:m[2],color:m[3],value:R(cur),delta:Number.isFinite(cur)&&Number.isFinite(snap)?Math.round((cur-snap)*10)/10:null}); }); } catch(e) {}
     var _power = null;
-    try { var _eng=(_liveEngines()||[]).find(function(e){return e.id===t.engineManufacturer;}); var _pw=State.game.puWear||{ice:0,turbo:0,ers:0}; if(_eng) _power={name:_eng.name,stats:[{label:'Power',value:R(_eng.powerRating),display:Number(_eng.powerRating||0).toFixed(1),color:'var(--amb)'},{label:'ERS',value:R(_eng.ersRating),display:Number(_eng.ersRating||0).toFixed(1),color:'var(--vio)'},{label:'Reliability',value:R(_eng.reliability),display:Number(_eng.reliability||0).toFixed(1),color:'var(--grn)'}],components:[{icon:'🔥',label:'ICE wear',wear:R(_pw.ice),display:R(_pw.ice)+'%'},{icon:'💨',label:'Turbo wear',wear:R(_pw.turbo),display:R(_pw.turbo)+'%'},{icon:'⚡',label:'ERS wear',wear:R(_pw.ers),display:R(_pw.ers)+'%'}]}; } catch(e) {}
+    try { var _eng=(_liveEngines()||[]).find(function(e){return e.id===t.engineManufacturer;}); var _pw=State.game.puWear||{ice:0,turbo:0,ers:0}; if(_eng) _power={name:_eng.name,stats:[{label:'Power',value:R(_eng.powerRating),display:Number(_eng.powerRating||0).toFixed(1),color:'var(--amb)'},{label:'ERS',value:R(_eng.ersRating),display:Number(_eng.ersRating||0).toFixed(1),color:'var(--vio)'},{label:'Reliability',value:R(_eng.reliability),display:Number(_eng.reliability||0).toFixed(1),color:'var(--grn)'}],components:[{icon:'🔥',label:'ICE wear',wear:R(_pw.ice),display:R(_pw.ice)+'%'},{icon:'💨',label:'Turbo wear',wear:R(_pw.turbo),display:R(_pw.turbo)+'%'},{icon:'⚡',label:'ERS wear',wear:R(_pw.ers),display:R(_pw.ers)+'%'}]};
+      // Supply terms and remaining free allocations were on the classic Power Unit panel and
+      // absent here — both are decisions you plan around. (v3.0.9, parity audit.)
+      if(_power){
+        var _owned=State.game.playerEngineId && t.engineManufacturer===State.game.playerEngineId;
+        var _yrs=t.engineContractYears||0;
+        _power.contract=_owned ? 'Owned manufacturer · no expiry · works supply'
+          : (_yrs+'yr'+(_yrs!==1?'s':'')+' remaining'+(t.engineContractCost?(' · $'+Math.round(t.engineContractCost)+'M/yr'):' · works team'));
+        _power.contractWarn=!_owned && _yrs<=1;
+        _power.unitNumber=(State.game.puComponents!=null?State.game.puComponents:(_pw.units!=null?_pw.units:1));
+        var _used=Math.max(0,(_power.unitNumber||1)-1);
+        _power.freeLeft=Math.max(0,3-1-_used);
+        var _ranked=(_liveEngines()||[]).slice().sort(function(a,b){ return (b.powerRating||0)-(a.powerRating||0); });
+        var _pr=_ranked.findIndex(function(e){ return e.id===t.engineManufacturer; })+1;
+        if(_pr>0 && _ranked.length){
+          var _lead=_ranked[0];
+          _power.standing=(_pr===1)?'Raw power leader among all suppliers.'
+            :('P'+_pr+' in power, '+Math.abs((_lead.powerRating||0)-(_eng.powerRating||0)).toFixed(1)+' behind '+(_lead.shortName||_lead.name||'the leader')+'.');
+        }
+      }
+    } catch(e) {}
     var _income=R(t.revenue), _costs=0; try { var _fin=_buildHQFinance(); _income=(_fin.income||[]).reduce(function(s,x){return s+(x.amount||0);},0); _costs=-(_fin.costs||[]).reduce(function(s,x){return s+(x.amount||0);},0); } catch(e) {}
     var _finance=[{label:'Annual Income',display:'$'+_income+'M',color:'grn'},{label:'Annual Costs',display:'$'+_costs+'M',color:''},{label:'Upgrade Spend',display:'$'+R((State.game.pendingUpgrades||[]).reduce(function(s,u){return s+(u.cost||0);},0))+'M',color:''},{label:'Net',display:'$'+(_income-_costs)+'M',color:_income>=_costs?'grn':'red'},{label:'Per Upgrade Window',display:'$'+R(t.revenue*0.15)+'M',color:'amb'}];
     var _racesDone=(State.game.calendar||[]).filter(function(r){return r.raceDone;}).length, _qThresholds=[];
@@ -35350,7 +35992,9 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       }
     } catch(e){}
     var detail={summary:[{label:'Car Performance',value:R(overall),display:Number(overall||0).toFixed(1),color:'var(--red)'},{label:'Reliability',value:R(t.reliability),display:Number(t.reliability||0).toFixed(1),color:'var(--grn)'},{label:'Development Rate',value:R(t.developmentRate),display:Number(t.developmentRate||0).toFixed(1),color:'var(--blu)'},{label:'Facilities',value:R(t.facilities),display:Number(t.facilities||0).toFixed(1),color:'var(--amb)'}],facilities:_facUnits,components:_components,trackName:_race&&_race.name?String(_race.name).replace(' Grand Prix',''):'',subStats:stats.map(function(s,i){return {label:s.label,value:s.value,display:s.value+' · '+(['P1','P1','P1','P1','P1'][i]||''),color:['var(--amb)','var(--vio)','var(--blu)','var(--grn)','var(--red)'][i]};}),power:_power,finance:_finance,windows:_windows,windowBudget:_qBudget,racesDone:_racesDone,winterDev:_winterDev};
-    return { ovr:R(overall), stats:stats, upgrades:ups, setup:setup, detail:detail, development:{ budget:'$'+R(t.revenue)+'M', allocations:alloc } };
+    return { ovr:R(overall), stats:stats, upgrades:ups, setup:setup, detail:detail,
+             trackScore:_trackScore, trackRank:_trackRank, trackName:(_raceNow&&_raceNow.name)||'', teamCount:_teamsAll.length,
+             development:{ budget:'$'+R(t.revenue)+'M', allocations:alloc } };
   };
   window._buildHQFinance = function(){
     var g=State.game, t=T_(g.playerTeamId);
@@ -35417,6 +36061,8 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       totalCosts=-costs.reduce(function(s,x){return s+(x.amount||0);},0);
     } catch(e){}
     return { budget:Math.round(t.revenue||0), balance:Math.round(t.revenue||0), season:g.season||'', income:income, costs:costs,
+             netVerdict:(function(){ var n=(totalIncome||0)-(totalCosts||0);
+               return n>20?'✅ Healthy surplus — reinvest in development':n>0?'⚠️ Tight margins — watch spending':n>-20?'🔴 Running at a loss — cut costs or improve results':'🔴 Significant deficit — championship results carry the budget'; })(),
              totalIncome:totalIncome, totalCosts:totalCosts, net:(totalIncome!=null&&totalCosts!=null)?(totalIncome-totalCosts):null,
              sponsors:sponsors, sponsorGroups:sponsorGroups };
   };
@@ -35425,8 +36071,22 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
     var tierMap=TIER_BY_CAR((g.teams||[]).map(function(t){ var c=0; try { c=getTeamOverallCar(t); } catch(e){ c=t.carPerformance||0; } return { id:t.id, car:c }; }));
     var teams=(g.teams||[]).map(function(t){
       var overall=0; try { overall=getTeamOverallCar(t); } catch(e){ overall=t.carPerformance||0; }
-      var drv=(t.driverIds||[]).map(function(id){ var d=(g.drivers||[]).find(function(x){return String(x.id)===String(id);}); return { id:d&&d.id, name:(d&&d.name)||'', rating:Math.round((d&&d.rating)||0) }; }).filter(function(x){return x.name;});
-      return { id:t.id, name:t.name, color:t.color||'#888', ovr:Math.round(overall||0), car:Math.round(t.carPerformance||overall||0), prestige:t.prestige||0, tier:tierMap[String(t.id)]||TIER2(t.prestige||0), drivers:drv, isPlayer:String(t.id)===String(pid), reliability:Math.round(t.reliability||0), facilities:Math.round(t.facilities||0), development:Math.round(t.developmentRate||0) };
+      var drv=(t.driverIds||[]).map(function(id){ var d=(g.drivers||[]).find(function(x){return String(x.id)===String(id);}); return { id:d&&d.id, name:(d&&d.name)||'', rating:Math.round((d&&d.rating)||0), points:Math.round((d&&d.seasonPoints)||0),
+        nat:(d&&d.nationality)||'', age:(d&&d.age)||0, wins:Math.round((d&&d.wins)||0), podiums:Math.round((d&&d.podiums)||0) }; }).filter(function(x){return x.name;});
+      var resv=(g.drivers||[]).filter(function(x){ return String(x.teamId)===String(t.id) && x.isReserve && !x.retired; })
+        .map(function(d){ return { id:d.id, name:d.name||'', rating:Math.round(d.rating||0) }; });
+      // Championship position, nationality, prestige, budget, engine supplier and season
+      // points were all on the classic team card and absent here. The card also labelled
+      // cards "P1..Pn" by their position in the current SORT, which read as championship
+      // position and was wrong for every sort but the default. (v3.0.9, parity audit.)
+      var cpos=null; try { cpos=State.getConstructorSeasonPos&&State.getConstructorSeasonPos(t.id); } catch(e){}
+      var eng=''; try { var el=(typeof _liveEngines==='function')?_liveEngines():(g.engineManufacturers||[]);
+        var e=el&&el.filter(function(x){return x.id===t.engineManufacturer;})[0]; eng=(e&&(e.shortName||e.name))||''; } catch(e){}
+      var facUnits=[]; try { facUnits=(typeof FACILITY_UNIT_KEYS!=='undefined'?FACILITY_UNIT_KEYS:[]).map(function(k){
+        return { label:(FACILITY_UNIT_META[k]||{}).label||k, icon:(FACILITY_UNIT_META[k]||{}).icon||'', value:Math.round(getFacilityUnit(t,k)) }; }); } catch(e){}
+      return { id:t.id, name:t.name, color:t.color||'#888', ovr:Math.round(overall||0), car:Math.round(t.carPerformance||overall||0), prestige:t.prestige||0, tier:tierMap[String(t.id)]||TIER2(t.prestige||0), drivers:drv, isPlayer:String(t.id)===String(pid), reliability:Math.round(t.reliability||0), facilities:Math.round(t.facilities||0), development:Math.round(t.developmentRate||0),
+               pos:cpos||null, nationality:t.nation||t.nationality||'', budget:Math.round(t.revenue||0), engine:eng, seasonPoints:Math.round(t.seasonPoints||0), facilityUnits:facUnits,
+               reserves:resv, wins:Math.round(t.wins||0), podiums:Math.round(t.podiums||0), poles:Math.round(t.poles||0), championships:Math.round(t.championships||0) };
     });
     var selected=teams.filter(function(t){return String(t.id)===String(selectedId);})[0]||teams[0]||null;
     return { teams:teams, selected:selected };
@@ -35434,8 +36094,19 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
   window._buildHQStaff = function(){
     var t=T_(State.game.playerTeamId), roles=[];
     try { State.ensureRaceEngineerAssignments(t); var sf=t.staff||{}; Object.keys(sf).forEach(function(k){ var s=sf[k]; if(!s)return; State._patchStaffMember(s,k); var role=(DATA.staffRoles||[]).find(function(r){return r.id===k;})||{}, aspect={td:'dev',rs:'strategy',cm:'reliability',pcc:'pit'}[k], bonus=0; try { if(aspect)bonus=State.getStaffBonus(t.id,aspect); } catch(e){} var bonusText=k==='td'?'+'+bonus.toFixed(1)+' dev efficiency':k==='rs'?'+'+(bonus*0.5).toFixed(1)+' strategy pace':k==='cm'?'+'+(bonus*0.5).toFixed(1)+' reliability · −'+(bonus*0.25).toFixed(2)+' DNF risk':k==='pcc'?'+'+(bonus*0.20).toFixed(2)+' pit execution':k==='jre'?'Development prospect · '+Math.max(0,(s.potential||s.rating)-s.rating)+' points of headroom':(function(){var m=State.getRaceEngineerModifiers(t.id,s.assignedDriverId);return '+'+m.oneLapPace.toFixed(2)+' quali · +'+m.strategyPace.toFixed(2)+' race · −'+m.pitTime.toFixed(2)+'s pit';})(); var assigned=State.getDriver(s.assignedDriverId); var defs=(DATA.staffAbilityDefs&&DATA.staffAbilityDefs[k])||[]; roles.push({ id:k, role:role.name||ROLE[k]||k.toUpperCase(), icon:role.icon||'', name:s.name||'', rating:Math.round(s.rating||0), potential:Math.round(s.potential||s.rating||0), age:s.age||0, years:s.contract||0, salary:s.salary||0, detail:role.desc||'Provides a specialist performance bonus for the team.', bio:s.desc||'', bonus:bonusText, bonusLabel:role.bonusLabel||'Team effect', assignedDriverId:s.assignedDriverId, assignedDriver:assigned&&assigned.name||'', driverOptions:role.raceEngineer?(t.driverIds||[]).map(function(id){var d=State.getDriver(id);return d?{id:d.id,name:d.name}:null;}).filter(Boolean):[], juniorEngineer:!!role.juniorEngineer, abilities:defs.map(function(a){return {id:a.id,label:a.label,value:Math.round((s.abilities&&s.abilities[a.id])||s.rating||0)};}) }); }); } catch(e){}
-    var market=[]; try { market=(State.game.staffMarket||[]).map(function(s,idx){ State._patchStaffMember(s,s.roleId); var role=(DATA.staffRoles||[]).find(function(r){return r.id===s.roleId;})||{}, current=(t.staff||{})[s.roleId], delta=current?Math.round((s.rating||0)-(current.rating||0)):null; return { index:idx, roleId:s.roleId||'', icon:role.icon||'', name:s.name||'', role:role.name||ROLE[s.roleId]||s.roleId||s.role||'', rating:Math.round(s.rating||0), potential:Math.round(s.potential||s.rating||0), age:s.age||0, years:s.contract||0, askingSalary:s.salary||s.askingSalary||0, detail:role.desc||'', bio:s.desc||'', bonusLabel:role.bonusLabel||'Team effect', delta:delta, abilities:((DATA.staffAbilityDefs&&DATA.staffAbilityDefs[s.roleId])||[]).map(function(a){return {id:a.id,label:a.label,value:Math.round((s.abilities&&s.abilities[a.id])||s.rating||0)};}) }; }); } catch(e){}
-    var rivals=[]; try { rivals=(State.game.teams||[]).filter(function(x){return String(x.id)!==String(t.id);}).flatMap(function(tm){return Object.keys(tm.staff||{}).map(function(k){var s=tm.staff[k];if(!s)return null;State._patchStaffMember(s,k);var role=(DATA.staffRoles||[]).find(function(r){return r.id===k;})||{},scouted=!!(State.game.scoutedStaffIds&&State.game.scoutedStaffIds[s.id]);return {teamId:tm.id,team:tm.name,roleId:k,role:role.name||k,name:s.name,rating:Math.round(s.rating||0),age:s.age||0,potential:scouted?Math.round(s.potential||0):null,years:s.contract||0,salary:s.salary||0,scouted:scouted,abilities:scouted?((DATA.staffAbilityDefs&&DATA.staffAbilityDefs[k])||[]).map(function(a){return {id:a.id,label:a.label,value:Math.round((s.abilities&&s.abilities[a.id])||s.rating||0)};}):[]};}).filter(Boolean);}).sort(function(a,b){return b.rating-a.rating;}).slice(0,24); } catch(e){}
+    // Race engineers compare against whichever of the two cars' engineers they would
+    // realistically displace, since a candidate can be hired onto either car.
+    var _cmp=function(roleId){ var role=(DATA.staffRoles||[]).find(function(r){return r.id===roleId;})||{}; var sf=t.staff||{};
+      if(!role.raceEngineer) return sf[roleId]||null;
+      return ['re1','re2'].map(function(id){return sf[id];}).filter(Boolean).sort(function(a,b){return (a.rating||0)-(b.rating||0);})[0]||null; };
+    var _delta=function(rating,roleId){ var cur=_cmp(roleId); return cur?Math.round((rating||0)-(cur.rating||0)):null; };
+    var market=[]; try { market=(State.game.staffMarket||[]).map(function(s,idx){ State._patchStaffMember(s,s.roleId); var role=(DATA.staffRoles||[]).find(function(r){return r.id===s.roleId;})||{}; return { index:idx, roleId:s.roleId||'', icon:role.icon||'', name:s.name||'', role:(role.raceEngineer?'Race Engineer':(role.name||ROLE[s.roleId]||s.roleId||s.role||'')), raceEngineer:!!role.raceEngineer, rating:Math.round(s.rating||0), potential:Math.round(s.potential||s.rating||0), age:s.age||0, years:s.contract||0, askingSalary:s.salary||s.askingSalary||0, detail:role.desc||'', bio:s.desc||'', bonusLabel:role.bonusLabel||'Team effect', delta:_delta(s.rating,s.roleId), abilities:((DATA.staffAbilityDefs&&DATA.staffAbilityDefs[s.roleId])||[]).map(function(a){return {id:a.id,label:a.label,value:Math.round((s.abilities&&s.abilities[a.id])||s.rating||0)};}) }; }); } catch(e){}
+    var rivals=[]; try { rivals=(State.game.teams||[]).filter(function(x){return String(x.id)!==String(t.id);}).flatMap(function(tm){return Object.keys(tm.staff||{}).map(function(k){var s=tm.staff[k];if(!s)return null;State._patchStaffMember(s,k);var role=(DATA.staffRoles||[]).find(function(r){return r.id===k;})||{};
+      var view=State.staffScoutView(s,k), lock=State.staffApproachLock(s.id);
+      return {teamId:tm.id,team:tm.name,roleId:k,role:(role.raceEngineer?'Race Engineer':(role.name||k)),raceEngineer:!!role.raceEngineer,name:s.name,rating:Math.round(s.rating||0),age:s.age||0,potential:view.potential,years:s.contract||0,salary:s.salary||0,
+        scouting:view.started,scouted:view.complete,band:view.band,step:view.step,total:view.total,nextIn:view.nextIn,
+        lock:lock,rejections:s._poachRejections||0,delta:_delta(s.rating,k),
+        abilities:view.abilities};}).filter(Boolean);}).sort(function(a,b){return b.rating-a.rating;}).slice(0,24); } catch(e){}
     var totalSalary=0,budgetCap=0; try { totalSalary=getTeamStaffSalaryCost(t); budgetCap=getTeamStaffBudgetCap(t); } catch(e){}
     return { roles:roles, market:market, rivals:rivals, totalSalary:totalSalary, budgetCap:budgetCap, overBudget:totalSalary>budgetCap, engineDelegate:!!State.game.staffEngineDelegate };
   };
@@ -35459,7 +36130,13 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
         var qe = qIds[String(d.id)];
         var racesLeft = qe ? Math.max(0, (qe.completesAfterRace||0) - racesDone) : 0;
         var potDisplay = d.scoutedPotential!=null ? Math.round(d.scoutedPotential) : (qe ? ('\u23F3 '+racesLeft+'r') : '?');
-        return { name:d.name||'', nat:nat2(d), age:d.age||0, pos:d.prospectSeries||'Feeder Series', feederSeries:d.prospectSeries||'Feeder Series', feederLocked:(d.feederContract||0)>0, feederYears:d.feederContract||0, availableYear:(g.season||2026)+(d.feederContract||0), potential:(d.scoutedPotential!=null?Math.round(d.scoutedPotential):null), potDisplay:potDisplay, ovr:Math.round(d.rating||0), pace:Math.round(d.racePace||0), quali:Math.round(d.qualifying||0), consistency:Math.round(d.consistency||0), wet:Math.round(d.wet||0), agg:Math.round(d.aggression||0), tyre:Math.round((d.consistency||0)*0.6+(100-(d.aggression||0))*0.4), ers:Math.round(d.energyMgmt!=null?d.energyMgmt:(d.consistency||70)*0.9), mkt:Math.round(d.marketability||0), scouted:(d.scoutedPotential!=null?100:(qe?50:0)) };
+        // The classic report shows the report's error band and stars a standout (85+ scouted
+        // potential); without the band a scouted number reads as fact. (v3.0.9, parity audit.)
+        var _band = d.scoutAccuracyBand!=null ? d.scoutAccuracyBand : (tier ? Math.round((100-(tier.accuracy||35))/5) : null);
+        var _sp = d.scoutedPotential!=null ? Math.round(d.scoutedPotential) : null;
+        return { name:d.name||'', nat:nat2(d), age:d.age||0, pos:d.prospectSeries||'Feeder Series', feederSeries:d.prospectSeries||'Feeder Series', feederLocked:(d.feederContract||0)>0, feederYears:d.feederContract||0, availableYear:(g.season||2026)+(d.feederContract||0), potential:(d.scoutedPotential!=null?Math.round(d.scoutedPotential):null), potDisplay:potDisplay, ovr:Math.round(d.rating||0), pace:Math.round(d.racePace||0), quali:Math.round(d.qualifying||0), consistency:Math.round(d.consistency||0), wet:Math.round(d.wet||0), agg:Math.round(d.aggression||0), tyre:Math.round((d.consistency||0)*0.6+(100-(d.aggression||0))*0.4), ers:Math.round(d.energyMgmt!=null?d.energyMgmt:(d.consistency||70)*0.9), mkt:Math.round(d.marketability||0), scouted:(d.scoutedPotential!=null?100:(qe?50:0)),
+                 id:d.id, band:_band, standout:(_sp!=null&&_sp>=88), potLabel:(_sp!=null?(_sp+(_band?' ±'+_band:'')):String(potDisplay)),
+                 reportRacesLeft:(qe?racesLeft:null), canPreSign:((d.feederContract||0)===1), canReserve:true };
       });
       prospects.sort(function(a,b){ return (b.potential||0)-(a.potential||0) || (b.ovr||0)-(a.ovr||0); });
     } catch(e){}
@@ -35828,7 +36505,30 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
         return {season:s.season,drivers:(s.drivers||[]).slice().sort(function(a,b){return a.position-b.position;}).map(function(d){return {id:d.driverId,name:d.driverName||'',teamId:d.teamId,team:d.teamName||'',points:d.points||0,position:d.position||0,mine:String(d.teamId)===String(g.playerTeamId)};}),races:(s.raceGrid||[]).map(function(r){return {name:r.location||String(r.name||'').replace(' Grand Prix',''),sprint:!!r.sprint,race:(r.raceResult||[]).map(function(x){return {id:x.driverId,pos:x.position||0,dnf:!!x.dnf};}),sprintResult:(r.sprintResult||[]).map(function(x){return {id:x.driverId,pos:x.position||0,dnf:!!x.dnf};})};})};
       });
     } catch(e){}
-    return { seasons:seasons, standingsSeasons:standingsSeasons, goat:goat, records:records, hof:hof, ladder:ladder, raceGrid:raceGrid, raceGridSeasons:raceGridSeasons, dynasty:dynasty, achievements:achievements, honours:{
+    // The classic Records tab also lists the real-world all-time marks to chase, with how
+    // far this save has got toward each. Team HQ only had in-save records. (v3.0.9 parity.)
+    var historical=null;
+    try {
+      if(typeof HISTORICAL_RECORDS!=='undefined'){
+        var _drvs=(g.drivers||[]);
+        var _dBest=function(key){ return _drvs.reduce(function(m,d){
+          var v = key==='wins'?((d.totalWins||0)+(d.wins||0))
+                : key==='poles'?((d.totalPoles||0)+(d.poles||0))
+                : key==='podiums'?((d.totalPodiums||0)+(d.podiums||0))
+                : key==='championships'?(d.championships||0):0;
+          return v>m.v?{v:v,name:d.name}:m; },{v:0,name:null}); };
+        var _tBest=function(key){ return (g.teams||[]).reduce(function(m,t2){
+          var v = key==='wins'?((t2.totalWins||0)+(t2.wins||0)):key==='championships'?(t2.championships||0):0;
+          return v>m.v?{v:v,name:t2.name}:m; },{v:0,name:null}); };
+        var _mk=function(list,bestFn){ return (list||[]).map(function(r){
+          var b=bestFn(r.key), beaten=b.v>r.value;
+          return { label:r.label, value:r.value, holder:r.holder, note:r.note, beaten:beaten,
+                   pct:Math.min(100,Math.round((b.v/Math.max(1,r.value))*100)),
+                   progress: beaten?'✓ Beaten in this save':(b.v>0?('Best so far: '+b.v+(b.name?(' ('+((typeof lastNameOf==='function')?lastNameOf(b.name):b.name)+')'):'')):'Not yet challenged') }; }); };
+        historical={ drivers:_mk(HISTORICAL_RECORDS.driver,_dBest), teams:_mk(HISTORICAL_RECORDS.team,_tBest) };
+      }
+    } catch(e){}
+    return { seasons:seasons, standingsSeasons:standingsSeasons, goat:goat, records:records, historical:historical, hof:hof, ladder:ladder, raceGrid:raceGrid, raceGridSeasons:raceGridSeasons, dynasty:dynasty, achievements:achievements, honours:{
       titles:(st.constructorChampionships!=null?st.constructorChampionships:(t.championships||0)),
       wins:(st.totalWins!=null?st.totalWins:(t.wins||0)),
       podiums:(st.totalPodiums!=null?st.totalPodiums:(t.podiums||0)),
@@ -36322,10 +37022,59 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       var preContracts=(g.preSeasonMoves||[]).filter(function(m){return m.playerInitiated;}).map(function(m){return {driver:m.driverName||'',from:m.fromTeamName||'',to:m.toTeamName||'',salary:m.salary||0,years:m.years||0};});
       var moveOptions=[]; try { moveOptions=(g.teams||[]).filter(function(x){return String(x.id)!==String(pid);}).map(function(x){var ev=GameActions.evaluateTeamInterest(x.id);return ev?{teamId:x.id,name:x.name||'',color:x.color||'#888',position:ev.tPos,interest:ev.interest,tier:ev.tier,trajectory:ev.traj,car:Math.round(getTeamOverallCar(x)||0)}:null;}).filter(Boolean).sort(function(a,b){return b.interest-a.interest;}); } catch(e){}
       var mood=g.ownerMood||{performance:0,finances:0}, moodTotal=(mood.performance||0)+(mood.finances||0), goal=g.ownerGoal||S.getOwnerGoal(pid), goalLabel=goal===1?'Win the Championship':goal<=3?'Top '+goal+' in Constructors':goal<=6?'Top '+goal+' Finish':'Finish P'+goal+' or Better';
+      // Three classic offseason blocks had no Team HQ equivalent: the season finance
+      // summary you allocate the winter budget against, the grid's car-performance
+      // ranking with winter deltas, and the rival transfer digest. (v3.0.9, parity audit.)
+      var _fin=null;
+      try {
+        // Mirror the classic offseason finance summary's own arithmetic so the two agree.
+        var _pos=null; try { _pos=State.getConstructorSeasonPos(t.id); } catch(e){}
+        var _tier=(DATA.scoutingTiers||[]).filter(function(x){return x.id===(g.scoutingTier||'none');})[0];
+        var _works=false; try { _works=(_liveEngines()||[]).some(function(e){ return (e.worksTeams||[]).indexOf(t.id)>=0; }); } catch(e){}
+        var _sponsorInc=0; try { _sponsorInc=sumSponsorIncome(g.sponsors||[]); } catch(e){}
+        var _inc=Math.round(_sponsorInc + (42+Math.round((11-(_pos||10))*3.5)) + Math.round((t.prestige||0)*0.3) + (_works?20:0));
+        var _drvSal=(State.getPlayerDrivers()||[]).reduce(function(s,d){return s+(d.salary||0);},0);
+        var _resSal=(State.getPlayerReserves()||[]).reduce(function(s,d){return s+(d.salary||0);},0);
+        var _staffC=0; try { _staffC=Math.round((t.facilities||0)*0.35+10)+getTeamStaffSalaryCost(t); } catch(e){}
+        var _qSpend=(g.quarterDev||[]).filter(function(q){return q.applied;}).reduce(function(s,q){ return s+((q.aero||0)*6+(q.reliability||0)*4+(q.engine||0)*10); },0);
+        var _offSpend=(function(){ var rd=g._lastOffseasonDevResult; if(!rd) return 0; var b=rd.spent||{}; return (b.aero||0)*6+(b.engine||0)*8+(b.reliability||0)*4+(b.facilities||0)*3; })();
+        var _exp=Math.round(_drvSal+_resSal+(_tier?_tier.salary:0)+35+(_works?0:12)+_staffC+_qSpend+_offSpend);
+        var _net=_inc-_exp;
+        _fin={ income:_inc, expenses:_exp, net:_net,
+               verdict:_net>20?'✅ Healthy surplus — reinvest in development':_net>0?'⚠️ Tight margins — watch spending':_net>-20?'🔴 Running at a loss — cut costs or improve results':'🔴 Significant deficit — championship results carry the budget' };
+      } catch(e){}
+      var _carDigest=null;
+      try {
+        var _snapC=(window._recapTransfers&&window._recapTransfers._carSnap)||g._preOffseasonCarSnapshot||{};
+        var _sorted=(g.teams||[]).slice().sort(function(a,b){ return (b.carPerformance||0)-(a.carPerformance||0); });
+        var _myPos=_sorted.findIndex(function(x){ return String(x.id)===String(pid); })+1;
+        _carDigest={ myPos:_myPos, myOvr:Math.round(t.carPerformance||0),
+          rows:_sorted.map(function(x,i){ var pre=_snapC[x.id]; var dv=pre?((x.carPerformance||0)-(pre.car||0)):0;
+            return { pos:i+1, name:(x.name||'').replace('Scuderia ','').replace(' F1 Team','').replace(' Racing',''),
+                     ovr:Math.round(x.carPerformance||0), color:x.color||'#888', mine:String(x.id)===String(pid),
+                     delta:(Math.abs(dv)<0.05?null:Number(dv.toFixed(1))) }; }) };
+      } catch(e){}
+      var _gridChanges=[];
+      try {
+        var _tr=window._recapTransfers||[];
+        _tr.forEach(function(x){
+          if(!x||!x.driverName) return;
+          var dd=(g.drivers||[]).filter(function(y){return y.name===x.driverName;})[0];
+          var rating=dd?Math.round(dd.rating||0):0;
+          if(x.graduated){ if(_gridChanges.length<14) _gridChanges.push({icon:'📈',text:x.driverName+' graduates '+(x.from||'the feeder series')+' → free agent pool',note:''}); return; }
+          if(x.to && rating>=80) _gridChanges.push({icon:'✍️',text:x.driverName+' → '+x.to,note:rating+' OVR'});
+          else if(x.from && !x.to && rating>=80) _gridChanges.push({icon:'👋',text:x.driverName+' left '+x.from,note:x.reason||'departure'});
+        });
+        ((window._recapChamps&&window._recapChamps.retirements)||[]).forEach(function(r){
+          if(r&&r.name) _gridChanges.push({icon:'🏁',text:r.name+' retired'+(r.age?' · Age '+r.age:''),note:(r.championships>0?(r.championships+'× champion'):'')});
+        });
+        _gridChanges=_gridChanges.slice(0,16);
+      } catch(e){}
       return {
         active:!!g.offseasonPending,
         fromSeason:(noPrior?null:finishedSeason), toSeason:toSeasonV,
         steps:steps,
+        finances:_fin, carDigest:_carDigest, gridChanges:_gridChanges,
         review:{ position:rvPos, points:rvPts, wins:rvWins, podiums:rvPod, bestFinish:(rvPos!=null?rvPos:''),
                  headline:(noPrior?('New campaign \u2014 no prior season to review yet. Lock in contracts and set winter development for the '+toSeasonV+' season.'):'') },
         contracts:{ drivers:driverContracts, reserves:reserveContracts, staff:staffContracts },
@@ -36434,11 +37183,31 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
   window._hqEnrichTeams=function(){ try {
     var d=window._hqRC.data.teamsScreen||{},x=d.selected;if(!x)return;
     var e=function(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});};
+    // The classic team modal also carries the header meta line, a season-stats block and
+    // the reserve roster, and lists each driver's nationality, age, points and results.
+    // (v3.0.9, modal parity audit.)
     var drivers=(x.drivers||[]).map(function(a){
       var arg=JSON.stringify({id:a.id,name:a.name}).replace(/'/g,'&#39;');
-      return '<button class="mkr" data-act="viewDriver" data-arg=\''+arg+'\' style="width:100%;border:0;border-bottom:1px solid var(--line);background:transparent;text-align:left;cursor:pointer"><b>'+e(a.name)+'</b><b>'+a.rating+' OVR</b><span class="fs10 red fw7">VIEW PROFILE →</span></button>';
+      var meta=[a.nat,(a.age?'Age '+a.age:''),(a.points!=null?a.points+'pts':''),((a.wins||0)+'W · '+(a.podiums||0)+'Pod')].filter(Boolean).join(' · ');
+      return '<button class="mkr" data-act="viewDriver" data-arg=\''+arg+'\' style="width:100%;border:0;border-bottom:1px solid var(--line);background:transparent;text-align:left;cursor:pointer">'
+        +'<span><b>'+e(a.name)+'</b><br><span class="fs10 mut">'+e(meta)+'</span></span><b>'+a.rating+' OVR</b><span class="fs10 red fw7">VIEW PROFILE →</span></button>';
     }).join('');
-    window._hqAddPanel('teams','hq-team-detail','Team Profile · '+e(x.name),'<div class="tele"><div class="statg"><div class="putile"><div class="k">Overall</div><div class="v">'+x.ovr+'</div></div><div class="putile"><div class="k">Reliability</div><div class="v">'+x.reliability+'</div></div><div class="putile"><div class="k">Facilities</div><div class="v">'+x.facilities+'</div></div><div class="putile"><div class="k">Development</div><div class="v">'+x.development+'</div></div></div><div class="card" style="margin-top:14px">'+drivers+'</div></div>');
+    var resv=(x.reserves||[]).length
+      ? '<div style="margin-top:14px"><div class="fs10 fnt hudf mb8" style="letter-spacing:.12em">RESERVE DRIVERS</div><div class="card">'
+        + x.reserves.map(function(r){ var ra=JSON.stringify({id:r.id,name:r.name}).replace(/'/g,'&#39;');
+            return '<button class="mkr" data-act="viewDriver" data-arg=\''+ra+'\' style="width:100%;border:0;border-bottom:1px solid var(--line);background:transparent;text-align:left;cursor:pointer"><b>'+e(r.name)+'</b><b>'+r.rating+' OVR</b><span class="fs10 red fw7">VIEW PROFILE →</span></button>'; }).join('')
+        + '</div></div>' : '';
+    var meta=[x.nationality,('Prestige '+x.prestige),(x.pos?('P'+x.pos+' this season'):''),(x.engine?('⚡ '+x.engine):'')].filter(Boolean).join(' · ');
+    var seasonStats='<div style="margin-top:14px"><div class="fs10 fnt hudf mb8" style="letter-spacing:.12em">SEASON STATS</div><div class="statg" style="margin-top:0">'
+      + [['Points',x.seasonPoints],['Wins',x.wins],['Podiums',x.podiums],['Poles',x.poles],['Budget','$'+x.budget+'M'],['Titles',x.championships]]
+          .map(function(s){ return '<div class="putile"><div class="k">'+s[0]+'</div><div class="v">'+e(s[1])+'</div></div>'; }).join('')
+      + '</div></div>';
+    window._hqAddPanel('teams','hq-team-detail','Team Profile · '+e(x.name),'<div class="tele">'
+      + (meta?'<div class="fs11 mut" style="margin:-4px 0 12px">'+e(meta)+'</div>':'')
+      + '<div class="statg"><div class="putile"><div class="k">Overall</div><div class="v">'+x.ovr+'</div></div><div class="putile"><div class="k">Reliability</div><div class="v">'+x.reliability+'</div></div><div class="putile"><div class="k">Facilities</div><div class="v">'+x.facilities+'</div></div><div class="putile"><div class="k">Development</div><div class="v">'+x.development+'</div></div></div>'
+      + seasonStats
+      + '<div style="margin-top:14px"><div class="fs10 fnt hudf mb8" style="letter-spacing:.12em">RACE DRIVERS</div><div class="card">'+drivers+'</div></div>'
+      + resv + '</div>');
   }catch(e){} };
   window._hqEnrichAcademy=function(){
     try {
@@ -36578,23 +37347,39 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       (State.getProspects?State.getProspects():[]).forEach(function(d){
         if((d.feederContract||0)>0) locked[String(d.name||'').toLowerCase()]={series:d.prospectSeries||'Feeder Series',year:(g.season||2026)+d.feederContract};
       });
-      [].forEach.call(doc.querySelectorAll('[data-act="signProspect"]'),function(btn){
-        var name='';try{name=(JSON.parse(btn.getAttribute('data-arg')||'{}').name||'').toLowerCase();}catch(e){}
-        var info=locked[name];if(!info)return;
-        btn.removeAttribute('data-act');btn.disabled=true;btn.textContent='LOCKED';
-        btn.classList.add('ghost');btn.style.opacity='.58';btn.style.cursor='not-allowed';
-        btn.title=info.series+' contract — unable to sign to a race seat until '+info.year;
-        var row=btn.closest('.fam'),meta=row&&row.querySelector('.fs11.mut');
+      // A locked prospect now renders PRE-SIGN / RESERVE instead of a race-seat SIGN, so the
+      // lock note is attached to the row rather than to a button that may not be there.
+      [].forEach.call(doc.querySelectorAll('section[data-screen="scouting"] .fam'),function(row){
+        var nameEl=row.querySelector('.fw7.fs13'); if(!nameEl) return;
+        var name=String(nameEl.textContent||'').replace('★','').trim().toLowerCase();
+        var info=locked[name]; if(!info) return;
+        var meta=row.querySelector('.fs11.mut');
         if(meta&&!row.querySelector('.hq-feeder-lock')){
           var note=doc.createElement('div');note.className='hq-feeder-lock';
           note.style.cssText='margin-top:3px;color:#b45309;font-size:10px;font-weight:700;line-height:1.25';
-          note.textContent='🔒 '+info.series+' contract · race-seat signing unavailable until '+info.year;
+          note.textContent='🔒 '+info.series+' contract · race seat unavailable until '+info.year+' — pre-sign or offer a reserve deal';
           meta.parentElement.appendChild(note);
         }
+        var btn=row.querySelector('[data-act="signProspect"]'); if(!btn) return;
+        btn.removeAttribute('data-act');btn.disabled=true;btn.textContent='LOCKED';
+        btn.classList.add('ghost');btn.style.opacity='.58';btn.style.cursor='not-allowed';
+        btn.title=info.series+' contract — unable to sign to a race seat until '+info.year;
       });
     } catch(e){}
   };
-  window._hqEnhance=function(){ try { window._hqEnsureStyles(); window._hqEnrichCar(); var s=window._hqScreen; if(s==='drivers')window._hqEnrichDrivers();else if(s==='schedule')window._hqEnrichSchedule();else if(s==='finance')window._hqEnrichFinance();else if(s==='teams')window._hqEnrichTeams();else if(s==='standings')window._hqEnrichStandings();else if(s==='staff')window._hqEnrichStaff();else if(s==='academy')window._hqEnrichAcademy();else if(s==='history')window._hqEnrichHistory();else if(s==='scouting')window._hqEnrichScouting(); }catch(e){} };
+  // The shell's top-bar NEXT is static markup. Once the finale stops booting straight into
+  // the offseason, that button is what starts it — so say so. (v3.0.9, requested by Pyritx.)
+  window._hqSyncNextLabel=function(){
+    try {
+      var fr=frame(), doc=fr&&fr.contentDocument; if(!doc) return;
+      var btn=doc.querySelector('.gnextbtn[data-act="next"]'); if(!btn) return;
+      var g=State.game;
+      var seasonOver=!!(g && !g.offseasonPending && (g.calendar||[]).length && g.raceIndex>=g.calendar.length);
+      var label=seasonOver?'END SEASON ▶':(g&&g.offseasonPending?'BEGIN SEASON ▶':'NEXT ▶');
+      if(btn.textContent!==label) btn.textContent=label;
+    } catch(e){}
+  };
+  window._hqEnhance=function(){ try { window._hqEnsureStyles(); window._hqSyncNextLabel(); window._hqEnrichCar(); var s=window._hqScreen; if(s==='drivers')window._hqEnrichDrivers();else if(s==='schedule')window._hqEnrichSchedule();else if(s==='finance')window._hqEnrichFinance();else if(s==='teams')window._hqEnrichTeams();else if(s==='standings')window._hqEnrichStandings();else if(s==='staff')window._hqEnrichStaff();else if(s==='academy')window._hqEnrichAcademy();else if(s==='history')window._hqEnrichHistory();else if(s==='scouting')window._hqEnrichScouting(); }catch(e){} };
   window._hqShowGuide=function(){ try { var fr=frame(),doc=fr&&fr.contentDocument;if(!doc)return;var old=doc.getElementById('hq-guide-overlay');if(old)old.remove();var el=doc.createElement('div');el.id='hq-guide-overlay';el.style.cssText='position:fixed;inset:0;z-index:9999;background:rgba(10,12,18,.58);display:flex;align-items:center;justify-content:center;padding:18px';el.innerHTML='<div class="card" style="width:min(680px,100%);max-height:90vh;overflow:auto;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.35)"><button onclick="this.closest(\'#hq-guide-overlay\').remove()" style="float:right;border:0;background:none;font-size:24px;cursor:pointer">×</button><div class="eye"><span class="dot"></span>Team HQ Guide</div><h2 style="margin:10px 0 18px">Run every part of your team from Team HQ</h2><div class="cols2"><div class="tele"><b>Race Weekend</b><p class="fs12 mut">Use Dashboard to set the car, complete qualifying, enter a race or simulate sessions. Finished races remain available in Schedule.</p></div><div class="tele"><b>Car Development</b><p class="fs12 mut">Car contains components, weighted sub-stats, the power unit and its allocation controls, plus each upgrade window.</p></div><div class="tele"><b>People</b><p class="fs12 mut">Drivers includes contracts, history and free agents. Staff and Academy include role details, development and loan information.</p></div><div class="tele"><b>Long-Term View</b><p class="fs12 mut">Standings tracks results and progression. History records champions, GOAT rankings, dynasty totals and race winners.</p></div></div></div>';doc.body.appendChild(el); }catch(e){} };
 
   // The Guide opens the full classic guide (UI.renderGuide's collapsible sections,
@@ -36715,6 +37500,71 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
         + '<div style="width:1px;background:var(--line)"></div>'+cs('Poles',(d.totalPoles||0)+(d.poles||0))
         + '<div style="width:1px;background:var(--line)"></div>'+cs('Pts',d.totalPoints||0)
         + '</div>';
+      // -- career injury scar + personal sponsor slots (classic driver modal has both and
+      //    the HQ profile had neither; v3.0.9, modal parity audit) --
+      var scarHtml='';
+      try {
+        if((d._injuryCareerScar||0) > 0){
+          scarHtml='<div style="margin:12px 0;padding:10px 12px;background:#f4f6fa;border:1px solid var(--line);border-radius:9px;font-size:12px">'
+            +'<b>⚕️ Career injury history</b><span style="color:var(--mut)"> — cumulative pace loss from past injuries: −'+Number(d._injuryCareerScar).toFixed(1)+' pts</span></div>';
+        }
+      } catch(e){}
+      var sponsorHtml='';
+      try {
+        var _slots=(typeof getPersonalSponsorSlots==='function')?getPersonalSponsorSlots(d):0;
+        var _linked=(g.sponsors||[]).filter(function(sp){ return String(sp.linkedDriverId)===String(d.id); });
+        if(_linked.length || _slots>0){
+          var _moodCol=function(m){ return m==='happy'?'var(--grn)':m==='neutral'?'var(--mut)':m==='unhappy'?'var(--amb)':'var(--red)'; };
+          sponsorHtml='<div class="hqp-sec">🔗 Personal Sponsors</div>'
+            +'<div class="fx jb ac gap8" style="margin-bottom:7px"><span class="fs11" style="color:var(--mut)">'
+            +(_linked.length?'These deals follow this driver. If they leave, the sponsor goes with them.':'High marketability attracts personal sponsor deals.')
+            +'</span><b class="fs10" style="color:'+(_linked.length>=_slots?'var(--red)':'var(--grn)')+'">'+_linked.length+'/'+_slots+' slots</b></div>'
+            +(_linked.length
+              ? '<div style="display:flex;flex-direction:column;gap:6px">'+_linked.map(function(sp){
+                  var m=sp.lastSeasonMood||'neutral';
+                  return '<div class="fx jb ac" style="padding:6px 9px;background:#f4f6fa;border-radius:7px">'
+                    +'<div><b class="fs12">'+esc(sp.name||'')+'</b> <span class="fs10" style="color:var(--mut)">'+esc(sp.type||'')+'</span></div>'
+                    +'<div style="text-align:right"><b class="fs12 grn">+$'+Math.round(sp.value||0)+'M/yr</b> <span class="fs10" style="color:'+_moodCol(m)+'">'+esc(String(m).replace('_',' '))+'</span></div></div>';
+                }).join('')+'</div>'
+              : '<div class="fs11" style="color:var(--mut);padding:8px;background:#f4f6fa;border-radius:7px">No personal sponsors yet. Linked deals will appear here when offered.</div>');
+        }
+      } catch(e){}
+      // -- last season development (classic parity; the new profile was missing it,
+      //    reported by IronicGerman) --
+      var devHtml='';
+      try {
+        var dd=d._lastDevDelta;
+        if(dd){
+          var delta=dd.rating||0;
+          var arrow=delta>=1.5?'📈':delta>=0.3?'↑':delta<=-1.0?'📉':delta<=-0.2?'↓':'→';
+          var dcol=delta>=1.0?'var(--grn)':delta>=0.2?'#4ade80':delta<=-0.8?'var(--red)':delta<=-0.1?'var(--amb)':'var(--mut)';
+          var verdict=d._devStatus==='breakthrough'?'Breakthrough season 🌟':
+                      d._devStatus==='struggling'?'Development stalled ⚠️':
+                      delta>=2?'Rapid improvement':delta>=0.8?'Good progress':
+                      delta>=0.2?'Steady growth':delta<=-1?'In decline':
+                      delta<=-0.2?'Minor regression':'Stable';
+          var phase=d._careerPhase||'';
+          var phaseCol=(phase==='late career'||phase==='early decline')?'var(--amb)':phase==='peak'?'var(--grn)':'var(--mut)';
+          var peakLabel=d._peakEnd===35?'Exceptional longevity':d._peakEnd===33?'Extended peak':d._peakEnd===29?'Early fader':'';
+          var detail=(dd.racePace>=0.5?'pace +'+dd.racePace.toFixed(1):
+                      dd.consistency>=0.5?'consistency +'+dd.consistency.toFixed(1):
+                      dd.qualifying>=0.5?'qualifying +'+dd.qualifying.toFixed(1):
+                      dd.racePace<=-0.5?'pace '+dd.racePace.toFixed(1):
+                      dd.qualifying<=-0.5?'qualifying '+dd.qualifying.toFixed(1):'');
+          devHtml='<div class="hqp-sec">Season Development</div>'
+            +'<div style="display:flex;align-items:center;gap:12px;background:#f4f6fa;border:1px solid var(--line);border-radius:9px;padding:10px 13px">'
+              +'<div style="flex:1;min-width:0">'
+                +'<div class="fw8 fs14" style="color:'+dcol+'">'+arrow+' '+(delta>=0?'+':'')+delta.toFixed(1)+' OVR · '+esc(verdict)+'</div>'
+                +(detail?'<div class="fs11" style="color:var(--mut);margin-top:2px">'+esc(detail)+'</div>':'')
+              +'</div>'
+              +'<div style="text-align:right;flex-shrink:0">'
+                +(phase?'<div class="fs11 fw7" style="color:'+phaseCol+';text-transform:capitalize">'+esc(phase)+'</div>':'')
+                +(peakLabel?'<div style="font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--amb)">'+esc(peakLabel)+'</div>':'')
+                +'<div class="fs11" style="color:var(--mut)">Season '+esc(dd.season||'')+'</div>'
+              +'</div>'
+            +'</div>';
+        }
+      } catch(e){}
       // -- season-by-season career history --
       var histHtml='';
       try {
@@ -36769,14 +37619,35 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
         + '<div style="font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--red)">Driver Profile</div>'
         + '<div class="fx jb gap12 wrap" style="align-items:flex-start;margin:10px 30px 0 0"><div style="min-width:0"><h2 style="margin:0;font-size:25px;line-height:1.1;display:flex;align-items:center;gap:8px;flex-wrap:wrap">'+esc(d.name||'')+badge+'</h2><div class="fs12" style="margin-top:6px;color:var(--mut)">Age '+(d.age||0)+' · '+esc(d.nationality||'')+' · '+esc(status)+'</div></div>'
         + '<div style="display:flex;gap:14px;text-align:center"><div><div class="mono fw8" style="font-size:27px">'+R(d.rating)+'</div><div style="font-size:9px;font-weight:700;letter-spacing:.08em;color:var(--mut)">OVERALL</div></div><div><div class="mono fw8" style="font-size:27px">'+potHtml+'</div><div style="font-size:9px;font-weight:700;letter-spacing:.08em;color:var(--mut)">POTENTIAL</div></div></div></div>'
-        + banner
-        + '<div class="hqp-sec" style="border-top:none;padding-top:0;margin-top:16px">Attributes</div>'+attrs
-        + '<div class="hqp-sec">Career Stats</div>'+careerStrip
+        + banner + scarHtml
+        + '<div class="hqp-sec" style="border-top:none;padding-top:0;margin-top:16px">Attributes'
+          + '<button type="button" data-hqp-glossary style="float:right;border:0;background:none;font:inherit;font-size:9px;color:var(--mut);cursor:pointer;text-transform:none;letter-spacing:0">ℹ️ What do these mean?</button></div>'
+        + '<div data-hqp-glossary-body style="display:none;background:#f4f6fa;border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-bottom:10px;font-size:11px;line-height:1.6">'
+          + '<div><b>Race Pace</b> — raw speed over a stint; the biggest factor in race positions.</div>'
+          + '<div><b>Qualifying</b> — single-lap speed; determines grid position.</div>'
+          + '<div><b>Consistency</b> — how reliably they hit their ceiling every lap.</div>'
+          + '<div><b>Wet Weather</b> — performance multiplier in rain.</div>'
+          + '<div><b>Tyre Management</b> — derived from consistency + aggression; affects how long tyres last.</div>'
+          + '<div><b>Aggression</b> — overtaking and defending; recovers positions but risks incidents, and adds tyre wear.</div>'
+          + '<div><b>ERS Management</b> — how well they manage the hybrid energy store across a stint.</div>'
+          + '<div><b>Marketability</b> — commercial value; boosts sponsor offers and unlocks personal sponsor slots (1 per 10 pts above 70).</div>'
+          + '<div><b>Morale</b> — affects performance slightly and contract demands.</div>'
+          + '</div>'
+        + attrs
+        + devHtml
+        + '<div class="hqp-sec">Career Stats</div>'+careerStrip + sponsorHtml
         + histHtml
         + traitHtml
         + contractLine + seasonLine + actionHtml
         + '</div>';
       el.addEventListener('click',function(ev){ if(ev.target===el||ev.target.closest('[data-hq-profile-close]')) el.remove(); });
+      el.addEventListener('click',function(ev){
+        var gb=ev.target.closest('[data-hqp-glossary]'); if(!gb) return;
+        var body=el.querySelector('[data-hqp-glossary-body]'); if(!body) return;
+        var open=body.style.display!=='none';
+        body.style.display=open?'none':'block';
+        gb.textContent=open?'ℹ️ What do these mean?':'✕ Close guide';
+      });
       el.addEventListener('click',function(ev){
         var b=ev.target.closest('[data-hqp-action]'); if(!b||b.disabled)return; var a=b.getAttribute('data-hqp-action'), modal=false, refresh=true;
         try {
@@ -37238,14 +38109,14 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       rc.on('renewDriver', function(p){ if(!hasGame())return; var d=_hqDriverRef(p); if(d&&GameActions.renewDriver){ GameActions.renewDriver(d.id); _hqElevateModal(); } });
       rc.on('openTalks', function(p){ if(!hasGame())return; var d=_hqDriverRef(p); if(d&&GameActions.renewDriver){ GameActions.renewDriver(d.id); _hqElevateModal(); } });
       rc.on('promoteReserve', function(p){ if(!hasGame())return; var d=_hqDriverRef(p); if(d&&GameActions.promoteReserve){ GameActions.promoteReserve(d.id); _hqElevateModal(); } window._hqRefresh(); });
-      rc.on('hireStaff', function(p){ if(!hasGame())return; p=p||{}; try { var idx=(p.index!=null?p.index:(State.game.staffMarket||[]).findIndex(function(m){return m.name===p.name;})); if(idx>=0&&GameActions.hireStaff){ var _sm=(State.game.staffMarket||[])[idx]||{}; window.__f1dEv('staff_change',window.__f1dEvCtx({action:'hire',role:_sm.roleId||'?',rating:Math.round(_sm.rating||0),salary:_sm.salary||0})); GameActions.hireStaff(idx); } } catch(e){} window._hqRefresh(); });
+      rc.on('hireStaff', function(p){ if(!hasGame())return; p=p||{}; try { var idx=(p.index!=null?p.index:(State.game.staffMarket||[]).findIndex(function(m){return m.name===p.name;})); if(idx>=0&&GameActions.hireStaff){ var _sm=(State.game.staffMarket||[])[idx]||{}; window.__f1dEv('staff_change',window.__f1dEvCtx({action:'hire',role:_sm.roleId||'?',rating:Math.round(_sm.rating||0),salary:_sm.salary||0})); GameActions.hireStaff(idx,p.target); } } catch(e){} window._hqRefresh(); });
       rc.on('renewStaff', function(p){ if(!hasGame())return; p=p||{}; try { var t=T_(State.game.playerTeamId), roleId=_hqStaffRoleId(t,p.role); if(roleId&&GameActions.renewStaff){ window.__f1dEv('staff_change',window.__f1dEvCtx({action:'renew',role:p.role||'?'})); GameActions.renewStaff(roleId); } } catch(e){} window._hqRefresh(); });
       rc.on('releaseStaff', function(p){ if(!hasGame())return; p=p||{}; try { var t=T_(State.game.playerTeamId), roleId=_hqStaffRoleId(t,p.role); if(roleId&&GameActions.fireStaff){ window.__f1dEv('staff_change',window.__f1dEvCtx({action:'release',role:p.role||'?'})); GameActions.fireStaff(roleId); } } catch(e){} window._hqRefresh(); });
       rc.on('assignRaceEngineer', function(p){ if(!hasGame())return; p=p||{}; try { GameActions.assignRaceEngineer(p.role,p.driverId); } catch(e){} window._hqRefresh(); });
       rc.on('promoteJuniorEngineer', function(p){ if(!hasGame())return; p=p||{}; try { GameActions.promoteJuniorEngineer(p.target); } catch(e){} window._hqRefresh(); });
       rc.on('toggleStaffEngineDelegate', function(){ if(!hasGame())return; try { GameActions.toggleStaffEngineDelegate(); } catch(e){} window._hqRefresh(); });
       rc.on('scoutStaff', function(p){ if(!hasGame())return; p=p||{}; try { GameActions.scoutStaff(p.teamId,p.role); } catch(e){} window._hqRefresh(); });
-      rc.on('poachStaff', function(p){ if(!hasGame())return; p=p||{}; try { GameActions.poachStaff(p.teamId,p.role); } catch(e){} window._hqRefresh(); });
+      rc.on('poachStaff', function(p){ if(!hasGame())return; p=p||{}; try { GameActions.poachStaff(p.teamId,p.role,p.target); } catch(e){} window._hqRefresh(); });
       rc.on('promoteJunior', function(p){ if(!hasGame())return; var d=_hqDriverRef(p); if(d&&GameActions.promoteJunior){ window.__f1dEv('academy_action',window.__f1dEvCtx({action:'promote',driver_name:d.name||'?',rating:Math.round(d.rating||0)})); GameActions.promoteJunior(d.id,'reserve'); } window._hqRefresh(); });
       rc.on('promoteJuniorRace', function(p){ if(!hasGame())return; var d=_hqDriverRef(p); if(!d||!GameActions.promoteJunior)return; if(confirm('Promote '+d.name+' to a race seat? This will displace your second race driver.')) GameActions.promoteJunior(d.id,'race'); window._hqRefresh(); });
       rc.on('loanJunior', function(p){ if(!hasGame())return; var d=_hqDriverRef(p); if(d&&GameActions.showLoanModal){ window.__f1dEv('academy_action',window.__f1dEvCtx({action:'loan_opened',driver_name:d.name||'?'})); GameActions.showLoanModal(d.id); _hqElevateModal(); elevateOpenHQModals(); } });
@@ -37253,6 +38124,10 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       rc.on('releaseJunior', function(p){ if(!hasGame())return; var d=_hqDriverRef(p); if(d&&GameActions.releaseJunior) GameActions.releaseJunior(d.id); window._hqRefresh(); });
       rc.on('signJunior', function(){ if(!hasGame())return; try { if(GameActions.showRecruitJunior){ GameActions.showRecruitJunior(); _hqElevateModal(); } } catch(e){} });
       rc.on('signProspect', function(p){ if(!hasGame())return; var d=_hqDriverRef(p); if(d) window._hqShowDriverProfile({id:d.id,name:d.name}); });
+      // Feeder-locked prospects: pre-sign for the year they come free, or take them on a
+      // reserve deal now — both classic routes, previously unreachable from Team HQ.
+      rc.on('preSignProspect', function(p){ if(!hasGame())return; var d=_hqDriverRef(p); if(d&&GameActions.commitProspect){ GameActions.commitProspect(d.id); _hqElevateModal(); elevateOpenHQModals(); } });
+      rc.on('signReserveProspect', function(p){ if(!hasGame())return; var d=_hqDriverRef(p); if(d&&GameActions.signReserve){ GameActions.signReserve(d.id); _hqElevateModal(); elevateOpenHQModals(); } });
       rc.on('deployScout', function(){ if(!hasGame())return; try { if(GameActions.scoutProspects) GameActions.scoutProspects(); } catch(e){} window._hqScreen='scouting'; window._hqRefresh(); });
       rc.on('foundAcademy', function(p){ if(!hasGame())return; p=p||{}; try { if(GameActions.foundAcademy) GameActions.foundAcademy(p.tier!=null?p.tier:0); } catch(e){} window._hqScreen='academy'; window._hqRefresh(); });
       rc.on('viewRace', function(p){
@@ -37566,14 +38441,26 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
     if(typeof UI!=='undefined' && typeof UI.toast==='function' && !UI._hqToastWrapped){
       UI._hqToastWrapped = true;
       var _hqOrigToast = UI.toast.bind(UI);
-      UI.toast = function(msg, type){
+      UI.toast = function(msg, type, opts){
+        // Both stacks used to render the same note — the shell's at bottom 78px and the
+        // classic one at bottom 80px — so every message appeared twice, offset by a couple
+        // of pixels and different padding. That is the "popup notes overlap" cascade
+        // (v3.0.9, reported by IronicGerman). When the shell shows it, the classic call is
+        // marked silent: it still records the note in the news feed, it just does not draw
+        // a second copy over the first.
+        var shown=false;
         try {
           if(flag()==='hq' && window._hqMode==='hq' && window._hqRC && window._hqRC.toast){
             var _d=document.createElement('div'); _d.innerHTML=String(msg==null?'':msg);
             var _txt=(_d.textContent||_d.innerText||'').trim();
-            if(_txt) window._hqRC.toast(_txt, type||'info');
+            if(_txt){ window._hqRC.toast(_txt, type||'info'); shown=true; }
           }
         } catch(e){}
+        if(shown){
+          var _o={}; try { if(opts) Object.keys(opts).forEach(function(k){ _o[k]=opts[k]; }); } catch(e){}
+          _o.silent=true;
+          return _hqOrigToast(msg, type, _o);
+        }
         return _hqOrigToast.apply(this, arguments);
       };
     }
