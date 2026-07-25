@@ -26007,7 +26007,7 @@ const sponsorInc=sumSponsorIncome(sponsors2);
             '📊 Every staff card now shows its "vs current" comparison, on rival staff as well as the hire market, so the value of a scouting target is readable at a glance. Race-engineer candidates are compared against whichever of your two engineers they would actually displace. (Requested by IronicGerman.)',
             '🏁 The final race of a season now ends like every other race. You land on the full race result with the finished standings, history and season review all still browsable, and the offseason begins when you press Next — the same button that starts a Grand Prix, labelled "End Season" once the calendar is complete. Previously the chequered flag threw you straight into the recap and you had to sit through an entire offseason before you could look at how the season actually finished. (Requested by Pyritx.)',
             '🔔 Popup notes no longer overlap. In Team HQ every message was being drawn twice — once by the shell and once by the classic layer underneath, two pixels apart — which stacked a cascade of half-faded notes across the middle of the screen. Only one copy is drawn now, repeated messages collapse into a single note with a counter, and no more than three are ever on screen at once. Every note is still recorded in the news feed. (Reported by IronicGerman.)',
-            '🔍 Old-UI vs new-UI parity audit. Every Team HQ page was compared against its classic equivalent and the missing information restored. Dashboard: the amber Contracts at Risk panel (Team HQ had no expiring-contract warning at all), plus driver morale and trait on the garage cards. Car: the Performance Envelope showed raw rounded values, so every pillar read the same number — it now shows the real track-weighted figures with their grid rank and how much each pillar is worth at this weekend\'s circuit, alongside the "Car at this circuit" composite; the Power Unit panel regained its supply-contract terms, unit number, remaining free allocations and supplier standing. Teams: cards regained nationality, prestige, budget, engine supplier, per-driver points, facility breakdown and season points — and the "P" number is now the championship position rather than the row\'s place in the current sort, which was wrong for every sort but the default. Drivers: reserve rows regained contract, morale, form and injury state, and the reserve simulator-contribution explainer. Scouting: reports show their ± error band and the ★ standout marker, and a prospect locked into a feeder contract can be pre-signed or given a reserve deal instead of showing a dead LOCKED button. Schedule: rounds show circuit location and type (power, technical, street or balanced). Finance: the net-position verdict. History: the real-world all-time records to chase, with your save\'s progress against each. Offseason: the season finance summary you allocate the winter budget against, the whole grid\'s car-performance ranking with winter deltas, and the notable-grid-changes digest of rival moves, retirements and graduations. Injuries and form dips now show on the driver cards themselves, not only in the medical report, and a reserve in line to substitute is flagged. Verified against the classic UI in a mid-season save, with a populated academy, an injured driver, a loaned junior and an expiring power-unit deal, and through a full season into the offseason handover. (Reported by IronicGerman.)',
+            '🔍 Old-UI vs new-UI parity audit. Every Team HQ page was compared against its classic equivalent and the missing information restored. Dashboard: the amber Contracts at Risk panel (Team HQ had no expiring-contract warning at all), plus driver morale and trait on the garage cards. Car: the Performance Envelope showed raw rounded values, so every pillar read the same number — it now shows the real track-weighted figures with their grid rank and how much each pillar is worth at this weekend\'s circuit, alongside the "Car at this circuit" composite; the Power Unit panel regained its supply-contract terms, unit number, remaining free allocations and supplier standing. Teams: cards regained nationality, prestige, budget, engine supplier, per-driver points, facility breakdown and season points — and the "P" number is now the championship position rather than the row\'s place in the current sort, which was wrong for every sort but the default. Drivers: reserve rows regained contract, morale, form and injury state, and the reserve simulator-contribution explainer. Scouting: reports show their ± error band and the ★ standout marker, and a prospect locked into a feeder contract can be pre-signed or given a reserve deal instead of showing a dead LOCKED button. Schedule: rounds show circuit location and type (power, technical, street or balanced). Finance: the net-position verdict. History: the real-world all-time records to chase, with your save\'s progress against each. Offseason: the season finance summary you allocate the winter budget against, the whole grid\'s car-performance ranking with winter deltas, and a full Transfer Report grouping every driver move, new signing, rookie debut, departure, retirement and feeder graduation across the grid, exactly as the classic offseason listed them. Injuries and form dips now show on the driver cards themselves, not only in the medical report, and a reserve in line to substitute is flagged. Verified against the classic UI in a mid-season save, with a populated academy, an injured driver, a loaned junior and an expiring power-unit deal, and through a full season into the offseason handover. (Reported by IronicGerman.)',
             '🪟 Shared dialogs audited against the classic UI too. Most modals are the same nodes both interfaces open, but three are rebuilt by Team HQ and had drifted. The driver profile regained the career injury history, the personal sponsor slots that high marketability unlocks, and the attribute glossary. The team profile regained its header meta line, the season stats block (points, wins, podiums, poles, budget, titles), per-driver nationality, age, points and results, and the reserve roster. The strategy planner was already at full parity. (Reported by IronicGerman.)',
             '🚪 Every dialog reachable from Team HQ was opened and checked. The shared modals (renewals, promotions, loans, junior recruitment, pre-signing, reserve offers, settings) all open above the Team HQ frame rather than behind it, and sponsor negotiation, the power-unit market and race strategy turned out to be handled natively in Team HQ with the same options the classic modals offer. The landing screen also regained the manager name, seasons played and last-played time on each saved career — the only things that tell two careers on the same team apart — and the engine supplier on the constructor cards.',
             '🧱 The offseason page finally uses the two-lane layout it was designed for. The patch that produced it had silently stopped matching the shell some versions ago, so the page had been falling back to paired rows: each pair was as tall as its taller card, leaving roughly 1,600px of blank column space on a 4,350px page — worst of all a 600px hole beside Owner Confidence next to Seek a Move — and the page never widened past 1,180px despite the wide-screen class being applied. Both lanes now flow independently and wide screens get the full 1,520px, cutting about a quarter off the page height. The patch now reports to telemetry if it ever stops matching again.',
@@ -34822,7 +34822,7 @@ window._pwHandleOrder = function(code, val){
       var _offBefore = _hq;
       _hq = _hq.replace(/    el\.innerHTML = rail \+ careerHtml \+ '<div class="cols2"[\s\S]*?\n      \+ footer;\n    syncMeta\('offseason'\);/, function(){ return String.raw`    var offseasonCss='<style>.offseason-lanes{display:grid;grid-template-columns:minmax(0,1fr);gap:24px;align-items:start;margin-top:24px}.offseason-lane{display:flex;flex-direction:column;gap:24px;min-width:0}@media(min-width:1040px){.offseason-lanes{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px}}@media(min-width:1440px){.pgwrap.offseason-wide{max-width:1520px}}</style>';
     var leftLane='<div>'+ownerHtml+'</div>'
-      + '<div>'+secH('Season Review'+(O.fromSeason!=null?' · '+O.fromSeason:''))+review+offseasonFinanceBlock()+offseasonGridDigest()+'</div>'
+      + '<div>'+secH('Season Review'+(O.fromSeason!=null?' · '+O.fromSeason:''))+review+offseasonFinanceBlock()+offseasonGridDigest()+offseasonTransfers()+'</div>'
       + scoutBlock
       + '<div>'+secH('Contracts · Drivers')+'<div class="card cardp">'+cdrv+cres+'</div></div>'
       + '<div>'+secH('Driver Market')+'<div class="card cardp scrolly">'+mrows+'</div></div>';
@@ -34920,14 +34920,31 @@ window._pwHandleOrder = function(code, val){
           "        + '<b class=\"mono fs11\" style=\"min-width:26px;text-align:right\">'+r.ovr+'</b></div>'",
           "        + '<div class=\"smeter lite\" style=\"height:3px;margin:3px 0 0 24px\"><div class=\"smf\" style=\"width:'+r.ovr+'%;background:'+(r.mine?'var(--red)':r.color)+'\"></div></div></div>';",
           "    }).join('');",
-          "    var changes = (O.gridChanges||[]).length",
-          "      ? '<div style=\"margin-top:14px;padding-top:12px;border-top:1px solid var(--line)\"><div class=\"fs10 fnt hudf mb8\" style=\"letter-spacing:.12em\">NOTABLE GRID CHANGES</div>'",
-          "        + O.gridChanges.map(function(c){ return '<div class=\"fx ac gap8\" style=\"padding:5px 0;border-bottom:1px solid var(--line);font-size:12px\"><span>'+c.icon+'</span><span class=\"f1\">'+esc(c.text)+'</span>'+(c.note?'<span class=\"fs10 mut fw7\">'+esc(c.note)+'</span>':'')+'</div>'; }).join('')",
-          "        + '</div>' : '';",
-          "    return '<div style=\"margin-top:22px\">'+secH((O.fromSeason!=null?O.fromSeason+' ':'')+'Season End \\u00B7 Car Performance & Changes')",
+          "    return '<div style=\"margin-top:22px\">'+secH((O.fromSeason!=null?O.fromSeason+' ':'')+'Season End \\u00B7 Car Performance')",
           "      + '<div class=\"card cardp\"><div class=\"fs10 fnt hudf mb8\" style=\"letter-spacing:.12em\">CAR PERFORMANCE RANKING</div>'+rows",
           "      + '<div class=\"fs11 mut\" style=\"margin-top:8px\">Your team: <b>P'+D.myPos+'</b> in car performance \\u00B7 '+D.myOvr+' OVR</div>'",
-          "      + changes + '</div></div>';",
+          "      + '</div></div>';",
+          "  }",
+          "  function offseasonTransfers(){",
+          "    var O=(TeamHQ.data&&TeamHQ.data.offseason)||{}, X=O.transfers;",
+          "    if(!X || !X.total) return '';",
+          "    var row=function(r){",
+          "      return '<div class=\"fx ac jb gap8\" style=\"padding:7px 0;border-bottom:1px solid var(--line)\">'",
+          "        + '<div style=\"min-width:0\"><b class=\"fs12\">'+esc(r.name)+'</b>'+(r.ovr!=null?' <span class=\"fs10 mut mono\">'+r.ovr+' OVR</span>':'')",
+          "        + '<div class=\"fs11 mut\" style=\"margin-top:2px\">'+esc(r.detail)+'</div></div>'",
+          "        + (r.note?'<span class=\"fs10 fw7 mut\" style=\"white-space:nowrap\">'+esc(r.note)+'</span>':'')+'</div>';",
+          "    };",
+          "    var group=function(title, list){ if(!list||!list.length) return '';",
+          "      return '<div style=\"margin-top:12px\"><div class=\"fs10 fnt hudf mb8\" style=\"letter-spacing:.12em\">'+title+'</div>'+list.map(row).join('')+'</div>'; };",
+          "    return '<div style=\"margin-top:22px\">'+secH('Transfer Report'+(O.fromSeason!=null?' \\u00B7 '+O.fromSeason+' Offseason':''))",
+          "      + '<div class=\"card cardp\">'",
+          "      + group('\\uD83D\\uDCA4 RETIREMENTS', X.retirements)",
+          "      + group('\\uD83D\\uDD04 DRIVER MOVES', X.moves)",
+          "      + group('\\u270D\\uFE0F NEW SIGNINGS', X.signings)",
+          "      + group('\\uD83C\\uDD95 ROOKIE DEBUTS', X.rookies)",
+          "      + group('\\uD83D\\uDC4B DEPARTURES', X.departures)",
+          "      + group('\\uD83C\\uDF93 ENTERING F1 FREE AGENCY', X.graduates)",
+          "      + '</div></div>';",
           "  }",
           "  function refreshMeta(){" ].join("\n"); }
       );
@@ -37054,27 +37071,37 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
                      ovr:Math.round(x.carPerformance||0), color:x.color||'#888', mine:String(x.id)===String(pid),
                      delta:(Math.abs(dv)<0.05?null:Number(dv.toFixed(1))) }; }) };
       } catch(e){}
-      var _gridChanges=[];
+      // Grouped exactly like the classic transfer report: a driver who left one team AND
+      // joined another is one MOVE, not a departure plus a signing, and every move is listed
+      // regardless of rating. A flat list dropped sub-80 moves and double-counted swaps.
+      // (v3.0.9, requested on r/f1dynasty.)
+      var _transfers=null;
       try {
-        var _tr=window._recapTransfers||[];
-        _tr.forEach(function(x){
-          if(!x||!x.driverName) return;
-          var dd=(g.drivers||[]).filter(function(y){return y.name===x.driverName;})[0];
-          var rating=dd?Math.round(dd.rating||0):0;
-          if(x.graduated){ if(_gridChanges.length<14) _gridChanges.push({icon:'📈',text:x.driverName+' graduates '+(x.from||'the feeder series')+' → free agent pool',note:''}); return; }
-          if(x.to && rating>=80) _gridChanges.push({icon:'✍️',text:x.driverName+' → '+x.to,note:rating+' OVR'});
-          else if(x.from && !x.to && rating>=80) _gridChanges.push({icon:'👋',text:x.driverName+' left '+x.from,note:x.reason||'departure'});
-        });
-        ((window._recapChamps&&window._recapChamps.retirements)||[]).forEach(function(r){
-          if(r&&r.name) _gridChanges.push({icon:'🏁',text:r.name+' retired'+(r.age?' · Age '+r.age:''),note:(r.championships>0?(r.championships+'× champion'):'')});
-        });
-        _gridChanges=_gridChanges.slice(0,16);
+        var _tr=(window._recapTransfers||[]).filter(function(x){ return x && x.driverName; });
+        var _rate=function(n){ var d=(g.drivers||[]).filter(function(y){return y.name===n;})[0]; return d?Math.round(d.rating||0):null; };
+        var _dep=_tr.filter(function(x){ return x.left; });
+        var _arr=_tr.filter(function(x){ return !x.left && !x.graduated && !x.rookie; });
+        var _moves=[], _pureArr=[], _pureDep=[];
+        _arr.forEach(function(a){ if(_dep.some(function(d){ return d.driverName===a.driverName; })) _moves.push(a); else _pureArr.push(a); });
+        _dep.forEach(function(d){ if(!_arr.some(function(a){ return a.driverName===d.driverName; })) _pureDep.push(d); });
+        var _row=function(name, detail, note){ return { name:name, detail:detail, ovr:_rate(name), note:note||'' }; };
+        _transfers={
+          moves:_moves.map(function(t){ return _row(t.driverName, (t.from||'?')+' → '+(t.to||'?'), t.upgrade?'Upgrade':'Move'); }),
+          signings:_pureArr.map(function(t){ return _row(t.driverName, 'Joins '+(t.to||'')+(t.from?(' from '+t.from):''), 'Signed'); }),
+          rookies:_tr.filter(function(x){ return x.rookie; }).map(function(t){ return _row(t.driverName, 'Joins '+(t.to||''), 'Rookie'); }),
+          departures:_pureDep.map(function(t){ return _row(t.driverName, 'Left '+(t.from||''), t.reason||'Released'); }),
+          graduates:_tr.filter(function(x){ return x.graduated; }).map(function(t){ return _row(t.driverName, 'Graduates '+(t.from||'the feeder series')+' → free agent', 'Free agent'); }),
+          retirements:((window._recapChamps&&window._recapChamps.retirements)||[]).filter(function(r){ return r&&r.name; })
+            .map(function(r){ return { name:r.name, detail:'Retired'+(r.age?' at '+r.age:''), ovr:null, note:(r.championships>0?(r.championships+'x champion'):'') }; })
+        };
+        _transfers.total=_transfers.moves.length+_transfers.signings.length+_transfers.rookies.length
+          +_transfers.departures.length+_transfers.graduates.length+_transfers.retirements.length;
       } catch(e){}
       return {
         active:!!g.offseasonPending,
         fromSeason:(noPrior?null:finishedSeason), toSeason:toSeasonV,
         steps:steps,
-        finances:_fin, carDigest:_carDigest, gridChanges:_gridChanges,
+        finances:_fin, carDigest:_carDigest, transfers:_transfers,
         review:{ position:rvPos, points:rvPts, wins:rvWins, podiums:rvPod, bestFinish:(rvPos!=null?rvPos:''),
                  headline:(noPrior?('New campaign \u2014 no prior season to review yet. Lock in contracts and set winter development for the '+toSeasonV+' season.'):'') },
         contracts:{ drivers:driverContracts, reserves:reserveContracts, staff:staffContracts },
