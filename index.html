@@ -49,7 +49,7 @@
   gtag('config', 'G-6B4MBFG3FX');
   // Single source of truth for the build number. The HQ landing reads this rather than
   // carrying its own literal, so a release bump touches the same number of places as before.
-  window.__f1dVersion = '3.0.9';
+  window.__f1dVersion = '3.1.0';
   // Analytics helper. Every call site is fire-and-forget: a missing gtag (ad blocker,
   // offline, file:// testing) or a bad param must never break gameplay, so the guard and
   // the try/catch live here once rather than being repeated at ~40 call sites.
@@ -954,16 +954,16 @@ body.hq-skin #driver-detail-modal .modal-box:has(.le-head)::before{display:none}
         </div>
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:16px;max-width:560px;padding:16px 18px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
-          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v3.0.9: What's New</div>
-          <div style="font-size:14px;font-weight:900;color:#111;margin-bottom:10px">Staff scouting with real intelligence work</div>
+          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v3.1.0: What's New</div>
+          <div style="font-size:14px;font-weight:900;color:#111;margin-bottom:10px">Clickable drivers, an open PU market, and numbers that say what they mean</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 16px">
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🔭</span><span><strong>Progressive staff reports</strong>: rival abilities arrive one finding at a time, at your Scout Network's pace and accuracy.</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🤝</span><span><strong>Approaches have weight</strong>: agent fees are charged win or lose, and a rejection closes that door for several races.</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:#888;font-weight:800;flex-shrink:0">🎧</span><span><strong>Race engineers unbound</strong>: any race engineer can be hired or poached onto either car.</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:#888;font-weight:800;flex-shrink:0">📈</span><span><strong>Season development is back</strong> on the Team HQ driver profile, with "vs current" on every staff card.</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:var(--red);font-weight:800;flex-shrink:0">🏁</span><span><strong>The finale ends like any race</strong>: review the final standings first, then press End Season to start the offseason. Overlapping popup notes and dark-on-dark text in Teams are fixed too.</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:var(--red);font-weight:800;flex-shrink:0">🔍</span><span><strong>Team HQ parity audit</strong>: contract warnings, track-weighted car stats, power-unit terms, reserve detail, scout accuracy bands and full team cards are all back on the new UI.</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:var(--red);font-weight:800;flex-shrink:0">✓</span><span><strong>One person, one paddock job</strong>: generated staff names are unique across every team and the hire market, and existing careers repair duplicate identities while preserving your own staff.</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">👤</span><span><strong>Click any driver, anywhere</strong>: names open the full profile from the garage, form guide, timing tower, standings, All Drivers, Free Agents and the race classification.</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🏁</span><span><strong>Finished races open the race you clicked</strong> on the Schedule, instead of jumping to the most recent round.</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:#888;font-weight:800;flex-shrink:0">⚖️</span><span><strong>Aero balance left the Performance Envelope</strong>: it is a weekend setup choice, not a car rating, and the envelope now says so.</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:#888;font-weight:800;flex-shrink:0">🔭</span><span><strong>No "vs current" on staff you have not scouted</strong> — the comparison waits for the first finding.</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:var(--red);font-weight:800;flex-shrink:0">⚡</span><span><strong>The PU market is open all season</strong>: browse every manufacturer from Car → Car &amp; Power Unit, and see what your engine is worth to Car Perf on any team profile.</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:var(--red);font-weight:800;flex-shrink:0">🏎️</span><span><strong>The Teams grid reads straight</strong>: two teams on the same car rating share a tier, "Overall" is "Car Perf" everywhere, and your team’s tick no longer sits on the tier badge.</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:var(--red);font-weight:800;flex-shrink:0">📊</span><span><strong>Team profiles show the working</strong>: a Car Perf breakdown lists the five pace pillars behind the headline rating, so a quick car with poor reliability finally makes sense.</span></div>
           </div>
           <button onclick="UI.showChangelog()" style="margin-top:10px;width:100%;padding:7px;background:none;border:1.5px solid rgba(192,57,43,.3);border-radius:7px;font-size:11px;font-weight:700;color:var(--red);cursor:pointer">Full release notes →</button>
         </div>
@@ -1103,7 +1103,7 @@ body.hq-skin #driver-detail-modal .modal-box:has(.le-head)::before{display:none}
       </div>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v3.0.9</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">Reddit</a> · <a href="https://discord.gg/w3R97uTBW" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">Discord</a></div>
+        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v3.1.0</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">Reddit</a> · <a href="https://discord.gg/w3R97uTBW" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">Discord</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -18976,7 +18976,10 @@ ${(()=>{ const active=(g.sponsors||[]).length; const pending=(g.pendingSponsors|
           ${g.playerEngineId && team.engineManufacturer===g.playerEngineId
             ? `<div style="font-size:12px">Status: <strong>Owned manufacturer · no expiry</strong> · Works supply</div><span style="font-size:10px;color:var(--tx3)">Developed through your winter Power Unit budget</span>`
             : `<div style="font-size:12px">Contract: <strong>${team.engineContractYears||0}yr${(team.engineContractYears||0)!==1?'s':''} remaining</strong>${team.engineContractCost?` · ${formatMoney(team.engineContractCost||0)}/yr`:' · Works team'}</div>
-               ${(team.engineContractYears||0)<=1?`<button onclick="GameActions.showEngineMarket()" class="btn btn-outline btn-sm" style="border-color:var(--amber);color:var(--amber)">🔄 Review Options</button>`:`<span style="font-size:10px;color:var(--tx3)">Renewable in ${(team.engineContractYears||3)-1}yr</span>`}`}
+               ${/* The market is readable at any time — mid-contract it is scouting, not a
+                     shortcut, since switchEngine still refuses while the deal runs.
+                     (v3.1.0, requested by IronicGerman.) */''}
+               <button onclick="GameActions.showEngineMarket()" class="btn btn-outline btn-sm" style="border-color:var(--amber);color:var(--amber)">${(team.engineContractYears||0)<=1?'🔄 Review Options':'⚡ View PU Market'}</button>`}
         </div>
         ${g._engineBreakthroughMsg?`<div style="margin-top:8px;padding:8px 10px;background:rgba(249,115,22,.1);border-radius:6px;border-left:3px solid #f97316;font-size:11px;color:#f97316;display:flex;justify-content:space-between;align-items:center"><span>${g._engineBreakthroughMsg}</span><button onclick="State.game._engineBreakthroughMsg=null;UI.renderCar()" style="background:none;border:none;cursor:pointer;color:#f97316;font-size:14px;padding:0 4px">×</button></div>`:''}
       </div>
@@ -21101,7 +21104,11 @@ const personalSlots = getPersonalSponsorSlots(d);
       if(!role.raceEngineer) return staff[roleId] || null;
       return ['re1','re2'].map(id=>staff[id]).filter(Boolean).sort((a,b)=>(a.rating||0)-(b.rating||0))[0] || null;
     };
-    const vsCurrentLabel = (rating, roleId) => {
+    // `known` is false for a rival nobody has scouted yet: the card already says the
+    // abilities are unknown, so quoting an exact gap to your own staff alongside that
+    // read as a contradiction. (v3.1.0, reported by IronicGerman.)
+    const vsCurrentLabel = (rating, roleId, known=true) => {
+      if(!known) return '<span style="color:var(--tx3)">Still scouting</span>';
       const cur = compareAgainst(roleId);
       if(!cur) return '<span style="color:var(--grn);font-weight:700">Vacant</span>';
       const d = Math.round(rating - cur.rating);
@@ -21184,7 +21191,7 @@ const personalSlots = getPersonalSponsorSlots(d);
           ? `<div style="display:flex;flex-direction:column;gap:5px;flex-shrink:0">${approachBtn('re1','Approach · Car 1')}${approachBtn('re2','Approach · Car 2')}</div>`
           : approachBtn(null,'Approach');
       return `<div style="background:var(--bg2);border:1px solid var(--bd);border-radius:10px;padding:12px;margin-bottom:8px">
-        <div style="display:flex;align-items:center;gap:10px"><div style="flex:1"><div style="font-size:10px;font-weight:800;color:var(--tx3)">${role.icon} ${escapeHtml(roleLabel)} · ${escapeHtml(x.team.name)}</div><div style="font-size:14px;font-weight:800;margin-top:2px">${escapeHtml(x.member.name)}</div><div style="font-size:10px;color:var(--tx3);margin-top:2px">Age ${x.member.age} · ${formatMoney(x.member.salary)}/yr · ${x.member.contract||1}yr left${potLabel}</div></div><div style="text-align:center;flex-shrink:0"><div style="font-size:20px;font-weight:900;color:${ratingColor(x.member.rating)}">${x.member.rating}</div><div style="font-size:9px;color:var(--tx3)">${vsCurrentLabel(x.member.rating,x.roleId)}</div></div>${actions}</div>
+        <div style="display:flex;align-items:center;gap:10px"><div style="flex:1"><div style="font-size:10px;font-weight:800;color:var(--tx3)">${role.icon} ${escapeHtml(roleLabel)} · ${escapeHtml(x.team.name)}</div><div style="font-size:14px;font-weight:800;margin-top:2px">${escapeHtml(x.member.name)}</div><div style="font-size:10px;color:var(--tx3);margin-top:2px">Age ${x.member.age} · ${formatMoney(x.member.salary)}/yr · ${x.member.contract||1}yr left${potLabel}</div></div><div style="text-align:center;flex-shrink:0"><div style="font-size:20px;font-weight:900;color:${ratingColor(x.member.rating)}">${x.member.rating}</div><div style="font-size:9px;color:var(--tx3)">${vsCurrentLabel(x.member.rating,x.roleId,view.started)}</div></div>${actions}</div>
         ${progress}${lockNote}
         ${scoutAbilityHtml(view)}
       </div>`;
@@ -26117,8 +26124,19 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const html=`
       <div style="max-height:85vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v3.0.9 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v3.1.0 · Release Notes</div>
          ${[
+    ['v3.1.0','July 2026',[
+            '⚡ The power-unit market is readable at any time, from Car → Car & Power Unit. Every manufacturer is listed with power, ERS, reliability, dev rate, price, how many teams it already supplies and its capacity, with your own supplier marked and the grid ranked by power. Previously it lived behind the offseason checklist, and in the classic UI behind a button that only appeared in the final year of your contract — so for two seasons out of three there was no way to see what the rest of the grid was running. Browsing is not a shortcut past the contract: the switch button only appears when you are actually free to sign, and says why when you are not. (Requested by IronicGerman.)',
+            '🔌 Team profiles now spell out what the power unit is worth. The engine is 40% of the Top Speed pillar and Top Speed is one of five, so a supplier carries 8% of a team’s Car Perf — the profile quotes that figure and what the best and worst manufacturers on the grid would add or cost, which is how a customer team can out-develop a works one and still lose the straights. (Requested by IronicGerman.)',
+            '👤 Driver names are clickable everywhere in Team HQ. The garage cards, the Form Guide, the dashboard timing tower, the reserve and academy call-up rows, All Drivers, the Free Agent market, both drivers’ championship tables, the Results tab and the final race classification all open the full driver profile from the name itself — the VIEW buttons stay where they were, and every row that has one is now clickable along its whole width. (Requested by IronicGerman.)',
+            '🏁 Opening a finished race from the Schedule shows that race again. If a later weekend had already been run, Team HQ was holding on to the most recent result and drew that instead, so clicking Round 1 gave you Round 4. The race you pick now wins, and a freshly finished session still takes over the result screen as before. (Reported by IronicGerman.)',
+            '⚖️ Aero balance is no longer listed in the Performance Envelope. It was sitting at the bottom of the car ratings as if it were a sixth pillar, with no grid rank and a value that changed every weekend, when it is actually the setup slider from the Race Setup panel directly above. The envelope is car ratings only now, and a caption explains that aero balance costs or gains lap time according to how close it lands to the circuit’s ideal window rather than changing the car. (Reported by IronicGerman.)',
+            '🔭 Rival staff you have not scouted no longer quote a "vs current" gap. A card that says the abilities and potential are unknown was still printing an exact comparison against your own staff; it now reads "Still scouting" until the first finding lands, in both interfaces. (Reported by IronicGerman.)',
+            '🏎️ Teams grid tiers no longer split a tie. Tier is ranked on car performance, and two teams showing the same rating could land either side of the boundary on a hidden fraction — which is how a 93 could be "Mid Tier" next to another 93 in "Top Tier". Teams on the same displayed rating now always share a tier. (Reported by IronicGerman.)',
+            '📊 "Overall" is called Car Perf everywhere, and the team profile shows where it comes from. The Teams grid was labelling the car-pace rating "OVR" while also carrying a separate "Car" bar for the raw chassis stat, so two different numbers had near-identical names — there is one now, matching the classic Teams page and the Standings CAR column. The team profile adds a Car Perf breakdown listing the five pace pillars behind the headline number, which is why a team can run a 93 car on 65 reliability. (Reported by IronicGerman.)',
+            '✓ The "your team" tick on the Teams grid moved to the top left of the card, clear of the tier badge it was overlapping in the top-right corner. (Reported by IronicGerman.)',
+          ]],
     ['v3.0.9','July 2026',[
             '🛡️ Importing a save backup can no longer overwrite the wrong career. If all five local slots are occupied, the import stops before changing anything and asks you to delete the exact career you intend to replace first. Previously it silently chose the least-recently-saved slot, which could destroy a long-running dynasty that simply had not been opened lately. (Reported by ZareJonathan.)',
             '&#10003; Staff identities are now unique across the whole paddock. Fresh careers reserve roster-editor names before filling generated positions, then exclude every active and market name case-insensitively from later generation. Existing careers repair duplicate names on load, preserve the player team\'s copy, refresh any linked scout-report name, and retry even if the incomplete first migration had already marked the save as fixed. Staff moving between teams still keep their identity and scouting history. (Reported by IronicGerman.)',
@@ -34134,6 +34152,7 @@ window._wrPitwallInit = function(){
         try {
           var _rd=(State.game&&(WR&&WR.isSprint?State.game.lastSprintResult:State.game.lastRaceResult))||window._hqLastRecap||null;
           if(_rd)window._hqLastRecap=_rd;
+          try{ State.game._hqViewedRaceIndex=null; }catch(e){}
           window._hqScreen='raceResult';
           if(window._hqRC){window._hqRC.render(window._buildHQAll());window._hqRC.show('raceResult');}
           window._hqRestore&&window._hqRestore();
@@ -34477,6 +34496,72 @@ window._pwHandleOrder = function(code, val){
 }
 </style>`);
       _hq = _hq.replace('</head>','<style id="hq-type-lock">.gm,.gm button,.gm input,.gm select,.gm textarea{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}.gm .objlbl{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-weight:650}.gm .objst,.gm .objrw{font-family:"Segoe UI",system-ui,-apple-system,sans-serif}</style></head>');
+      // On the Teams grid the "your team" tick sat on top of the tier chip in the card's top
+      // right. The landing paddock picker has no chip there, so only the grid moves the tick
+      // to the free top-left corner above the rating ring. (v3.1.0, reported by IronicGerman.)
+      _hq = _hq.replace('</head>','<style id="hq-teams-selmark">.screen[data-screen="teams"] .lteam .lselmark{right:auto;left:13px}.screen[data-screen="teams"] .lteam .lteamnm{max-width:100%}</style></head>');
+      // Driver names open the profile wherever they appear. `.hq-dlink` marks a name that
+      // carries its own viewDriver action; `.hq-drow` marks a row that already holds a VIEW
+      // button, and the delegate below reuses it. (v3.1.0, requested by IronicGerman.)
+      _hq = _hq.replace('</head>','<style id="hq-driver-links">.hq-dlink{cursor:pointer;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:2px;text-decoration-color:rgba(232,17,45,.38)}.hq-dlink:hover{color:var(--red);text-decoration-color:var(--red)}.hq-drow{cursor:pointer}.hq-drow:hover{background:rgba(232,17,45,.045)}</style></head>');
+      // The supplier cards carry four stats, so the default three-column .statg left a
+      // ragged 3+1 row that made the manufacturers hard to compare down the column.
+      _hq = _hq.replace('</head>','<style id="hq-pu-market">.pumktg{grid-template-columns:repeat(4,minmax(0,1fr));gap:7px!important;margin-top:8px!important}.pumktg .putile{padding:7px 9px}.pumktg .putile .k{font-size:8.5px;letter-spacing:.04em}.pumktg .putile .v{font-size:15px}@media(max-width:620px){.pumktg{grid-template-columns:repeat(2,minmax(0,1fr))}}</style></head>');
+      _hq = _hq.replace(
+        "      emit(a, payload); // next | save | simulate | enterRace | renewDriver | signSponsor | deployScout | signProspect | hireStaff | signJunior | viewTeam | ...\n    }\n  });",
+        [ "      emit(a, payload); // next | save | simulate | enterRace | renewDriver | signSponsor | deployScout | signProspect | hireStaff | signJunior | viewTeam | ...",
+          "      return;",
+          "    }",
+          "    // Fallback: a click anywhere in a row that already carries a VIEW-profile button",
+          "    // opens that profile, so the driver's name is live too.",
+          "    var drow = e.target.closest('.hq-drow');",
+          "    if (drow){",
+          "      var vd = drow.querySelector('[data-act=\"viewDriver\"]');",
+          "      if (vd){",
+          "        var vraw = vd.getAttribute('data-arg'), vpay;",
+          "        if (vraw){ try { vpay = JSON.parse(vraw); } catch(err){ vpay = vraw; } }",
+          "        emit('viewDriver', vpay);",
+          "      }",
+          "    }",
+          "  });" ].join("\n")
+      );
+      // Rows that already own a VIEW button just opt into the delegate above.
+      _hq = _hq.replace(
+        "'<div class=\"fx ac jb gap10\" style=\"padding:12px 16px;border-bottom:1px solid var(--line)\">'",
+        "'<div class=\"fx ac jb gap10 hq-drow\" style=\"padding:12px 16px;border-bottom:1px solid var(--line)\">'"
+      );
+      _hq = _hq.replace(
+        "+esc(r.name)+'</div><div class=\"fs11 mut\">'+esc(r.nat||'')+' \u00B7 Age '+r.age+' \u00B7 OVR '+r.ovr",
+        "+'<span class=\"hq-dlink\">'+esc(r.name)+'</span></div><div class=\"fs11 mut\">'+esc(r.nat||'')+' \u00B7 Age '+r.age+' \u00B7 OVR '+r.ovr"
+      );
+      _hq = _hq.replace("'<div class=\"fam\">'", "'<div class=\"fam hq-drow\">'");
+      // The free-agent name line has already been rewritten by the pre-contract patch above,
+      // so anchor on the fragment both versions share.
+      _hq = _hq.replace(
+        "'+trait+esc(r.name)+",
+        "'+trait+'<span class=\"hq-dlink\">'+esc(r.name)+'</span>'+"
+      );
+      // Names that had no VIEW button anywhere in the row carry the action themselves.
+      _hq = _hq.replace(
+        "<div class=\"pname\">'+d.first+'<br>'+d.last+'</div>'",
+        "<div class=\"pname hq-dlink\" data-act=\"viewDriver\" data-arg=\\''+argOf({id:d.id,name:d.name})+'\\'>'+d.first+'<br>'+d.last+'</div>'"
+      );
+      _hq = _hq.replace(
+        "'<div class=\"formrow\"><span class=\"objlbl\">'+esc(r.name)+'</span><div class=\"formdots\">'",
+        "'<div class=\"formrow\"><span class=\"objlbl hq-dlink\" data-act=\"viewDriver\" data-arg=\\''+argOf({id:r.id,name:r.name})+'\\'>'+esc(r.name)+'</span><div class=\"formdots\">'"
+      );
+      _hq = _hq.replace(
+        "+ '<span class=\"tnm\">'+esc(l.name)+(l.fl?' <span class=\"flb\">FL</span>':'')",
+        "+ '<span class=\"tnm hq-dlink\" data-act=\"viewDriver\" data-arg=\\''+argOf({id:l.id,name:l.name})+'\\'>'+esc(l.name)+(l.fl?' <span class=\"flb\">FL</span>':'')"
+      );
+      _hq = _hq.replace(
+        "'<div class=\"fx ac\" style=\"min-width:0\"><span class=\"tnm nowrap\" style=\"overflow:hidden;text-overflow:ellipsis\">'+esc(c.name)+",
+        "'<div class=\"fx ac\" style=\"min-width:0\"><span class=\"tnm nowrap hq-dlink\" data-act=\"viewDriver\" data-arg=\\''+argOf({id:c.id,name:c.name})+'\\' style=\"overflow:hidden;text-overflow:ellipsis\">'+esc(c.name)+"
+      );
+      _hq = _hq.replace(
+        "+ '<span class=\"fw7 fs13\" style=\"min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap\">'+esc(x.name)+'</span>'",
+        "+ '<span class=\"fw7 fs13 hq-dlink\" data-act=\"viewDriver\" data-arg=\\''+argOf({id:x.id,name:x.name})+'\\' style=\"min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap\">'+esc(x.name)+'</span>'"
+      );
       // Qualifying is a complete result, so keep every driver visible instead of hiding the
       // lower half behind an inner scrollbar. Desktop uses the card width for two ordered
       // columns; phones return to one compact column and use the page's normal scrolling.
@@ -34516,7 +34601,10 @@ window._pwHandleOrder = function(code, val){
       development:function(a,b){return (b.development||0)-(a.development||0);}
     };
     var teams=(T.teams||[]).slice().sort(cmp[key]||cmp.tier);
-    var controls=[['tier','Top Tier'],['ovr','Overall'],['car','Car'],['reliability','Reliability'],['facilities','Facilities'],['development','Development']].map(function(s){return '<button class="setbtn'+(key===s[0]?' on':'')+'" data-teamsort="'+s[0]+'">'+s[1]+'</button>';}).join('');
+    // "Overall" was the car-pace rating and "Car" was the raw chassis stat behind it, so the
+    // grid showed two different numbers under near-identical names. One label now, matching
+    // the classic Teams page and the Standings CAR column. (v3.1.0, IronicGerman.)
+    var controls=[['tier','Top Tier'],['ovr','Car Perf'],['reliability','Reliability'],['facilities','Facilities'],['development','Development']].map(function(s){return '<button class="setbtn'+(key===s[0]?' on':'')+'" data-teamsort="'+s[0]+'">'+s[1]+'</button>';}).join('');
     function bar(label,val,col){return '<div style="display:grid;grid-template-columns:72px minmax(80px,1fr) 28px;gap:7px;align-items:center;margin-top:6px"><span class="fs10 mut">'+label+'</span><div class="smeter lite" style="height:6px"><div class="smf" style="width:'+Math.max(0,Math.min(100,val||0))+'%;background:'+col+'"></div></div><b class="mono fs10" style="text-align:right">'+(val||0)+'</b></div>';}
     var cards=teams.map(function(t,index){
       var c=t.color||'#9aa3b4',badge=TIER[t.tier]||'chipN';
@@ -34525,7 +34613,7 @@ window._pwHandleOrder = function(code, val){
       var posLbl=t.pos?('P'+t.pos):('#'+(index+1));
       var meta=[t.nationality,'Prestige '+t.prestige,'$'+t.budget+'M',(t.engine?'⚡ '+t.engine:'')].filter(Boolean).join(' · ');
       var facLine=(t.facilityUnits||[]).length?'<div class="fs10 mut mt4">'+(t.facilityUnits||[]).map(function(f){return esc(f.icon)+' '+f.value;}).join(' · ')+'</div>':'';
-      return '<button class="lteam'+(t.isPlayer?' sel':'')+'" data-act="viewTeam" data-arg=\''+argOf({id:t.id})+'\' style="text-align:left"><span class="lselmark">✓</span><div class="lteamtop"><div class="lteamring" style="background:conic-gradient('+c+' '+t.ovr+'%,#e8eaef 0)"><div class="in"><span class="n">'+t.ovr+'</span><span class="l">OVR</span></div></div><div class="lteaminfo"><div class="fx ac jb gap8"><div class="lteamnm"><span class="mono fs10 mut" style="margin-right:6px">'+posLbl+'</span>'+esc(t.name)+'</div><span class="'+badge+'">'+esc(t.tier)+' Tier</span></div><div class="lteambase" style="margin-top:5px">'+esc(meta)+'</div><div class="lteamdrv">'+drv+'</div>'+bar('Car',t.car,c)+bar('Reliability',t.reliability,'var(--grn)')+bar('Facilities',t.facilities,'var(--blu)')+bar('Development',t.development,'var(--amb)')+facLine+'<div class="fx ac jb gap8 mt8"><span class="fs11 fw7">'+t.seasonPoints+' pts this season</span><span class="fs10 red fw7">OPEN TEAM PROFILE →</span></div></div></div></button>';
+      return '<button class="lteam'+(t.isPlayer?' sel':'')+'" data-act="viewTeam" data-arg=\''+argOf({id:t.id})+'\' style="text-align:left"><span class="lselmark">✓</span><div class="lteamtop"><div class="lteamring" style="background:conic-gradient('+c+' '+t.ovr+'%,#e8eaef 0)"><div class="in"><span class="n">'+t.ovr+'</span><span class="l">CAR</span></div></div><div class="lteaminfo"><div class="fx ac jb gap8"><div class="lteamnm"><span class="mono fs10 mut" style="margin-right:6px">'+posLbl+'</span>'+esc(t.name)+'</div><span class="'+badge+'">'+esc(t.tier)+' Tier</span></div><div class="lteambase" style="margin-top:5px">'+esc(meta)+'</div><div class="lteamdrv">'+drv+'</div>'+bar('Car Perf',t.ovr,c)+bar('Reliability',t.reliability,'var(--grn)')+bar('Facilities',t.facilities,'var(--blu)')+bar('Development',t.development,'var(--amb)')+facLine+'<div class="fx ac jb gap8 mt8"><span class="fs11 fw7">'+t.seasonPoints+' pts this season</span><span class="fs10 red fw7">OPEN TEAM PROFILE →</span></div></div></div></button>';
     }).join('')||emptyState('No teams on the grid.');
     el.innerHTML=secH('Rival Paddock'+(TeamHQ.data.team&&TeamHQ.data.team.season?' · '+TeamHQ.data.team.season+' Grid':''))+'<div class="fx ac gap8 wrap mb16"><span class="fs10 fnt hudf">SORT BY</span>'+controls+'</div><div class="lteams">'+cards+'</div>';
   }
@@ -34582,7 +34670,7 @@ window._pwHandleOrder = function(code, val){
       // Completed and pending scouting reports for current grid drivers were another classic
       // section that had no HQ destination.
       _hq = _hq.replace("    el.innerHTML = note + '<div class=\"cols\">", function(){ return String.raw`    var gridBlock='';
-    if((S.gridReports||[]).length||(S.pendingGrid||[]).length){var gr=(S.gridReports||[]).map(function(r){return '<div class="upr"><div><b>'+esc(r.name)+'</b><div class="fs11 mut mt4">'+esc(r.team)+' · Age '+r.age+' · '+esc(r.nat)+'</div></div><span class="chipT">REPORT COMPLETE</span><b class="mono fs15">'+r.result+' OVR</b><button class="renew ghost" data-act="viewDriver" data-arg=\''+argOf({id:r.id,name:r.name})+'\'>VIEW</button></div>';}).join(''),pg=(S.pendingGrid||[]).map(function(r){return '<div class="mkr" style="opacity:.65"><b>'+esc(r.name)+'</b><span class="fs11 mut">Scouts in the field</span><span class="chipN">'+r.remaining+' RACES LEFT</span></div>';}).join('');gridBlock='<div style="margin-top:26px">'+secH('Grid Driver Reports')+'<div class="card cardp">'+gr+pg+'</div></div>';}
+    if((S.gridReports||[]).length||(S.pendingGrid||[]).length){var gr=(S.gridReports||[]).map(function(r){return '<div class="upr hq-drow"><div><b class="hq-dlink">'+esc(r.name)+'</b><div class="fs11 mut mt4">'+esc(r.team)+' · Age '+r.age+' · '+esc(r.nat)+'</div></div><span class="chipT">REPORT COMPLETE</span><b class="mono fs15">'+r.result+' OVR</b><button class="renew ghost" data-act="viewDriver" data-arg=\''+argOf({id:r.id,name:r.name})+'\'>VIEW</button></div>';}).join(''),pg=(S.pendingGrid||[]).map(function(r){return '<div class="mkr" style="opacity:.65"><b>'+esc(r.name)+'</b><span class="fs11 mut">Scouts in the field</span><span class="chipN">'+r.remaining+' RACES LEFT</span></div>';}).join('');gridBlock='<div style="margin-top:26px">'+secH('Grid Driver Reports')+'<div class="card cardp">'+gr+pg+'</div></div>';}
     el.innerHTML = note + '<div class="cols">`; });
       _hq = _hq.replace("      + '<div style=\"margin-top:26px\">'+secH('Prospect Shortlist · '+((S.prospects||[]).length)+' Discovered')+'<div class=\"card\">'+pros+'</div></div>';", "      + '<div style=\"margin-top:26px\">'+secH('Prospect Shortlist · '+((S.prospects||[]).length)+' Discovered')+'<div class=\"card\">'+pros+'</div></div>' + gridBlock;");
       _hq = _hq.replace("document.addEventListener('input', function(e){", "document.addEventListener('input', function(e){ if(e.target&&e.target.dataset&&e.target.dataset.diversion!=null){ emit('setQuarterDiversion',{qi:parseInt(e.target.dataset.diversion,10)||0,value:(parseInt(e.target.value,10)||0)/100}); var b=e.target.parentElement&&e.target.parentElement.querySelector('b');if(b)b.textContent=(parseInt(e.target.value,10)||0)+'% new regs';return;} if(e.target&&e.target.dataset&&e.target.dataset.quarter){ emit('setQuarterDev',{qi:parseInt(e.target.dataset.quarter,10)||0,key:e.target.dataset.key,value:parseInt(e.target.value,10)||0}); return; }");
@@ -34604,8 +34692,8 @@ window._pwHandleOrder = function(code, val){
       var statusCol=r.preToMe?'var(--grn)':(r.preSigned&&!r.preStaying?'var(--vio)':(r.freeAgent?'var(--grn)':(r.reserve?'var(--amb)':'var(--mut)')));
       var preChip=r.preToMe?' <span class="chipT" style="font-size:8px" title="Pre-contract agreed — joins your team next season">SIGNED FOR NEXT SEASON</span>'
         :(r.preSigned&&!r.preStaying?' <span class="chipN" style="font-size:8px" title="Committed to '+esc(r.preTo||'another team')+' for next season">→ '+esc(r.preTo||'COMMITTED')+'</span>':'');
-      return '<div class="fam"'+(r.mine?' style="background:rgba(232,17,45,.035)"':'')+'>'
-        +'<div style="min-width:0"><div class="fw7 fs13" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(r.traitIcon?'<span title="'+esc(r.traitLabel||'')+'">'+r.traitIcon+'</span> ':'')+esc(r.name)+(r.reserve?' <span class="chipN" style="font-size:8px">RSV</span>':'')+preChip+'</div><div class="fs11 mut" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(r.nat||'')+' · Age '+r.age+' · '+esc(r.freeAgent?'Available':r.team||'Unassigned')+'</div></div>'
+      return '<div class="fam hq-drow"'+(r.mine?' style="background:rgba(232,17,45,.035)"':'')+'>'
+        +'<div style="min-width:0"><div class="fw7 fs13" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(r.traitIcon?'<span title="'+esc(r.traitLabel||'')+'">'+r.traitIcon+'</span> ':'')+'<span class="hq-dlink">'+esc(r.name)+'</span>'+(r.reserve?' <span class="chipN" style="font-size:8px">RSV</span>':'')+preChip+'</div><div class="fs11 mut" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(r.nat||'')+' · Age '+r.age+' · '+esc(r.freeAgent?'Available':r.team||'Unassigned')+'</div></div>'
         +'<span class="mono fs12 tc famh2">'+r.pace+'</span><span class="mono fs12 tc famh2">'+r.quali+'</span><span class="mono fs12 tc famh2">'+r.consistency+'</span><span class="mono fs12 tc famh2">'+r.wet+'</span>'
         +'<span class="fw8 mono tc fs14">'+r.ovr+'</span><span class="mono fs12 fw7 tc">'+r.points+'</span>'
         +'<span class="fs10 fw8" style="text-align:right;color:'+statusCol+'">'+status+'</span>'
@@ -34874,7 +34962,7 @@ window._pwHandleOrder = function(code, val){
     }
     function sortHead(kind,key,label){var st=(TeamHQ._standingsSort||{})[kind]||{key:'points',dir:-1};return '<button type="button" class="'+(st.key===key?'on':'')+'" data-hqssort="'+key+'" data-hqssort-kind="'+kind+'">'+label+(st.key===key?(st.dir<0?' ▼':' ▲'):'')+'</button>';}
     function driversTable(){
-      var rows=sortRows('drivers',S.drivers||[]).map(function(d){var ar=argOf({id:d.id,name:d.name});return '<tr class="'+(d.isPlayer?'mine':'')+'"><td><span class="stpos">'+(d.isSubstitute?'—':d.pos)+'</span></td><td>'+delta(d.delta)+'</td><td><div class="stname"><i class="stbar" style="background:'+esc(d.color||'#888')+'"></i><div><b>'+esc(d.name)+'</b>'+(d.isSubstitute?' <span class="chipT" style="font-size:8px">SUB</span>':'')+'<div class="fs10 mut mt4">'+esc(d.team||'')+'</div></div></div></td><td class="mono fw8">'+d.points+'</td><td class="mono">'+d.wins+'</td><td class="mono">'+d.podiums+'</td><td class="mono">'+d.poles+'</td><td class="mono">'+d.dnfs+'</td><td class="mono">'+d.fastestLaps+'</td><td class="mono">'+d.ovr+'</td><td class="mono">'+d.age+'</td><td><button class="renew ghost stview" data-act="viewDriver" data-arg=\''+ar+'\'>VIEW</button></td></tr>';}).join('');
+      var rows=sortRows('drivers',S.drivers||[]).map(function(d){var ar=argOf({id:d.id,name:d.name});return '<tr class="hq-drow '+(d.isPlayer?'mine':'')+'"><td><span class="stpos">'+(d.isSubstitute?'—':d.pos)+'</span></td><td>'+delta(d.delta)+'</td><td><div class="stname"><i class="stbar" style="background:'+esc(d.color||'#888')+'"></i><div><b class="hq-dlink">'+esc(d.name)+'</b>'+(d.isSubstitute?' <span class="chipT" style="font-size:8px">SUB</span>':'')+'<div class="fs10 mut mt4">'+esc(d.team||'')+'</div></div></div></td><td class="mono fw8">'+d.points+'</td><td class="mono">'+d.wins+'</td><td class="mono">'+d.podiums+'</td><td class="mono">'+d.poles+'</td><td class="mono">'+d.dnfs+'</td><td class="mono">'+d.fastestLaps+'</td><td class="mono">'+d.ovr+'</td><td class="mono">'+d.age+'</td><td><button class="renew ghost stview" data-act="viewDriver" data-arg=\''+ar+'\'>VIEW</button></td></tr>';}).join('');
       return secH("Drivers' Championship · "+(S.drivers||[]).length+' Classified')+'<div class="stintro">Full championship detail, including countback position, retirements, fastest laps and current driver rating. Select View for the complete profile.</div><div class="stcard sttblwrap"><table class="sttbl"><thead><tr><th>#</th><th>±</th><th>'+sortHead('drivers','name','DRIVER')+'</th><th>'+sortHead('drivers','points','PTS')+'</th><th>'+sortHead('drivers','wins','W')+'</th><th>'+sortHead('drivers','podiums','POD')+'</th><th>'+sortHead('drivers','poles','POLE')+'</th><th>'+sortHead('drivers','dnfs','DNF')+'</th><th>'+sortHead('drivers','fastestLaps','FL')+'</th><th>'+sortHead('drivers','ovr','OVR')+'</th><th>'+sortHead('drivers','age','AGE')+'</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>';
     }
     function constructorsTable(){
@@ -34997,7 +35085,49 @@ window._pwHandleOrder = function(code, val){
         "<div class=\"fs11 mut\" style=\"margin-top:8px;text-align:center\">Unit #'+(D.power.unitNumber||1)+' this season · '+(D.power.freeLeft||0)+' free allocation'+((D.power.freeLeft||0)===1?'':'s')+' left before grid penalties.</div>'"
         + "+ (D.power.contract?'<div class=\"fs11\" style=\"margin-top:8px;text-align:center;color:'+(D.power.contractWarn?'var(--amb)':'var(--mut)')+'\">Contract: '+esc(D.power.contract)+'</div>':'')"
         + "+ (D.power.standing?'<div class=\"fs11 mut\" style=\"margin-top:4px;text-align:center\">'+esc(D.power.standing)+'</div>':'')"
+        + "+ (D.power.canRenew?'<div style=\"margin-top:10px\"><button class=\"gcta2\" data-act=\"carRenewEngine\">Renew '+esc(D.power.name)+' (3yr)</button></div>':'')"
+        + "+ puMarket(D.power)"
         + "+ '"
+      );
+      // The supplier market, rendered inline under the Power Unit panel rather than behind
+      // the offseason checklist. (v3.1.0, requested by IronicGerman.)
+      // NB: function replacement — the body below contains `'$'+s.cost`, and as a string
+      // replacement that `$'` would be expanded as a regex-replacement pattern and splice
+      // the rest of the shell in, silently breaking its <script>.
+      _hq = _hq.replace(
+        "  function renderCar(){",
+        function(){ return [ "  function puMarket(P){",
+          "    var list = (P && P.suppliers) || [];",
+          "    if (!list.length) return '';",
+          "    var rows = list.map(function(s){",
+          "      var chip = s.isCurrent ? '<span class=\"chipT\" style=\"font-size:8px\">CURRENT</span>'",
+          "        : (s.atCapacity ? '<span class=\"chipR\" style=\"font-size:8px\">AT CAPACITY</span>' : '');",
+          "      var stat = function(k,v,rank,col){",
+          "        return '<div class=\"putile\"><div class=\"k\">'+k+(rank?' <span class=\"mut\">P'+rank+'</span>':'')+'</div><div class=\"v\" style=\"color:'+col+'\">'+v+'</div></div>';",
+          "      };",
+          "      var action = s.canSwitch",
+          "        ? '<button class=\"renew\" data-act=\"carSwitchEngine\" data-arg=\\''+argOf({id:s.id,name:s.name})+'\\'>SWITCH \\u00B7 3YR '+(s.cost?('$'+s.cost+'M/YR'):'WORKS RATE')+'</button>'",
+          "        : (s.blocked ? '<div class=\"fs10 mut tc\">'+esc(s.blocked)+'</div>' : '');",
+          "      return '<div class=\"card cardp\" style=\"margin-bottom:8px'+(s.isCurrent?';border-color:var(--grn)':'')+'\">'",
+          "        + '<div class=\"fx ac jb gap8 wrap\"><div class=\"fw8 fs14\">'+esc(s.name)+' '+chip+'</div>'",
+          "        + '<b class=\"fs12\" style=\"color:var(--amb)\">'+(s.cost?('$'+s.cost+'M/yr'):'Works rate')+'</b></div>'",
+          "        + '<div class=\"statg pumktg\" style=\"margin-top:8px\">'",
+          "        + stat('POWER', s.power.toFixed(1), s.powerRank, 'var(--amb)')",
+          "        + stat('ERS', s.ers.toFixed(1), s.ersRank, 'var(--vio)')",
+          "        + stat('RELIABILITY', s.reliability.toFixed(1), 0, 'var(--grn)')",
+          "        + stat('DEV RATE', s.devRate+'/10', 0, 'var(--blu)')",
+          "        + '</div>'",
+          "        + (s.desc?'<div class=\"fs11 mut\" style=\"margin-top:8px\">'+esc(s.desc)+'</div>':'')",
+          "        + '<div class=\"fs10 mut\" style=\"margin-top:6px\">'+s.users+' team'+(s.users===1?'':'s')+' supplied \\u00B7 max '+s.max+'</div>'",
+          "        + (action?'<div style=\"margin-top:9px\">'+action+'</div>':'')",
+          "        + '</div>';",
+          "    }).join('');",
+          "    return '<div style=\"margin-top:16px;padding-top:14px;border-top:1px solid var(--line)\">'",
+          "      + '<div class=\"fs10 fnt hudf mb8\" style=\"letter-spacing:.12em\">SUPPLIER MARKET \\u00B7 '+list.length+' MANUFACTURERS</div>'",
+          "      + (P.marketNote?'<div class=\"fs11 mut\" style=\"margin:-2px 0 11px;line-height:1.5\">'+esc(P.marketNote)+'</div>':'')",
+          "      + rows + '</div>';",
+          "  }",
+          "  function renderCar(){" ].join("\n"); }
       );
       // Landing parity: the classic save card names the manager and says when the slot was
       // last played — with several careers on the same team those are the only things that
@@ -35174,6 +35304,9 @@ window._pwHandleOrder = function(code, val){
           "        + '<div class=\"f1\"><div class=\"fs10 fnt hudf\">CAR AT THIS CIRCUIT</div><div class=\"fs11 mut\">Track-weighted rating for '+esc(C.trackName||'this weekend')+'</div></div>'",
           "        + '<b class=\"mono fw8\" style=\"font-size:14px;color:'+_trkCol+'\">P'+C.trackRank+'<span class=\"fs10 mut fw6\"> of '+(C.teamCount||0)+'</span></b>'",
           "        + '</div>' + stats;",
+          "    }",
+          "    if (C.aeroNote){",
+          "      stats += '<div class=\"fs11 mut\" style=\"margin-top:11px;line-height:1.5\">\\u2696\\uFE0F '+esc(C.aeroNote)+'</div>';",
           "    }" ].join("\n")
       );
       // Repeated notes (a toggle tapped several times) stacked as separate cards and filled
@@ -35375,7 +35508,7 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       var btn=function(target,label){return '<button class="renew'+(r.lock>0?' ghost':'')+'"'+(r.lock>0?' disabled style="opacity:.45;cursor:not-allowed"':'')+' data-act="poachStaff" data-arg=\''+argOf({teamId:r.teamId,role:r.roleId,target:target})+'\'>'+label+'</button>';};
       var actions=!r.scouting?'<button class="renew" data-act="scoutStaff" data-arg=\''+argOf({teamId:r.teamId,role:r.roleId})+'\'>SCOUT</button>'
         :(r.raceEngineer?'<div class="fx gap6 wrap">'+btn('re1','APPROACH · CAR 1')+btn('re2','APPROACH · CAR 2')+'</div>':btn(null,'APPROACH'));
-      return '<div class="card cardp" style="display:flex;flex-direction:column;gap:10px"><div class="fx jb gap10"><div><div class="fs10 fnt hudf">'+esc((r.role+' · '+r.team).toUpperCase())+'</div><div class="fw8 fs16 mt4">'+esc(r.name)+'</div><div class="fs11 mut mt4">Age '+esc(r.age)+' · $'+esc(r.salary)+'M/yr · '+esc(r.years)+'yr left'+(r.potential!=null?' · Potential '+(r.band?'~':'')+esc(r.potential):'')+'</div></div><div class="tc"><span class="mono fw8" style="font-size:22px">'+esc(r.rating)+'</span><div class="fs10 mut">'+esc(vsCurrent(r.delta))+'</div></div></div>'+bar(r.rating)+progress+lockNote+scoutAbilities(r)+actions+'</div>';
+      return '<div class="card cardp" style="display:flex;flex-direction:column;gap:10px"><div class="fx jb gap10"><div><div class="fs10 fnt hudf">'+esc((r.role+' · '+r.team).toUpperCase())+'</div><div class="fw8 fs16 mt4">'+esc(r.name)+'</div><div class="fs11 mut mt4">Age '+esc(r.age)+' · $'+esc(r.salary)+'M/yr · '+esc(r.years)+'yr left'+(r.potential!=null?' · Potential '+(r.band?'~':'')+esc(r.potential):'')+'</div></div><div class="tc"><span class="mono fw8" style="font-size:22px">'+esc(r.rating)+'</span><div class="fs10 mut">'+(r.deltaHidden?'STILL SCOUTING':esc(vsCurrent(r.delta)))+'</div></div></div>'+bar(r.rating)+progress+lockNote+scoutAbilities(r)+actions+'</div>';
     }
     var delegate='<div class="card cardp mb16"><div class="fx jb ac gap12 wrap"><div><div class="fw8 fs15">Engineer-managed engine modes</div><div class="fs11 mut mt4">Race engineers manage Conserve, Normal and Push with a small ability-based execution trade-off.</div></div><button class="renew'+(S.engineDelegate?'':' ghost')+'" data-act="toggleStaffEngineDelegate">'+(S.engineDelegate?'ENABLED':'ENABLE')+'</button></div></div>';
     var roles=(S.roles||[]).map(roleCard).join('')||emptyState('No staff hired.');
@@ -35422,7 +35555,7 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
         // Morale and trait were on the classic dashboard driver card and missing here.
         // Morale drives race performance and contract demands, so it is decision information.
         var _tr=null; try { _tr=d.trait&&((typeof DATA!=='undefined'&&DATA.traitDefs)||{})[d.trait]; } catch(e){}
-        return { first: parts.slice(0,-1).join(' ')||parts[0]||'', last: parts.slice(-1)[0]||'', nat: nat2(d), age: d.age||0, years: d.contract||0, ovr: ovr, tier: ovr>=90?'gold':'', role:'\u25C9 DRIVER',
+        return { id: d.id, name: d.name||'', first: parts.slice(0,-1).join(' ')||parts[0]||'', last: parts.slice(-1)[0]||'', nat: nat2(d), age: d.age||0, years: d.contract||0, ovr: ovr, tier: ovr>=90?'gold':'', role:'\u25C9 DRIVER',
                  note: _tr?((_tr.icon||'')+' '+(_tr.label||'')):'', morale: d.morale!=null?Math.round(d.morale):null,
                  injury:(function(){ try{ var inj=State.getActiveInjury&&State.getActiveInjury(d.id); return inj?{type:inj.type||'Injury',races:Math.max(0,(inj.returnsAfterRace||0)-(g.raceIndex||0)+1)}:null; }catch(e){ return null; } })(),
                  atRisk:(d.contract||0)<=1, stats:{ Pace: Math.round(d.racePace||d.race||0), Quali: Math.round(d.qualifying||0), Con: Math.round(d.consistency||0) }, form:{ color: ovr>=90?'var(--amb)':'var(--mut)', label:'\u2013' } };
@@ -35570,11 +35703,11 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
             // classification must never cut off P9 and P10.
             var rows=lastDone.raceResult.slice().sort(function(a,b){ if(a.dnf&&b.dnf) return 0; if(a.dnf) return 1; if(b.dnf) return -1; return (a.position||99)-(b.position||99); }).slice(0,10);
             tower={ title:'Last Race \u00B7 '+(lastDone.name||''), header:'FINISH', badge:'FINAL', summary: window._raceStoryText(lastDone,false),
-              lines: rows.map(function(r){ var tt=team_(g,r.teamId); return { pos:(r.dnf?'DNF':(r.position||'')), color:(tt.color||'#565d6c'), name:(r.driverName||''), fl:!!r.fastestLap, team:(r.teamName||tt.name||''), pts:(r.points||0), me:String(r.teamId)===String(teamId) }; }) };
+              lines: rows.map(function(r){ var tt=team_(g,r.teamId); return { id:r.driverId, pos:(r.dnf?'DNF':(r.position||'')), color:(tt.color||'#565d6c'), name:(r.driverName||''), fl:!!r.fastestLap, team:(r.teamName||tt.name||''), pts:(r.points||0), me:String(r.teamId)===String(teamId) }; }) };
           } else {
             var ds=[]; try { ds=(State.getDriverStandings()||[]).slice(0,10); } catch(e){}
             tower={ title:'Championship Order', header:'POS', badge:'STANDINGS',
-              lines: ds.map(function(r,ix){ var d=r.driver||{}; var tt=team_(g,d.teamId); return { pos:ix+1, color:(tt.color||'#565d6c'), name:(d.name||''), fl:false, team:(tt.name||''), pts:(r.points||0), me:String(d.teamId)===String(teamId) }; }) };
+              lines: ds.map(function(r,ix){ var d=r.driver||{}; var tt=team_(g,d.teamId); return { id:d.id, pos:ix+1, color:(tt.color||'#565d6c'), name:(d.name||''), fl:false, team:(tt.name||''), pts:(r.points||0), me:String(d.teamId)===String(teamId) }; }) };
           }
         } catch(e){}
 
@@ -35632,7 +35765,7 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
           if(last5.length && pd.length){
             form={ races:last5.map(function(r){return (r.name||'').replace(' Grand Prix','');}),
                    rows: pd.map(function(d){
-                     return { name:d.name, dots:last5.map(function(r){
+                     return { id:d.id, name:d.name, dots:last5.map(function(r){
                        var res=(r.raceResult||[]).find(function(x){return x.driverId===d.id;});
                        if(!res) return { label:'\u2013', kind:'na', tip:'Did not race' };
                        if(res.dnf) return { label:'DNF', kind:'dnf', tip:'DNF'+(res.dnfLap?' (L'+res.dnfLap+')':'') };
@@ -35800,14 +35933,15 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
         }
       } catch(e){}
       var landingTheme='light'; try { landingTheme=localStorage.getItem('f1d_theme')==='dark'?'dark':'light'; } catch(e){}
-      return { appearance:{theme:landingTheme}, landing:{ saves:saves, teams:teams, selectedTeam:sel, challenge:challenge, patchVersion:(window.__f1dVersion||'3.0.9'), whatsNew:[
-        {tag:'FIX', text:'Staff names are unique across teams and the hire market; existing saves repair duplicates while preserving your own staff member.'},
-        {tag:'NEW', text:'Rival staff reports now arrive one finding at a time, at your Scout Network’s pace and accuracy — approach on a guess or wait for the full picture.'},
-        {tag:'FIX', text:'Approaches cost agent fees win or lose and a rejection blocks that target for several races, so staff can no longer be brute-forced.'},
-        {tag:'FIX', text:'Race engineers can be hired or poached onto either car, and the Team HQ driver profile shows season development again.'},
-        {tag:'NEW', text:'The last race of a season no longer boots you into the offseason — review the finish, then press End Season when you are ready.'},
-        {tag:'FIX', text:'Popup notes no longer draw twice and overlap, and dark-on-dark text in the Teams section is readable again.'},
-        {tag:'NEW', text:'Every Team HQ page audited against the classic UI — contract warnings, track-weighted car stats, PU terms, reserve detail, scout accuracy and more are back.'}
+      return { appearance:{theme:landingTheme}, landing:{ saves:saves, teams:teams, selectedTeam:sel, challenge:challenge, patchVersion:(window.__f1dVersion||'3.1.0'), whatsNew:[
+        {tag:'NEW', text:'Browse the power-unit market any time from Car → Car & Power Unit, and see what your engine is worth to Car Perf on any team profile.'},
+        {tag:'NEW', text:'Driver names are clickable everywhere — the garage, form guide, timing tower, standings, All Drivers, Free Agents and the race classification all open the full profile.'},
+        {tag:'FIX', text:'Opening a finished race from the Schedule shows that race again instead of jumping to the most recent round.'},
+        {tag:'FIX', text:'Aero balance left the Performance Envelope: it is a weekend setup choice, not a car rating, and the envelope now explains what it actually does.'},
+        {tag:'FIX', text:'Rival staff you have not scouted no longer quote an exact “vs current” gap — it reads “Still scouting” until the first finding lands.'},
+        {tag:'FIX', text:'Teams on the same car rating now share a tier, so a 93 can no longer sit in Mid Tier next to a 93 in Top Tier.'},
+        {tag:'FIX', text:'“Overall” is called Car Perf everywhere, and the team profile lists the five pace pillars behind it — a quick car with poor reliability finally reads correctly.'},
+        {tag:'FIX', text:'The “your team” tick moved to the top left of the Teams card, clear of the tier badge.'}
       ], cloudSave:{
         available: (typeof CloudSave!=='undefined' && CloudSave.isAvailable()),
         signedIn: (typeof CloudSave!=='undefined' && CloudSave.isSignedIn()),
@@ -35825,10 +35959,19 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
   // used the static difficulty field while the Teams page used prestige, so with
   // custom rosters the two disagreed — e.g. Aston Martin "Mid" on one screen and
   // effectively a backmarker on the other (v3.0.1, reported by RuleImpossible3362).
+  // Tie-aware: the cards show a ROUNDED car rating, so two teams both reading 93 must land
+  // in the same tier. Splitting them on a hidden 0.1 produced "Mid Tier" sitting next to
+  // "Top Tier" at an identical number. Any tied group takes the best tier it earned.
+  // (v3.1.0, reported by IronicGerman.)
   var TIER_BY_CAR=function(list){
     var ranked=list.slice().sort(function(a,b){ return (b.car||0)-(a.car||0); });
-    var n=Math.max(1,ranked.length), map={};
-    ranked.forEach(function(t,i){ var f=(i+1)/n; map[String(t.id)]=f<=0.28?'Top':(f<=0.65?'Mid':'Back'); });
+    var n=Math.max(1,ranked.length), map={}, group={}, best={}, rank={Back:1,Mid:2,Top:3};
+    ranked.forEach(function(t,i){
+      var f=(i+1)/n, tier=f<=0.28?'Top':(f<=0.65?'Mid':'Back'), k=String(Math.round(t.car||0));
+      group[String(t.id)]=k;
+      if(!best[k] || rank[tier]>rank[best[k]]) best[k]=tier;
+    });
+    Object.keys(group).forEach(function(id){ map[id]=best[group[id]]; });
     return map;
   };
   var ROLE={td:'Technical Director',rs:'Race Strategist',cm:'Chief Mechanic',pcc:'Pit Crew Chief'};
@@ -35965,7 +36108,7 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
     var mine=(g.drivers||[]).filter(function(d){return String(d.teamId)===String(pid)&&!d.isReserve&&!d.retired;});
     var res=(g.drivers||[]).filter(function(d){return String(d.teamId)===String(pid)&&d.isReserve&&!d.retired;});
     var R=function(v){return Math.round(v||0);};
-    var history=[]; try { history=(g.calendar||[]).filter(function(r){return r.raceDone;}).slice(-8).reverse().map(function(r){var my=(r.raceResult||[]).filter(function(x){return String(x.teamId)===String(pid);}).map(function(x){return {name:x.driverName||'',pos:x.dnf?'DNF':('P'+x.position),points:x.points||0};}); return {race:r.name||'',drivers:my};}); }catch(e){}
+    var history=[]; try { history=(g.calendar||[]).filter(function(r){return r.raceDone;}).slice(-8).reverse().map(function(r){var my=(r.raceResult||[]).filter(function(x){return String(x.teamId)===String(pid);}).map(function(x){return {id:x.driverId,name:x.driverName||'',pos:x.dnf?'DNF':('P'+x.position),points:x.points||0};}); return {race:r.name||'',drivers:my};}); }catch(e){}
     var market=[]; try {
       var scoutedIds={}; try { (g.scoutedGridDrivers||[]).forEach(function(sd){ scoutedIds[String(sd.driverId)]=1; }); } catch(e){}
       market=(State.getFreeAgents?State.getFreeAgents():(g.drivers||[]).filter(function(d){return !d.teamId;})).filter(function(d){return !d.retired&&!d.isProspect;}).sort(function(a,b){return (b.rating||0)-(a.rating||0);}).slice(0,40).map(function(d){
@@ -36042,7 +36185,17 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
                 weight:Math.round((_cwNow[p[1]]||0)*100), track:_trackShort};
       }))
       .concat([{label:'Reliability',value:R(t.reliability),display:_d1(t.reliability),rank:_rankOf('reliability'),of:_teamsAll.length}]);
-    if(t.downforce!=null) stats.push({label:'Downforce',value:R(t.downforce),display:String(R(t.downforce))});
+    // Downforce used to sit at the bottom of this list as if it were a sixth car pillar.
+    // It is not a rating at all — it is the weekend aero-balance setting from the Race
+    // Setup panel directly above, so it moved race to race and had no grid rank, which
+    // read as a broken stat. The envelope is ratings only now, with the relationship
+    // spelled out in a caption. (v3.1.0, reported by IronicGerman.)
+    // The engineers' recommended range stays the only hint at the circuit ideal — the exact
+    // value (and its hidden per-race offset) must not leak into this caption.
+    var _dfNote=(t.downforce==null)?null
+      :('Aero balance ('+R(t.downforce)+') is a setup choice for this weekend, not a car rating — tune it in Race Setup above. '
+        +'It leaves these pillars untouched and instead adds or costs lap time depending on how close it lands to the circuit’s ideal window, '
+        +'which is why it moves from race to race.');
     // Track-weighted composite for the current circuit, ranked against the grid.
     var _trackScore=null,_trackRank=null;
     try {
@@ -36108,6 +36261,40 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
           _power.standing=(_pr===1)?'Raw power leader among all suppliers.'
             :('P'+_pr+' in power, '+Math.abs((_lead.powerRating||0)-(_eng.powerRating||0)).toFixed(1)+' behind '+(_lead.shortName||_lead.name||'the leader')+'.');
         }
+        // The supplier market was only reachable from the offseason checklist, and in the
+        // classic UI only once the contract was inside its final year — so for two seasons
+        // out of three there was no way to see what the other manufacturers were doing.
+        // The full grid of suppliers is readable here at any time; the switch button still
+        // obeys the contract, so browsing never becomes a shortcut past it.
+        // (v3.1.0, requested by IronicGerman.)
+        try {
+          var _ersRanked=(_liveEngines()||[]).slice().sort(function(a,b){ return (b.ersRating||0)-(a.ersRating||0); });
+          var _ownsPU=!!(State.game.playerEngineId && t.engineManufacturer===State.game.playerEngineId);
+          _power.suppliers=(_liveEngines()||[]).map(function(e){
+            var isCur=e.id===t.engineManufacturer;
+            var users=0,max=0; try { users=getEngineUserCount(e.id,State.game.teams); max=getEngineEffectiveMax(e,State.game.season); } catch(err){}
+            var cost=0; try { cost=isCur?(t.engineContractCost||0):getEngineContractCost(t.id,e.id); } catch(err){}
+            var atCap=users>=max && !isCur;
+            var locked=(t.engineContractYears||0)>0 && !_ownsPU;
+            return { id:e.id, name:e.name||'', short:e.shortName||e.name||'',
+                     power:Math.round((e.powerRating||0)*10)/10, ers:Math.round((e.ersRating||0)*10)/10,
+                     reliability:Math.round((e.reliability||0)*10)/10, devRate:Math.min(10,e.devRate||0),
+                     powerRank:_ranked.findIndex(function(x){return x.id===e.id;})+1,
+                     ersRank:_ersRanked.findIndex(function(x){return x.id===e.id;})+1,
+                     users:users, max:max, atCapacity:atCap, cost:Math.round(cost||0),
+                     isCurrent:isCur, canSwitch:!isCur && !atCap && !locked,
+                     // Why a switch is unavailable, so the card is never just a dead button.
+                     blocked:isCur?'':(atCap?'No supply slots left':(locked?('Contract locked — '+(t.engineContractYears||0)+'yr'+((t.engineContractYears||0)!==1?'s':'')+' remaining'):'')),
+                     desc:e.desc||'' };
+          }).sort(function(a,b){ return (b.power||0)-(a.power||0); });
+          _power.canRenew=!_ownsPU && (t.engineContractYears||0)===0;
+          _power.owned=_ownsPU;
+          _power.marketNote=_ownsPU
+            ? 'You own your power unit, so you are free to divest and sign with a supplier below at any time.'
+            : ((t.engineContractYears||0)>0
+                ? 'Your contract runs for another '+(t.engineContractYears||0)+' year'+((t.engineContractYears||0)!==1?'s':'')+'. You can study the field now and switch once it expires.'
+                : 'Your contract has expired — renew with your current supplier or sign with any manufacturer that has a slot free.');
+        } catch(e2){}
       }
     } catch(e) {}
     var _income=R(t.revenue), _costs=0; try { var _fin=_buildHQFinance(); _income=(_fin.income||[]).reduce(function(s,x){return s+(x.amount||0);},0); _costs=-(_fin.costs||[]).reduce(function(s,x){return s+(x.amount||0);},0); } catch(e) {}
@@ -36134,6 +36321,7 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
     var detail={summary:[{label:'Car Performance',value:R(overall),display:Number(overall||0).toFixed(1),color:'var(--red)'},{label:'Reliability',value:R(t.reliability),display:Number(t.reliability||0).toFixed(1),color:'var(--grn)'},{label:'Development Rate',value:R(t.developmentRate),display:Number(t.developmentRate||0).toFixed(1),color:'var(--blu)'},{label:'Facilities',value:R(t.facilities),display:Number(t.facilities||0).toFixed(1),color:'var(--amb)'}],facilities:_facUnits,components:_components,trackName:_race&&_race.name?String(_race.name).replace(' Grand Prix',''):'',subStats:stats.map(function(s,i){return {label:s.label,value:s.value,display:s.value+' · '+(['P1','P1','P1','P1','P1'][i]||''),color:['var(--amb)','var(--vio)','var(--blu)','var(--grn)','var(--red)'][i]};}),power:_power,finance:_finance,windows:_windows,windowBudget:_qBudget,racesDone:_racesDone,winterDev:_winterDev};
     return { ovr:R(overall), stats:stats, upgrades:ups, setup:setup, detail:detail,
              trackScore:_trackScore, trackRank:_trackRank, trackName:(_raceNow&&_raceNow.name)||'', teamCount:_teamsAll.length,
+             aeroNote:_dfNote,
              development:{ budget:'$'+R(t.revenue)+'M', allocations:alloc } };
   };
   window._buildHQFinance = function(){
@@ -36209,6 +36397,46 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
   window._buildHQTeams = function(){
     var g=State.game, pid=g.playerTeamId, selectedId=g._hqViewedTeamId||pid;
     var tierMap=TIER_BY_CAR((g.teams||[]).map(function(t){ var c=0; try { c=getTeamOverallCar(t); } catch(e){ c=t.carPerformance||0; } return { id:t.id, car:c }; }));
+    // "Overall 93" on a team with 65 reliability read as a bug. It is car pace only — the
+    // mean of the five pillars below, with top speed already blended with engine power —
+    // so the profile now shows the working. (v3.1.0, reported by IronicGerman.)
+    var _engListT=function(){ try { return (typeof _liveEngines==='function')?_liveEngines():(g.engineManufacturers||[]); } catch(e){ return []; } };
+    var _pwOfT=function(tm){ var l=_engListT(),e=l&&l.filter(function(x){return x.id===tm.engineManufacturer;})[0]; return (e&&e.powerRating!=null)?e.powerRating:88; };
+    var _pillarsOf=function(tm){
+      var base=tm.carPerformance||70;
+      return [{label:'Top Speed',value:Math.round((tm.topSpeed||base)*0.6+_pwOfT(tm)*0.4)},
+              {label:'Cornering',value:Math.round(tm.cornering||base)},
+              {label:'Tyre Mgmt',value:Math.round(tm.tyreManagement||base)},
+              {label:'Dirty Air',value:Math.round(tm.dirtyAir||base)},
+              {label:'Aero Eff.',value:Math.round(tm.aeroEfficiency||base)}];
+    };
+    // "I would like to know the influence of the PU to the Team ranking" — the engine is 40%
+    // of the Top Speed pillar and Top Speed is one of five, so a supplier moves Car Perf by
+    // 8% of its power rating. Quoting that as a swing against the best and worst manufacturer
+    // on the grid makes the size of the choice concrete. (v3.1.0, requested by IronicGerman.)
+    var _engAll=(function(){ try { return (typeof _liveEngines==='function')?_liveEngines():(g.engineManufacturers||[]); } catch(e){ return []; } })();
+    var _engRanked=_engAll.slice().sort(function(a,b){ return (b.powerRating||0)-(a.powerRating||0); });
+    var _PU_SHARE=0.4/5; // engine weight inside Top Speed, divided across the five pillars
+    var _engineImpactOf=function(tm){
+      var e=_engAll.filter(function(x){return x.id===tm.engineManufacturer;})[0];
+      if(!e||!_engRanked.length) return null;
+      var best=_engRanked[0], worst=_engRanked[_engRanked.length-1];
+      var r=function(v){ return Math.round(v*10)/10; };
+      var rank=_engRanked.findIndex(function(x){return x.id===e.id;})+1, of=_engRanked.length;
+      var vsBest=r(((best.powerRating||0)-(e.powerRating||0))*_PU_SHARE);
+      var vsWorst=r(((e.powerRating||0)-(worst.powerRating||0))*_PU_SHARE);
+      // Only quote a comparison that means something: the team already ON the best or worst
+      // unit would otherwise be told a swap with itself is worth 0.0.
+      var swing;
+      if(of<2) swing='It is the only power unit on the grid.';
+      else if(vsBest<=0) swing='No supplier on the grid would add more — the weakest ('+(worst.shortName||worst.name||'')+') would cost −'+vsWorst.toFixed(1)+'.';
+      else if(vsWorst<=0) swing='It is the weakest unit on the grid — the best ('+(best.shortName||best.name||'')+') would add +'+vsBest.toFixed(1)+'.';
+      else swing='The best available ('+(best.shortName||best.name||'')+') would add +'+vsBest.toFixed(1)+', the weakest ('+(worst.shortName||worst.name||'')+') would cost −'+vsWorst.toFixed(1)+'.';
+      return { name:e.shortName||e.name||'', fullName:e.name||'', power:r(e.powerRating||0), ers:r(e.ersRating||0),
+               rank:rank, of:of, contribution:r((e.powerRating||0)*_PU_SHARE),
+               vsBest:vsBest, vsWorst:vsWorst, swing:swing,
+               bestName:best.shortName||best.name||'', worstName:worst.shortName||worst.name||'' };
+    };
     var teams=(g.teams||[]).map(function(t){
       var overall=0; try { overall=getTeamOverallCar(t); } catch(e){ overall=t.carPerformance||0; }
       var drv=(t.driverIds||[]).map(function(id){ var d=(g.drivers||[]).find(function(x){return String(x.id)===String(id);}); return { id:d&&d.id, name:(d&&d.name)||'', rating:Math.round((d&&d.rating)||0), points:Math.round((d&&d.seasonPoints)||0),
@@ -36225,6 +36453,7 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       var facUnits=[]; try { facUnits=(typeof FACILITY_UNIT_KEYS!=='undefined'?FACILITY_UNIT_KEYS:[]).map(function(k){
         return { label:(FACILITY_UNIT_META[k]||{}).label||k, icon:(FACILITY_UNIT_META[k]||{}).icon||'', value:Math.round(getFacilityUnit(t,k)) }; }); } catch(e){}
       return { id:t.id, name:t.name, color:t.color||'#888', ovr:Math.round(overall||0), car:Math.round(t.carPerformance||overall||0), prestige:t.prestige||0, tier:tierMap[String(t.id)]||TIER2(t.prestige||0), drivers:drv, isPlayer:String(t.id)===String(pid), reliability:Math.round(t.reliability||0), facilities:Math.round(t.facilities||0), development:Math.round(t.developmentRate||0),
+               pillars:_pillarsOf(t), engineImpact:_engineImpactOf(t),
                pos:cpos||null, nationality:t.nation||t.nationality||'', budget:Math.round(t.revenue||0), engine:eng, seasonPoints:Math.round(t.seasonPoints||0), facilityUnits:facUnits,
                reserves:resv, wins:Math.round(t.wins||0), podiums:Math.round(t.podiums||0), poles:Math.round(t.poles||0), championships:Math.round(t.championships||0) };
     });
@@ -36245,7 +36474,9 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       var view=State.staffScoutView(s,k), lock=State.staffApproachLock(s.id);
       return {teamId:tm.id,team:tm.name,roleId:k,role:(role.raceEngineer?'Race Engineer':(role.name||k)),raceEngineer:!!role.raceEngineer,name:s.name,rating:Math.round(s.rating||0),age:s.age||0,potential:view.potential,years:s.contract||0,salary:s.salary||0,
         scouting:view.started,scouted:view.complete,band:view.band,step:view.step,total:view.total,nextIn:view.nextIn,
-        lock:lock,rejections:s._poachRejections||0,delta:_delta(s.rating,k),
+        // A card that says "not scouted" must not also quote an exact gap to your own
+        // staff — the comparison waits for the first finding. (v3.1.0, IronicGerman.)
+        lock:lock,rejections:s._poachRejections||0,delta:(view.started?_delta(s.rating,k):null),deltaHidden:!view.started,
         abilities:view.abilities};}).filter(Boolean);}).sort(function(a,b){return b.rating-a.rating;}).slice(0,24); } catch(e){}
     var totalSalary=0,budgetCap=0; try { totalSalary=getTeamStaffSalaryCost(t); budgetCap=getTeamStaffBudgetCap(t); } catch(e){}
     return { roles:roles, market:market, rivals:rivals, totalSalary:totalSalary, budgetCap:budgetCap, overBudget:totalSalary>budgetCap, engineDelegate:!!State.game.staffEngineDelegate };
@@ -36912,7 +37143,12 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
   window._buildHQRaceResult = function(rd){
     try {
       var S=State, g=S.game, pid=g.playerTeamId;
-      rd = rd || window._hqLastRecap || null;
+      // A race picked from the Schedule must beat the cached recap of the most recent
+      // round. The recap used to win unconditionally, so opening a finished race while a
+      // later weekend was already under way showed that weekend instead of the race you
+      // clicked. (v3.1.0, reported by IronicGerman.)
+      var _picked = (g._hqViewedRaceIndex!=null) ? (g.calendar||[])[g._hqViewedRaceIndex] : null;
+      if(!rd && !_picked) rd = window._hqLastRecap || null;
       var race, results, isSprint=false;
       if(rd && rd.race && rd.results){
         race = rd.race; results = rd.results; isSprint = !!race.isSprint;
@@ -36951,7 +37187,7 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
         else if(myIdx>0 && cs[0]){ var r1=cs[0]; gapTxt='\u25BC '+(myPts-(r1.points||0))+' TO '+(((r1.team&&r1.team.name)||'').toUpperCase()); }
       } catch(e){}
       var mine = sorted.filter(function(r){ return String(r.teamId)===String(pid); });
-      var classification = sorted.map(function(r){ return { pos:r.position||null, name:r.driverName||'', code:dcode(r.driverName), team:r.teamName||'', color:(T_(r.teamId).color)||'#888', grid:r.startPos!=null?r.startPos:null, gap:'', points:r.points||0, dnf:!!r.dnf, fastestLap:!!r.fastestLap, isPlayer:String(r.teamId)===String(pid) }; });
+      var classification = sorted.map(function(r){ return { id:r.driverId, pos:r.position||null, name:r.driverName||'', code:dcode(r.driverName), team:r.teamName||'', color:(T_(r.teamId).color)||'#888', grid:r.startPos!=null?r.startPos:null, gap:'', points:r.points||0, dnf:!!r.dnf, fastestLap:!!r.fastestLap, isPlayer:String(r.teamId)===String(pid) }; });
       var playerResult = mine.map(function(r){ return { name:r.driverName||'', code:dcode(r.driverName), pos:r.dnf?null:(r.position||null), grid:r.startPos!=null?r.startPos:null, points:r.points||0, dnf:!!r.dnf, dnfReason:r.dnf?'DNF':'' }; });
       // ── Race report: summary line + key moments (restores the classic debrief commentary) ──
       var report=null;
@@ -37354,7 +37590,23 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       + '</div></div>';
     window._hqAddPanel('teams','hq-team-detail','Team Profile · '+e(x.name),'<div class="tele">'
       + (meta?'<div class="fs11 mut" style="margin:-4px 0 12px">'+e(meta)+'</div>':'')
-      + '<div class="statg"><div class="putile"><div class="k">Overall</div><div class="v">'+x.ovr+'</div></div><div class="putile"><div class="k">Reliability</div><div class="v">'+x.reliability+'</div></div><div class="putile"><div class="k">Facilities</div><div class="v">'+x.facilities+'</div></div><div class="putile"><div class="k">Development</div><div class="v">'+x.development+'</div></div></div>'
+      + '<div class="statg"><div class="putile"><div class="k">Car Perf</div><div class="v">'+x.ovr+'</div></div><div class="putile"><div class="k">Reliability</div><div class="v">'+x.reliability+'</div></div><div class="putile"><div class="k">Facilities</div><div class="v">'+x.facilities+'</div></div><div class="putile"><div class="k">Development</div><div class="v">'+x.development+'</div></div></div>'
+      + ((x.pillars||[]).length
+          ? '<div style="margin-top:14px"><div class="fs10 fnt hudf mb8" style="letter-spacing:.12em">CAR PERF BREAKDOWN</div>'
+            + '<div class="fs11 mut" style="margin:-4px 0 9px;line-height:1.5">Car Perf is the average of these five pace pillars — top speed already includes the engine. Reliability, facilities and development are tracked separately and do not feed into it.</div>'
+            + x.pillars.map(function(p){ return '<div style="display:grid;grid-template-columns:78px minmax(60px,1fr) 26px;gap:8px;align-items:center;margin-top:6px"><span class="fs10 mut">'+e(p.label)+'</span><div class="smeter lite" style="height:6px"><div class="smf" style="width:'+Math.max(0,Math.min(100,p.value))+'%;background:'+e(x.color||'#888')+'"></div></div><b class="mono fs10" style="text-align:right">'+p.value+'</b></div>'; }).join('')
+            + (x.engineImpact
+                ? (function(E){
+                    return '<div style="margin-top:12px;padding:10px 11px;border:1px solid var(--line);border-radius:9px">'
+                      + '<div class="fx ac jb gap8 wrap"><b class="fs12">⚡ '+e(E.fullName)+'</b>'
+                      + '<span class="fs10 mut">Power '+E.power.toFixed(1)+' · P'+E.rank+' of '+E.of+' · ERS '+E.ers.toFixed(1)+'</span></div>'
+                      + '<div class="fs11 mut" style="margin-top:6px;line-height:1.5">The power unit is 40% of Top Speed, so it carries <b>'+E.contribution.toFixed(1)+'</b> of this team’s '+x.ovr+' Car Perf. '
+                      + e(E.swing||'')
+                      + '</div></div>';
+                  })(x.engineImpact)
+                : '')
+            + '</div>'
+          : '')
       + seasonStats
       + '<div style="margin-top:14px"><div class="fs10 fnt hudf mb8" style="letter-spacing:.12em">RACE DRIVERS</div><div class="card">'+drivers+'</div></div>'
       + resv + '</div>');
@@ -38161,6 +38413,28 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       rc.on('setQuarterDiversion', function(p){ try { if(GameActions.setQuarterDiversion) GameActions.setQuarterDiversion(p.qi,p.value); Storage.autosave(); } catch(e){} });
       rc.on('applyQuarterDev', function(p){ try { window.__f1dEv('car_dev',window.__f1dEvCtx({action:'apply_upgrade_window',quarter:(p&&p.qi)||0})); if(GameActions.applyQuarterDev) GameActions.applyQuarterDev(p.qi); } catch(e){} window._hqRefresh(); });
       rc.on('takeNewPU', function(){ try { window.__f1dEv('car_dev',window.__f1dEvCtx({action:'take_new_pu'})); if(GameActions.takeNewPU) GameActions.takeNewPU(); } catch(e){} window._hqRefresh(); });
+      // Supplier market on the Car screen. Separate actions from the offseason pair because
+      // `rc.on` stacks rather than replaces, and those handlers bounce back to the offseason
+      // screen. GameActions.switchEngine still enforces the contract itself, so an out-of-
+      // window press only ever produces its warning toast. (v3.1.0, requested by IronicGerman.)
+      var _carEngineRefresh=function(){
+        try { window._hqScreen='car';
+          var _cw=frame()&&frame().contentWindow;
+          if(_cw&&_cw.TeamHQ){ _cw.TeamHQ._subtabs=_cw.TeamHQ._subtabs||{}; _cw.TeamHQ._subtabs.car='garage'; }
+          window._hqRC.render(window._buildHQAll()); window._hqRC.show('car'); setTimeout(window._hqEnhance,0);
+        } catch(e){}
+      };
+      rc.on('carSwitchEngine', function(p){
+        if(!hasGame())return; p=p||{};
+        try { window.__f1dEv('engine_switch',window.__f1dEvCtx({to:p.name||p.id||'?',from:'car_screen'})); } catch(e){}
+        try { if(GameActions.switchEngine && p.id) GameActions.switchEngine(p.id); } catch(e){}
+        _carEngineRefresh();
+      });
+      rc.on('carRenewEngine', function(){
+        if(!hasGame())return;
+        try { if(GameActions.renewEngine) GameActions.renewEngine(); } catch(e){}
+        _carEngineRefresh();
+      });
       rc.on('openCarSetup', function(){
         try {
           window._hqScreen='car';
@@ -38314,6 +38588,7 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
         var sid = (typeof saveId==='string') ? parseInt(saveId,10) : saveId;
         window._hqLastRecap = null; // a different save's recap must never bleed into this one
         try { (typeof Storage!=='undefined' && Storage._loadSlotAndGo) && Storage._loadSlotAndGo(sid); } catch(e){}
+        try { State.game._hqViewedRaceIndex = null; } catch(e){} // nor a race it had open on the Schedule
         try { window._hqRC.render(window._buildHQAll()); window._hqRC.show(window._hqDefaultScreen()); } catch(e){}
         setTimeout(function(){ try{ window._hqRC.render(window._buildHQAll()); }catch(e){} }, 300);
         setTimeout(function(){ window._hqRestore(); }, 60);
@@ -38638,6 +38913,8 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       UI.showRaceRecap = function(rd){
         if(flag()==='hq'){
           window._hqLastRecap = rd || null;
+          // A fresh result supersedes whatever finished race was last opened from the Schedule.
+          try { State.game._hqViewedRaceIndex = null; } catch(e){}
           try { window._hqRC.render(window._buildHQAll()); window._hqRC.show('raceResult'); } catch(e){}
           window._hqRestore();
           return;
@@ -38682,7 +38959,7 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
     if(typeof UI!=='undefined' && typeof UI.renderRaceResult==='function'){
       var _origRRR = UI.renderRaceResult.bind(UI);
       UI.renderRaceResult = function(rd){
-        if(flag()==='hq' && rd){ window._hqLastRecap = rd; }
+        if(flag()==='hq' && rd){ window._hqLastRecap = rd; try { State.game._hqViewedRaceIndex = null; } catch(e){} }
         return _origRRR.apply(this, arguments);
       };
     }
