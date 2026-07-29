@@ -49,7 +49,7 @@
   gtag('config', 'G-6B4MBFG3FX');
   // Single source of truth for the build number. The HQ landing reads this rather than
   // carrying its own literal, so a release bump touches the same number of places as before.
-  window.__f1dVersion = '3.1.0';
+  window.__f1dVersion = '3.1.1';
   // Analytics helper. Every call site is fire-and-forget: a missing gtag (ad blocker,
   // offline, file:// testing) or a bad param must never break gameplay, so the guard and
   // the try/catch live here once rather than being repeated at ~40 call sites.
@@ -954,16 +954,15 @@ body.hq-skin #driver-detail-modal .modal-box:has(.le-head)::before{display:none}
         </div>
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:16px;max-width:560px;padding:16px 18px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
-          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v3.1.0: What's New</div>
-          <div style="font-size:14px;font-weight:900;color:#111;margin-bottom:10px">Clickable drivers, an open PU market, and numbers that say what they mean</div>
+          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v3.1.1: What's New</div>
+          <div style="font-size:14px;font-weight:900;color:#111;margin-bottom:10px">Much smaller saves, cloud sync that stops arguing with itself, and reserves that show their contract</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 16px">
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">👤</span><span><strong>Click any driver, anywhere</strong>: names open the full profile from the garage, form guide, timing tower, standings, All Drivers, Free Agents and the race classification.</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🏁</span><span><strong>Finished races open the race you clicked</strong> on the Schedule, instead of jumping to the most recent round.</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:#888;font-weight:800;flex-shrink:0">⚖️</span><span><strong>Aero balance left the Performance Envelope</strong>: it is a weekend setup choice, not a car rating, and the envelope now says so.</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:#888;font-weight:800;flex-shrink:0">🔭</span><span><strong>No "vs current" on staff you have not scouted</strong> — the comparison waits for the first finding.</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:var(--red);font-weight:800;flex-shrink:0">⚡</span><span><strong>The PU market is open all season</strong>: browse every manufacturer from Car → Car &amp; Power Unit, and see what your engine is worth to Car Perf on any team profile.</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:var(--red);font-weight:800;flex-shrink:0">🏎️</span><span><strong>The Teams grid reads straight</strong>: two teams on the same car rating share a tier, "Overall" is "Car Perf" everywhere, and your team’s tick no longer sits on the tier badge.</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:var(--red);font-weight:800;flex-shrink:0">📊</span><span><strong>Team profiles show the working</strong>: a Car Perf breakdown lists the five pace pillars behind the headline rating, so a quick car with poor reliability finally makes sense.</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:var(--red);font-weight:800;flex-shrink:0">💾</span><span><strong>Saves are about 70% smaller</strong>: every save was carrying a full lap-by-lap telemetry log of the last race that nothing ever read back. This is the cause behind "storage full" warnings and careers vanishing on mobile.</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:var(--red);font-weight:800;flex-shrink:0">☁️</span><span><strong>Cloud sync stops arguing with itself</strong>: no more "updated from another device" every time you sync on the <em>same</em> device, and downloading a save no longer files a duplicate career each time.</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🧑‍✈️</span><span><strong>Reserves show contract, morale and form</strong> — including injuries and who is in line to substitute.</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">📝</span><span><strong>The Free Agent market names the team</strong> a pre-signed driver has already committed to.</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:#888;font-weight:800;flex-shrink:0">🔤</span><span><strong>Apostrophes and ampersands survive in names</strong> — "O’Ward" no longer stores as "OWard".</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:#888;font-weight:800;flex-shrink:0">🔐</span><span><strong>Imported save files are checked more thoroughly</strong>, so a shared backup cannot smuggle anything into the game.</span></div>
           </div>
           <button onclick="UI.showChangelog()" style="margin-top:10px;width:100%;padding:7px;background:none;border:1.5px solid rgba(192,57,43,.3);border-radius:7px;font-size:11px;font-weight:700;color:var(--red);cursor:pointer">Full release notes →</button>
         </div>
@@ -1103,7 +1102,7 @@ body.hq-skin #driver-detail-modal .modal-box:has(.le-head)::before{display:none}
       </div>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v3.1.0</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">Reddit</a> · <a href="https://discord.gg/w3R97uTBW" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">Discord</a></div>
+        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v3.1.1</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">Reddit</a> · <a href="https://discord.gg/w3R97uTBW" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">Discord</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -4315,15 +4314,25 @@ function escapeHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;
 // escaping every render site individually isn't tractable — instead this strips
 // HTML/script-relevant characters at the FEW points untrusted text enters game
 // state (editors + save import), so a malicious name can never get in, and it
-// doesn't matter that downstream renders trust it. Preserves apostrophes, hyphens,
-// accents, ampersands, and unicode letters, since real names use all of these.
+// doesn't matter that downstream renders trust it. Preserves hyphens, accents,
+// ampersands, apostrophes and unicode letters, since real names use all of these.
 function sanitizeUserName(v, maxLen){
   if(v==null) return '';
   let s = String(v);
+  // The straight apostrophe is converted to a typographic one (U+2019) rather than
+  // deleted: it is the correct character for a name anyway, and unlike ' it has no
+  // meaning in any HTML context, so it stays safe inside the single-quoted attributes
+  // this codebase builds (data-arg='…') without needing an audit of ~150 render sites.
+  // Deleting it silently turned O'Ward into OWard — including when importing a save
+  // that had the name spelled correctly in the first place.
+  s = s.replace(/'/g, '’');
   // Strip anything with HTML/markup significance, control characters, and
   // javascript:/data: protocol strings — matches Editor._sanitizeText so
   // there is one canonical rule for every place untrusted text enters state.
-  s = s.replace(/[<>&"'`\u0000-\u001F\u007F]/g, '');
+  // & is deliberately NOT stripped: it cannot open a tag or terminate an attribute,
+  // so it is inert in every render context (an entity decodes to a text node, never
+  // to markup), and removing it turned "Brawn & Sons" into "Brawn  Sons".
+  s = s.replace(/[<>"`\u0000-\u001F\u007F]/g, '');
   s = s.replace(/javascript:/gi, '').replace(/data:/gi, '');
   s = s.replace(/\s+/g, ' ').trim();
   if(maxLen && s.length > maxLen) s = s.slice(0, maxLen).trim();
@@ -5135,8 +5144,12 @@ const Editor = {
   _sanitizeText(value, maxLen, fallback) {
     if(value == null) return fallback || '';
     let s = String(value);
+    // Same rule as sanitizeUserName (see the note there): the straight apostrophe becomes
+    // a typographic one instead of being deleted, & is left alone as it cannot introduce
+    // markup, and only the characters that genuinely can are removed.
+    s = s.replace(/'/g, '’');
     // Remove anything with HTML/markup significance and control characters outright.
-    s = s.replace(/[<>&"'`\u0000-\u001F\u007F]/g, '');
+    s = s.replace(/[<>"`\u0000-\u001F\u007F]/g, '');
     // Strip JS/data protocol words defensively (names never need them).
     s = s.replace(/javascript:/gi, '').replace(/data:/gi, '');
     s = s.replace(/\s+/g, ' ').trim();
@@ -15421,6 +15434,20 @@ const Storage = {
     return rest;
   },
 
+  // lastRaceResult / lastSprintResult are built as {race:{...race}, results} — a SHALLOW
+  // spread, so the recap drags the whole uncompacted race (lapStates above all) into every
+  // save. Stripping the calendar alone never touched it, because the save is assembled with
+  // Object.assign over State.game and these are separate top-level keys. Left in, a single
+  // recap measured 622KB of an 838KB save at round 5 of season 1, of which lapStates was
+  // 562KB — nothing reads replay data back off a recap (only race.name / race.isSprint /
+  // race._raceSubIds and results), so it was pure ballast, and it was also what made the
+  // quota-recovery retry below ineffective.
+  _compactRecapForSave(rec){
+    if(!rec || !rec.race || typeof rec.race !== 'object') return rec;
+    const { lapEvents, sprintLapEvents, lapStates, simEvents, sprintSimEvents, ...race } = rec.race;
+    return { ...rec, race };
+  },
+
   // Return all slot indices that have saves, sorted newest first
   _getSlots() {
     const slots = [];
@@ -15486,7 +15513,11 @@ const Storage = {
       const strippedCal = (State.game.calendar||[]).map((r,i)=>this._compactRaceForSave(r, i, currentRaceIndex));
       const saveNews = (State.game.newsFeed||[]).slice(-50);
       const saveHistory = this._compactHistoryForSave(State.game.history, State.game.season);
-      const saveGame = Object.assign({}, State.game, {calendar: strippedCal});
+      const saveGame = Object.assign({}, State.game, {
+        calendar: strippedCal,
+        lastRaceResult: this._compactRecapForSave(State.game.lastRaceResult),
+        lastSprintResult: this._compactRecapForSave(State.game.lastSprintResult)
+      });
       if(saveHistory) saveGame.history = saveHistory;
       saveGame.newsFeed = saveNews;
       const data = { game: saveGame, savedAt: Date.now(), version: this.SAVE_VERSION };
@@ -15510,7 +15541,11 @@ const Storage = {
       const strippedCalendar = (State.game.calendar||[]).map((r,i)=>this._compactRaceForSave(r, i, currentRaceIndex));
       const saveNews = (State.game.newsFeed||[]).slice(-50);
       const saveHistory = this._compactHistoryForSave(State.game.history, State.game.season);
-      const saveGame = Object.assign({}, State.game, {calendar: strippedCalendar});
+      const saveGame = Object.assign({}, State.game, {
+        calendar: strippedCalendar,
+        lastRaceResult: this._compactRecapForSave(State.game.lastRaceResult),
+        lastSprintResult: this._compactRecapForSave(State.game.lastSprintResult)
+      });
       if(saveHistory) saveGame.history = saveHistory;
       saveGame.newsFeed = saveNews;
       const data = { game: saveGame, savedAt: Date.now(), version: this.SAVE_VERSION, autosave: true };
@@ -15532,7 +15567,12 @@ const Storage = {
             const { lapEvents, sprintLapEvents, lapStates, simEvents, sprintSimEvents, ...rest } = r;
             return rest;
           });
-          const _leanGame = Object.assign({}, State.game, {calendar:_leanCal, newsFeed:(State.game.newsFeed||[]).slice(-20)});
+          const _leanGame = Object.assign({}, State.game, {
+            calendar:_leanCal,
+            newsFeed:(State.game.newsFeed||[]).slice(-20),
+            lastRaceResult: this._compactRecapForSave(State.game.lastRaceResult),
+            lastSprintResult: this._compactRecapForSave(State.game.lastSprintResult)
+          });
           if(saveHistory) _leanGame.history = saveHistory;
           localStorage.setItem(this.SAVE_KEY_PREFIX + slot, JSON.stringify({ game:_leanGame, savedAt:Date.now(), version:this.SAVE_VERSION, autosave:true }));
           _recovered = true;
@@ -15621,11 +15661,28 @@ const Storage = {
   _sanitizeImportedNames(g){
     if(!g) return;
     const clean = (v, len) => sanitizeUserName(v, len || 60);
+    // News messages are deliberately rendered as raw HTML (they embed <strong>), so they
+    // cannot go through the name sanitizer without losing that formatting — but that also
+    // made them the one field in an imported save that reached innerHTML untouched. Allow
+    // a bare <strong>/</strong> and nothing else: every message the game generates uses
+    // only that tag, so legitimate saves round-trip exactly while markup a hostile save
+    // introduced (and any attribute, on a <strong> or otherwise) is dropped.
+    const cleanMsg = (v) => {
+      if(v == null) return v;
+      let s = String(v).replace(/[\u0000-\u001F\u007F]/g, '');
+      s = s.replace(/<(?!\/?strong\s*>)[^>]*>/gi, '');
+      s = s.replace(/<(?!\/?strong\s*>)/gi, '&lt;');   // neutralise any dangling '<'
+      return s;
+    };
+    // Colours are interpolated straight into style attributes. The Editor already gates
+    // these behind a hex test; the save-import path did not.
+    const cleanColor = (v, fallback) => (/^#[0-9a-fA-F]{3,8}$/.test(String(v||'').trim()) ? String(v).trim() : fallback);
     (g.drivers||[]).forEach(d=>{ if(d){ if(d.name!=null) d.name = clean(d.name,60)||d.name; if(d.nationality!=null) d.nationality = clean(d.nationality,30)||d.nationality; } });
     (g.teams||[]).forEach(t=>{
       if(!t) return;
       if(t.name!=null) t.name = clean(t.name,60)||t.name;
       if(t.nation!=null) t.nation = clean(t.nation,30)||t.nation;
+      if(t.color!=null) t.color = cleanColor(t.color, '#888888');
       (t.sponsors||[]).forEach(sp=>{ if(sp && sp.name!=null) sp.name = clean(sp.name,60)||sp.name; });
       if(t.staff){ Object.keys(t.staff).forEach(k=>{ const m=t.staff[k]; if(m && m.name!=null) m.name = clean(m.name,60)||m.name; }); }
     });
@@ -15642,6 +15699,33 @@ const Storage = {
       (g.academy.graduates||[]).forEach(j=>{ if(j && j.name!=null) j.name = clean(j.name,60)||j.name; });
     }
     if(g.managerName!=null) g.managerName = clean(g.managerName,40)||g.managerName;
+    // Fields below reach innerHTML without escaping and were previously untouched here,
+    // which left the documented import boundary open: the Paddock News panel renders
+    // `item.msg || item.text` raw, the grid-change card renders `gc.msg` raw, and the
+    // history screens render archived names raw.
+    (g.newsFeed||[]).forEach(n=>{
+      if(!n) return;
+      if(n.msg!=null) n.msg = cleanMsg(n.msg);
+      if(n.text!=null) n.text = cleanMsg(n.text);
+      if(n.icon!=null) n.icon = cleanMsg(n.icon);
+    });
+    if(g._lastGridChange){
+      if(g._lastGridChange.msg!=null) g._lastGridChange.msg = cleanMsg(g._lastGridChange.msg);
+      if(g._lastGridChange.headline!=null) g._lastGridChange.headline = cleanMsg(g._lastGridChange.headline);
+    }
+    if(g.history){
+      const cleanRow = (row, nameKeys) => { if(row) nameKeys.forEach(k=>{ if(row[k]!=null) row[k] = clean(row[k],60)||row[k]; }); };
+      (g.history.champions||[]).forEach(c=>cleanRow(c,['driverName','teamName']));
+      (g.history.constructorChampions||[]).forEach(c=>cleanRow(c,['teamName']));
+      (g.history.rookiesOfTheYear||[]).forEach(c=>cleanRow(c,['driverName','teamName']));
+      (g.history.seasonStandings||[]).forEach(ss=>{
+        if(!ss) return;
+        (ss.drivers||[]).forEach(r=>cleanRow(r,['driverName','teamName']));
+        (ss.constructors||[]).forEach(r=>{ cleanRow(r,['teamName']); if(r && r.color!=null) r.color = cleanColor(r.color, '#888888'); });
+        (ss.raceGrid||[]).forEach(r=>cleanRow(r,['name','location']));
+        if(ss.narrative!=null) ss.narrative = cleanMsg(ss.narrative);
+      });
+    }
   },
 
   importSaveFile(fileText){
@@ -16489,9 +16573,26 @@ const CloudSave = {
     // Stamp the local save with when AND where it was last synced, so future
     // pulls/pushes on this device recognize "I already have this cloud save"
     // instead of creating a duplicate local slot.
-    parsed.game._cloudSyncedAt = saved ? new Date(saved.updated_at).getTime() : Date.now();
+    const _syncedAt = saved ? new Date(saved.updated_at).getTime() : Date.now();
+    parsed.game._cloudSyncedAt = _syncedAt;
+    parsed.game._cloudSyncedRaceIndex = parsed.game.raceIndex || 0;
+    parsed.game._cloudSyncedSeason = parsed.game.season != null ? parsed.game.season : null;
     parsed.game._cloudSourceSlot = slot;
     localStorage.setItem(Storage.SAVE_KEY_PREFIX + slot, JSON.stringify(parsed));
+    // Mirror the markers onto the IN-MEMORY career as well. Storage.autosave() serialises
+    // State.game, so markers written only to the stored copy are erased by the very next
+    // autosave — and there are ~100 autosave call sites, so that happens within seconds of
+    // syncing. Once erased, the conflict check below reads 0 and every later push on this
+    // same device false-positives as "updated from another device", while
+    // findLocalSlotForCloud stops matching so each pull forks a duplicate local slot.
+    try {
+      if(State.game && State.game._saveId === parsed.game._saveId){
+        State.game._cloudSyncedAt = _syncedAt;
+        State.game._cloudSyncedRaceIndex = parsed.game.raceIndex || 0;
+        State.game._cloudSyncedSeason = parsed.game.season != null ? parsed.game.season : null;
+        State.game._cloudSourceSlot = slot;
+      }
+    } catch(e){}
     return true;
   },
 
@@ -16521,9 +16622,18 @@ const CloudSave = {
         // it was last synced? If so, pulling now would silently discard that progress.
         const { data: existing } = await window.__cloud.from('saves')
           .select('updated_at, season').eq('user_id', this._user.id).eq('slot', cloudSlot).maybeSingle();
+        // Compare (season, raceIndex) rather than raceIndex alone: raceIndex resets to 0
+        // each new season, so a career that synced mid-2027 and has since rolled into 2028
+        // would otherwise look like it had gone BACKWARDS and skip the conflict prompt.
+        // _cloudSyncedSeason is absent on saves synced before it was recorded, in which case
+        // fall back to the raceIndex-only comparison rather than firing a false conflict.
+        const _syncedSeason = localG._cloudSyncedSeason;
         const localAdvancedSinceSync = lastKnown > 0 &&
-          ((localG.season||0) > 0) &&
-          (localG._cloudSyncedRaceIndex != null && (localG.raceIndex||0) > localG._cloudSyncedRaceIndex);
+          localG._cloudSyncedRaceIndex != null && (
+            (_syncedSeason != null && (localG.season||0) > _syncedSeason) ||
+            ((_syncedSeason == null || (localG.season||0) === _syncedSeason) &&
+              (localG.raceIndex||0) > localG._cloudSyncedRaceIndex)
+          );
         if(existing && localAdvancedSinceSync){
           const err = new Error('CONFLICT');
           err.isConflict = true;
@@ -16541,6 +16651,7 @@ const CloudSave = {
     if(incoming && incoming.game){
       incoming.game._cloudSyncedAt = new Date(data.updated_at).getTime();
       incoming.game._cloudSyncedRaceIndex = incoming.game.raceIndex || 0;
+      incoming.game._cloudSyncedSeason = incoming.game.season != null ? incoming.game.season : null;
       incoming.game._cloudSourceSlot = cloudSlot;
     }
     localStorage.setItem(Storage.SAVE_KEY_PREFIX + localSlot, JSON.stringify(incoming));
@@ -26124,8 +26235,16 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const html=`
       <div style="max-height:85vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v3.1.0 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v3.1.1 · Release Notes</div>
          ${[
+    ['v3.1.1','July 2026',[
+            '💾 Saves are around 70% smaller. Every save was carrying a complete lap-by-lap telemetry log of the most recent race — on a first-season career that single hidden record was three quarters of the entire file, and it was written again on every autosave. Finished rounds already had this trimmed; the last-race record was being missed. Nothing in the game ever reads it back, so nothing is lost: replays, results, recaps and standings are all unchanged. This is the root cause behind "storage full" warnings and careers disappearing on mobile, and it also means the emergency retry that runs when a device really is full can now free meaningful space instead of almost none.',
+            '☁️ Cloud sync no longer argues with itself. After syncing once, the marker recording that sync was erased by the next autosave — so every later sync insisted your cloud save had been "updated from another device" and asked whether to overwrite it, on the same device, with nobody else involved. The same missing marker meant downloading a save stopped recognising which career it belonged to and filed a fresh copy each time, quietly filling all five slots with duplicates of one career. Both are fixed, and the warning shown before a download replaces unsynced progress now survives the turn of a season instead of going quiet.',
+            '🧑‍✈️ Reserve drivers show their contract, form and availability. Reserve rows had carried nothing but name, nationality, age and rating: contract length, morale, a deal that is expiring or already expired, an injury, a form dip, and whether the driver is in line to substitute were all being worked out and then never drawn.',
+            '📝 The Free Agent market says who a driver has already signed with. A driver on a pre-contract showed a greyed-out PRE-SIGNED button with nothing next to it explaining why; the row now names the team they are committed to.',
+            '🔤 Apostrophes and ampersands survive in names. Typing or importing "O’Ward" stored it as "OWard", and "Brawn & Sons" lost the ampersand — including when importing a backup that had the name spelled correctly in the first place.',
+            '🔐 Imported save files are checked more thoroughly. Names were already cleaned when a save was imported, but the news feed, archived season history and team colours inside a shared file were not, which left a way for a hand-edited save to smuggle markup into the game. All of it is now cleaned on the way in, and ordinary news formatting is untouched.',
+          ]],
     ['v3.1.0','July 2026',[
             '⚡ The power-unit market is readable at any time, from Car → Car & Power Unit. Every manufacturer is listed with power, ERS, reliability, dev rate, price, how many teams it already supplies and its capacity, with your own supplier marked and the grid ranked by power. Previously it lived behind the offseason checklist, and in the classic UI behind a button that only appeared in the final year of your contract — so for two seasons out of three there was no way to see what the rest of the grid was running. Browsing is not a shortcut past the contract: the switch button only appears when you are actually free to sign, and says why when you are not. (Requested by IronicGerman.)',
             '🔌 Team profiles now spell out what the power unit is worth. The engine is 40% of the Top Speed pillar and Top Speed is one of five, so a supplier carries 8% of a team’s Car Perf — the profile quotes that figure and what the best and worst manufacturers on the grid would add or cost, which is how a customer team can out-develop a works one and still lose the straights. (Requested by IronicGerman.)',
@@ -34715,9 +34834,14 @@ window._pwHandleOrder = function(code, val){
       // chip when a driver has already committed for next season, the SIGN button is
       // disabled once a pre-contract exists, and your own squad cards flag a driver who
       // has agreed to leave.
+      // Re-anchored: the driver-link patch further up already wrapped this name in a
+      // .hq-dlink span, so the original `+trait+esc(r.name)+` needle stopped matching and
+      // this chip never shipped — the market row showed a disabled PRE-SIGNED button with
+      // nothing saying who the driver had committed to. Matches the All-drivers table's
+      // preStaying guard so a driver re-signing where they are is not labelled COMMITTED.
       _hq = _hq.replace(
-        "+trait+esc(r.name)+'</div><div class=\"fs11 mut\">'",
-        "+trait+esc(r.name)+(r.preToMe?' <span class=\"chipT\" style=\"font-size:8px\" title=\"Pre-contract agreed — joins your team next season\">SIGNED FOR NEXT SEASON</span>':(r.preSigned?' <span class=\"chipN\" style=\"font-size:8px\" title=\"Already committed for next season\">COMMITTED'+(r.preTo?' · '+esc(r.preTo):'')+'</span>':''))+'</div><div class=\"fs11 mut\">'"
+        "+trait+'<span class=\"hq-dlink\">'+esc(r.name)+'</span>'+'</div><div class=\"fs11 mut\">'",
+        function(){ return "+trait+'<span class=\"hq-dlink\">'+esc(r.name)+'</span>'+(r.preToMe?' <span class=\"chipT\" style=\"font-size:8px\" title=\"Pre-contract agreed — joins your team next season\">SIGNED FOR NEXT SEASON</span>':(r.preSigned&&!r.preStaying?' <span class=\"chipN\" style=\"font-size:8px\" title=\"Already committed for next season\">COMMITTED'+(r.preTo?' · '+esc(r.preTo):'')+'</span>':''))+'</div><div class=\"fs11 mut\">'"; }
       );
       _hq = _hq.replace(
         "<button class=\"renew\" data-act=\"signFreeAgent\" data-arg=\\''+argOf({id:r.id})+'\\'>SIGN</button>",
@@ -35212,14 +35336,22 @@ window._pwHandleOrder = function(code, val){
       // Drivers parity: reserve rows carried no contract, form or injury state, and the
       // simulator-contribution explainer — the whole reason to keep a strong reserve —
       // was missing entirely. (v3.0.9, parity audit.)
+      // The original needle anchored on the bare `esc(r.name)+'</div>` name line, which the
+      // driver-link patch further up has already rewritten to wrap the name in a .hq-dlink
+      // span — so this silently no-opped from the day it shipped and none of the chips below
+      // ever reached a player. Re-anchored on the post-link text. Function replacement so
+      // nothing in the payload can be read as a $-substitution pattern.
+      // NB: no leading quote on the needle — in the shell this div opens mid-literal
+      // ('<div style="min-width:0"><div class="fw7 fs14">' is a single string), so an
+      // anchor starting with ' cannot match.
       _hq = _hq.replace(
-        "+ '<div style=\"min-width:0\"><div class=\"fw7 fs14\">'+esc(r.name)+'</div><div class=\"fs11 mut\">'+esc(r.nat||'')+' · Age '+r.age+' · OVR '+r.ovr+' · Reserve</div></div>'",
-        "+ '<div style=\"min-width:0\"><div class=\"fw7 fs14\">'+esc(r.name)"
+        "<div class=\"fw7 fs14\">'+'<span class=\"hq-dlink\">'+esc(r.name)+'</span></div><div class=\"fs11 mut\">'+esc(r.nat||'')+' · Age '+r.age+' · OVR '+r.ovr+' · Reserve</div></div>'",
+        function(){ return "<div class=\"fw7 fs14\">'+'<span class=\"hq-dlink\">'+esc(r.name)+'</span>'"
         + "+ (r.atRisk?' <span class=\"chipR\" style=\"font-size:8px\">'+(r.expired?'EXPIRED':'AT RISK')+'</span>':'')"
         + "+ (r.formDip?' <span class=\"chipN\" style=\"font-size:8px;color:var(--amb)\" title=\"'+esc(r.formDip.severity)+' form dip\">OUT OF FORM · '+r.formDip.races+'r</span>':'')"
         + "+ (r.injured?' <span class=\"chipR\" style=\"font-size:8px\">INJURED</span>':'')"
         + "+ (r.sub&&!r.injured?' <span class=\"chipN\" style=\"font-size:8px;color:var(--amb)\" title=\"In line to substitute for an injured race driver\">SUB</span>':'')"
-        + "+ '</div><div class=\"fs11 mut\">'+esc(r.nat||'')+' · Age '+r.age+' · OVR '+r.ovr+' · Reserve · '+(r.years||0)+'yr'+(r.morale!=null?' · Morale '+r.morale:'')+'</div></div>'"
+        + "+ '</div><div class=\"fs11 mut\">'+esc(r.nat||'')+' · Age '+r.age+' · OVR '+r.ovr+' · Reserve · '+(r.years||0)+'yr'+(r.morale!=null?' · Morale '+r.morale:'')+'</div></div>'"; }
       );
       _hq = _hq.replace(
         "+ '<div style=\"margin-top:26px\">'+secH('Reserve & Academy Call-ups') + '<div class=\"card\">'+reserve+'</div></div>';",
@@ -35933,15 +36065,13 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
         }
       } catch(e){}
       var landingTheme='light'; try { landingTheme=localStorage.getItem('f1d_theme')==='dark'?'dark':'light'; } catch(e){}
-      return { appearance:{theme:landingTheme}, landing:{ saves:saves, teams:teams, selectedTeam:sel, challenge:challenge, patchVersion:(window.__f1dVersion||'3.1.0'), whatsNew:[
-        {tag:'NEW', text:'Browse the power-unit market any time from Car → Car & Power Unit, and see what your engine is worth to Car Perf on any team profile.'},
-        {tag:'NEW', text:'Driver names are clickable everywhere — the garage, form guide, timing tower, standings, All Drivers, Free Agents and the race classification all open the full profile.'},
-        {tag:'FIX', text:'Opening a finished race from the Schedule shows that race again instead of jumping to the most recent round.'},
-        {tag:'FIX', text:'Aero balance left the Performance Envelope: it is a weekend setup choice, not a car rating, and the envelope now explains what it actually does.'},
-        {tag:'FIX', text:'Rival staff you have not scouted no longer quote an exact “vs current” gap — it reads “Still scouting” until the first finding lands.'},
-        {tag:'FIX', text:'Teams on the same car rating now share a tier, so a 93 can no longer sit in Mid Tier next to a 93 in Top Tier.'},
-        {tag:'FIX', text:'“Overall” is called Car Perf everywhere, and the team profile lists the five pace pillars behind it — a quick car with poor reliability finally reads correctly.'},
-        {tag:'FIX', text:'The “your team” tick moved to the top left of the Teams card, clear of the tier badge.'}
+      return { appearance:{theme:landingTheme}, landing:{ saves:saves, teams:teams, selectedTeam:sel, challenge:challenge, patchVersion:(window.__f1dVersion||'3.1.1'), whatsNew:[
+        {tag:'FIX', text:'Saves are around 70% smaller — every save was carrying a lap-by-lap telemetry log of the last race that nothing ever read back. This is the cause behind “storage full” warnings and careers vanishing on mobile.'},
+        {tag:'FIX', text:'Cloud sync no longer claims your save was “updated from another device” every time you sync on the same device, and downloading a save stops filing a duplicate career each time.'},
+        {tag:'NEW', text:'Reserve drivers show contract length, morale, form dips, injuries and whether they are in line to substitute.'},
+        {tag:'NEW', text:'The Free Agent market names the team a pre-signed driver has already committed to, instead of just greying out the SIGN button.'},
+        {tag:'FIX', text:'Apostrophes and ampersands survive in names — “O’Ward” no longer stores as “OWard”.'},
+        {tag:'FIX', text:'Imported save files are checked more thoroughly, so a shared backup cannot smuggle markup into the game.'}
       ], cloudSave:{
         available: (typeof CloudSave!=='undefined' && CloudSave.isAvailable()),
         signedIn: (typeof CloudSave!=='undefined' && CloudSave.isSignedIn()),
