@@ -955,8 +955,10 @@ body.hq-skin #driver-detail-modal .modal-box:has(.le-head)::before{display:none}
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:16px;max-width:560px;padding:16px 18px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
           <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v3.1.1: What's New</div>
-          <div style="font-size:14px;font-weight:900;color:#111;margin-bottom:10px">Much smaller saves, cloud sync that stops arguing with itself, and reserves that show their contract</div>
+          <div style="font-size:14px;font-weight:900;color:#111;margin-bottom:10px">No more phantom deficits, much smaller saves, and cloud sync that stops arguing with itself</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 16px">
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:var(--red);font-weight:800;flex-shrink:0">💰</span><span><strong>The season review no longer invents a huge deficit</strong>: winter development spending was being multiplied before it was displayed. Your actual money, the Finances tab and owner confidence were always correct — only the summary was wrong.</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:var(--red);font-weight:800;flex-shrink:0">🏁</span><span><strong>No more teleporting drivers on the timing tower</strong> after a team order: two cars trading places now trade their gap to the leader with it. Race results and points were never affected.</span></div>
             <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:var(--red);font-weight:800;flex-shrink:0">💾</span><span><strong>Saves are about 70% smaller</strong>: every save was carrying a full lap-by-lap telemetry log of the last race that nothing ever read back. This is the cause behind "storage full" warnings and careers vanishing on mobile.</span></div>
             <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:var(--red);font-weight:800;flex-shrink:0">☁️</span><span><strong>Cloud sync stops arguing with itself</strong>: no more "updated from another device" every time you sync on the <em>same</em> device, and downloading a save no longer files a duplicate career each time.</span></div>
             <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🧑‍✈️</span><span><strong>Reserves show contract, morale and form</strong> — including injuries and who is in line to substitute.</span></div>
@@ -25796,7 +25798,12 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const opsB=35, engC=(_liveEngines().some(e=>(e.worksTeams||[]).includes(team.id)))?0:12;
     const staffC=Math.round(team.facilities*0.35+10)+getTeamStaffSalaryCost(team);
     const qSpend=(g.quarterDev||[]).filter(q=>q.applied).reduce((s,q)=>s+(q.aero*6+q.reliability*4+q.engine*10),0);
-    const offSpend=(()=>{ const rd=g._lastOffseasonDevResult; if(!rd) return 0; const b=rd.spent||{}; return (b.aero||0)*6+(b.engine||0)*8+(b.reliability||0)*4+(b.facilities||0)*3; })();
+    // NOT multiplied, unlike qSpend above: quarterDev stores dev POINTS, so those carry a
+    // per-area cost multiplier, but _lastOffseasonDevResult.spent is a copy of
+    // g.offseasonBudget, which is already money in $M (it is allocated against a budget of
+    // ~35% of revenue). Applying the quarterDev-style ×6/×8/×4/×3 here inflated winter
+    // development several-fold and invented season deficits of a few hundred million.
+    const offSpend=(()=>{ const rd=g._lastOffseasonDevResult; if(!rd) return 0; const b=rd.spent||{}; return (b.aero||0)+(b.engine||0)+(b.reliability||0)+(b.facilities||0); })();
     const totalExp=driverSals+reserveSals+scoutCost2+opsB+engC+staffC+qSpend+offSpend;
     const net=totalInc-totalExp;
     const netCol=net>15?'var(--grn)':net>0?'var(--amber)':'var(--red)';
@@ -26238,6 +26245,8 @@ const sponsorInc=sumSponsorIncome(sponsors2);
   <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v3.1.1 · Release Notes</div>
          ${[
     ['v3.1.1','July 2026',[
+            '💰 The season review no longer invents a huge deficit. Winter development spending was being multiplied by its per-area development cost before being shown — but that multiplier belongs to in-season development, which is allocated in points; the winter budget is already money. A full winter allocation could therefore be displayed at several times what it actually cost, turning a season in profit into a "Significant deficit" of a few hundred million. Only the summary was wrong: the money itself, the Finances tab and your owner\'s confidence were always working from the correct figure — which is why the same screen could show a healthy Finances rating next to a huge red deficit. The classic offseason summary had the same fault and is fixed too. (Reported by IIIBanana3519.)',
+            '🏁 The timing tower no longer shows drivers teleporting after a team order. The tower takes its running order from one place and its gap column from another, and a swap moved the two cars\' positions without moving their gaps with them — so the car shown second could be carrying a bigger gap to the leader than the car shown third. The interval column clamps at zero, so instead of an obviously wrong negative number you got a run of "+0.0" and cars that looked like they had jumped. Two cars trading places now trade their gap to the leader along with it. The race result, the points and the classification were always correct — this only ever affected the live tower.',
             '💾 Saves are around 70% smaller. Every save was carrying a complete lap-by-lap telemetry log of the most recent race — on a first-season career that single hidden record was three quarters of the entire file, and it was written again on every autosave. Finished rounds already had this trimmed; the last-race record was being missed. Nothing in the game ever reads it back, so nothing is lost: replays, results, recaps and standings are all unchanged. This is the root cause behind "storage full" warnings and careers disappearing on mobile, and it also means the emergency retry that runs when a device really is full can now free meaningful space instead of almost none.',
             '☁️ Cloud sync no longer argues with itself. After syncing once, the marker recording that sync was erased by the next autosave — so every later sync insisted your cloud save had been "updated from another device" and asked whether to overwrite it, on the same device, with nobody else involved. The same missing marker meant downloading a save stopped recognising which career it belonged to and filed a fresh copy each time, quietly filling all five slots with duplicates of one career. Both are fixed, and the warning shown before a download replaces unsynced progress now survives the turn of a season instead of going quiet.',
             '🧑‍✈️ Reserve drivers show their contract, form and availability. Reserve rows had carried nothing but name, nationality, age and rating: contract length, morale, a deal that is expiring or already expired, an injury, a form dip, and whether the driver is in line to substitute were all being worked out and then never drawn.',
@@ -31898,6 +31907,20 @@ window._wrApplyPositionSwaps = function() {
     if(posA < posB) {
       WR.lastPos[s.a] = posB;
       WR.lastPos[s.b] = posA;
+      // Swap the gap-to-leader too. The timing tower renders its ORDER from lastPos but its
+      // GAP column from gapState, and gapState is rebuilt wholesale from the recorded lap
+      // state on every lap event — so moving a position without moving its gap left the two
+      // disagreeing, and the car shown second could carry a larger gap than the car shown
+      // third. The interval column's Math.max(0,…) then hid it as a wall of "+0.0" instead
+      // of a negative number, which is what made it look like drivers were teleporting.
+      // Two cars trading track position trade their gap to the leader with it.
+      if(WR.gapState) {
+        var gapA = WR.gapState[s.a], gapB = WR.gapState[s.b];
+        if(gapA != null && gapB != null) {
+          WR.gapState[s.a] = gapB;
+          WR.gapState[s.b] = gapA;
+        }
+      }
     }
   });
 };
@@ -36066,6 +36089,8 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       } catch(e){}
       var landingTheme='light'; try { landingTheme=localStorage.getItem('f1d_theme')==='dark'?'dark':'light'; } catch(e){}
       return { appearance:{theme:landingTheme}, landing:{ saves:saves, teams:teams, selectedTeam:sel, challenge:challenge, patchVersion:(window.__f1dVersion||'3.1.1'), whatsNew:[
+        {tag:'FIX', text:'The timing tower no longer shows drivers teleporting after a team order — two cars trading places now trade their gap to the leader with it. Race results and points were never affected.'},
+        {tag:'FIX', text:'The season review no longer shows a huge invented deficit — winter development spending was being multiplied before it was displayed. Your actual money, the Finances tab and owner confidence were always correct.'},
         {tag:'FIX', text:'Saves are around 70% smaller — every save was carrying a lap-by-lap telemetry log of the last race that nothing ever read back. This is the cause behind “storage full” warnings and careers vanishing on mobile.'},
         {tag:'FIX', text:'Cloud sync no longer claims your save was “updated from another device” every time you sync on the same device, and downloading a save stops filing a duplicate career each time.'},
         {tag:'NEW', text:'Reserve drivers show contract length, morale, form dips, injuries and whether they are in line to substitute.'},
@@ -37543,7 +37568,11 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
         var _resSal=(State.getPlayerReserves()||[]).reduce(function(s,d){return s+(d.salary||0);},0);
         var _staffC=0; try { _staffC=Math.round((t.facilities||0)*0.35+10)+getTeamStaffSalaryCost(t); } catch(e){}
         var _qSpend=(g.quarterDev||[]).filter(function(q){return q.applied;}).reduce(function(s,q){ return s+((q.aero||0)*6+(q.reliability||0)*4+(q.engine||0)*10); },0);
-        var _offSpend=(function(){ var rd=g._lastOffseasonDevResult; if(!rd) return 0; var b=rd.spent||{}; return (b.aero||0)*6+(b.engine||0)*8+(b.reliability||0)*4+(b.facilities||0)*3; })();
+        // Raw sum, not multiplied — see the note on the classic offseason summary's offSpend.
+        // g.offseasonBudget is already money in $M; the ×6/×8/×4/×3 belongs to quarterDev,
+        // whose values are dev points. This was showing "-$239M / Significant deficit" on a
+        // season that was actually in surplus (reported by IIIBanana3519).
+        var _offSpend=(function(){ var rd=g._lastOffseasonDevResult; if(!rd) return 0; var b=rd.spent||{}; return (b.aero||0)+(b.engine||0)+(b.reliability||0)+(b.facilities||0); })();
         var _exp=Math.round(_drvSal+_resSal+(_tier?_tier.salary:0)+35+(_works?0:12)+_staffC+_qSpend+_offSpend);
         var _net=_inc-_exp;
         _fin={ income:_inc, expenses:_exp, net:_net,
