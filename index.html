@@ -49,7 +49,7 @@
   gtag('config', 'G-6B4MBFG3FX');
   // Single source of truth for the build number. The HQ landing reads this rather than
   // carrying its own literal, so a release bump touches the same number of places as before.
-  window.__f1dVersion = '3.1.1';
+  window.__f1dVersion = '3.1.2';
   // Analytics helper. Every call site is fire-and-forget: a missing gtag (ad blocker,
   // offline, file:// testing) or a bad param must never break gameplay, so the guard and
   // the try/catch live here once rather than being repeated at ~40 call sites.
@@ -954,17 +954,14 @@ body.hq-skin #driver-detail-modal .modal-box:has(.le-head)::before{display:none}
         </div>
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:16px;max-width:560px;padding:16px 18px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
-          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v3.1.1: What's New</div>
-          <div style="font-size:14px;font-weight:900;color:#111;margin-bottom:10px">No more phantom deficits, much smaller saves, and cloud sync that stops arguing with itself</div>
+          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v3.1.2: What's New</div>
+          <div style="font-size:14px;font-weight:900;color:#111;margin-bottom:10px">Timing tower gaps that match the running order, Build Your Own Power Unit in Team HQ, and an option to never be sacked</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 16px">
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:var(--red);font-weight:800;flex-shrink:0">💰</span><span><strong>The season review no longer invents a huge deficit</strong>: winter development spending was being multiplied before it was displayed. Your actual money, the Finances tab and owner confidence were always correct — only the summary was wrong.</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:var(--red);font-weight:800;flex-shrink:0">🏁</span><span><strong>No more teleporting drivers on the timing tower</strong> after a team order: two cars trading places now trade their gap to the leader with it. Race results and points were never affected.</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:var(--red);font-weight:800;flex-shrink:0">💾</span><span><strong>Saves are about 70% smaller</strong>: every save was carrying a full lap-by-lap telemetry log of the last race that nothing ever read back. This is the cause behind "storage full" warnings and careers vanishing on mobile.</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:var(--red);font-weight:800;flex-shrink:0">☁️</span><span><strong>Cloud sync stops arguing with itself</strong>: no more "updated from another device" every time you sync on the <em>same</em> device, and downloading a save no longer files a duplicate career each time.</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">🧑‍✈️</span><span><strong>Reserves show contract, morale and form</strong> — including injuries and who is in line to substitute.</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:var(--red);font-weight:800;flex-shrink:0">📝</span><span><strong>The Free Agent market names the team</strong> a pre-signed driver has already committed to.</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:#888;font-weight:800;flex-shrink:0">🔤</span><span><strong>Apostrophes and ampersands survive in names</strong> — "O’Ward" no longer stores as "OWard".</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span style="color:#888;font-weight:800;flex-shrink:0">🔐</span><span><strong>Imported save files are checked more thoroughly</strong>, so a shared backup cannot smuggle anything into the game.</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:var(--red);font-weight:800;flex-shrink:0">🔒</span><span><strong>A "Never get sacked" option for long-term saves</strong>, in Settings → Job Security. Off by default. With it on the board can never fire you, however the season goes — owner confidence still moves and is still shown. Not available in the Weekly Challenge.</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:var(--red);font-weight:800;flex-shrink:0">🏁</span><span><strong>Drivers have stopped flying up the timing tower.</strong> The tower took its running order from one place and its gap column from another, so a penalty, a pit stop or the final classification could move a car without moving its gap — leaving a run of "+0.0" and cars that looked like they had jumped. The gap column now always follows the order on screen. Results and points were never affected.</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:var(--red);font-weight:800;flex-shrink:0">⚡</span><span><strong>Build Your Own Power Unit is in Team HQ.</strong> Once you have won a Constructors' Championship the founding card sits at the head of the supplier market on the Car screen — previously it existed only in the classic interface, so in the new UI there was no way to reach it.</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:var(--red);font-weight:800;flex-shrink:0">💰</span><span><strong>The Roster Editor respects the sponsor slot limits.</strong> It accepted an unlimited list and handed it straight to your career, so a custom team could open with twenty paying sponsors and only fall back to the legal shape once those deals expired.</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:var(--red);font-weight:800;flex-shrink:0">💾</span><span><strong>Importing a save backup no longer fails on storage quota.</strong> Imports are compacted the same way a normal save is, and if the store really is full it says which career to delete instead of showing a raw browser error.</span></div>
           </div>
           <button onclick="UI.showChangelog()" style="margin-top:10px;width:100%;padding:7px;background:none;border:1.5px solid rgba(192,57,43,.3);border-radius:7px;font-size:11px;font-weight:700;color:var(--red);cursor:pointer">Full release notes →</button>
         </div>
@@ -1104,7 +1101,7 @@ body.hq-skin #driver-detail-modal .modal-box:has(.le-head)::before{display:none}
       </div>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v3.1.1</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">Reddit</a> · <a href="https://discord.gg/w3R97uTBW" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">Discord</a></div>
+        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v3.1.2</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">Reddit</a> · <a href="https://discord.gg/w3R97uTBW" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">Discord</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -4156,9 +4153,53 @@ function normalizeSponsorDeal(sp, teamId, team){
     lastSeasonMood: sp.lastSeasonMood || 'neutral'
   };
 }
+// ── Sponsor slot limits (v3.1.2, reported by Formula1antagonist) ─────────────
+// One definition, shared by the Finance and Offseason panels, the sign paths and the
+// Roster Editor. The editor pushed straight into team.sponsors with no cap at all, and a
+// custom team's sponsor list becomes the player's starting deals verbatim — so a roster
+// could open a career with twenty paying sponsors and only fall back to the legal shape
+// once those contracts expired a season or two later.
+const SPONSOR_TIER_CAPS = {Title:1, Works:1, Primary:2, Partner:1, Secondary:3, Technical:3, Associate:5};
+function getSponsorTierCap(type){ return SPONSOR_TIER_CAPS[normalizeSponsorType(type)] || 3; }
+// Fit a sponsor list to the tier limits. A deal that can't have the tier it asks for moves
+// to the nearest tier with a slot free (down the hierarchy first, then up) rather than being
+// deleted — a roster author's sponsors are content, and the limit is on how many run at once,
+// not on which names may appear. Only a list that overflows every tier loses deals, and the
+// most valuable ones are placed first. Order of the survivors is preserved.
+function capSponsorList(list){
+  const all = Array.isArray(list) ? list.slice() : [];
+  const order = ['Title','Works','Primary','Partner','Secondary','Technical','Associate'];
+  const counts = {};
+  const assigned = new Map();
+  const dropped = [];
+  const free = ty => (counts[ty]||0) < getSponsorTierCap(ty);
+  all.slice().sort((a,b)=>((b&&b.value)||0)-((a&&a.value)||0)).forEach(sp=>{
+    const want = normalizeSponsorType(sp && sp.type);
+    let type = free(want) ? want : null;
+    const i = order.indexOf(want);
+    for(let j=i+1; j<order.length && !type; j++) if(free(order[j])) type = order[j];
+    for(let j=i-1; j>=0 && !type; j--) if(free(order[j])) type = order[j];
+    if(!type){ dropped.push(sp); return; }
+    counts[type] = (counts[type]||0) + 1;
+    assigned.set(sp, type);
+  });
+  const kept = all.filter(sp=>assigned.has(sp)).map(sp=>{
+    const ty = assigned.get(sp);
+    return normalizeSponsorType(sp && sp.type) === ty ? sp : Object.assign({}, sp, {type: ty});
+  });
+  return { kept, dropped };
+}
 function buildStarterSponsorsForTeam(teamId, team, templateSponsors){
   // Use template/editor sponsors if provided, then DATA.sponsors, then generate defaults
-  const existing = (templateSponsors && templateSponsors.length) ? templateSponsors : (DATA.sponsors && DATA.sponsors[teamId]) || [];
+  const existingRaw = (templateSponsors && templateSponsors.length) ? templateSponsors : (DATA.sponsors && DATA.sponsors[teamId]) || [];
+  // Rosters published before the editor enforced the limits can still carry an over-full
+  // list, so the starting deals are trimmed here too — otherwise the cap only applies to
+  // sponsors signed in-game and the opening seasons stay unbounded.
+  const _capped = capSponsorList(existingRaw);
+  const existing = _capped.kept;
+  if(_capped.dropped.length){
+    try { console.warn('Sponsor slots: '+_capped.dropped.length+' starting sponsor(s) did not fit any tier and were left out.'); } catch(e){}
+  }
   if(existing.length) return existing.map(sp=>normalizeSponsorDeal(JSON.parse(JSON.stringify(sp)), teamId, team)).filter(Boolean);
   const name = (team && team.name ? team.name : 'Constructor').replace(/\s+(F1 Team|Racing|Grand Prix)$/i, '').trim() || 'Constructor';
   const revenue = team?.revenue || 120;
@@ -5417,7 +5458,11 @@ const Editor = {
       sponsors: Array.isArray(team?.sponsors) ? team.sponsors.map(sp => ({
         name: this._sanitizeText(sp.name, 40, 'Sponsor') || 'Sponsor',
         value: clamp(parseInt(sp.value) || 10, 1, 200),
-        type: ['Title','Works','Primary','Partner','Secondary','Technical','Associate'].includes(sp.type) ? sp.type : 'Partner'
+        // normalizeSponsorType understands the legacy 'Tech' alias the 2026 roster uses.
+        // The old list-membership test didn't, so every 'Tech' sponsor was retiered to
+        // Partner — which quietly put nearly every default team two-deep in a one-slot
+        // tier. (v3.1.2)
+        type: normalizeSponsorType(sp.type)
       })) : (Array.isArray(fallback?.sponsors) ? JSON.parse(JSON.stringify(fallback.sponsors)) : JSON.parse(JSON.stringify(DATA.sponsors[fallback.id] || []))),
       baseDrivers: JSON.parse(JSON.stringify(fallback.baseDrivers || []))
     };
@@ -6080,18 +6125,47 @@ const Editor = {
     this.persist();
     if(typeof UI !== 'undefined') UI.renderLanding();
   },
+  // Slots already used per tier, excluding one row (used when re-typing that row).
+  sponsorTierUse(team, exceptIndex) {
+    const used = {};
+    (team && team.sponsors || []).forEach((sp, i) => {
+      if(i === exceptIndex) return;
+      const ty = normalizeSponsorType(sp && sp.type);
+      used[ty] = (used[ty] || 0) + 1;
+    });
+    return used;
+  },
   updateSponsor(teamId, index, field, value) {
     const team = this.getTeam(teamId); if(!team || !team.sponsors || !team.sponsors[index]) return;
     if(field === 'name') team.sponsors[index].name = sanitizeUserName(value, 60) || 'Sponsor';
     else if(field === 'value') team.sponsors[index].value = clamp(parseInt(value)||10, 1, 200);
-    else if(field === 'type') team.sponsors[index].type = value;
+    else if(field === 'type') {
+      // A tier only has so many slots, and these become real starting contracts.
+      const ty = normalizeSponsorType(value);
+      const cap = getSponsorTierCap(ty);
+      if((this.sponsorTierUse(team, index)[ty] || 0) >= cap){
+        if(typeof UI !== 'undefined') UI.toast(ty+' is full — '+cap+' slot'+(cap!==1?'s':'')+' maximum.','warning');
+        if(typeof UI !== 'undefined') UI.renderEditor();
+        return;
+      }
+      team.sponsors[index].type = ty;
+    }
     this.persist();
     if(typeof UI !== 'undefined') UI.renderEditor();
   },
   addSponsor(teamId) {
     const team = this.getTeam(teamId); if(!team) return;
     if(!team.sponsors) team.sponsors = [];
-    team.sponsors.push({name:'New Sponsor', value:5, type:'Associate'});
+    // Fill the first tier with a slot free rather than always stacking Associates, so
+    // "+ Add Sponsor" keeps working until the team is genuinely full.
+    const used = this.sponsorTierUse(team, -1);
+    const order = ['Associate','Technical','Secondary','Partner','Primary','Works','Title'];
+    const free = order.find(ty => (used[ty]||0) < getSponsorTierCap(ty));
+    if(!free){
+      if(typeof UI !== 'undefined') UI.toast('Every sponsor tier is full for this team.','warning');
+      return;
+    }
+    team.sponsors.push({name:'New Sponsor', value:5, type:free});
     this.persist();
     if(typeof UI !== 'undefined') UI.renderEditor();
   },
@@ -7771,6 +7845,15 @@ return {id,name:`${fn} ${ln}`,age:baseAge,nationality:nat,teamId:teamId||null,tr
     const merged = Object.assign({}, defaults, g.scoringRules);
     merged.fastestLap = g.scoringRules.fastestLap === true; // treat undefined/null as off
     return merged;
+  },
+  // ── Job security (v3.1.2, requested by Rollo1874) ───────────────────────────
+  // Opt-in from Settings, off by default, and never active in a Weekly Challenge save:
+  // those are a fixed, scored format that everyone runs on the same terms. Owner
+  // confidence still moves and is still shown — only the sacking itself is withheld, so
+  // a 100-season dynasty on one team stays possible without hiding how the board feels.
+  sackingsDisabled() {
+    const g = this.game;
+    return !!(g && g.noSackings && !g.weeklyChallenge);
   },
   isDoublePointsRace(race) {
     const g = this.game;
@@ -12297,9 +12380,15 @@ const spons=sumSponsorIncome(g.sponsors||[]);
     g.ownerMood.finances = clamp(g.ownerMood.finances + finDelta, -3, 1);
     // Save for display
     g.lastOwnerMoodDelta = {perfDelta:perfDelta+champBonus, finDelta, constrPos, goal};
-    // Fired if total drops below -1
+    // Fired if total drops below -1 — unless job security is switched on in Settings
+    // (v3.1.2, requested by Rollo1874). The count of seasons the board would have acted on
+    // is kept so the owner-confidence panels can say so rather than quietly pretending
+    // everything is fine.
     const moodTotal = g.ownerMood.performance + g.ownerMood.finances;
-    if(moodTotal < -1) g.playerFired = true;
+    if(moodTotal < -1){
+      if(State.sackingsDisabled()) g.sackingsSpared = (g.sackingsSpared||0) + 1;
+      else g.playerFired = true;
+    }
     if(driverChamp){
       driverChamp.driver.championships++;
       g.history.champions.push({season:g.season,driverId:driverChamp.driver.id,driverName:driverChamp.driver.name,teamId:driverChamp.driver.teamId,teamName:State.getTeam(driverChamp.driver.teamId)?.name||'?',points:driverChamp.points,ageAtChamp:driverChamp.driver.age});
@@ -15450,6 +15539,28 @@ const Storage = {
     return { ...rec, race };
   },
 
+  // The same compaction saveGame/autosave apply, but for a game object that is NOT
+  // State.game — an imported file, or the export fallback. `lean` strips replay data from
+  // every race rather than keeping it for the most recent ones. (v3.1.2)
+  _compactGameForStorage(game, lean){
+    if(!game || typeof game !== 'object') return game;
+    const currentRaceIndex = game.raceIndex || 0;
+    const cal = (game.calendar||[]).map((r,i)=>{
+      if(!lean) return this._compactRaceForSave(r, i, currentRaceIndex);
+      if(!r) return r;
+      const { lapEvents, sprintLapEvents, lapStates, simEvents, sprintSimEvents, ...rest } = r;
+      return rest;
+    });
+    const out = Object.assign({}, game, {
+      calendar: cal,
+      lastRaceResult: this._compactRecapForSave(game.lastRaceResult),
+      lastSprintResult: this._compactRecapForSave(game.lastSprintResult)
+    });
+    out.newsFeed = (game.newsFeed||[]).slice(lean ? -20 : -50);
+    try { const _h = this._compactHistoryForSave(game.history, game.season); if(_h) out.history = _h; } catch(e){}
+    return out;
+  },
+
   // Return all slot indices that have saves, sorted newest first
   _getSlots() {
     const slots = [];
@@ -15644,7 +15755,11 @@ const Storage = {
       this.saveGame();
       const slot = this._currentSlot();
       const raw = slot >= 0 ? localStorage.getItem(this.SAVE_KEY_PREFIX + slot) : null;
-      const data = raw || JSON.stringify({ game: State.game, savedAt: Date.now(), version: this.SAVE_VERSION });
+      // Fallback path (the save itself failed, e.g. the store is full): compact the live game
+      // the same way a stored save is compacted. Exporting State.game raw produced a backup
+      // carrying every race's lapStates — a multi-megabyte file that no browser would then
+      // accept back on import, which is how a full store turned into an unimportable backup.
+      const data = raw || JSON.stringify({ game: this._compactGameForStorage(State.game, true), savedAt: Date.now(), version: this.SAVE_VERSION });
       const t = State.getPlayerTeam() || {};
       const fname = 'f1dynasty-save-' + String(t.name||'career').toLowerCase().replace(/[^a-z0-9]+/g,'-') + '-season-' + (State.game.season||'') + '.json';
       const blob = new Blob([data], { type:'application/json' });
@@ -15749,7 +15864,25 @@ const Storage = {
       data.game._saveId = 'sg_import_' + Date.now() + '_' + Math.random().toString(36).slice(2,10);
       this._sanitizeImportedNames(data.game);
       const slot = this._newSlot();
-      localStorage.setItem(this.SAVE_KEY_PREFIX + slot, JSON.stringify({ game: data.game, savedAt: Date.now(), version: data.version || this.SAVE_VERSION }));
+      const _key = this.SAVE_KEY_PREFIX + slot;
+      const _stamp = { savedAt: Date.now(), version: data.version || this.SAVE_VERSION };
+      // The file used to be written exactly as it arrived. A backup taken while storage was
+      // already full carries full replay data (lapStates alone ran to hundreds of KB per
+      // race), so the write blew the slot quota and the import died on a raw DOMException
+      // \u2014 "Setting the value of 'f1gm_save_4' exceeded the quota" with no way forward.
+      // Imports are now compacted like any other save, retried lean, and told what to do
+      // if the store is genuinely full. (v3.1.2, reported by ExtremeTruck7626.)
+      try {
+        localStorage.setItem(_key, JSON.stringify(Object.assign({ game: this._compactGameForStorage(data.game, false) }, _stamp)));
+      } catch(quotaErr){
+        try {
+          localStorage.setItem(_key, JSON.stringify(Object.assign({ game: this._compactGameForStorage(data.game, true) }, _stamp)));
+        } catch(retryErr){
+          try { localStorage.removeItem(_key); } catch(e2){}
+          UI.toast('Import failed \u2014 this browser\u2019s storage is full. Delete a career you no longer need from the save list, then import again. No saves were changed.','error');
+          return false;
+        }
+      }
       UI.toast('Save imported into an empty slot. Reloading\u2026','success');
       setTimeout(()=>{ location.reload(); }, 900);
       return true;
@@ -17218,13 +17351,27 @@ const UI = {
         <details style="margin-top:10px" ${Editor._openSections?.sponsors?'open':''} ontoggle="Editor.setSectionOpen('sponsors',this.open)">
           <summary style="cursor:pointer;font-size:11px;font-weight:700;color:var(--tx2);letter-spacing:.5px;text-transform:uppercase;list-style:none">💰 Sponsors</summary>
           <div style="font-size:10px;color:var(--tx3);margin:6px 0 8px">Edit sponsor names, values, and tiers. These are the starting sponsors when you play as this team.</div>
+          ${(()=>{
+            // Every tier has a slot limit in-game, so show it here — the editor used to accept
+            // an unlimited list and hand it straight to the career (v3.1.2, Formula1antagonist).
+            const use = Editor.sponsorTierUse(team, -1);
+            return `<div style="font-size:10px;color:var(--tx3);margin:-2px 0 8px;display:flex;flex-wrap:wrap;gap:8px">${
+              ['Title','Works','Primary','Partner','Secondary','Technical','Associate'].map(ty=>{
+                const cap=getSponsorTierCap(ty), n=use[ty]||0;
+                return `<span style="color:${n>=cap?'var(--amber)':'var(--tx3)'}">${ty} ${n}/${cap}</span>`;
+              }).join('')
+            }</div>`;
+          })()}
           <div style="display:flex;flex-direction:column;gap:6px">
             ${(team.sponsors||[]).map((sp, si) => `
               <div style="display:flex;gap:6px;align-items:center">
                 <input value="${escapeHtml(sp.name)}" onchange="Editor.updateSponsor('${team.id}',${si},'name',this.value)" placeholder="Name" style="flex:2;font-size:11px;padding:5px 8px;border:1px solid var(--bd);border-radius:6px;background:var(--bg2)">
                 <input type="number" value="${sp.value}" min="1" max="200" onchange="Editor.updateSponsor('${team.id}',${si},'value',this.value)" style="width:55px;font-size:11px;padding:5px 8px;border:1px solid var(--bd);border-radius:6px;background:var(--bg2)" title="Value ($M/yr)">
                 <select onchange="Editor.updateSponsor('${team.id}',${si},'type',this.value)" style="font-size:11px;padding:5px 4px;border:1px solid var(--bd);border-radius:6px;background:var(--bg2)">
-                  ${['Title','Works','Primary','Partner','Secondary','Technical','Associate'].map(t=>`<option value="${t}" ${sp.type===t?'selected':''}>${t}</option>`).join('')}
+                  ${(()=>{ const use=Editor.sponsorTierUse(team, si); return ['Title','Works','Primary','Partner','Secondary','Technical','Associate'].map(t=>{
+                    const cap=getSponsorTierCap(t), full=(use[t]||0)>=cap;
+                    return `<option value="${t}" ${sp.type===t?'selected':''} ${full&&sp.type!==t?'disabled':''}>${t}${full&&sp.type!==t?' (full)':''}</option>`;
+                  }).join(''); })()}
                 </select>
                 <button onclick="Editor.removeSponsor('${team.id}',${si})" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:14px;padding:0 4px" title="Remove">✕</button>
               </div>`).join('')}
@@ -21843,7 +21990,11 @@ const personalSlots = getPersonalSponsorSlots(d);
           +'<div style="font-size:16px;font-weight:900;font-family:var(--fm);color:'+finCol+'">'+(finScore>=0?'+':'')+finScore.toFixed(1)+'</div>'
           +'<div style="font-size:10px;color:var(--tx3)">cumulative, max +1.0</div></div>'
           +'</div>'
-          +(total<=-0.5?'<div style="margin-top:8px;padding:6px 8px;background:#fef2f2;border-radius:5px;font-size:11px;color:var(--red);font-weight:600">⚠️ '+(total<=-1?'You are in danger of being fired. A strong season is essential.':'The board is watching closely. Results need to improve.')+'</div>':'')
+          // With job security on, the board's mood is still worth reading — but it must not
+          // threaten a sacking that cannot happen (v3.1.2).
+          +(State.sackingsDisabled()
+            ? '<div style="margin-top:8px;padding:6px 8px;background:var(--bg3);border-radius:5px;font-size:11px;color:var(--tx3);font-weight:600">🔒 Job security is on — you cannot be sacked'+((g.sackingsSpared||0)>0?'. The board would have acted after '+g.sackingsSpared+' season'+(g.sackingsSpared===1?'':'s')+' so far.':'.')+'</div>'
+            : (total<=-0.5?'<div style="margin-top:8px;padding:6px 8px;background:#fef2f2;border-radius:5px;font-size:11px;color:var(--red);font-weight:600">⚠️ '+(total<=-1?'You are in danger of being fired. A strong season is essential.':'The board is watching closely. Results need to improve.')+'</div>':''))
           +'</div></div>';
       })()}
 
@@ -24738,6 +24889,7 @@ const _sponsorInc=sumSponsorIncome(State.game.sponsors||[]);
       <p>Objectives are tuned to what your car can realistically achieve. A front-running car gets win, pole, podium, and championship-position targets. A midfield or backmarker car instead gets goals it can actually hit — finishing a place or two above where the car ranks, scoring points in a set number of races, and season points totals. You won't be asked to win a race or take poles in a car that can't get near the front. Each objective carries a revenue bonus proportional to its difficulty.</p>
       ${tip('Check them early', 'Board objectives are shown on the dashboard above the news feed. Read them at the start of the season — some objectives (like "score 3 poles") require you to actively prioritise qualifying in your strategy decisions.')}
       ${warn('Missing all 3 objectives two seasons in a row damages owner mood. Sustained poor owner mood gets you fired. Even if results are poor, meeting at least 1–2 objectives per season keeps the board onside. If you are fired from a mid-grid or top team, struggling teams will offer you a second chance. If you are fired from a bottom team (last or second-to-last), your career is over — no team will hire a manager who ran the worst team into the ground.')}
+      <p><strong>Building a decades-long save?</strong> Settings → Job Security has a <strong>Never get sacked</strong> option, off by default. With it on the board can never fire you, however the season goes — owner confidence still moves and is still shown, and the seasons the board would have acted on are counted so you can see how close it came. It is not available inside the Weekly Challenge.</p>
     `)}
 
     ${sec('🏁','Race Strategy — Pit Stops & Weather',`
@@ -25869,9 +26021,13 @@ const sponsorInc=sumSponsorIncome(sponsors2);
           const total=mood.performance+mood.finances;
           const totalCol=total>0.5?'var(--grn)':total>-0.5?'var(--amber)':'var(--red)';
           const goalLabel=goal===1?'Win Championship':goal<=3?'Top '+goal+' Constructors':goal<=6?'Top '+goal+' Finish':'Competitive (P'+goal+'+)';
+          const _secure=State.sackingsDisabled();
           const statusMsg=total>0.8?'Delighted — your job is very safe'
             :total>0.2?'Satisfied — keep up the form'
             :total>-0.5?'Concerned — results must improve'
+            // Job security on: the mood still matters, the sacking cannot happen (v3.1.2).
+            :_secure?(total>-1?'⚠️ Warning — the board is unhappy, but job security is on'
+                                :'🔒 The board would have acted — job security is on')
             :total>-1?'⚠️ Warning — one more bad season and you could be fired'
             :'🔴 Critical — immediate improvement required or you will be fired';
           const perfBar=UI._ownerMoodBar(mood.performance,'Performance (goal: '+goalLabel+')');
@@ -26242,8 +26398,15 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const html=`
       <div style="max-height:85vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v3.1.1 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v3.1.2 · Release Notes</div>
          ${[
+    ['v3.1.2','August 2026',[
+            '🔒 A "Never get sacked" option for long-term saves, in Settings → Job Security. It is off by default and has to be switched on deliberately: with it on the board can never fire you, however the season goes, so a hundred-season dynasty with one team cannot be ended by a bad run. Nothing else is softened — owner confidence still rises and falls exactly as it did, the panels still show the board turning against you, and the seasons the board would have acted on are counted and reported so you can see how close it came. It is not available inside the Weekly Challenge, which is a scored format everyone runs on the same terms. (Requested by Rollo1874.)',
+            '🏁 Drivers have stopped flying up the timing tower. v3.1.1 fixed this for team orders, but the same fault had several other sources: the tower renders its running order from the event stream and its gap column from the lap model, and a time penalty, the cap that stops a pit stop showing as a fifteen-place drop, and the snap to the official classification at the flag all move a car\'s position without moving its gap. Whenever the two disagreed the car shown second could be carrying a bigger gap to the leader than the car shown third, and because the interval column clamps at zero you saw a run of "+0.0" instead of an obviously wrong negative number. The gap column now always follows the order actually on screen — the values are still the lap model\'s real gaps, only which car carries which changes, so the spread stays honest and an interval can never go negative. At the chequered flag the tower switches to the same gaps the classification and the share card use, penalties included, so the last thing you see matches the result table exactly. Results, points and the classification were never affected. (Reported by IronicGerman.)',
+            '⚡ Build Your Own Power Unit is reachable in Team HQ. Founding your own manufacturer existed only on the classic Engine Market modal, so in the new interface there was no way to get to it at all — two separate reports from championship-winning teams asking where it had gone. The founding card now sits at the head of the supplier market on the Car screen, showing the Constructors\' Championship requirement before you have met it, why it is unavailable when your current PU contract still has years to run or the $180M is not there, and the state of your programme once it is yours — how many customer teams buy your supply and what they paid last year. (Reported by SanderSucksAtLife and EmiliusReturns.)',
+            '💰 The Roster Editor now respects the sponsor slot limits. Sponsors have had a cap per tier for a long time — 1 Title, 1 Works, 2 Primary, 1 Partner, 3 Secondary, 3 Technical, 5 Associate — but the editor pushed straight into the team with no limit at all, and a custom team\'s sponsor list becomes your starting contracts verbatim. A roster could therefore open a career with twenty paying sponsors and only settle back to the legal shape a season or two later as those deals expired. The editor now shows slots used against the limit for every tier, adds new sponsors into the first tier with room, refuses to move a sponsor into a full tier, and a roster made before this that is over the limits is trimmed to its most valuable deals when the career starts. (Reported by Formula1antagonist, with thanks to RuleImpossible3362 for pinning down the timeline.)',
+            '💾 Importing a save backup no longer dies on a storage quota error. The file was written to the slot exactly as it arrived, without the compaction every normal save goes through — and a backup taken while storage was already full carried a full lap-by-lap telemetry log of every race, easily several megabytes, which no browser would accept back. Imports are now compacted like any other save, retried leaner if the first write fails, and if the store genuinely is full you are told to delete a career you no longer need rather than shown a raw browser exception. The backup that caused it is fixed at the source too: an export that has to fall back to the in-memory career now strips the same replay data. (Reported by ExtremeTruck7626.)'
+    ]],
     ['v3.1.1','July 2026',[
             '💰 The season review no longer invents a huge deficit. Winter development spending was being multiplied by its per-area development cost before being shown — but that multiplier belongs to in-season development, which is allocated in points; the winter budget is already money. A full winter allocation could therefore be displayed at several times what it actually cost, turning a season in profit into a "Significant deficit" of a few hundred million. Only the summary was wrong: the money itself, the Finances tab and your owner\'s confidence were always working from the correct figure — which is why the same screen could show a healthy Finances rating next to a huge red deficit. The classic offseason summary had the same fault and is fixed too. (Reported by IIIBanana3519.)',
             '🏁 The timing tower no longer shows drivers teleporting after a team order. The tower takes its running order from one place and its gap column from another, and a swap moved the two cars\' positions without moving their gaps with them — so the car shown second could be carrying a bigger gap to the leader than the car shown third. The interval column clamps at zero, so instead of an obviously wrong negative number you got a run of "+0.0" and cars that looked like they had jumped. Two cars trading places now trade their gap to the leader along with it. The race result, the points and the classification were always correct — this only ever affected the live tower.',
@@ -27762,6 +27925,27 @@ const sponsorInc=sumSponsorIncome(sponsors2);
             ${toggle('Auto Aero', 'Engineers set downforce each race (−2 car performance)', autoAero,
               `State.game.autoAero=!${autoAero};Storage.autosave();UI.showSettings();UI.renderCar()`)}
           </div>`
+        )}
+
+        ${section('Job Security',
+          (()=>{
+            // Opt-in "no sackings" for long dynasty saves (v3.1.2, requested by Rollo1874).
+            // Locked off inside a Weekly Challenge: that is a scored format everyone runs on
+            // the same terms, so it must not be playable with the consequences switched off.
+            const noSack = g.noSackings || false;
+            if(g.weeklyChallenge){
+              return `<div style="padding:10px 12px;border:1px solid var(--bd);border-radius:8px;background:var(--bg3);opacity:.75">
+                <div style="font-size:13px;font-weight:600;color:var(--tx)">Never get sacked</div>
+                <div style="font-size:11px;color:var(--tx3);margin-top:3px;line-height:1.5">Not available in the Weekly Challenge — everyone runs the challenge on the same terms. It can be switched on in any normal career.</div>
+              </div>`;
+            }
+            return `<div style="display:flex;flex-direction:column;gap:8px">
+              ${toggle('Never get sacked', 'The board can never fire you, however the season goes',
+                noSack,
+                `State.game.noSackings=!${noSack};Storage.autosave();UI.showSettings()`)}
+              <div style="font-size:11px;color:var(--tx3);line-height:1.5">For long-term saves — build one team over decades without a bad run ending the career. Owner confidence still moves and is still shown, and seasons the board would have acted on are recorded, so you can see how close it got.</div>
+            </div>`;
+          })()
         )}
 
         <button class="btn btn-ghost btn-sm" onclick="UI.closeModal()" style="width:100%;margin-top:4px">Done</button>
@@ -31925,6 +32109,45 @@ window._wrApplyPositionSwaps = function() {
   });
 };
 
+// ── Timing-tower gap alignment (v3.1.2, reported by IronicGerman) ─────────────
+// The tower renders its ORDER from WR.lastPos and its GAP column from WR.gapState, and
+// those two are built from different places: lastPos comes from the event stream (and is
+// snapped to the canonical classification at the flag, nudged by penalty drops, and capped
+// on pit laps so a stop can't show as a 15-place fall), while gapState is rebuilt wholesale
+// from the recorded lap model every lap. Any of those adjustments moves a car's position
+// without moving its gap, so the car shown P2 could be carrying a bigger gap to the leader
+// than the car shown P3. The interval column's Math.max(0,…) then hid the negative result
+// as "+0.0", which is what made cars look like they were flying up the order.
+// v3.1.1 traded the two gaps on a team-order swap, which only covered that one case.
+// This is the general form: the gap column is dealt out in the order actually displayed.
+// The values are the lap model's real gaps — only which row carries which value changes —
+// so the spread stays honest and intervals can never go negative. Display only: results,
+// points and the classification are untouched.
+window._wrAlignGaps = function(orderedIds, gapMap) {
+  var out = {};
+  if(!Array.isArray(orderedIds) || !orderedIds.length) return out;
+  var map = gapMap || {};
+  var known = [];
+  var hasGap = orderedIds.map(function(id){
+    var g = map[id];
+    var ok = (typeof g === 'number' && isFinite(g) && g > 0);
+    if(ok) known.push(g);
+    return ok;
+  });
+  known.sort(function(a,b){ return a - b; });
+  var k = 0, prev = 0;
+  orderedIds.forEach(function(id, i){
+    if(i === 0){ out[id] = 0; return; }
+    // A car with no recorded gap this lap inherits the one ahead instead of consuming a
+    // real value — otherwise a missing entry sorts to the front and shifts the whole ladder.
+    var v = hasGap[i] ? (k < known.length ? known[k++] : prev) : prev;
+    if(v < prev) v = prev;
+    out[id] = v;
+    prev = v;
+  });
+  return out;
+};
+
 window.WRSpeed = function(ms, btn) {
   document.getElementById('wr-speed').value = ms;
   document.querySelectorAll('.wr-spd-btn').forEach(function(b){
@@ -32064,6 +32287,8 @@ window._wrRenderPositions = function() {
   // simply reassigning 1..N ensures no duplicates or gaps in the tower display.
   // This is display-only and does not affect stored race results or standings.
   rows.forEach(function(r, i) { r.pos = i + 1; });
+  // Gaps follow the order actually shown (v3.1.2) — see window._wrAlignGaps.
+  const _alignedGaps = window._wrAlignGaps(rows.map(function(r){ return r.driverId; }), WR.gapState);
 
   const tyreColors = {soft:'#e53e3e',medium:'#d97706',hard:'#718096',inter:'#38a169',wet:'#3182ce'};
   const tyreLetters = {soft:'S',medium:'M',hard:'H',inter:'I',wet:'W'};
@@ -32093,7 +32318,7 @@ window._wrRenderPositions = function() {
       : '';
     // Live gap to the leader, mirroring the broadcast timing tower (v2.6.1, Diligent_Landscape64).
     // P1 shows the interval label; everyone else shows their gap to the lead car this lap.
-    const _gapMap = WR.gapState || {};
+    const _gapMap = _alignedGaps;
     let gapHtml = '';
     if(r.pos === 1){
       gapHtml = '<div style="width:40px;flex-shrink:0;text-align:right;font-size:8px;font-weight:800;letter-spacing:.2px;color:var(--tx3);font-family:var(--fm)">LEADER</div>';
@@ -32518,6 +32743,16 @@ window._wrTick = function() {
     finalResultArr.forEach(function(r){
       if(!r.dnf && r.position) WR.lastPos[r.driverId] = r.position;
     });
+    // The tower snaps to the canonical classification here, so take the classification's
+    // gaps with it (v3.1.2) — getRaceGapNumbers is the same source the result table and the
+    // share card read, penalties included. Without this the last thing the tower showed was
+    // the final lap model's gaps against a running order that had already moved on.
+    try {
+      if(typeof getRaceGapNumbers === 'function'){
+        const _finalGaps = getRaceGapNumbers(race, finalResultArr, isSprint);
+        if(_finalGaps && Object.keys(_finalGaps).length) WR.gapState = _finalGaps;
+      }
+    } catch(e){}
     window._wrRenderPositions();
       // ── End position adjustment ───────────────────────────────────────────────
       window._wrSyncCommentary(race, isSprint);
@@ -34044,6 +34279,10 @@ window._wrBuildPitwallData = function(){
     };
   }).sort((a,b)=>a._p-b._p);
   rows.forEach((r,i)=>r._p=i+1);
+  // Gaps follow the order actually shown (v3.1.2) — see window._wrAlignGaps. Applied to the
+  // row itself so the tower and the "your cars" panel quote the same gap to the leader.
+  const _aligned = window._wrAlignGaps(rows.map(r=>r.driverId), gapMap);
+  rows.forEach(r=>{ r.gapNum = _aligned[r.driverId] != null ? _aligned[r.driverId] : 0; });
   const positions = rows.map((r,i)=>({
     p:r._p, code:r.code, name:r.name, teamName:r.team, teamColor:r._color,
     gap: i===0?'LEADER':'+'+r.gapNum.toFixed(1),
@@ -35246,6 +35485,31 @@ window._pwHandleOrder = function(code, val){
         function(){ return [ "  function puMarket(P){",
           "    var list = (P && P.suppliers) || [];",
           "    if (!list.length) return '';",
+          // Build-your-own-PU card, at the head of the market (v3.1.2). Classic had it on the
+          // Engine Market modal only, so in Team HQ the feature was unreachable.
+          "    var own = P && P.ownPU, ownCard = '';",
+          "    if (own && own.owned) {",
+          "      ownCard = '<div class=\"card cardp\" style=\"margin-bottom:9px;border-color:var(--amb)\">'",
+          "        + '<div class=\"fw8 fs14\">\\u26A1 '+esc(own.name||'Your Power Unit')+' \\u00B7 Your Manufacturer</div>'",
+          "        + '<div class=\"fs11 mut\" style=\"margin-top:6px;line-height:1.5\">You own this power unit and run it at works rate. '",
+          "        + own.customers+' customer team'+(own.customers===1?'':'s')+' buy your supply'",
+          "        + (own.revenue?(' \\u2014 last year that earned $'+own.revenue+'M'):'')",
+          "        + '. Develop it through your winter Power Unit budget, or sign with a supplier below to divest the programme.</div>'",
+          "        + '</div>';",
+          "    } else if (own && !own.unlocked) {",
+          "      ownCard = '<div class=\"card cardp\" style=\"margin-bottom:9px;opacity:.85\">'",
+          "        + '<div class=\"fw8 fs14\">\\uD83D\\uDD12 Build Your Own Power Unit</div>'",
+          "        + '<div class=\"fs11 mut\" style=\"margin-top:6px;line-height:1.5\">Win a Constructors\\u2019 Championship to unlock founding your own power-unit manufacturer. Once unlocked, rival teams can buy your supply and pay you for it.</div>'",
+          "        + '</div>';",
+          "    } else if (own) {",
+          "      ownCard = '<div class=\"card cardp\" style=\"margin-bottom:9px;border-color:var(--amb)\">'",
+          "        + '<div class=\"fw8 fs14\">\\u26A1 Build Your Own Power Unit</div>'",
+          "        + '<div class=\"fs11 mut\" style=\"margin-top:6px;line-height:1.5\">Found your own manufacturer. Your team becomes a works operation on free supply, and rival teams can sign as paying customers \\u2014 their fees are credited to your budget each offseason. It starts mid-tier and develops through your winter Power Unit budget. One-off founding cost: $'+own.cost+'M.</div>'",
+          "        + (own.canFound",
+          "            ? '<div style=\"margin-top:9px\"><button class=\"renew\" data-act=\"carFoundEngine\">FOUND YOUR POWER UNIT \\u00B7 $'+own.cost+'M</button></div>'",
+          "            : (own.blocked?'<div class=\"fs10 mut tc\" style=\"margin-top:8px\">'+esc(own.blocked)+'</div>':''))",
+          "        + '</div>';",
+          "    }",
           "    var rows = list.map(function(s){",
           "      var chip = s.isCurrent ? '<span class=\"chipT\" style=\"font-size:8px\">CURRENT</span>'",
           "        : (s.atCapacity ? '<span class=\"chipR\" style=\"font-size:8px\">AT CAPACITY</span>' : '');",
@@ -35272,7 +35536,7 @@ window._pwHandleOrder = function(code, val){
           "    return '<div style=\"margin-top:16px;padding-top:14px;border-top:1px solid var(--line)\">'",
           "      + '<div class=\"fs10 fnt hudf mb8\" style=\"letter-spacing:.12em\">SUPPLIER MARKET \\u00B7 '+list.length+' MANUFACTURERS</div>'",
           "      + (P.marketNote?'<div class=\"fs11 mut\" style=\"margin:-2px 0 11px;line-height:1.5\">'+esc(P.marketNote)+'</div>':'')",
-          "      + rows + '</div>';",
+          "      + ownCard + rows + '</div>';",
           "  }",
           "  function renderCar(){" ].join("\n"); }
       );
@@ -36088,15 +36352,16 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
         }
       } catch(e){}
       var landingTheme='light'; try { landingTheme=localStorage.getItem('f1d_theme')==='dark'?'dark':'light'; } catch(e){}
-      return { appearance:{theme:landingTheme}, landing:{ saves:saves, teams:teams, selectedTeam:sel, challenge:challenge, patchVersion:(window.__f1dVersion||'3.1.1'), whatsNew:[
-        {tag:'FIX', text:'The timing tower no longer shows drivers teleporting after a team order — two cars trading places now trade their gap to the leader with it. Race results and points were never affected.'},
+      return { appearance:{theme:landingTheme}, landing:{ saves:saves, teams:teams, selectedTeam:sel, challenge:challenge, patchVersion:(window.__f1dVersion||'3.1.2'), whatsNew:[
+        {tag:'NEW', text:'A “Never get sacked” option for long-term saves, in Settings → Job Security. Off by default; with it on the board can never fire you, however the season goes. Owner confidence still moves and is still shown. Not available in the Weekly Challenge.'},
+        {tag:'FIX', text:'Drivers have stopped flying up the timing tower. The tower took its running order from one place and its gap column from another, so a penalty, a pit stop or the final classification could move a car without moving its gap — leaving a run of “+0.0” and cars that looked like they had jumped. The gap column now always follows the order on screen.'},
+        {tag:'NEW', text:'Build Your Own Power Unit is in Team HQ — once you have won a Constructors’ Championship the founding card sits at the head of the supplier market on the Car screen. It was previously reachable only in the classic interface.'},
+        {tag:'FIX', text:'The Roster Editor respects the sponsor slot limits. It accepted an unlimited list and handed it straight to your career, so a custom team could start with twenty paying sponsors until those deals expired.'},
+        {tag:'FIX', text:'Importing a save backup no longer fails on storage quota — imports are compacted like any other save, and a genuinely full store now says which career to delete instead of showing a raw browser error.'},
+        {tag:'FIX', text:'At the chequered flag the tower shows the same gaps as the classification and the share card, penalties included.'},
         {tag:'FIX', text:'The season review no longer shows a huge invented deficit — winter development spending was being multiplied before it was displayed. Your actual money, the Finances tab and owner confidence were always correct.'},
         {tag:'FIX', text:'Saves are around 70% smaller — every save was carrying a lap-by-lap telemetry log of the last race that nothing ever read back. This is the cause behind “storage full” warnings and careers vanishing on mobile.'},
-        {tag:'FIX', text:'Cloud sync no longer claims your save was “updated from another device” every time you sync on the same device, and downloading a save stops filing a duplicate career each time.'},
-        {tag:'NEW', text:'Reserve drivers show contract length, morale, form dips, injuries and whether they are in line to substitute.'},
-        {tag:'NEW', text:'The Free Agent market names the team a pre-signed driver has already committed to, instead of just greying out the SIGN button.'},
-        {tag:'FIX', text:'Apostrophes and ampersands survive in names — “O’Ward” no longer stores as “OWard”.'},
-        {tag:'FIX', text:'Imported save files are checked more thoroughly, so a shared backup cannot smuggle markup into the game.'}
+        {tag:'NEW', text:'Reserve drivers show contract length, morale, form dips, injuries and whether they are in line to substitute.'}
       ], cloudSave:{
         available: (typeof CloudSave!=='undefined' && CloudSave.isAvailable()),
         signedIn: (typeof CloudSave!=='undefined' && CloudSave.isSignedIn()),
@@ -36449,6 +36714,25 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
             : ((t.engineContractYears||0)>0
                 ? 'Your contract runs for another '+(t.engineContractYears||0)+' year'+((t.engineContractYears||0)!==1?'s':'')+'. You can study the field now and switch once it expires.'
                 : 'Your contract has expired — renew with your current supplier or sign with any manufacturer that has a slot free.');
+          // Founding your own manufacturer existed only on the classic Engine Market, so in
+          // Team HQ there was no way to reach it at all — two separate reports of "I've won
+          // the WCC, where is it?" (v3.1.2, reported by SanderSucksAtLife and EmiliusReturns).
+          // GameActions.foundOwnEngine re-checks every condition itself; this is the same
+          // gate expressed as a card so the requirement is visible before it is met.
+          var _foundCost=180;
+          var _cTitles=(State.game.careerStats&&State.game.careerStats.constructorChampionships)||0;
+          if(_ownsPU){
+            var _custN=(State.game.teams||[]).filter(function(x){ return String(x.id)!==String(t.id) && x.engineManufacturer===State.game.playerEngineId; }).length;
+            _power.ownPU={ owned:true, name:(_eng&&_eng.name)||'Your Power Unit', customers:_custN,
+                           revenue:R((State.game._lastPuRevenue&&State.game._lastPuRevenue.revenue)||0) };
+          } else {
+            var _cYrs=t.engineContractYears||0, _afford=(t.revenue||0)>=_foundCost;
+            _power.ownPU={ owned:false, unlocked:_cTitles>=1, cost:_foundCost,
+                           canFound:_cTitles>=1 && _cYrs===0 && _afford,
+                           blocked:(_cYrs>0
+                             ? ('Available when your current PU contract expires — '+_cYrs+'yr'+(_cYrs!==1?'s':'')+' remaining.')
+                             : (!_afford ? ('Needs $'+_foundCost+'M available — you have $'+R(t.revenue||0)+'M.') : '')) };
+          }
         } catch(e2){}
       }
     } catch(e) {}
@@ -37630,7 +37914,11 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
         development:{ budget:budget, remaining:Math.max(0,budget-spentTot), areas:areas },
         regs:{ active:true, note:'Invest early development into the '+((g.nextRegsYear)||((g.season||0)+1))+' regulation reset.', investedPct:Math.round((g.regsInvestment||0)*100) },
         teamOffers:teamOffers, poachAttempts:poachAttempts, preContracts:preContracts, moveOptions:moveOptions, moveLocked:g._managerMoveCommittedSeason===g.season,
-        owner:{goal:goalLabel,performance:mood.performance||0,finances:mood.finances||0,total:moodTotal,status:moodTotal>0.8?'Delighted':moodTotal>0.2?'Satisfied':moodTotal>-0.5?'Concerned':moodTotal>-1?'Worried':'On the Brink'}
+        owner:{goal:goalLabel,performance:mood.performance||0,finances:mood.finances||0,total:moodTotal,
+          // Job security on (v3.1.2): the board's mood is unchanged, but "On the Brink" would
+          // be describing a sacking that cannot happen.
+          status:(S.sackingsDisabled&&S.sackingsDisabled()&&moodTotal<=-0.5)?'Unhappy · job security on'
+            :moodTotal>0.8?'Delighted':moodTotal>0.2?'Satisfied':moodTotal>-0.5?'Concerned':moodTotal>-1?'Worried':'On the Brink'}
       };
     } catch(e){ return {}; }
   };
@@ -38592,6 +38880,15 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       rc.on('carRenewEngine', function(){
         if(!hasGame())return;
         try { if(GameActions.renewEngine) GameActions.renewEngine(); } catch(e){}
+        _carEngineRefresh();
+      });
+      // Found your own manufacturer from the Car screen (v3.1.2). foundOwnEngine enforces the
+      // title, the contract and the $180M itself and toasts the reason when one fails, so the
+      // button can never commit the spend from a state the classic path would have refused.
+      rc.on('carFoundEngine', function(){
+        if(!hasGame())return;
+        try { window.__f1dEv('engine_found',window.__f1dEvCtx({from:'car_screen'})); } catch(e){}
+        try { if(GameActions.foundOwnEngine) GameActions.foundOwnEngine(); } catch(e){}
         _carEngineRefresh();
       });
       rc.on('openCarSetup', function(){
