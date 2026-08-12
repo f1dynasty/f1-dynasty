@@ -49,7 +49,7 @@
   gtag('config', 'G-6B4MBFG3FX');
   // Single source of truth for the build number. The HQ landing reads this rather than
   // carrying its own literal, so a release bump touches the same number of places as before.
-  window.__f1dVersion = '3.1.3';
+  window.__f1dVersion = '3.1.4';
   // Analytics helper. Every call site is fire-and-forget: a missing gtag (ad blocker,
   // offline, file:// testing) or a bad param must never break gameplay, so the guard and
   // the try/catch live here once rather than being repeated at ~40 call sites.
@@ -956,11 +956,11 @@ body.hq-skin #driver-detail-modal .modal-box:has(.le-head)::before{display:none}
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:16px;max-width:560px;padding:16px 18px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
           <!-- f1d-current-release-i18n:start -->
-          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v3.1.3: What's New</div>
-          <div style="font-size:14px;font-weight:900;color:#111;margin-bottom:10px">Season progression charts for every year of your career, and an interface available in 12 languages</div>
+          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v3.1.4: What's New</div>
+          <div style="font-size:14px;font-weight:900;color:#111;margin-bottom:10px">Time penalties no longer distort the gaps behind them, and the live race feed is translated</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 16px">
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:var(--red);font-weight:800;flex-shrink:0">📈</span><span><strong>Season progression charts are in History, for every finished season.</strong> The cumulative points chart that Standings has always had for the current year is now available for any season your save has recorded — pick the year and watch the title fight play out round by round. It works on careers that started long before this update, because the finishing positions were already being stored. (Requested by ExtremeTruck7626.)</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:var(--red);font-weight:800;flex-shrink:0">🌍</span><span><strong>The interface is available in 12 languages.</strong> Choose a language on this landing page or later in Settings. Driver, team, sponsor and circuit names are never translated. (Requested by Any-Answer2614.)</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:var(--red);font-weight:800;flex-shrink:0">🏁</span><span><strong>Time penalties no longer distort the gaps behind them.</strong> A penalised driver&rsquo;s seconds were added to their gap even though the finishing order had already accounted for them &mdash; and because each car&rsquo;s gap is clamped to sit behind the one ahead, that second helping was dragged onto everyone further back. In a sprint it bunched the whole midfield. Positions and points were never affected. (Reported by IronicGerman.)</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:var(--red);font-weight:800;flex-shrink:0">🌍</span><span><strong>The live race feed and lap commentary are translated.</strong> Lines built around a driver&rsquo;s name &mdash; &ldquo;Theo Laurent drops to P3&rdquo; &mdash; could never match the dictionary and stayed English inside a translated interface. They are now matched by shape, with the position placed where each language actually puts it.</span></div>
           </div>
           <button onclick="UI.showChangelog()" style="margin-top:10px;width:100%;padding:7px;background:none;border:1.5px solid rgba(192,57,43,.3);border-radius:7px;font-size:11px;font-weight:700;color:var(--red);cursor:pointer">Full release notes →</button>
           <!-- f1d-current-release-i18n:end -->
@@ -1110,7 +1110,7 @@ body.hq-skin #driver-detail-modal .modal-box:has(.le-head)::before{display:none}
       </div>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v3.1.2</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">Reddit</a> · <a href="https://discord.gg/w3R97uTBW" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">Discord</a></div>
+        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v3.1.4</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">Reddit</a> · <a href="https://discord.gg/w3R97uTBW" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">Discord</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -4104,10 +4104,19 @@ function getRaceGapNumbers(race, results, isSprint){
         rawGap[r.driverId] = cum;
       });
     }
-    // 3) Penalties on top, then enforce monotonicity by final position
+    // 3) Enforce monotonicity by final position.
+    //    Penalty seconds are deliberately NOT added here. The classification already accounts
+    //    for them — Sim applies `score - penaltySeconds*0.35` before sorting, so a penalised
+    //    driver has already lost the places the penalty cost. Adding the raw seconds on top
+    //    counted the penalty twice, and because the clamp below chains each gap off the one
+    //    ahead, that second helping was then dragged onto every car BEHIND the penalised
+    //    driver — giving them time they never lost. In a sprint, where the synthetic spread is
+    //    only ~17s across the field, a 15s penalty collapsed P6 onward into a two-second train.
+    //    The "Ns PEN" tag on the row is what tells the player a penalty was taken.
+    //    (v3.1.4, reported by IronicGerman.)
     let prev = -1;
     finishers.forEach((r,i)=>{
-      let gp = (rawGap[r.driverId]!=null ? rawGap[r.driverId] : (prev>=0?prev+2.5:0)) + (r.penaltySeconds||0);
+      let gp = (rawGap[r.driverId]!=null ? rawGap[r.driverId] : (prev>=0?prev+2.5:0));
       if(i===0) gp = 0; else if(gp <= prev) gp = prev + 0.15 + ((i*7)%10)/20;
       rawGap[r.driverId] = gp; prev = gp;
     });
@@ -4123,7 +4132,9 @@ function getRaceGapStrings(race, results, isSprint){
     results.forEach(r=>{ if(r && r.dnf) out[r.driverId]='DNF'; });
     const rawGap = getRaceGapNumbers(race, results, isSprint);
     // Format — lapped cars show +N Lap(s); total race ≈ 90 min regardless of lap count
-    const lapSec = 5400 / Math.max(20, (isSprint ? Math.round((race.laps||58)*0.30) : (race.laps||58)));
+    // A GP runs ~90 min, a sprint ~30. Using the GP duration for both put the sprint
+    // "lapped" threshold at ~257s — nearly three times a real lap. (v3.1.4)
+    const lapSec = (isSprint ? 1800 : 5400) / Math.max(20, (isSprint ? Math.round((race.laps||58)*0.30) : (race.laps||58)));
     finishers.forEach((r,i)=>{
       const gp = rawGap[r.driverId];
       if(i===0){ out[r.driverId]=''; return; }
@@ -26489,8 +26500,13 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const html=`
       <div style="max-height:85vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v3.1.3 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v3.1.4 · Release Notes</div>
          ${[
+    ['v3.1.4','August 2026',[
+            '🏁 Time penalties no longer distort the gap column for the rest of the field. A penalised driver\'s seconds were being added to their displayed gap — but the classification had already applied them, because a penalty reduces the driver\'s race score before finishing positions are sorted. The penalty was therefore counted twice. Worse, the gap column clamps every car to sit behind the one ahead of it, chaining off the previous value, so that second helping was then dragged onto every car BEHIND the penalised driver: they showed time they had never lost. A fifteen-second penalty in a sprint — where the entire field is usually covered by about seventeen seconds — collapsed everyone from sixth place back into a two-second train. Sprints showed it worst for exactly that reason; across a Grand Prix, where the spread is far wider, the distortion faded out a few places down and was easy to miss. Finishing positions, points and the classification were never affected — this was the gap column alone, and the "15s PEN" tag on the row is what reports the penalty itself. (Reported by IronicGerman.)',
+            '🌍 The live race feed and lap commentary are translated. Lines like "Theo Laurent drops to P3" are assembled at runtime with the driver\'s name spliced into the middle of them, so unlike a fixed button label they could never match the translation dictionary — they sat in English inside an otherwise fully translated interface. They are now matched by shape rather than by exact text, and the position number is placed where each language actually puts it rather than simply appended: German pushes it inside the separable verb ("rückt auf P4 vor"), and Hindi, Japanese and Korean keep it ahead of the trailing verb ("P3 पर गिरता है", "P3へ後退", "P3로 하락합니다"). Appending it would have produced nonsense in six of the twelve languages. Driver, team and sponsor names are still never translated. (Reported by IronicGerman.)',
+            '⚡ Sprint results no longer judge a lapped car against the Grand Prix race distance. The threshold was derived from a ninety-minute race rather than a thirty-minute sprint, putting it at nearly three times a real lap.'
+    ]],
     ['v3.1.3','August 2026',[
             '📈 Season progression charts are in History, one for every finished season. The cumulative points chart has existed on Standings since v2.5.8, but only ever for the year you are currently in — the moment a season ended, the shape of how it was won was gone. History now carries the same chart with a season picker, for drivers or constructors, so you can go back and see where a title was actually decided: the double-header that swung it, the retirement that cost it, the mid-season upgrade that changed the gradient. This works on careers that started long before this update, because the finishing position of every round has been stored in the season archive all along — nothing had to start being recorded, so your existing saves have their whole history available immediately. Seasons are drawn in the liveries of their own era rather than today\'s colours. Available in both Team HQ and the classic interface. (Requested by ExtremeTruck7626.)',
             '🌍 The interface can be played in 12 languages — Portuguese (BR), French, Hindi, Spanish, Chinese, German, Italian, Japanese, Korean, Arabic, Russian and English — from Settings → Language. It started as a Brazilian Portuguese request, since Brazil has one of the largest Formula 1 followings anywhere and the game had only ever spoken English; once the translation layer existed, extending it to the rest was the same mechanism repeated. Translation happens across the whole interface at once — the main menus, Team HQ, the pit wall and the shared screens — rather than a single screen at a time, and the language you pick is remembered on the device. Driver, team, sponsor and circuit names are never translated, so a grid always reads the way it should. Hindi, Arabic, Chinese, Japanese, Korean and Russian ship with the font stacks their scripts need so they render properly on devices that would otherwise show empty boxes; Arabic also runs right-to-left. Coverage of the deeper text — long-form guidance, the news feed and race commentary — grows with each update, and anything not yet translated falls back to English rather than breaking the layout. Thanks to Any-Answer2614 for the request and for offering to help with Brazilian Portuguese.'
@@ -36527,11 +36543,11 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
         }
       } catch(e){}
       var landingTheme='light'; try { landingTheme=localStorage.getItem('f1d_theme')==='dark'?'dark':'light'; } catch(e){}
-      return { appearance:{theme:landingTheme}, landing:{ saves:saves, teams:teams, selectedTeam:sel, challenge:challenge, patchVersion:(window.__f1dVersion||'3.1.3'),
+      return { appearance:{theme:landingTheme}, landing:{ saves:saves, teams:teams, selectedTeam:sel, challenge:challenge, patchVersion:(window.__f1dVersion||'3.1.4'),
       /* f1d-current-release-i18n:start */
       whatsNew:[
-        {tag:'NEW', text:'Season progression charts are in History, for every finished season. Pick a year and watch the title fight play out round by round, for drivers or constructors. It works on careers that started long before this update, because the finishing position of every round was already being stored.'},
-        {tag:'NEW', text:'The interface can be played in 12 languages. Choose one on the landing page or later in Settings. Driver, team, sponsor and circuit names are never translated, and anything not yet translated stays in English rather than breaking the layout.'}
+        {tag:'FIX', text:'Time penalties no longer distort the gap column for the cars behind them. A penalised driver\'s seconds were counted twice and then dragged onto everyone further back, which bunched the midfield — worst in sprints, where the whole field is covered by about seventeen seconds. Positions and points were never affected.'},
+        {tag:'FIX', text:'The live race feed and lap commentary are translated. Lines built around a driver\'s name could never match the dictionary and stayed in English; they are now matched by shape, with the position number placed where each language actually puts it.'}
       ],
       /* f1d-current-release-i18n:end */
       cloudSave:{
@@ -42311,6 +42327,7 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       'knows it too.':'também sabe disso.',
       'laps left in window.':'voltas restantes na janela.',
       'late on.':'no fim.',
+      'leads':'lidera',
       'leads off the line from pole.':'lidera na largada saindo da pole.',
       'leads the championship by':'lidera o campeonato por',
       'left a place or two on the table with a couple of avoidable errors.':'deixou uma ou duas posições na mesa com alguns erros evitáveis.',
@@ -42696,7 +42713,7 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       'used the rain to his advantage. Sensible and composed out there.':'usou a chuva a seu favor. Sensato e sereno na pista.',
       'used the tricky conditions better than anyone on the circuit today.':'usou as condições difíceis melhor que todos no circuito hoje.',
       'using clear air to make the move stick.':'usando ar limpo para consolidar a ultrapassagem.',
-      'v3.1.3: What\'s New':'v3.1.3: Novidades',
+      'v3.1.4: What\'s New':'v3.1.4: Novidades',
       'vacant — missing bonuses':'vago — bônus ausentes',
       'var achievementHtml=emptyState(\'Achievements are unavailable for this save.\');':'var achievementHtml=emptyState(\'Conquistas indisponíveis para este save.\');',
       'var gridHtml=emptyState(\'Race grid data is recorded when a season finishes.\');':'var gridHtml=emptyState(\'Os dados do grid são registrados quando uma temporada termina.\');',
@@ -45681,6 +45698,7 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       'knows it too.':'le sait aussi.',
       'laps left in window.':'tours restants dans la fenêtre.',
       'late on.':'en fin de course.',
+      'leads':'est en tête',
       'leads off the line from pole.':'mène au départ depuis la pole.',
       'leads the championship by':'mène le championnat de',
       'left a place or two on the table with a couple of avoidable errors.':'a laissé une ou deux places en route avec quelques erreurs évitables.',
@@ -46063,7 +46081,7 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       'used the rain to his advantage. Sensible and composed out there.':'a utilisé la pluie à son avantage. Intelligent et serein en piste.',
       'used the tricky conditions better than anyone on the circuit today.':'a mieux exploité les conditions délicates que quiconque sur le circuit aujourd\'hui.',
       'using clear air to make the move stick.':'utilisant l\'air propre pour faire tenir le dépassement.',
-      'v3.1.3: What\'s New':'v3.1.3: Nouveautés',
+      'v3.1.4: What\'s New':'v3.1.4: Nouveautés',
       'vacant — missing bonuses':'vacant — bonus manquants',
       'var vd = drow.querySelector(\'[data-act=\\"viewDriver\\"]\');':'var vd = drow.querySelector(\'[data-act="viewDriver"]\');',
       've already committed enough drivers for next season. Let a contract expire or release someone first.`,':'avez déjà engagé assez de pilotes pour la saison prochaine. Laissez un contrat expirer ou libérez quelqu\'un d\'abord.`,',
@@ -49053,6 +49071,7 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       'knows it too.':'वह भी जानता है।',
       'laps left in window.':'विंडो में बचे लैप्स।',
       'late on.':'देर में।',
+      'leads':'आगे है',
       'leads off the line from pole.':'पोल से लाइन पर बढ़त लेता है।',
       'leads the championship by':'चैंपियनशिप में से आगे है',
       'left a place or two on the table with a couple of avoidable errors.':'कुछ टाले जा सकने वाली गलतियों से एक-दो जगह छोड़ दी।',
@@ -49441,7 +49460,7 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       'used the rain to his advantage. Sensible and composed out there.':'बारिश का अपने फायदे के लिए इस्तेमाल किया। ट्रैक पर समझदारी और संयम दिखाया।',
       'used the tricky conditions better than anyone on the circuit today.':'आज सर्किट पर किसी से बेहतर मुश्किल परिस्थितियों का उपयोग किया।',
       'using clear air to make the move stick.':'मूव को कायम रखने के लिए क्लीन एयर का उपयोग करते हुए।',
-      'v3.1.3: What\'s New':'v3.1.3: नया क्या है',
+      'v3.1.4: What\'s New':'v3.1.4: नया क्या है',
       'vacant — missing bonuses':'रिक्त — बोनस नहीं मिल रहे',
       've already committed enough drivers for next season. Let a contract expire or release someone first.`,':'आपने अगले सीज़न के लिए पर्याप्त ड्राइवरों से पहले ही करार कर लिया है। पहले किसी कॉन्ट्रैक्ट को समाप्त होने दें या किसी को रिलीज़ करें।`,',
       've built in this world — titles, wins, poles, points, and back-to-back title streaks — so the dynasties you':'इस दुनिया में आपने जो बनाया है — खिताब, जीत, पोल, पॉइंट्स और लगातार खिताबी सिलसिले — ताकि वे राजवंश जिन्हें आप',
@@ -52399,6 +52418,7 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       'knows it too.':'también lo sabe.',
       'laps left in window.':'vueltas restantes en la ventana.',
       'late on.':'al final.',
+      'leads':'lidera',
       'leads off the line from pole.':'lidera desde la salida desde la pole.',
       'leads the championship by':'lidera el campeonato por',
       'left a place or two on the table with a couple of avoidable errors.':'dejó una o dos posiciones sobre la mesa con un par de errores evitables.',
@@ -52781,7 +52801,7 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       'used the rain to his advantage. Sensible and composed out there.':'usó la lluvia a su favor. Sensato y sereno ahí fuera.',
       'used the tricky conditions better than anyone on the circuit today.':'aprovechó las condiciones difíciles mejor que nadie en el circuito hoy.',
       'using clear air to make the move stick.':'usando aire limpio para consolidar la maniobra.',
-      'v3.1.3: What\'s New':'v3.1.3: Novedades',
+      'v3.1.4: What\'s New':'v3.1.4: Novedades',
       'vacant — missing bonuses':'vacante — bonificaciones perdidas',
       've already committed enough drivers for next season. Let a contract expire or release someone first.`,':'ve ya has comprometido suficientes pilotos para la próxima temporada. Deja que expire un contrato o libera a alguien primero.`,`',
       've built in this world — titles, wins, poles, points, and back-to-back title streaks — so the dynasties you':'ve construido en este mundo — títulos, victorias, poles, puntos y rachas de títulos consecutivos — para que las dinastías que',
@@ -55806,6 +55826,7 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       'knows it too.':'他自己也知道。',
       'laps left in window.':'窗口内剩余圈数。',
       'late on.':'在后期。',
+      'leads':'领先',
       'leads off the line from pole.':'从杆位领跑起步。',
       'leads the championship by':'以以下优势领跑积分榜',
       'left a place or two on the table with a couple of avoidable errors.':'因几次可避免的失误，留下了一两个位置。',
@@ -56191,7 +56212,7 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       'used the rain to his advantage. Sensible and composed out there.':'利用雨势为自己创造优势。明智而冷静。',
       'used the tricky conditions better than anyone on the circuit today.':'今天比赛道上任何人都更善于利用棘手条件。',
       'using clear air to make the move stick.':'利用清洁空气确保这次超越成功。',
-      'v3.1.3: What\'s New':'v3.1.3：新增内容',
+      'v3.1.4: What\'s New':'v3.1.4：新增内容',
       'vacant — missing bonuses':'空缺 — 缺少奖金',
       've already committed enough drivers for next season. Let a contract expire or release someone first.`,':'你已经为下赛季承诺了足够多的车手。先让一份合同到期或解约一人。`,',
       've built in this world — titles, wins, poles, points, and back-to-back title streaks — so the dynasties you':'你在这个世界建立的一切 — 冠军、胜场、杆位、积分和连冠纪录 — 所以你所建立的王朝',
@@ -59148,6 +59169,7 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       'knows it too.':'weiß es auch.',
       'laps left in window.':'Runden im Fenster übrig.',
       'late on.':'spät.',
+      'leads':'führt',
       'leads off the line from pole.':'führt von der Pole beim Start.',
       'leads the championship by':'führt die Meisterschaft mit',
       'left a place or two on the table with a couple of avoidable errors.':'ließ durch ein paar vermeidbare Fehler ein oder zwei Plätze liegen.',
@@ -59534,7 +59556,7 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       'used the rain to his advantage. Sensible and composed out there.':'nutzte den Regen zu seinem Vorteil. Vernünftig und abgeklärt da draußen.',
       'used the tricky conditions better than anyone on the circuit today.':'nutzte die schwierigen Bedingungen heute besser als jeder andere auf der Strecke.',
       'using clear air to make the move stick.':'nutzt freie Fahrt, um das Manöver festzumachen.',
-      'v3.1.3: What\'s New':'v3.1.3: Was ist neu',
+      'v3.1.4: What\'s New':'v3.1.4: Was ist neu',
       'vacant — missing bonuses':'frei — Boni fehlen',
       've already committed enough drivers for next season. Let a contract expire or release someone first.`,':'ve haben bereits genug Fahrer für nächste Saison verpflichtet. Lass einen Vertrag auslaufen oder entlasse zuerst jemanden.`,',
       've built in this world — titles, wins, poles, points, and back-to-back title streaks — so the dynasties you':'ve in dieser Welt aufgebaut hast — Titel, Siege, Poles, Punkte und Titelserien — damit die Dynastien, die du',
@@ -62512,6 +62534,7 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       'knows it too.':'lo sa anche lui.',
       'laps left in window.':'giri rimasti nella finestra.',
       'late on.':'nel finale.',
+      'leads':'è in testa',
       'leads off the line from pole.':'conduce dalla pole allo spegnimento dei semafori.',
       'leads the championship by':'guida il campionato di',
       'left a place or two on the table with a couple of avoidable errors.':'ha lasciato per strada una o due posizioni con un paio di errori evitabili.',
@@ -62896,7 +62919,7 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       'used the rain to his advantage. Sensible and composed out there.':'ha usato la pioggia a suo vantaggio. Sensato e composto in pista.',
       'used the tricky conditions better than anyone on the circuit today.':'ha sfruttato le condizioni insidiose meglio di chiunque altro sul circuito oggi.',
       'using clear air to make the move stick.':'usando aria pulita per rendere decisiva la manovra.',
-      'v3.1.3: What\'s New':'v3.1.3: Novità',
+      'v3.1.4: What\'s New':'v3.1.4: Novità',
       'vacant — missing bonuses':'vacante — bonus mancanti',
       've already committed enough drivers for next season. Let a contract expire or release someone first.`,':'ve hai già ingaggiato abbastanza piloti per la prossima stagione. Lascia scadere un contratto o rilascia prima qualcuno. `,',
       've built in this world — titles, wins, poles, points, and back-to-back title streaks — so the dynasties you':'ve hai costruito in questo mondo — titoli, vittorie, pole, punti e serie di titoli consecutivi — così le dinastie che',
@@ -65881,6 +65904,7 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       'knows it too.':'本人も分かっている。',
       'laps left in window.':'ウィンドウ残り周回。',
       'late on.':'終盤に。',
+      'leads':'首位',
       'leads off the line from pole.':'ポールから好スタートでリード。',
       'leads the championship by':'選手権をでリード',
       'left a place or two on the table with a couple of avoidable errors.':'避けられたミスを数回して、1つか2つ順位を取りこぼした。',
@@ -66258,7 +66282,7 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       'used the rain to his advantage. Sensible and composed out there.':'雨を味方につけた。賢明で落ち着いた走りだった。',
       'used the tricky conditions better than anyone on the circuit today.':'今日のサーキットで誰よりも難しいコンディションをうまく使った。',
       'using clear air to make the move stick.':'クリアエアを使って仕掛けを成功させる。',
-      'v3.1.3: What\'s New':'v3.1.3: 新機能',
+      'v3.1.4: What\'s New':'v3.1.4: 新機能',
       'vacant — missing bonuses':'空席 — ボーナス欠落',
       've already committed enough drivers for next season. Let a contract expire or release someone first.`,':'来季に向け十分なドライバーをすでに確保しています。先に契約を満了させるか、誰かを放出してください。`,',
       've built in this world — titles, wins, poles, points, and back-to-back title streaks — so the dynasties you':'この世界で築いたタイトル、勝利、ポール、ポイント、連覇記録 — あなたが築く王朝が',
@@ -69263,6 +69287,7 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       'knows it too.':'그 자신도 알고 있습니다.',
       'laps left in window.':'윈도에 남은 랩.',
       'late on.':'막판에.',
+      'leads':'선두',
       'leads off the line from pole.':'폴 포지션에서 출발해 선두를 지킵니다.',
       'leads the championship by':'챔피언십을 다음만큼 선두하고 있습니다:',
       'left a place or two on the table with a couple of avoidable errors.':'피할 수 있었던 몇 번의 실수로 한두 자리를 놓쳤습니다.',
@@ -69649,7 +69674,7 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       'used the rain to his advantage. Sensible and composed out there.':'비를 자신에게 유리하게 활용했습니다. 현명하고 침착했습니다.',
       'used the tricky conditions better than anyone on the circuit today.':'오늘 서킷의 누구보다 까다로운 조건을 잘 활용했습니다.',
       'using clear air to make the move stick.':'클린 에어를 이용해 추월을 확정합니다.',
-      'v3.1.3: What\'s New':'v3.1.3: 새로운 기능',
+      'v3.1.4: What\'s New':'v3.1.4: 새로운 기능',
       'vacant — missing bonuses':'공석 — 누락된 보너스',
       'var achievementHtml=emptyState(\'Achievements are unavailable for this save.\');':'var achievementHtml=emptyState(\'이 세이브에서는 업적을 사용할 수 없습니다.\');',
       'var gridHtml=emptyState(\'Race grid data is recorded when a season finishes.\');':'var gridHtml=emptyState(\'시즌이 끝나면 레이스 그리드 데이터가 기록됩니다.\');',
@@ -72643,6 +72668,7 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       'knows it too.':'وهو يعلم ذلك أيضًا.',
       'laps left in window.':'لفات متبقية في النافذة.',
       'late on.':'متأخرًا.',
+      'leads':'يتصدر',
       'leads off the line from pole.':'يتصدر من خط الانطلاق انطلاقًا من البول.',
       'leads the championship by':'يتصدر البطولة بفارق',
       'left a place or two on the table with a couple of avoidable errors.':'ترك مركزًا أو اثنين على الطاولة بسبب خطأين يمكن تجنبهما.',
@@ -73030,7 +73056,7 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       'used the rain to his advantage. Sensible and composed out there.':'استخدم المطر لصالحه. كان عاقلًا ومتزنًا على الحلبة.',
       'used the tricky conditions better than anyone on the circuit today.':'استفاد من الظروف الصعبة أفضل من أي شخص آخر على الحلبة اليوم.',
       'using clear air to make the move stick.':'مستخدمًا هواءً نظيفًا لتثبيت المناورة.',
-      'v3.1.3: What\'s New':'v3.1.3: ما الجديد',
+      'v3.1.4: What\'s New':'v3.1.4: ما الجديد',
       'vacant — missing bonuses':'شاغر — مكافآت مفقودة',
       'var achievementHtml=emptyState(\'Achievements are unavailable for this save.\');':'var achievementHtml=emptyState(\'الإنجازات غير متاحة لهذا الحفظ.\');',
       'var gridHtml=emptyState(\'Race grid data is recorded when a season finishes.\');':'var gridHtml=emptyState(\'تُسجّل بيانات شبكة السباق عند انتهاء الموسم.\');',
@@ -76065,6 +76091,7 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       'knows it too.':'тоже это знает.',
       'laps left in window.':'кругов осталось в окне.',
       'late on.':'в конце.',
+      'leads':'лидирует',
       'leads off the line from pole.':'лидирует со старта с поула.',
       'leads the championship by':'лидирует в чемпионате с отрывом',
       'left a place or two on the table with a couple of avoidable errors.':'оставил на трассе одну-две позиции из-за нескольких предотвратимых ошибок.',
@@ -76452,7 +76479,7 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
       'used the rain to his advantage. Sensible and composed out there.':'использовал дождь в свою пользу. Разумно и хладнокровно на трассе.',
       'used the tricky conditions better than anyone on the circuit today.':'лучше всех на трассе использовал сложные условия сегодня.',
       'using clear air to make the move stick.':'используя чистый воздух, чтобы закрепить манёвр.',
-      'v3.1.3: What\'s New':'v3.1.3: Что нового',
+      'v3.1.4: What\'s New':'v3.1.4: Что нового',
       'vacant — missing bonuses':'вакантно — отсутствуют бонусы',
       've already committed enough drivers for next season. Let a contract expire or release someone first.`,':'вы уже подписали достаточно пилотов на следующий сезон. Сначала дождитесь окончания контракта или освободите кого-то.`,',
       've built in this world — titles, wins, poles, points, and back-to-back title streaks — so the dynasties you':'вы построили в этом мире — титулы, победы, поулы, очки и серии титулов подряд — чтобы династии, которые вы',
@@ -76986,6 +77013,41 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
   };
   I18N.detectBrowserLang = detectBrowserLanguage;
 
+  // ── Composed sentences ──────────────────────────────────────────────────────
+  // Race-feed and commentary lines are built by interpolation — `name + ' drops
+  // to P' + pos` — so the rendered string carries a driver name and can never
+  // match the dictionary exactly. The extractor harvested the fragments BETWEEN
+  // the interpolations ("drops to P"), which are already translated in every
+  // language but could never match a whole text node on their own.
+  //
+  // Each rule below pairs the rendered English shape with the fragment that
+  // already carries its translation. The position number is re-inserted at the
+  // fragment's own "P", which is where every language puts it — including the
+  // ones whose verb trails the number (de "rückt auf P3 vor", hi "P3 पर गिरता
+  // है", ja "P3へ後退", ko "P3로 하락합니다"). Splicing the number onto the end
+  // instead would produce "rückt auf P vor3".
+  // (v3.1.4 — the untranslated race feed, reported by IronicGerman.)
+  var COMPOSED = [
+    { re: /^(.*\S)\s+and drops to P(\d+)([.!]?)$/, frag: 'and drops to P' },
+    { re: /^(.*\S)\s+drops to P(\d+)([.!]?)$/,     frag: 'drops to P' },
+    { re: /^(.*\S)\s+moves up to P(\d+)([.!]?)$/,  frag: 'moves up to P' },
+    { re: /^(.*\S)\s+leads$/,                      frag: 'leads', noPos: true }
+  ];
+  function composedLookup(key){
+    var d = DICT[I18N.lang];
+    if(!d) return null;
+    for(var i=0;i<COMPOSED.length;i++){
+      var rule = COMPOSED[i], m = key.match(rule.re);
+      if(!m) continue;
+      var frag = d[rule.frag];
+      if(!frag) continue;                       // not translated yet — stay English
+      if(rule.noPos) return m[1] + ' ' + frag;
+      if(frag.indexOf('P') < 0) continue;       // no anchor for the number; don't guess
+      return m[1] + ' ' + frag.replace('P', 'P' + m[2]) + (m[3] || '');
+    }
+    return null;
+  }
+
   function lookup(key){
     if(!key) return null;
     var d = DICT[I18N.lang];
@@ -76994,6 +77056,8 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
     for(var i=0;i<pats.length;i++){
       if(pats[i][0].test(key)) return key.replace(pats[i][0], pats[i][1]);
     }
+    var comp = composedLookup(key);
+    if(comp != null) return comp;
     // Record it so coverage can be finished from evidence rather than guesswork.
     if(key.length<200 && /[A-Za-z]{3}/.test(key)) I18N._missing[key]=(I18N._missing[key]||0)+1;
     return null;
