@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#10141c"/>
+  <rect x="68" y="104" width="12" height="304" fill="#c0012e"/>
+  <text x="256" y="286" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="174" font-weight="900">F1</text>
+  <text x="256" y="355" text-anchor="middle" fill="#ff3156" font-family="Arial, sans-serif" font-size="45" font-weight="900" letter-spacing="2">DYNASTY</text>
+</svg>
