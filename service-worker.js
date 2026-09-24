@@ -1,5 +1,5 @@
 /* Bump this name with every release. Online navigation always uses the network. */
-const CACHE = 'f1d-shell-2026-09-24-1';
+const CACHE = 'f1d-shell-3.1.5';
 const ROOT = new URL('./', self.location.href);
 const INDEX = new URL('index.html', ROOT).href;
 const SHELL = ['index.html','f1d-growth.js','f1d-leaderboard.js','manifest.webmanifest','icons/f1-dynasty-192.png','icons/f1-dynasty-512.png'];

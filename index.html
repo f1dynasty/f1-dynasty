@@ -49,7 +49,7 @@
   gtag('config', 'G-6B4MBFG3FX');
   // Single source of truth for the build number. The HQ landing reads this rather than
   // carrying its own literal, so a release bump touches the same number of places as before.
-  window.__f1dVersion = '3.1.4';
+  window.__f1dVersion = '3.1.5';
   // Analytics helper. Every call site is fire-and-forget: a missing gtag (ad blocker,
   // offline, file:// testing) or a bad param must never break gameplay, so the guard and
   // the try/catch live here once rather than being repeated at ~40 call sites.
@@ -1019,11 +1019,11 @@ body.hq-skin #driver-detail-modal .modal-box:has(.le-head)::before{display:none}
         <p class="land-sub">Build a legacy.<br>Dominate the grid.</p>
         <div style="margin-top:16px;max-width:560px;padding:16px 18px;background:rgba(255,255,255,.7);border:1px solid #ece9e4;border-radius:12px;backdrop-filter:blur(6px)">
           <!-- f1d-current-release-i18n:start -->
-          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v3.1.4: What's New</div>
-          <div style="font-size:14px;font-weight:900;color:#111;margin-bottom:10px">Time penalties no longer distort the gaps behind them, and the live race feed is translated</div>
+          <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:6px">v3.1.5: What's New</div>
+          <div style="font-size:14px;font-weight:900;color:#111;margin-bottom:10px">Weekly Challenge leaderboards, smaller language downloads and offline careers</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 16px">
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:var(--red);font-weight:800;flex-shrink:0">🏁</span><span><strong>Time penalties no longer distort the gaps behind them.</strong> A penalised driver&rsquo;s seconds were added to their gap even though the finishing order had already accounted for them &mdash; and because each car&rsquo;s gap is clamped to sit behind the one ahead, that second helping was dragged onto everyone further back. In a sprint it bunched the whole midfield. Positions and points were never affected. (Reported by IronicGerman.)</span></div>
-            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:var(--red);font-weight:800;flex-shrink:0">🌍</span><span><strong>The live race feed and lap commentary are translated.</strong> Lines built around a driver&rsquo;s name &mdash; &ldquo;Theo Laurent drops to P3&rdquo; &mdash; could never match the dictionary and stayed English inside a translated interface. They are now matched by shape, with the position placed where each language actually puts it.</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:var(--red);font-weight:800;flex-shrink:0">🏁</span><span><strong>Weekly Challenges have local personal bests and a community leaderboard.</strong> Signed-in players can submit their best result when the public board is available, compare ranks and share a result card.</span></div>
+            <div style="font-size:11px;color:#333;display:flex;align-items:flex-start;gap:6px;line-height:1.4;grid-column:1/-1"><span style="color:var(--red);font-weight:800;flex-shrink:0">📱</span><span><strong>Languages load only when chosen, and local careers can reopen offline.</strong> Install F1 Dynasty after you have played; the original landing layout and existing saves remain.</span></div>
           </div>
           <button onclick="UI.showChangelog()" style="margin-top:10px;width:100%;padding:7px;background:none;border:1.5px solid rgba(192,57,43,.3);border-radius:7px;font-size:11px;font-weight:700;color:var(--red);cursor:pointer">Full release notes →</button>
           <!-- f1d-current-release-i18n:end -->
@@ -1173,7 +1173,7 @@ body.hq-skin #driver-detail-modal .modal-box:has(.le-head)::before{display:none}
       </div>
       <div id="land-team-grid" class="land-team-grid"></div>
       <button id="btn-start-game-landing" class="land-start">Start Career →</button>
-        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v3.1.4</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">Reddit</a> · <a href="https://discord.gg/w3R97uTBW" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">Discord</a></div>
+        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-weight:600;letter-spacing:.5px"><a href="javascript:void(0)" onclick="UI.showChangelog()" style="color:#aaa;text-decoration:none;cursor:pointer">v3.1.5</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">feedback</a> · <a href="https://www.reddit.com/r/f1dynasty/" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">Reddit</a> · <a href="https://discord.gg/w3R97uTBW" target="_blank" rel="noopener noreferrer" style="color:#aaa;text-decoration:none">Discord</a></div>
 
       <!-- Hidden legacy buttons for JS compatibility -->
       <button id="btn-continue" class="hidden" style="display:none"></button>
@@ -26565,8 +26565,15 @@ const sponsorInc=sumSponsorIncome(sponsors2);
     const html=`
       <div style="max-height:85vh;overflow-y:auto">
         <div style="font-size:16px;font-weight:900;margin-bottom:4px">F1 Dynasty</div>
-  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v3.1.4 · Release Notes</div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;font-family:var(--fm)">v3.1.5 · Release Notes</div>
          ${[
+    ['v3.1.5','September 2026',[
+            '🏁 Weekly Challenges now keep a local personal best and offer a community leaderboard in the in-career challenge view. Anyone can play, keep a local score and read the board. Signing in is required only to submit a result. Each account keeps one best entry per challenge; an equal score replaces it only when the completion time is faster. Top 10, Around Me and My Best views, manager names, ranks and result-card sharing are available when the public board is configured. Public scores are player-reported and are not verified race records.',
+            '🌍 The original landing layout is back. Non-English language packs now load only when selected, rather than making every visitor download all eleven dictionaries. English needs no extra file. The existing 12-language selector, Spanish suggestion, translated HQ and race interfaces, Arabic right-to-left layout and saved language preference remain; a failed locale request falls back to English without stopping play.',
+            '📱 F1 Dynasty can now be installed as a web app on supported browsers. After an online visit it can reopen a cached copy offline so local careers can continue; cloud sync and the public leaderboard still need a connection. The install prompt waits until the first race or a later meaningful visit, and a dismissal is remembered.',
+            '📊 New landing, install and leaderboard events use the existing analytics helper. Language and generic creator referrals can be compared with career starts, races and D1/D7 returns. A creator is recorded only when a visitor actually arrives with a nonempty ?ref= link; searches for the game are never assigned a creator automatically.',
+            '🔧 The works-deal setting uses an ordinary checkbox; manual engine-mode choices no longer hand control back to automatic delegation; and a DNF does not produce a misleading finish message. Existing careers remain compatible.'
+    ]],
     ['v3.1.4','August 2026',[
             '🏁 Time penalties no longer distort the gap column for the rest of the field. A penalised driver\'s seconds were being added to their displayed gap — but the classification had already applied them, because a penalty reduces the driver\'s race score before finishing positions are sorted. The penalty was therefore counted twice. Worse, the gap column clamps every car to sit behind the one ahead of it, chaining off the previous value, so that second helping was then dragged onto every car BEHIND the penalised driver: they showed time they had never lost. A fifteen-second penalty in a sprint — where the entire field is usually covered by about seventeen seconds — collapsed everyone from sixth place back into a two-second train. Sprints showed it worst for exactly that reason; across a Grand Prix, where the spread is far wider, the distortion faded out a few places down and was easy to miss. Finishing positions, points and the classification were never affected — this was the gap column alone, and the "15s PEN" tag on the row is what reports the penalty itself. (Reported by IronicGerman.)',
             '🌍 The live race feed and lap commentary are translated. Lines like "Theo Laurent drops to P3" are assembled at runtime with the driver\'s name spliced into the middle of them, so unlike a fixed button label they could never match the translation dictionary — they sat in English inside an otherwise fully translated interface. They are now matched by shape rather than by exact text, and the position number is placed where each language actually puts it rather than simply appended: German pushes it inside the separable verb ("rückt auf P4 vor"), and Hindi, Japanese and Korean keep it ahead of the trailing verb ("P3 पर गिरता है", "P3へ後退", "P3로 하락합니다"). Appending it would have produced nonsense in six of the twelve languages. Driver, team and sponsor names are still never translated. (Reported by IronicGerman.)',
@@ -36632,11 +36639,11 @@ html[data-theme="dark"] .hqs3 [style*="border:1px solid #dfe3e9"],html[data-them
         }
       } catch(e){}
       var landingTheme='light'; try { landingTheme=localStorage.getItem('f1d_theme')==='dark'?'dark':'light'; } catch(e){}
-      return { appearance:{theme:landingTheme}, landing:{ saves:saves, teams:teams, selectedTeam:sel, challenge:challenge, patchVersion:(window.__f1dVersion||'3.1.4'),
+      return { appearance:{theme:landingTheme}, landing:{ saves:saves, teams:teams, selectedTeam:sel, challenge:challenge, patchVersion:(window.__f1dVersion||'3.1.5'),
       /* f1d-current-release-i18n:start */
       whatsNew:[
-        {tag:'FIX', text:'Time penalties no longer distort the gap column for the cars behind them. A penalised driver\'s seconds were counted twice and then dragged onto everyone further back, which bunched the midfield — worst in sprints, where the whole field is covered by about seventeen seconds. Positions and points were never affected.'},
-        {tag:'FIX', text:'The live race feed and lap commentary are translated. Lines built around a driver\'s name could never match the dictionary and stayed in English; they are now matched by shape, with the position number placed where each language actually puts it.'}
+        {tag:'NEW', text:'Weekly Challenges keep a local personal best and offer a community leaderboard. Signed-in players can submit a best result when the public board is available, compare ranks and share a result card.'},
+        {tag:'NEW', text:'Non-English languages load only when chosen. F1 Dynasty can be installed on supported browsers, and cached local careers can reopen offline. The original landing layout and existing saves remain.'}
       ],
       /* f1d-current-release-i18n:end */
       cloudSave:{
